@@ -1,19 +1,21 @@
+import {HashRouter as Route, Router, Switch } from 'react-router-dom';
+
 import { AppHeader } from './cmps/app-header';
-import { Route, Router, Switch } from 'react-router-dom';
 import { HomeRoute } from './pages/home-route';
 
 function App() {
   return (
-    <Router>
+    // <Router>
       <div className='main-app'>
-        <AppHeader />
+        {/* <AppHeader /> */}
         <main className=''>
-          <Switch>
-            <Route path="/" component={HomeRoute}/>
-          </Switch>
+          {/* <Switch> */}
+            {/* <Route path="/" component={HomeRoute}/> */}
+            <HomeRoute />
+          {/* </Switch> */}
         </main>
       </div>
-    </Router>
+    // </Router>
   )
 }
 

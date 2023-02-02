@@ -1,0 +1,11 @@
+.animal-table {
+    border-collapse: collapse;
+
+    .animal-preview {
+
+        td {
+            padding: 8px;
+            border: 1px solid $second-color;
+        }
+    }
+}

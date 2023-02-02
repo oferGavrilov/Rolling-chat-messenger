@@ -1,5 +1,14 @@
+// Setup
+@import "./setup/variable";
+
 // base
 @import "./base/base";
 
+
 // cmps
 @import "./cmps/animal-list";
+@import "./cmps/animal-preview";
+@import "./cmps/season-clock";
+@import "./cmps/count-down";
+@import "./cmps/mouse-monitor";
+@import "./cmps/watcher-app";
