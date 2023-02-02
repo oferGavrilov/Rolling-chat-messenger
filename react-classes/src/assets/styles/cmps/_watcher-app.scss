@@ -1,12 +1,13 @@
 .watcher-app {
-    height: 70vh;
+    height: 90vh;
     background-color: $watcher-app-bg;
     color: $main-color;
     display: flex;
     align-items: center;
     flex-direction: column;
+    gap: 40px;
     .title {
         font-size: 48px;
-        padding: 100px;
+        padding-top: 100px;
     }
 }
