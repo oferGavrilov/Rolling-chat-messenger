@@ -1,12 +1,10 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import path from 'path'
 import http from 'http'
 import cookieParser from 'cookie-parser'
-import requestIp from 'request-ip'
 
-import router from './api/routes.js'
 
 const app = express()
 const server = http.createServer(app)
@@ -15,7 +13,6 @@ app.use(express.json())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(requestIp.mw())
 
 const port = 5000
 
@@ -32,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 
-app.get('/api/time', (_, res) => {
+app.get('/', (req: Request, res: Response) => {
       res.send(new Date().toLocaleTimeString())
 })
 
@@ -40,8 +37,6 @@ app.get('/api/time', (_, res) => {
 //       res.sendFile(path.join(__dirname, 'public', 'index.html'))
 // })
 
-
-app.use('/api' , router)
 
 
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))
