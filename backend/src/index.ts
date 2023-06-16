@@ -5,11 +5,13 @@ import path from 'path'
 import http from 'http'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import {connectDB} from '../config/db.js'
 
 import { chats } from '../data/dummyData'
 
 const app = express()
 dotenv.config()
+connectDB()
 const server = http.createServer(app)
 
 app.use(express.json())

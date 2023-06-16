@@ -1,0 +1,19 @@
+.fade-down{
+      animation-name: fade-down ;
+      animation-duration: .7s;
+}
+
+@keyframes fade-down {
+      0% {
+            opacity: 0;
+            transform: translateY(-80px);
+      }
+      80% {
+            opacity: 1;
+            transform: translateY(10px);
+      }
+      100% {
+            opacity: 1;
+            transform: translateY(0);
+      }
+}

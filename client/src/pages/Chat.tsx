@@ -15,9 +15,9 @@ export default function Chat () {
             setChats(data)
       }
       return (
-            <ul className="h-screen">
+            <ul>
                   {chats.map(chat => (
-                        <li key={chat._id}>{chat.chatName}</li>
+                        <li key={chat._id} className="">{chat.chatName}</li>
                   ))}
             </ul>
       )
