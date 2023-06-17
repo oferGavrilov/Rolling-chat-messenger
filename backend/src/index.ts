@@ -5,9 +5,12 @@ import path from 'path'
 import http from 'http'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
-import {connectDB} from '../config/db.js'
+import { connectDB } from '../config/db'
 
-import { chats } from '../data/dummyData'
+import { notFound } from '../middleware/errorMiddleware'
+import { errorHandler } from '../middleware/errorMiddleware'
+
+import { router as userRoutes } from '../api/user/router'
 
 const app = express()
 dotenv.config()
@@ -24,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.resolve(__dirname, 'public')))
 } else {
       const corsOptions = {
-            origin: ['http://127.0.0.1:5173', 'http://localhost:5173'],
+            origin: ['http://127.0.0.1:5000', 'http://localhost:5000'],
             credentials: true
       }
       app.use(cors(corsOptions))
@@ -36,18 +39,10 @@ app.get('/', (req: Request, res: Response) => {
       res.send(new Date().toLocaleTimeString())
 })
 
-app.get('/api/chat', (req: Request, res: Response) => {
-      res.send(chats)
-})
+app.use(notFound)
+app.use(errorHandler)
 
-app.get('/api/chat/:id', (req: Request, res: Response) => {
-      const signleChat  = chats.find(chat => chat._id === req.params.id)
-      res.send(signleChat)
-})
-
-// app.get('/**', (req, res) => {
-//       res.sendFile(path.join(__dirname, 'public', 'index.html'))
-// })
+app.use('/api/auth', userRoutes)
 
 const port = process.env.PORT || 5000
 
