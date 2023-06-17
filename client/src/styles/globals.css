@@ -17,6 +17,12 @@ background: linear-gradient(0deg, rgba(132,169,140,1) 0%, rgba(59,195,34,0) 100%
             @apply w-full rounded-xl text-gray-700 py-2 font-semibold transition-colors duration-200;
       }
       .login-input {
-            @apply border-2 border-gray-300 rounded-md p-2 focus:border-[#84a98c] focus:outline-none;
+            @apply border-2 border-gray-300 rounded-md p-2 focus:border-[#84a98c] focus:outline-none  transition-colors duration-300;
+      }
+      .error-message{
+            @apply text-red-500 text-sm;
+      }
+      .input-error{
+            @apply border-red-500;
       }
 }
