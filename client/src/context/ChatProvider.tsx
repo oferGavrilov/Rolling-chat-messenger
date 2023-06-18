@@ -18,7 +18,7 @@ export const ChatState = () => {
       return useContext(ChatContext)
 }
 
-export default function ChatProvider ({ children }: { children: ReactNode }) {
+export default function ChatProvider ({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState(null)
 
       const navigate = useNavigate()

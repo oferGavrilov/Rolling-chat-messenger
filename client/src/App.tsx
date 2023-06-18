@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatProvider from "./context/ChatProvider"
 import Layout from "./components/Layout";
+import SearchUsers from "./components/SearchUsers";
 
 function App () {
 
