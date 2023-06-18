@@ -11,6 +11,7 @@ import { notFound } from '../middleware/errorMiddleware'
 import { errorHandler } from '../middleware/errorMiddleware'
 
 import { router as userRoutes } from '../api/user/router'
+import { router as chatRoutes } from '../api/chat/router'
 
 const app = express()
 dotenv.config()
@@ -27,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.resolve(__dirname, 'public')))
 } else {
       const corsOptions = {
-            origin: ['http://127.0.0.1:5000', 'http://localhost:5000'],
+            origin: ['http://127.0.0.1:5173', 'http://localhost:5173'],
             credentials: true
       }
       app.use(cors(corsOptions))
@@ -39,10 +40,12 @@ app.get('/', (req: Request, res: Response) => {
       res.send(new Date().toLocaleTimeString())
 })
 
+app.use('/api/auth', userRoutes)
+app.use('/api/chat', chatRoutes)
+
 app.use(notFound)
 app.use(errorHandler)
 
-app.use('/api/auth', userRoutes)
 
 const port = process.env.PORT || 5000
 

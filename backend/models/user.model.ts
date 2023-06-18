@@ -2,20 +2,20 @@ import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcryptjs'
 
 interface User {
-      name: string,
+      username: string,
       email: string,
       password: string,
-      profilePicUrl: string,
+      profileImg: string,
       matchPassword: (enteredPassword: string) => Promise<boolean>
       createdAt: Date,
       updatedAt: Date
 }
 
 const userModel: Schema<User> = new mongoose.Schema({
-      name: { type: String, required: true },
+      username: { type: String, required: true },
       email: { type: String, required: true, unique: true },
       password: { type: String, required: true },
-      profilePicUrl: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
+      profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
 },
       { timestamps: true }
 )

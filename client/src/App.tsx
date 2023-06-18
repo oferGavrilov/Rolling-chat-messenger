@@ -1,7 +1,7 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 import Home from "./pages/Home"
 import Chat from "./pages/Chat"
-import Login from "./pages/Login"
+import Login from "./pages/Auth"
 import AuthGuard from "./customs/AuthGuard"
 
 import { ToastContainer } from 'react-toastify';

@@ -1,11 +1,12 @@
 import { User } from "../../models/user.model"
 import { generateToken } from "../../config/generateToken"
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../../models/types";
 
 export async function signUp (req: Request, res: Response) {
-      const { name, email, password, pic } = req.body;
+      const { username, email, password, profileImg } = req.body;
 
-      if (!name || !email || !password) {
+      if (!username || !email || !password) {
             return res.status(400).json({ msg: 'Please enter all fields' });
       }
 
@@ -16,18 +17,18 @@ export async function signUp (req: Request, res: Response) {
       }
 
       const newUser = await User.create({
-            name,
+            username,
             email,
             password,
-            profilePicUrl: pic
+            profileImg,
       })
 
       if (newUser) {
             res.status(201).json({
                   _id: newUser._id,
-                  name: newUser.name,
+                  username: newUser.username,
                   email: newUser.email,
-                  profilePicUrl: newUser.profilePicUrl,
+                  profileImg: newUser.profileImg,
                   token: generateToken(newUser._id)
             })
       } else {
@@ -44,12 +45,23 @@ export async function login (req: Request, res: Response) {
       if (user && (await user.matchPassword(password))) {
             res.json({
                   _id: user._id,
-                  name: user.name,
+                  username: user.username,
                   email: user.email,
-                  profilePicUrl: user.profilePicUrl,
+                  profileImg: user.profileImg,
                   token: generateToken(user._id)
             })
       } else {
             res.status(401).json({ msg: 'Invalid email or password' })
       }
+}
+
+export async function getUsers (req: AuthenticatedRequest, res: Response) {
+      const keyword = req.query.search ? {
+            $or: [
+                  { username: { $regex: req.query.search.toString(), $options: 'i' } },
+                  { email: { $regex: req.query.search.toString(), $options: 'i' } }
+            ]
+      } : {}
+      const users = await User.find(keyword).find({ _id: { $ne: req.user?._id } })
+      res.send(users)
 }
