@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import { Field, ErrorMessage, useFormik, FormikProvider } from 'formik'
 import { toast } from 'react-toastify'
@@ -20,6 +20,11 @@ export default function Auth () {
       const [isLoading, setIsLoadig] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
       const navigate = useNavigate()
+
+      useEffect(() => {
+            const user = userService.getLoggedinUser() 
+            if (user) navigate('/chat')
+      }, [navigate])
 
       const validationSchema = isLogin
             ? Yup.object().shape({

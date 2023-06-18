@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,5 +25,16 @@ background: linear-gradient(0deg, rgba(132,169,140,1) 0%, rgba(59,195,34,0) 100%
       }
       .input-error{
             @apply border-red-500;
+      }
+
+      /* HEADER */
+      .profile-img-header{
+            @apply w-11 h-11 rounded-full drop-shadow-lg border-primary border-[3px];
+      }
+}
+
+@layer utilities{
+      .header-animation{
+            @apply !transition-all !duration-500 cursor-pointer  hover:scale-110  hover:drop-shadow-[2px_1px_2px_#84a98c];
       }
 }
