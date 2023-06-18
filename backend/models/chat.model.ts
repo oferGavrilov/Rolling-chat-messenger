@@ -1,13 +1,22 @@
-import mongoose from 'mongoose'
+import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
-const chatModel = new mongoose.Schema({
-      chatName: { type: String, trim: true },
-      isGroupChat: { type: Boolean, default: false },
-      users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-      latestMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
-      groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-},
-      { timestamps: true }
-)
+export interface ChatDocument extends Document {
+  chatName?: string;
+  isGroupChat: boolean;
+  users: Types.ObjectId[];
+  latestMessage: Types.ObjectId;
+  groupAdmin?: Types.ObjectId;
+}
 
-export const Chat = mongoose.model('Chat', chatModel)
+const chatSchema: Schema<ChatDocument> = new Schema(
+  {
+    chatName: { type: String, trim: true },
+    isGroupChat: { type: Boolean, default: false },
+    users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    latestMessage: { type: Schema.Types.ObjectId, ref: 'Message' },
+    groupAdmin: { type: Schema.Types.ObjectId, ref: 'User' },
+  },
+  { timestamps: true }
+);
+
+export const Chat: Model<ChatDocument> = mongoose.model<ChatDocument>('Chat', chatSchema);
