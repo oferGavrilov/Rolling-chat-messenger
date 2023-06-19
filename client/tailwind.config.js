@@ -6,18 +6,21 @@ export default {
   ],
   theme: {
     extend: {
-      dropShadow:{
-        'primary':'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'
+      dropShadow: {
+        'primary': 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'
       },
-      colors:{
-        'primary':'#84a98c',
-        'secondary':'#cad2c5',
-        'tertiary':'#52796f',
+      colors: {
+        'primary': '#84a98c',
+        'secondary': '#cad2c5',
+        'tertiary': '#52796f',
+        'quaternary': '#e9ecef',
+        'main-color': '#2f3e46',
       }
     },
     fontFamily: {
-      sans: ['Open Sans','sans-serif'],
-      righteous: ['Righteous','cursive'],
+      sans: ['Open Sans', 'sans-serif'],
+      righteous: ['Righteous', 'cursive'],
+      noto: ['Noto Serif Telugu', 'serif']
     }
   },
   plugins: [],

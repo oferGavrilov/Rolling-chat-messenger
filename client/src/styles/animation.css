@@ -1,5 +1,5 @@
-.fade-down{
-      animation-name: fade-down ;
+.fade-down {
+      animation-name: fade-down;
       animation-duration: .7s;
 }
 
@@ -8,10 +8,12 @@
             opacity: 0;
             transform: translateY(-80px);
       }
+
       80% {
             opacity: 1;
             transform: translateY(10px);
       }
+
       100% {
             opacity: 1;
             transform: translateY(0);
@@ -22,8 +24,9 @@
       display: inline-block;
       width: 24px;
       height: 24px;
-    }
-    .spinner:after {
+}
+
+.spinner:after {
       content: " ";
       display: block;
       width: 24px;
@@ -32,13 +35,51 @@
       border: 2px solid #fff;
       border-color: #fff transparent #fff transparent;
       animation: spinner 1.2s linear infinite;
-    }
-    @keyframes spinner {
+}
+
+@keyframes spinner {
       0% {
-        transform: rotate(0deg);
+            transform: rotate(0deg);
       }
+
       100% {
-        transform: rotate(360deg);
+            transform: rotate(360deg);
       }
-    }
-    
+}
+
+.slide-right{
+      animation-name: slide-right;
+      animation-fill-mode: forwards;
+      animation-duration: .7s;
+}
+
+@keyframes slide-right {
+      0% {
+            opacity: 0;
+            transform: translateX(-75vw);
+      }
+
+      100% {
+            opacity: 1;
+            transform: translateX(0);
+      }
+}
+
+.slide-left {
+      animation-name: slide-left;
+      animation-duration: .7s;
+      animation-fill-mode: forwards;
+
+}
+
+@keyframes slide-left {
+      0% {
+            opacity: 0;
+            transform: translateX(75vw);
+      }
+      
+      100% {
+            opacity: 1;
+            transform: translateX(0);
+      }
+}

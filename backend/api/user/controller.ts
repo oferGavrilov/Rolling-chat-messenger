@@ -56,12 +56,16 @@ export async function login (req: Request, res: Response) {
 }
 
 export async function getUsers (req: AuthenticatedRequest, res: Response) {
-      const keyword = req.query.search ? {
-            $or: [
-                  { username: { $regex: req.query.search.toString(), $options: 'i' } },
-                  { email: { $regex: req.query.search.toString(), $options: 'i' } }
-            ]
-      } : {}
-      const users = await User.find(keyword).find({ _id: { $ne: req.user?._id } })
-      res.send(users)
+      try {
+            const keyword = req.query.search ? {
+                  $or: [
+                        { username: { $regex: req.query.search.toString(), $options: 'i' } },
+                        { email: { $regex: req.query.search.toString(), $options: 'i' } }
+                  ]
+            } : {}
+            const users = await User.find(keyword).find({ _id: { $ne: req.user?._id } })
+            res.send(users)
+      } catch (err) {
+            throw new Error(err)
+      }
 }
