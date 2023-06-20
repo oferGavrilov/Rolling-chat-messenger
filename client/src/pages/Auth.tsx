@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { userService } from '../services/user.service'
 import { uploadImg } from '../utils/upload-img'
 import axios from 'axios'
+import { ChatState } from '../context/ChatProvider'
 
 interface FormData {
       username?: string
@@ -21,8 +22,10 @@ export default function Auth () {
       const [image, setImage] = useState<string>('')
       const navigate = useNavigate()
 
+      const { setUser } = ChatState()
+
       useEffect(() => {
-            const user = userService.getLoggedinUser() 
+            const user = userService.getLoggedinUser()
             if (user) navigate('/chat')
       }, [navigate])
 
@@ -66,8 +69,9 @@ export default function Auth () {
             values = isLogin ? { email: values.email, password: values.password } : { username: values.username, email: values.email, password: values.password, profileImg: image }
             setIsLoadig(true)
             try {
-                  const { username } = await userService.loginSignUp(values, isLogin)
-                  toast.success(`Welcome ${username}`)
+                  const user = await userService.loginSignUp(values, isLogin)
+                  setUser(user)
+                  toast.success(`Welcome ${user.username}`)
                   navigate('/chat')
             } catch (error) {
                   if (axios.isAxiosError(error)) toast.error(error?.response?.data.msg)

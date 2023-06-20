@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { userService } from "../services/user.service"
 import { useNavigate } from "react-router-dom"
-import { FormData } from "../model/user.model"
+import { FormData, User } from "../model/user.model"
 import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
-      user: FormData | null
+      user: User | null
       setUser: React.Dispatch<React.SetStateAction<null>>
       logout: () => void
-      selectedChat: any
-      setSelectedChat: React.Dispatch<React.SetStateAction<null>>
+      selectedChat: IChat | null
+      setSelectedChat: React.Dispatch<React.SetStateAction<IChat | null>>
       chats: IChat[]
       setChats: React.Dispatch<React.SetStateAction<IChat[]>>
 }
@@ -31,7 +32,7 @@ export const ChatState = () => {
 
 export default function ChatProvider ({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState(null)
-      const [selectedChat, setSelectedChat] = useState(null)
+      const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
       const [chats, setChats] = useState<IChat[]>([])
 
       const navigate = useNavigate()

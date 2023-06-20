@@ -31,7 +31,7 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
             return res.status(200).json(isChat[0])
       } else {
             let chatData = {
-                  chatName: "sender",
+                  chatName: "New Chat",
                   isGroupChat: false,
                   users: [req.user?._id, userId]
             }
@@ -54,6 +54,38 @@ export async function getChats (req: AuthenticatedRequest, res: Response) {
                   .populate("groupAdmin", "-password")
                   .populate("latestMessage")
                   .sort({ updatedAt: -1 })
+                  .then(async (result) => {
+                        await User.populate(result, {
+                              path: "latestMessage.sender",
+                              select: "name pic email",
+                        })
+                        res.status(200).send(result);
+                  })
+
+      } catch (error) {
+            throw new Error(error.message)
+      }
+}
+
+export async function getUserChats (req: AuthenticatedRequest, res: Response) {
+      const { userId } = req.params
+
+      console.log('userId', userId)
+      if (!userId) {
+            console.log('No user id send to server')
+            return res.status(400).json({ message: 'No user id send to server' })
+      }
+      try {
+            Chat.find({
+                  isGroupChat: false,
+                  $and: [
+                        { users: { $elemMatch: { $eq: req.user?._id } } },
+                        { users: { $elemMatch: { $eq: userId } } },
+                  ],
+            })
+                  .populate("users", "-password")
+                  .populate("groupAdmin", "-password")
+                  .populate("latestMessage")
                   .then(async (result) => {
                         await User.populate(result, {
                               path: "latestMessage.sender",

@@ -20,7 +20,7 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<User[]>([])
 
-      const { setSelectedChat } = ChatState()
+      const { setSelectedChat, chats, setChats } = ChatState()
 
       function handleKeyPress (e: React.KeyboardEvent<HTMLInputElement>) {
             if (e.key === 'Enter') {
@@ -43,7 +43,11 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
 
       async function onSelectChat (userId: string): Promise<void> {
             const data = await userService.createChat(userId)
+            if (!chats.find(chat => chat._id !== data._id)) setChats(prev => [data, ...prev])
+
             setSelectedChat(data)
+            clearSearch()
+            setIsOpen(false)
       }
 
 

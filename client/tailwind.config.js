@@ -10,7 +10,7 @@ export default {
         'primary': 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'
       },
       colors: {
-        'primary': '#84a98c',
+        'primary': '#27AE60',
         'secondary': '#cad2c5',
         'tertiary': '#52796f',
         'quaternary': '#e9ecef',
@@ -18,9 +18,7 @@ export default {
       }
     },
     fontFamily: {
-      sans: ['Open Sans', 'sans-serif'],
-      righteous: ['Righteous', 'cursive'],
-      noto: ['Noto Serif Telugu', 'serif']
+      'sf-regular':['sf-pro-display' , 'sans-serif']
     }
   },
   plugins: [],

@@ -20,7 +20,7 @@ export async function protect (req: AuthenticatedRequest, res: Response, next: N
                   res.status(401).json({ msg: 'Not authorized, token failed' })
             }
       }
-
+      console.log('token',token)
       if (!token) {
             res.status(401).json({ msg: 'Not authorized, no token' })
       }

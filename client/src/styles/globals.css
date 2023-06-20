@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Telugu&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
       body {
-            @apply text-[#2f3e46];
-            background: rgb(59,195,34);
-            background: linear-gradient(0deg, rgba(132,169,140,1) 0%, rgba(59,195,34,0) 100%);
+            @apply text-[#242424];
+
       }
+}
+
+@font-face {
+      font-family: 'sf-pro-display';
+      src: url('../assets/fonts/SF-Pro-Text-Regular.ttf');
 }
 
 @layer components {
@@ -32,6 +32,14 @@
       /* HEADER */
       .profile-img-header{
             @apply w-11 h-11 rounded-full drop-shadow-lg border-primary border-[3px];
+      }
+
+      /* SIDE MENU */
+      .side-icon {
+            @apply flex justify-center h-12 text-[#27AE60] my-1 mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
+      }
+      .active-side-icon {
+            @apply bg-[#27AE60] text-white shadow-md shadow-[#27AE60] hover:bg-[#129047];
       }
 }
 

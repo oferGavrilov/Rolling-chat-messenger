@@ -1,3 +1,5 @@
+import { User } from "./user.model"
+
 export interface IChat {
       _id: string
       chatName: string
@@ -6,7 +8,3 @@ export interface IChat {
       groupAdmin?: User
 }
 
-type User = {
-      email: string
-      name: string
-}

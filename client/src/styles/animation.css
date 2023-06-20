@@ -83,3 +83,38 @@
             transform: translateX(0);
       }
 }
+
+.custom-rotate {
+      animation-name: custom-rotate;
+      animation-duration: .5s;
+      animation-fill-mode: forwards;
+}
+
+@keyframes custom-rotate {
+      0% {
+            opacity: 0;
+            transform: rotate(0deg);
+      }
+      
+      100% {
+            opacity: 1;
+            transform: rotate(-90deg);
+      }
+}
+
+.reverse-rotate{
+      animation-name: reverse-rotate;
+      animation-duration: .3s;
+      animation-fill-mode: forwards;
+}
+
+@keyframes reverse-rotate {
+      0% {
+            opacity: 1;
+            transform: rotate(-90deg);
+      }
+      
+      100% {
+            transform: rotate(0deg);
+      }
+}
