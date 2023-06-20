@@ -1,3 +1,3 @@
-# (In Progress) - SMALL TALK
+# (In Progress) - Rolling
 
-Small Talk is a chat messenger web application, To be continued... :)
+Rolling is a chat messenger web application, with many surprises, To be continued...        :)
