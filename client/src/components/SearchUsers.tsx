@@ -1,13 +1,13 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box'
 import CloseIcon from '@mui/icons-material/Close';
 import { Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { userService } from '../services/user.service';
 import { User } from '../model/user.model';
-import ChatLoading from './ChatLoading';
+import Loading from './Loading';
 import { ChatState } from '../context/ChatProvider';
 
 interface Props {
@@ -69,20 +69,20 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
                         <div className='py-6 px-4 flex gap-x-2 relative'>
                               <input type="text" className="w-full  h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                     placeholder="Search by name or email" value={search} onKeyUp={handleKeyPress} onChange={(e) => setSearch(e.target.value)} />
-                              <Button color='inherit' style={{ background: '#84a98c', color: 'white' }} onClick={handleSearch} className="!px-4 !py-2 !rounded-lg hover:!bg-[#52796f]">{isLoading ? <div className='spinner'></div> : 'Search'}</Button>
+                              <Button color='inherit' style={{ background: '#27AE60', color: 'white' }} onClick={handleSearch} className="!px-4 !py-2 !rounded-lg hover:!bg-[#52796f]">{isLoading ? <div className='spinner'></div> : 'Search'}</Button>
                               {search && <CloseIcon className='cursor-pointer absolute right-28 top-9' color='disabled' fontSize="medium" onClick={clearSearch} />}
                         </div>
 
                         <div className='border-t '>
-                              {isLoading && <ChatLoading />}
+                              {isLoading && <Loading type="users"/>}
                               {(users.length > 0 && !isLoading) && (
-                                    <ul className='flex flex-col main-text px-4 gap-y-4 py-8'>
+                                    <ul className='flex flex-col main-text px-8 gap-y-4 py-8'>
                                           {users.map((user: User) => (
-                                                <li key={user._id} onClick={() => onSelectChat(user._id)} className='custom-hover text-main-color py-3 px-4 rounded-lg bg-[#dee2e6]'>
-                                                      <div className='flex gap-x-4'>
-                                                            <img className='w-14 h-14 object-cover rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
+                                                <li key={user._id} onClick={() => onSelectChat(user._id)} className='custom-hover text-main-color py-2 px-4 rounded-lg bg-[#dee2e6]'>
+                                                      <div className='flex gap-x-4 items-center'>
+                                                            <img className='w-12 h-12 object-cover rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
                                                             <div>
-                                                                  <span className='text-2xl'>{user.username}</span>
+                                                                  <span className='text-xl'>{user.username}</span>
                                                                   <p className='cut-text text-lg max-w-[270px]'>
                                                                         <span className='font-bold'>Email: </span>
                                                                         {user.email}</p>

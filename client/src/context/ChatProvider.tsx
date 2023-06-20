@@ -2,7 +2,7 @@
 import React, { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { userService } from "../services/user.service"
 import { useNavigate } from "react-router-dom"
-import { FormData, User } from "../model/user.model"
+import { User } from "../model/user.model"
 import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
@@ -42,6 +42,8 @@ export default function ChatProvider ({ children }: { children: ReactNode }): JS
             if (user) setUser(user)
             else navigate('/login')
       }, [navigate])
+
+     
 
       const logout = useCallback((): void => {
             userService.logout()

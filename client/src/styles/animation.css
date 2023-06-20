@@ -50,7 +50,7 @@
 .slide-right{
       animation-name: slide-right;
       animation-fill-mode: forwards;
-      animation-duration: .7s;
+      animation-duration: .4s;
 }
 
 @keyframes slide-right {
@@ -86,13 +86,12 @@
 
 .custom-rotate {
       animation-name: custom-rotate;
-      animation-duration: .5s;
+      animation-duration: .2s;
       animation-fill-mode: forwards;
 }
 
 @keyframes custom-rotate {
       0% {
-            opacity: 0;
             transform: rotate(0deg);
       }
       
@@ -116,5 +115,23 @@
       
       100% {
             transform: rotate(0deg);
+      }
+}
+
+.fade-left {
+      animation-name: fade-left;
+      animation-duration: .3s;
+      animation-fill-mode: forwards;
+}
+
+@keyframes fade-left {
+      0% {
+            opacity: 1;
+            transform: translateX(-25vw);
+      }
+      
+      100% {
+            opacity: 0;
+            transform: translateX(0);
       }
 }

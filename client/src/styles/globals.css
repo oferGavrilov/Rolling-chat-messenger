@@ -2,16 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-      body {
-            @apply text-[#242424];
-
-      }
-}
-
 @font-face {
       font-family: 'sf-pro-display';
       src: url('../assets/fonts/SF-Pro-Text-Regular.ttf');
+}
+
+@layer base {
+      body {
+            @apply text-[#242424] font-sf-regular;
+      }
 }
 
 @layer components {
@@ -40,6 +39,10 @@
       }
       .active-side-icon {
             @apply bg-[#27AE60] text-white shadow-md shadow-[#27AE60] hover:bg-[#129047];
+      }
+      .messenger{
+            display: grid;
+            grid-template-rows:auto 1fr auto ;
       }
 }
 
