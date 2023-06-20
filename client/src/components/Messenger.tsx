@@ -22,7 +22,7 @@ export default function Messenger () {
       console.log('conversationUser', conversationUser)
 
       return (
-            <section className='flex-1 messenger'>
+            <section className='flex-1 messenger slide-left'>
 
                   <div className='flex items-center p-4'>
                         <img src={conversationUser?.profileImg} alt={conversationUser?.username} className='w-12 h-11 mr-5 rounded-full object-cover' />

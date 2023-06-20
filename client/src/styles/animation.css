@@ -66,10 +66,12 @@
 }
 
 .slide-left {
+      opacity: 0;
+      transform: translateX(75vw);
       animation-name: slide-left;
-      animation-duration: .7s;
+      animation-duration: 0.2s;
       animation-fill-mode: forwards;
-
+      animation-timing-function: ease-in-out;
 }
 
 @keyframes slide-left {
@@ -86,7 +88,7 @@
 
 .custom-rotate {
       animation-name: custom-rotate;
-      animation-duration: .2s;
+      animation-duration: .3s;
       animation-fill-mode: forwards;
 }
 
@@ -96,7 +98,6 @@
       }
       
       100% {
-            opacity: 1;
             transform: rotate(-90deg);
       }
 }

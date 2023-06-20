@@ -27,7 +27,7 @@ export default function DynamicList (props: Props) {
 
 
       return (
-            <section className="w-[364px] px-5 border-r-2 border-[#EEEEEE] ">
+            <section className="w-[364px]  border-r-2 border-[#EEEEEE] ">
                   {getContent()}
             </section>
       )
