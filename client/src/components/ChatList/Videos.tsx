@@ -6,6 +6,7 @@ interface Props {
 }
 
 export default function Videos ({ setShowSearch, contentType }: Props): JSX.Element {
+  console.log(contentType)
   return (
     <section className='pt-7 relative'>
       <div className='flex justify-between items-center pb-4 '>

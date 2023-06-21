@@ -8,7 +8,8 @@ import { toast } from 'react-toastify';
 import { userService } from '../services/user.service';
 import { User } from '../model/user.model';
 import Loading from './Loading';
-import { ChatState } from '../context/ChatProvider';
+import { useChat } from '../store/useChat';
+import { IChat } from '../model/chat.model';
 
 interface Props {
       isOpen: boolean
@@ -20,7 +21,7 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<User[]>([])
 
-      const { setSelectedChat, chats, setChats } = ChatState()
+      const { setSelectedChat, chats, setChats } = useChat()
 
       function handleKeyPress (e: React.KeyboardEvent<HTMLInputElement>) {
             if (e.key === 'Enter') {
@@ -40,14 +41,15 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
             setUsers(data)
             setIsLoading(false)
       }
-
       async function onSelectChat (userId: string): Promise<void> {
-            const data = await userService.createChat(userId)
-            if (!chats.find(chat => chat._id !== data._id)) setChats(prev => [data, ...prev])
+            const data: IChat = await userService.createChat(userId);
+            if (!chats.find(chat => chat._id !== data._id)) {
+                  setChats([data, ...chats])
+            }
 
-            setSelectedChat(data)
-            clearSearch()
-            setIsOpen(false)
+            setSelectedChat(data);
+            clearSearch();
+            setIsOpen(false);
       }
 
 
@@ -67,14 +69,14 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
                               }} />
                         </div>
                         <div className='py-6 px-4 flex gap-x-2 relative'>
-                              <input type="text" className="w-full  h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                              <input type="text" autoFocus className="w-full  h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                     placeholder="Search by name or email" value={search} onKeyUp={handleKeyPress} onChange={(e) => setSearch(e.target.value)} />
                               <Button color='inherit' style={{ background: '#27AE60', color: 'white' }} onClick={handleSearch} className="!px-4 !py-2 !rounded-lg hover:!bg-[#52796f]">{isLoading ? <div className='spinner'></div> : 'Search'}</Button>
                               {search && <CloseIcon className='cursor-pointer absolute right-28 top-9' color='disabled' fontSize="medium" onClick={clearSearch} />}
                         </div>
 
                         <div className='border-t '>
-                              {isLoading && <Loading type="users"/>}
+                              {isLoading && <Loading type="users" />}
                               {(users.length > 0 && !isLoading) && (
                                     <ul className='flex flex-col main-text px-8 gap-y-4 py-8'>
                                           {users.map((user: User) => (
@@ -92,7 +94,7 @@ export default function SearchUsers ({ isOpen, setIsOpen }: Props): JSX.Element 
                                           ))}
                                     </ul>)
                               }
-                              {(users.length <= 0 && !isLoading) && <img className='mx-auto py-8 w-40 opacity-80' loading='eager' src="imgs/search.gif" alt="" />}
+                              {(users.length <= 0 && !isLoading) && <img className='mx-auto py-8 w-40 opacity-80' loading='eager' src="gifs/search.gif" alt="" />}
                         </div>
                   </Typography>
             </Box>

@@ -1,4 +1,4 @@
-import { ChatState } from "../context/ChatProvider"
+import { AuthState } from "../context/useAuth"
 import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function SideMenu ({ contentType, setContentType }: Props) {
-      const { user } = ChatState()
+      const { user, logout } = AuthState()
 
       return (
             <section className="w-[70px] flex flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10">
@@ -39,7 +39,7 @@ export default function SideMenu ({ contentType, setContentType }: Props) {
                               <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary">
                                     <FiSettings size={27} />
                               </div>
-                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7">
+                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={logout}>
                                     <RxExit size={27} className="rotate-180" />
                               </div>
                         </div>

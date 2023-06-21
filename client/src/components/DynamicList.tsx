@@ -1,4 +1,4 @@
-import Messages from "./ChatList/Messages"
+import Messages from "./ChatList/messages/Messages"
 import Videos from "./ChatList/Videos"
 import Story from "./ChatList/Story"
 import Communities from "./ChatList/Communities"

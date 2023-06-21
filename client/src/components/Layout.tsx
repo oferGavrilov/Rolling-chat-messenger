@@ -4,19 +4,20 @@ import SearchUsers from './SearchUsers'
 import { useState } from 'react'
 import DynamicList from './DynamicList'
 import Messenger from './Messenger'
-import { ChatState } from '../context/ChatProvider'
+import { useChat } from '../store/useChat'
 
 export default function Layout () {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<string>('messages')
-      const { selectedChat } = ChatState()
+
+      const { selectedChat } = useChat()
 
       return (
             <div>
                   <div className='flex h-screen  slide-right'>
                         <SideMenu contentType={contentType} setContentType={setContentType} />
                         <DynamicList contentType={contentType} setShowSearch={setShowSearch} />
-                        {selectedChat && <Messenger />}
+                        {selectedChat && <Messenger selectedChat={selectedChat} />}
                   </div>
                   <Outlet />
                   <SearchUsers isOpen={showSearch} setIsOpen={setShowSearch} />

@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ChatState } from '../context/ChatProvider'
 import { User } from '../model/user.model'
 import { userService } from '../services/user.service'
 import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle, AiOutlinePaperClip } from 'react-icons/ai'
+import { IChat } from '../model/chat.model'
 
-export default function Messenger () {
-      const { selectedChat } = ChatState()
+export default function Messenger ({ selectedChat }: { selectedChat: IChat }) {
       const loggedinUser = userService.getLoggedinUser()
       const [conversationUser, setConversationUser] = useState<User>()
 
@@ -51,9 +50,9 @@ export default function Messenger () {
                               <AiOutlinePaperClip size={25} />
                         </div>
                         <input
-                         type="text"
-                          className='bg-gray-100 px-4 w-full rounded-xl py-2 focus-visible:outline-none' 
-                          placeholder='Type a message...'
+                              type="text"
+                              className='bg-gray-100 px-4 w-full rounded-xl py-2 focus-visible:outline-none'
+                              placeholder='Type a message...'
                         />
                         <button className='text-primary transition-colors duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg'>Send message</button>
                   </div>

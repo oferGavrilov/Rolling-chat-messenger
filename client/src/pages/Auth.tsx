@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { userService } from '../services/user.service'
 import { uploadImg } from '../utils/upload-img'
 import axios from 'axios'
-import { ChatState } from '../context/ChatProvider'
+import { AuthState } from '../context/useAuth'
+
 
 interface FormData {
       username?: string
@@ -22,7 +23,7 @@ export default function Auth () {
       const [image, setImage] = useState<string>('')
       const navigate = useNavigate()
 
-      const { setUser } = ChatState()
+      const { setUser } = AuthState()
 
       useEffect(() => {
             const user = userService.getLoggedinUser()
@@ -47,7 +48,7 @@ export default function Auth () {
                         .min(6, 'Password must be at least 6 characters')
                         .max(20, 'Password must not exceed 20 characters'),
                   confirmPassword: Yup.string().required('Confirm Password is required').oneOf([Yup.ref('password'), ''], 'Confirm Password does not match'),
-            });
+            })
 
       const formik = useFormik({
             initialValues: {
