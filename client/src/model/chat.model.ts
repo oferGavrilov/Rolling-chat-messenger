@@ -6,5 +6,10 @@ export interface IChat {
       isGroupChat: boolean
       users: User[]
       groupAdmin?: User
+      groupImage?: string
 }
 
+export interface IGroup {
+      chatName: string
+      users: User[]
+}

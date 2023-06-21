@@ -18,7 +18,7 @@ export default function DynamicList (props: Props) {
                         return <Videos {...props} />
                   case 'story':
                         return <Story {...props} />
-                  case 'communities':
+                  case 'groups':
                         return <Communities {...props} />
                   default:
                         return <Messages {...props} />

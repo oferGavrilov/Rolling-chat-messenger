@@ -77,7 +77,6 @@ export async function getUserChats (req: AuthenticatedRequest, res: Response) {
       }
       try {
             Chat.find({
-                  isGroupChat: false,
                   $and: [
                         { users: { $elemMatch: { $eq: req.user?._id } } },
                         { users: { $elemMatch: { $eq: userId } } },
@@ -108,12 +107,6 @@ export async function createGroupChat (req: AuthenticatedRequest, res: Response)
             return res.status(400).json({ message: 'Please fill all the fields' })
       }
 
-      // const usersToSave = JSON.parse(users)
-
-      if (users.length < 2) {
-            return res.status(400).json({ message: 'Please add at least 2 users' })
-      }
-
       users.push(req.user?._id)
 
       try {
@@ -121,7 +114,8 @@ export async function createGroupChat (req: AuthenticatedRequest, res: Response)
                   chatName,
                   isGroupChat: true,
                   users,
-                  groupAdmin: req.user?._id
+                  groupAdmin: req.user?._id,
+                  groupImage: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg', // Replace with your default group image URL
             }
 
             const createdChat = await Chat.create(groupChatData)

@@ -9,23 +9,21 @@ import MessagePreview from "./MessagePreview"
 export default function MessageList () {
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const { chats, setChats } = useChat()
-
       const memoizedChats = useMemo(() => {
             return chats
       }, [chats])
 
       useEffect(() => {
-            async function loadChats (): Promise<void> {
-                  setIsLoading(true)
-                  const user = await userService.getLoggedinUser()
-                  const chats = await chatService.getUserChats(user._id)
-                  setChats(chats)
-                  setIsLoading(false)
-            }
-
             loadChats()
-      }, [setChats])
+      }, [])
 
+      async function loadChats (): Promise<void> {
+            setIsLoading(true)
+            const user = await userService.getLoggedinUser()
+            const chats = await chatService.getUserChats(user._id)
+            setChats(chats)
+            setIsLoading(false)
+      }
       return (
             // <div className="overflow-y-auto h-[82vh]">
             <ul >

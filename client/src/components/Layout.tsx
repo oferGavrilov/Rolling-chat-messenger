@@ -20,7 +20,7 @@ export default function Layout () {
                         {selectedChat && <Messenger selectedChat={selectedChat} />}
                   </div>
                   <Outlet />
-                  <SearchUsers isOpen={showSearch} setIsOpen={setShowSearch} />
+                  <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />
             </div>
       )
 }

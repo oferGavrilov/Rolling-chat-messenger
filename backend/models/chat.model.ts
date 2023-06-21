@@ -6,6 +6,7 @@ export interface ChatDocument extends Document {
   users: Types.ObjectId[];
   latestMessage: Types.ObjectId;
   groupAdmin?: Types.ObjectId;
+  groupImage?: string;
 }
 
 const chatSchema: Schema<ChatDocument> = new Schema(
@@ -15,6 +16,10 @@ const chatSchema: Schema<ChatDocument> = new Schema(
     users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     latestMessage: { type: Schema.Types.ObjectId, ref: 'Message' },
     groupAdmin: { type: Schema.Types.ObjectId, ref: 'User' },
+    groupImage: {
+      type: String,
+      default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg', // Replace with your default group image URL
+    },
   },
   { timestamps: true }
 );

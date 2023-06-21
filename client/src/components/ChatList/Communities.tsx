@@ -1,3 +1,4 @@
+import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined'
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
@@ -5,16 +6,13 @@ interface Props {
 
 export default function Communities ({ setShowSearch }: Props): JSX.Element {
       return (
-            <section className='pt-7 relative'>
-            <div className='flex justify-between items-center pb-4 '>
-                  <h2 className="text-3xl font-sf-regular font-bold ">Communities</h2>
-                  <div onClick={() => setShowSearch(true)} className='hover:text-blue-500 hover:bg-gray-200 p-2 flex items-center justify-center rounded-xl transition-colors duration-200 cursor-pointer'>
-                        {/* <PersonSearchOutlinedIcon /> */}
+            <section className='py-7 px-5 relative'>
+                  <div className='flex justify-between items-center pb-4 '>
+                        <h2 className="text-3xl font-sf-regular font-bold ">Groups</h2>
+                        <div onClick={() => setShowSearch(true)} className='message-filter-icon'>
+                              <PersonSearchOutlinedIcon />
+                        </div>
                   </div>
-            </div>
-            <div className='p-2 bg-primary'>
-                  yessssssss
-            </div>
-      </section>
+            </section>
       )
 }

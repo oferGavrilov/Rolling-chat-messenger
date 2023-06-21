@@ -2,13 +2,14 @@ import { BsSearch } from 'react-icons/bs'
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined'
+
 import { useState } from 'react'
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function MessageFilter ({setShowSearch}: Props) {
+export default function MessageFilter ({ setShowSearch }: Props) {
       const [search, setSearch] = useState<string>('')
 
       return (
@@ -16,7 +17,7 @@ export default function MessageFilter ({setShowSearch}: Props) {
 
                   <div className='flex justify-between items-center pb-4'>
                         <h2 className="text-3xl font-sf-regular font-bold ">Messages</h2>
-                        <div onClick={() => setShowSearch(true)} className='hover:text-blue-500 hover:bg-gray-200 p-2 text-gray-400 flex items-center justify-center rounded-xl transition-colors duration-200 cursor-pointer'>
+                        <div onClick={() => setShowSearch(true)} className='message-filter-icon'>
                               <PersonSearchOutlinedIcon />
                         </div>
                   </div>

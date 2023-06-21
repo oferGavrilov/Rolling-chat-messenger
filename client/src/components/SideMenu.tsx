@@ -31,7 +31,7 @@ export default function SideMenu ({ contentType, setContentType }: Props) {
                               <div className={`side-icon  ${contentType === 'story' && 'active-side-icon'}`} onClick={() => setContentType('story')}>
                                     <Story />
                               </div>
-                              <div className={`side-icon ${contentType === 'communities' && 'active-side-icon'}`} onClick={() => setContentType('communities')}>
+                              <div className={`side-icon ${contentType === 'groups' && 'active-side-icon'}`} onClick={() => setContentType('groups')}>
                                     <PeopleOutlinedIcon />
                               </div>
                         </div>

@@ -7,7 +7,7 @@ export const router = express.Router()
 router.post('/', protect, createChat)
 router.post('/group', protect, createGroupChat)
 router.get('/', protect, getChats)
-router.get('/chat/:userId', protect, getUserChats)
+router.get('/chat/:userId', protect, getUserChats) //TODO: change to /:chatId
 router.put('/rename', protect, renameGroupChat)
 router.put('/groupadd', protect, addToGroupChat)
 router.put('/groupremove', protect, removeFromGroupChat)
