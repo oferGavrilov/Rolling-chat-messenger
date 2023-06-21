@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import SideMenu from './SideMenu'
-import SearchUsers from './SearchUsers'
+import SearchUsers from './SideModal/SearchUsers'
 import { useState } from 'react'
 import DynamicList from './DynamicList'
 import Messenger from './Messenger'

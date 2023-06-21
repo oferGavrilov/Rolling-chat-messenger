@@ -25,7 +25,7 @@ export default function SideMenu ({ contentType, setContentType }: Props) {
                               <div className={`side-icon ${contentType === 'messages' && 'active-side-icon'}`} onClick={() => setContentType('messages')}>
                                     <BsChatText size={20} />
                               </div>
-                              <div className={`side-icon ${contentType === 'video-chat' && 'active-side-icon'}`} onClick={() => setContentType('video-chat')}>
+                              <div className={`side-icon ${contentType === 'videos' && 'active-side-icon'}`} onClick={() => setContentType('videos')}>
                                     <BsCameraVideo size={20} />
                               </div>
                               <div className={`side-icon  ${contentType === 'story' && 'active-side-icon'}`} onClick={() => setContentType('story')}>

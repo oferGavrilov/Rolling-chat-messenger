@@ -24,10 +24,10 @@ export default function Messenger ({ selectedChat }: { selectedChat: IChat }) {
             <section className='flex-1 messenger slide-left'>
 
                   <div className='flex items-center p-4'>
-                        <img src={conversationUser?.profileImg} alt={conversationUser?.username} className='w-12 h-11 mr-5 rounded-full object-cover' />
+                        <img src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} className='w-12 h-11 mr-5 rounded-full object-cover' />
                         <div className='flex items-center gap-4  justify-between w-full'>
                               <div className='flex flex-col'>
-                                    <h2 className='text-xl font-semibold'>{conversationUser?.username}</h2>
+                                    <h2 className='text-xl font-semibold'>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
                                     <span className='text-primary'>Online</span>
                               </div>
                               <div className='flex items-center gap-x-2'>

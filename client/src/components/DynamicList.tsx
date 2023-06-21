@@ -1,7 +1,7 @@
 import Messages from "./ChatList/messages/Messages"
-import Videos from "./ChatList/Videos"
-import Story from "./ChatList/Story"
-import Communities from "./ChatList/Communities"
+import Videos from "./ChatList/videos/Videos"
+import Story from "./ChatList/stories/Stories"
+import Communities from "./ChatList/groups/Groups"
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
@@ -14,7 +14,7 @@ export default function DynamicList (props: Props) {
             switch (props.contentType) {
                   case 'messages':
                         return <Messages {...props} />
-                  case 'video-chat':
+                  case 'videos':
                         return <Videos {...props} />
                   case 'story':
                         return <Story {...props} />

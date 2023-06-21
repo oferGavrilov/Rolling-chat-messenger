@@ -1,8 +1,8 @@
 import * as React from 'react'
 import Drawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
-import UsersToMessage from './SideMenu/UsersToMessage'
-import UsersToGroup from './SideMenu/UsersToGroup'
+import UsersToMessage from './UsersToMessage'
+import UsersToGroup from './UsersToGroup'
 
 
 interface Props {
@@ -23,6 +23,9 @@ export default function SearchUsers (props: Props): JSX.Element {
             switch (props.contentType) {
                   case 'messages': return <UsersToMessage {...props} />
                   case 'groups': return <UsersToGroup {...props} />
+                  case 'videos': return <div>videos</div>
+                  case 'story': return <div>story</div>
+                  default: return <UsersToMessage {...props} />
             }
       }
 

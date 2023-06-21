@@ -6,7 +6,7 @@ export default function ChatLoading ({type}: {type: string}) {
       const LoadingType = (type: string): JSX.Element => {
             switch (type) {
                   case 'users': return <LoadingUsers />
-                  case 'messages': return <LoadingMessages />
+                  case 'chats': return <LoadingMessages />
                   default: return <LoadingUsers />
             }
       }
