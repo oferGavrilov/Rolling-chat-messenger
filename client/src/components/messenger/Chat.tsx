@@ -5,12 +5,12 @@ export default function Chat () {
 
       return (
             <>
-                  <div className='bg-gray-100 border-y border-1 overflow-auto'>
+                  <div className='bg-gray-100 border-y border-1 overflow-auto slide-left'>
                         chat
                   </div>
 
                   <div className='py-5 flex items-center px-5 gap-x-5'>
-                        <div className='text-gray-500 px-3 hover:text-gray-600 cursor-pointer'>
+                        <div className='text-gray-500  hover:text-gray-600 cursor-pointer'>
                               <AiOutlinePaperClip size={25} />
                         </div>
                         <input

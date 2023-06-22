@@ -1,10 +1,20 @@
-import { authConfig, baseConfig, config , getLoggedinUser } from "../helpers/config"
+import { baseConfig, getLoggedinUser } from "../helpers/config"
 import { FormData, User } from "../model/user.model"
 import axios from 'axios'
 
 const STORAGE_KEY = 'loggedin-user'
 
-
+const authConfig = {
+      headers: {
+            Authorization: `Bearer ${getLoggedinUser()?.token}`
+      }
+}
+const config = {
+      headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getLoggedinUser()?.token}`
+      }
+}
 
 export const userService = {
       loginSignUp,

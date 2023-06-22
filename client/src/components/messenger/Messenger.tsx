@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react"
 import Chat from "./Chat"
-import ChatInfo from "./ChatInfo"
 import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { User } from "../../model/user.model"
 import { userService } from "../../services/user.service"
 import useChat from "../../store/useChat"
+import Info from "./info/Info"
 
 
 export default function Messenger () {
@@ -27,7 +27,7 @@ export default function Messenger () {
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden'>
                   <div className='flex items-center p-4'>
-                        <img src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} className='w-12 h-11 mr-5 rounded-full object-cover object-top' />
+                        <img src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} className='w-12 h-12 mr-5 rounded-full object-cover object-top' />
                         <div className='flex items-center gap-4  justify-between w-full'>
                               <div className='flex flex-col'>
                                     <h2 className='text-xl font-semibold'>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
@@ -51,7 +51,7 @@ export default function Messenger () {
                               </div>
                         </div>
                   </div>
-                  {mode === 'chat' ? (<Chat />) : (<ChatInfo conversationUser={conversationUser} setMode={setMode} />)}
+                  {mode === 'chat' ? (<Chat />) : (<Info conversationUser={conversationUser} setMode={setMode} />)}
             </section>
       )
 }

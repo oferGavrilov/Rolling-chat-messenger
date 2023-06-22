@@ -10,7 +10,12 @@ import useChat from '../../store/useChat'
 import UploadImage from '../UploadImage'
 
 
-export default function UsersToGroup ({ setIsOpen }) {
+interface Props {
+      setIsOpen: CallableFunction
+      mode?: string
+}
+
+export default function UsersToGroup ({ setIsOpen, mode }: Props) {
       const [search, setSearch] = useState<string>('')
       const [searchResult, setSearchResult] = useState<User[]>([])
       const [group, setGroup] = useState({ chatName: '', users: [] })
@@ -63,25 +68,29 @@ export default function UsersToGroup ({ setIsOpen }) {
 
       return (
             <div className="p-6">
-                  <h2 className='text-2xl text-center pb-5'>Create Group Chat</h2>
+                  {mode === 'create' &&
+                        <>
+                              <h2 className='text-2xl text-center pb-5'>Create Group Chat</h2>
 
-                  <div className='flex flex-col gap-y-6'>
-                       <UploadImage image={image} setImage={setImage}/>
-                        <input
-                              type="text"
-                              className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'
-                              value={group.chatName}
-                              onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
-                              placeholder="Group Name"
-                        />
-                        <input type="text"
-                              className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'
-                              value={search}
-                              onChange={handleSearch}
-                              placeholder="Search users to Add"
-                        />
-                        <button onClick={onCreateGroup} className='self-end  mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>Create Chat</button>
-                  </div>
+                              <div className='flex flex-col gap-y-6'>
+                                    <UploadImage image={image} setImage={setImage} />
+                                    <input
+                                          type="text"
+                                          className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'
+                                          value={group.chatName}
+                                          onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
+                                          placeholder="Group Name"
+                                    />
+                                    <input type="text"
+                                          className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'
+                                          value={search}
+                                          onChange={handleSearch}
+                                          placeholder="Search users to Add"
+                                    />
+                                    <button onClick={onCreateGroup} className='self-end  mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>Create Chat</button>
+                              </div>
+                        </>
+                  }
 
                   {group.users.length > 0 && (
                         <div className="flex py-4">

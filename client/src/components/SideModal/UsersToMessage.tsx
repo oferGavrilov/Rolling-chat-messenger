@@ -37,7 +37,8 @@ export default function UsersToMessage ({ setIsOpen }) {
       }
 
       async function onSelectChat (userId: string): Promise<void> {
-            const data: IChat = await userService.createChat(userId);
+            const data: IChat = await userService.createChat(userId)
+            console.log(data)
             if (!chats.find(chat => chat._id !== data._id)) {
                   setChats([data, ...chats])
             }

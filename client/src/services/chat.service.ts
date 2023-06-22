@@ -9,7 +9,8 @@ export const chatService = {
       getUserChats,
       createGroup,
       updateGroupImage,
-      updateGroupName
+      updateGroupName,
+      removeFromGroup
 }
 
 async function getChats () {
@@ -57,9 +58,20 @@ async function updateGroupImage (chatId: string, groupImage: string) {
       }
 }
 
-async function updateGroupName(chatId: string, groupName: string) {
+async function updateGroupName (chatId: string, groupName: string) {
       try {
             const { data } = await axios.put('/api/chat/rename', { chatId, groupName }, authConfig)
+            return data
+      } catch (err) {
+            console.log(err)
+            return []
+      }
+}
+
+async function removeFromGroup (chatId: string, userId?: string) {
+      userId = userId || userService.getLoggedinUser()?._id
+      try {
+            const { data } = await axios.put('/api/chat/groupremove', { chatId, userId }, authConfig)
             return data
       } catch (err) {
             console.log(err)

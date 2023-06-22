@@ -38,7 +38,7 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
 
             try {
                   const createdChat = await Chat.create(chatData)
-                  const FullChat = (await Chat.findOne({ _id: createdChat._id })).populate('users', "-password")
+                  const FullChat = await Chat.findOne({ _id: createdChat._id }).populate('users', "-password")
 
                   res.status(200).send(FullChat)
             } catch (error) {
@@ -70,7 +70,6 @@ export async function getChats (req: AuthenticatedRequest, res: Response) {
 export async function getUserChats (req: AuthenticatedRequest, res: Response) {
       const { userId } = req.params
 
-      console.log('userId', userId)
       if (!userId) {
             console.log('No user id send to server')
             return res.status(400).json({ message: 'No user id send to server' })

@@ -8,16 +8,16 @@ interface Props {
       editImage?: CallableFunction
 }
 
-export default function UploadImage ({image , setImage , editImage}:Props) {
+export default function UploadImage ({ image, setImage, editImage }: Props) {
       const [imageLoading, setImageLoading] = React.useState<boolean>(false)
-
+      
       async function uploadImage (file: File) {
             if (!file) return toast.error('Upload image went wrong')
             try {
                   setImageLoading(true)
                   const data = await uploadImg(file)
                   setImage(data.url)
-                  editImage(data.url)
+                  if (editImage) editImage(data.url)
             } catch (err) {
                   console.log(err)
             } finally {
@@ -29,7 +29,7 @@ export default function UploadImage ({image , setImage , editImage}:Props) {
                   htmlFor="img-upload"
                   className='upload-img'
                   style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
-            >{imageLoading && <div className='spinner'></div> || !image && 'Add Group Image'}
+            >{imageLoading && <div className='spinner'></div>}
                   <div className='overlay hidden '> Upload Image</div>
                   <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/*' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         uploadImage(e.target.files?.[0])
