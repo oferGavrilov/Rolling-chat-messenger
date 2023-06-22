@@ -59,17 +59,23 @@
             display: grid;
             grid-template-rows:auto 1fr auto ;
       }
+
+      /* Create Group */
+      .upload-img{
+            @apply w-32 h-32 rounded-full mx-auto text-center bg-gray-200 flex items-center justify-center cursor-pointer;
+      }
+      .upload-img:hover .overlay{
+            display: block;
+      }
 }
 
 @layer utilities{
-      .header-animation{
-            @apply !transition-all !duration-500 cursor-pointer  hover:scale-110  hover:drop-shadow-[2px_1px_2px_#84a98c];
-      }
       .custom-hover{
             @apply transition-opacity duration-300 opacity-80 cursor-pointer hover:opacity-100;
       }
       .cut-text{
             text-overflow: ellipsis;
+            
             overflow: hidden; 
             height: 2rem; 
             white-space: nowrap;

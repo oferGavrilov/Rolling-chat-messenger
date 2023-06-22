@@ -99,8 +99,7 @@ export async function getUserChats (req: AuthenticatedRequest, res: Response) {
 }
 
 export async function createGroupChat (req: AuthenticatedRequest, res: Response) {
-      const { users, chatName } = req.body
-      console.log(users, chatName)
+      const { users, chatName, groupImage } = req.body
 
       if (!users || !chatName) {
             console.log('No user ids or chat name sent to server')
@@ -115,7 +114,7 @@ export async function createGroupChat (req: AuthenticatedRequest, res: Response)
                   isGroupChat: true,
                   users,
                   groupAdmin: req.user?._id,
-                  groupImage: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg', // Replace with your default group image URL
+                  groupImage: groupImage || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
             }
 
             const createdChat = await Chat.create(groupChatData)
@@ -130,20 +129,29 @@ export async function createGroupChat (req: AuthenticatedRequest, res: Response)
 }
 
 export async function renameGroupChat (req: AuthenticatedRequest, res: Response) {
-      const { chatId, chatName } = req.body
+      const { chatId, groupName } = req.body
 
-      if (!chatId || !chatName) {
+      if (!chatId || !groupName) {
             console.log('No chat id or chat name sent to server')
             return res.status(400).json({ message: 'Please fill all the fields' })
       }
-      
-      const updatedChat = await Chat.findByIdAndUpdate(chatId, { chatName }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
-      
-      if (!updatedChat) {
-            return res.status(400).json({ message: 'Could not rename chat' })
-      } else {
-            return res.status(200).send(updatedChat)
+
+      await Chat.findByIdAndUpdate(chatId, { groupName }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
+
+      return res.status(200).send(groupName)
+}
+
+export async function updateGroupImage (req: AuthenticatedRequest, res: Response) {
+      const { chatId, groupImage } = req.body
+
+      if (!chatId || !groupImage) {
+            console.log('No chat id or group image sent to server')
+            return res.status(400).json({ message: 'Please fill all the fields' })
       }
+
+      await Chat.findByIdAndUpdate(chatId, { groupImage }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
+
+      return res.status(200).send(groupImage)
 }
 
 export async function addToGroupChat (req: AuthenticatedRequest, res: Response) {

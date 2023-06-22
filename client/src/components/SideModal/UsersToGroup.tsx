@@ -7,12 +7,15 @@ import Loading from "../Loading"
 import { toast } from 'react-toastify'
 import { chatService } from '../../services/chat.service'
 import useChat from '../../store/useChat'
+import UploadImage from '../UploadImage'
+
 
 export default function UsersToGroup ({ setIsOpen }) {
       const [search, setSearch] = useState<string>('')
       const [searchResult, setSearchResult] = useState<User[]>([])
       const [group, setGroup] = useState({ chatName: '', users: [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
+      const [image, setImage] = useState<string>('')
 
       const { chats, setChats } = useChat()
 
@@ -20,16 +23,15 @@ export default function UsersToGroup ({ setIsOpen }) {
             if (!group.chatName) return toast.error('Please enter a group name')
             if (group.users.length === 0) return toast.error('Please select at least one user')
             try {
-                  const newChat = await chatService.createGroup(group)
+                  const groupToAdd = { ...group, groupImage: image }
+                  const newChat = await chatService.createGroup(groupToAdd)
                   setChats([newChat, ...chats])
                   toast.success('Group created successfully')
                   setIsOpen(false)
             } catch (error) {
                   console.error("An error occurred while creating group:", error)
             }
-            console.log(group)
       }
-      console.log(chats)
 
       async function handleSearch (e: React.ChangeEvent<HTMLInputElement>) {
             setSearch(e.target.value)
@@ -45,7 +47,6 @@ export default function UsersToGroup ({ setIsOpen }) {
                         setIsLoading(false)
                   }
             })
-
             debouncedSearch(search)
       }
 
@@ -65,6 +66,7 @@ export default function UsersToGroup ({ setIsOpen }) {
                   <h2 className='text-2xl text-center pb-5'>Create Group Chat</h2>
 
                   <div className='flex flex-col gap-y-6'>
+                       <UploadImage image={image} setImage={setImage}/>
                         <input
                               type="text"
                               className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'

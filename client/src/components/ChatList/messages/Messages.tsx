@@ -11,9 +11,9 @@ interface Props {
 }
 
 export default function Messages ({ setShowSearch }: Props) {
-
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const { chats, setChats } = useChat()
+      
       const memoizedChats = useMemo(() => {
             return chats
       }, [chats])

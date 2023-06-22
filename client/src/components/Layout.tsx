@@ -3,8 +3,8 @@ import SideMenu from './SideMenu'
 import SearchUsers from './SideModal/SearchUsers'
 import { useState } from 'react'
 import DynamicList from './DynamicList'
-import Messenger from './Messenger'
 import { useChat } from '../store/useChat'
+import Messenger from './messenger/Messenger'
 
 export default function Layout () {
       const [showSearch, setShowSearch] = useState<boolean>(false)
@@ -17,7 +17,7 @@ export default function Layout () {
                   <div className='flex h-screen  slide-right'>
                         <SideMenu contentType={contentType} setContentType={setContentType} />
                         <DynamicList contentType={contentType} setShowSearch={setShowSearch} />
-                        {selectedChat && <Messenger selectedChat={selectedChat} />}
+                        {selectedChat && <Messenger />}
                   </div>
                   <Outlet />
                   <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />
