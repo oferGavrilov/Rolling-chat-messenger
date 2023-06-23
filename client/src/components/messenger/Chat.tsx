@@ -6,7 +6,6 @@ export default function Chat () {
       return (
             <>
                   <div className='bg-gray-100 border-y border-1 overflow-auto slide-left'>
-                        chat
                   </div>
 
                   <div className='py-5 flex items-center px-5 gap-x-5'>

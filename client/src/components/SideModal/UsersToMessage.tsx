@@ -7,8 +7,7 @@ import { IChat } from "../../model/chat.model"
 import { Button, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import Loading from "../Loading"
-
-
+import SendIcon from '@mui/icons-material/Send';
 
 export default function UsersToMessage ({ setIsOpen }) {
       const [search, setSearch] = useState<string>('')
@@ -29,7 +28,7 @@ export default function UsersToMessage ({ setIsOpen }) {
                   return clearSearch()
             }
 
-            if (!search) return toast.error('Please enter a name or email')
+            if (!search) return toast.warn('Please enter a name or email')
             setIsLoading(true)
             const data = await userService.searchUsers(search)
             setUsers(data)
@@ -63,9 +62,9 @@ export default function UsersToMessage ({ setIsOpen }) {
                         }} />
                   </div>
                   <div className='py-6 px-4 flex gap-x-2 relative'>
-                        <input type="text" autoFocus className="w-full  h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        <input type="text" autoFocus className="w-full  h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
                               placeholder="Search by name or email" value={search} onKeyUp={handleKeyPress} onChange={(e) => setSearch(e.target.value)} />
-                        <Button color='inherit' style={{ background: '#27AE60', color: 'white' }} onClick={handleSearch} className="!px-4 !py-2 !rounded-lg hover:!bg-[#52796f]">{isLoading ? <div className='spinner'></div> : 'Search'}</Button>
+                        <Button color='inherit' style={{ color: '#6294f1' }} onClick={handleSearch} className="!rounded-lg hover:!text-[#3573e8]">{isLoading ? <div className='spinner'></div> : <SendIcon fontSize="large"/>}</Button>
                         {search && <CloseIcon className='cursor-pointer absolute right-28 top-9' color='disabled' fontSize="medium" onClick={clearSearch} />}
                   </div>
 

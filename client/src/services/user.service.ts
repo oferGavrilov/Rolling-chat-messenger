@@ -1,8 +1,16 @@
-import { baseConfig, getLoggedinUser } from "../helpers/config"
+import { baseConfig} from "../helpers/config"
 import { FormData, User } from "../model/user.model"
 import axios from 'axios'
 
 const STORAGE_KEY = 'loggedin-user'
+
+export function getLoggedinUser () {
+      const storedItem = sessionStorage.getItem(STORAGE_KEY);
+      if (storedItem) {
+            return JSON.parse(storedItem);
+      }
+      return null
+}
 
 const authConfig = {
       headers: {

@@ -19,7 +19,7 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200
                    ${selectedChat?._id === chat._id && 'bg-gray-100'}`}>
                   <div className="flex items-center">
-                        <img src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt="user-image" className="h-11 w-11 rounded-full object-cover" />
+                        <img src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt="user-image" className="h-11 w-11 rounded-full object-cover object-top" />
                         <div className="ml-3">
                               <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
                               <p className="text-sm  text-[#00000085]">Hey, how are you?</p>

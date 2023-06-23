@@ -3,7 +3,6 @@ import { authConfig } from "../helpers/config"
 import { IGroup } from "../model/chat.model"
 import { userService } from "./user.service"
 
-
 export const chatService = {
       getChats,
       getUserChats,

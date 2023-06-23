@@ -2,17 +2,20 @@ import React, { ReactNode, createContext, useCallback, useContext, useEffect, us
 import { userService } from "../services/user.service"
 import { useNavigate } from "react-router-dom"
 import { User } from "../model/user.model"
+import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
       user: User | null
       setUser: React.Dispatch<React.SetStateAction<null>>
-      logout: () => void
+      logout: () => void,
+      isAdmin: (chat: IChat, userId?: string) => boolean
 }
 
 const useAuth = createContext<ChatContextProps>({
       user: null,
       setUser: () => null,
       logout: () => null,
+      isAdmin: () => false
 })
 
 
@@ -31,7 +34,10 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
             else navigate('/login')
       }, [navigate])
 
-     
+      const isAdmin = useCallback((chat: IChat, userId?: string): boolean => {
+            return chat.groupAdmin._id === (userId || user?._id)
+      }, [user])
+
 
       const logout = useCallback((): void => {
             userService.logout()
@@ -43,9 +49,10 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
             () => ({
                   user,
                   setUser,
-                  logout
+                  logout,
+                  isAdmin
             }),
-            [user, logout]
+            [user, logout, isAdmin]
       )
 
       return (

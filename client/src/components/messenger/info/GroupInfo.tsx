@@ -10,9 +10,11 @@ import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import CloseIcon from '@mui/icons-material/Close'
 import useChat from "../../../store/useChat"
+import { AuthState } from "../../../context/useAuth"
 
 export default function GroupInfo () {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
+      const { isAdmin } = AuthState()
 
       const [image, setImage] = useState<string>(selectedChat.groupImage)
       const [isEditName, setIsEditName] = useState<boolean>(false)
@@ -51,15 +53,15 @@ export default function GroupInfo () {
             setChats(chatsToUpdate)
       }
 
-
       return (
             <section className="w-full ">
                   <div className="border-b-8 pb-6 border-gray-200 text-center">
-                        <UploadImage image={image} setImage={setImage} editImage={editImage} />
+                        {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
+                        ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-32 h-32 mx-auto rounded-full" />)}
                         {!isEditName ? (
                               <div className="flex items-center justify-center gap-x-2 pt-4">
                                     <span className="text-2xl font-semibold">{selectedChat.chatName}</span>
-                                    <EditOutlinedIcon fontSize="small" color="primary" className="cursor-pointer" onClick={() => setIsEditName(true)} />
+                                    {isAdmin(selectedChat) && <EditOutlinedIcon fontSize="small" color="primary" className="cursor-pointer" onClick={() => setIsEditName(true)} />}
                               </div>
                         ) : (
                               <div className="flex justify-center items-center">
@@ -88,17 +90,18 @@ export default function GroupInfo () {
                               <span>{selectedChat.users.length} Participants</span>
                               <SearchOutlinedIcon className="cursor-pointer" />
                         </div>
-                        <div className="flex px-2 items-center hover:bg-gray-100 p-2 cursor-pointer rounded-lg">
+                        {isAdmin(selectedChat) && <div className="flex px-2 items-center hover:bg-gray-100 p-2 cursor-pointer rounded-lg">
                               <div className="bg-primary text-white p-2 mr-2 rounded-full">
                                     <PersonAddAltOutlinedIcon />
                               </div>
                               <span>Adding participants</span>
-                        </div>
-                        <div className="px-2 flex flex-col gap-y-2 ">
+                        </div>}
+                        <div className="flex flex-col border-2 rounded-lg">
                               {selectedChat.users.map(user => (
-                                    <div key={user._id} className="flex items-center gap-x-3  py-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg">
+                                    <div key={user._id} className="flex items-center gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 p-2 cursor-pointer rounded-t-lg">
                                           <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
-                                          <span>{user.username}</span>
+                                          <span className="text-lg">{user.username}</span>
+                                          {isAdmin(selectedChat, user._id) && <span className="bg-slate-300 text-white px-2 py-[1px] rounded-md  text-sm">Admin</span>}
                                     </div>
                               ))}
                         </div>
