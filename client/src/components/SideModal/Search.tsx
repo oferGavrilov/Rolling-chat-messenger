@@ -22,7 +22,7 @@ export default function SearchUsers (props: Props): JSX.Element {
       function switchContent () {
             switch (props.contentType) {
                   case 'messages': return <UsersToMessage {...props} />
-                  case 'groups': return <UsersToGroup {...props} mode="create" />
+                  case 'groups': return <UsersToGroup {...props} />
                   case 'videos': return <div>videos</div>
                   case 'story': return <div>story</div>
                   default: return <UsersToMessage {...props} />

@@ -6,7 +6,13 @@ import CloseIcon from '@mui/icons-material/Close'
 import ChatInfo from "./ChatInfo"
 import GroupInfo from "./GroupInfo"
 
-export default function Info ({ conversationUser, setMode }: { conversationUser: User, setMode: CallableFunction }) {
+interface Props {
+      conversationUser: User
+      setMode: CallableFunction
+      setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export default function Info ({ conversationUser, setMode }: Props) {
       const { selectedChat } = useChat()
 
       return (

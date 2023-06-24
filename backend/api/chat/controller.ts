@@ -129,6 +129,7 @@ export async function createGroupChat (req: AuthenticatedRequest, res: Response)
 
 export async function renameGroupChat (req: AuthenticatedRequest, res: Response) {
       const { chatId, groupName } = req.body
+      console.log('chatId',chatId, 'groupName',groupName)
 
       if (!chatId || !groupName) {
             console.log('No chat id or chat name sent to server')

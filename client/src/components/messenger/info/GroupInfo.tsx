@@ -45,13 +45,19 @@ export default function GroupInfo () {
             }
       }
 
-      async function handleLeaveGroup (userId?: string) {
-            const updatedChat = await chatService.removeFromGroup(selectedChat._id, userId)
+      async function onLeaveFromGroup () {
+            const updatedChat = await chatService.removeFromGroup(selectedChat._id)
 
             const chatsToUpdate = chats.filter(chat => chat._id !== updatedChat._id)
             setSelectedChat(null)
             setChats(chatsToUpdate)
       }
+
+      async function onRemoveFromGroup (userId: string) {
+            const updatedChat = await chatService.removeFromGroup(selectedChat._id, userId)
+            setSelectedChat(updatedChat)
+      }
+
 
       return (
             <section className="w-full ">
@@ -90,24 +96,31 @@ export default function GroupInfo () {
                               <span>{selectedChat.users.length} Participants</span>
                               <SearchOutlinedIcon className="cursor-pointer" />
                         </div>
-                        {isAdmin(selectedChat) && <div className="flex px-2 items-center hover:bg-gray-100 p-2 cursor-pointer rounded-lg">
-                              <div className="bg-primary text-white p-2 mr-2 rounded-full">
+                        {isAdmin(selectedChat) && <div className="flex px-2 items-center gap-x-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg" >
+                              <div className="bg-primary text-white p-2 r-2 rounded-full">
                                     <PersonAddAltOutlinedIcon />
                               </div>
                               <span>Adding participants</span>
                         </div>}
                         <div className="flex flex-col border-2 rounded-lg">
                               {selectedChat.users.map(user => (
-                                    <div key={user._id} className="flex items-center gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 p-2 cursor-pointer rounded-t-lg">
-                                          <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
-                                          <span className="text-lg">{user.username}</span>
-                                          {isAdmin(selectedChat, user._id) && <span className="bg-slate-300 text-white px-2 py-[1px] rounded-md  text-sm">Admin</span>}
+                                    <div key={user._id} className="flex justify-between">
+                                          <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 w-full p-2  cursor-pointer rounded-t-lg">
+                                                <div className="flex items-center gap-x-3">
+                                                      <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
+                                                      <span className="text-lg">{user.username}</span>
+                                                </div>
+                                                {isAdmin(selectedChat, user._id) ? (
+                                                      <span className="bg-slate-300 text-white px-2 py-[1px] rounded-md text-sm">Admin</span>) : (
+                                                      <div className="flex justify-end text-red-500 hover:bg-red-100 px-1 rounded-md" onClick={() => onRemoveFromGroup(user._id)}>Remove</div>
+                                                )}
+                                          </div>
                                     </div>
                               ))}
                         </div>
                   </div>
 
-                  <div className="text-red-500 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleLeaveGroup()}>
+                  <div className="text-red-500 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 cursor-pointer" onClick={() => onLeaveFromGroup()}>
                         <LogoutOutlinedIcon />
                         Leave The Group
                   </div>

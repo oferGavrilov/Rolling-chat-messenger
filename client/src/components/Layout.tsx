@@ -17,7 +17,7 @@ export default function Layout () {
                   <div className='flex h-screen  slide-right'>
                         <SideMenu contentType={contentType} setContentType={setContentType} />
                         <DynamicList contentType={contentType} setShowSearch={setShowSearch} />
-                        {selectedChat && <Messenger />}
+                        {selectedChat && <Messenger  setShowSearch={setShowSearch}/>}
                   </div>
                   <Outlet />
                   <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />

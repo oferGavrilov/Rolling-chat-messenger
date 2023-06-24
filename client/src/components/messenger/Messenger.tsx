@@ -8,7 +8,7 @@ import useChat from "../../store/useChat"
 import Info from "./info/Info"
 
 
-export default function Messenger () {
+export default function Messenger ({setShowSearch}: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>>}) {
       const loggedinUser = userService.getLoggedinUser()
       const [conversationUser, setConversationUser] = useState<User>()
       const { selectedChat } = useChat()
@@ -20,7 +20,7 @@ export default function Messenger () {
 
       useEffect(() => {
             if (selectedChat) setConversationUser(getConversationUser())
-            setMode(true)
+            // setMode(true)
       }, [selectedChat])
 
 
@@ -56,7 +56,7 @@ export default function Messenger () {
                               </div>
                         </div>
                   </div>
-                  {isChatMode  ? (<Chat />) : (<Info conversationUser={conversationUser} setMode={setMode} />)}
+                  {isChatMode  ? (<Chat />) : (<Info conversationUser={conversationUser} setMode={setMode} setShowSearch={setShowSearch} />)}
             </section>
       )
 }
