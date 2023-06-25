@@ -5,7 +5,9 @@ import path from 'path'
 import http from 'http'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+
 import { connectDB } from '../config/db'
+import { logger } from './services/logger.service'
 
 import { notFound } from '../middleware/errorMiddleware'
 import { errorHandler } from '../middleware/errorMiddleware'
@@ -13,6 +15,7 @@ import { errorHandler } from '../middleware/errorMiddleware'
 import { router as userRoutes } from '../api/user/router'
 import { router as chatRoutes } from '../api/chat/router'
 import { router as messageRoutes } from '../api/message/router'
+import { setupSocketAPI } from './services/socket.service'
 
 const app = express()
 dotenv.config()
@@ -29,26 +32,24 @@ if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.resolve(__dirname, 'public')))
 } else {
       const corsOptions = {
-            origin: ['http://127.0.0.1:5173', 'http://localhost:5173'],
+            origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
             credentials: true
       }
       app.use(cors(corsOptions))
 }
 
-
-
-app.get('/', (req: Request, res: Response) => {
-      res.send(new Date().toLocaleTimeString())
-})
-
 app.use('/api/auth', userRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
+setupSocketAPI(server)
 
 app.use(notFound)
 app.use(errorHandler)
 
+app.get('/**', (req: Request, res: Response) => {
+      res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
 
 const port = process.env.PORT || 5000
 
-server.listen(port, () => console.log(`Example app listening on port ${port}!`))
+server.listen(port, () => logger.info(`Server running on port ${port}!`))

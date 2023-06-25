@@ -21,7 +21,7 @@ export default function ChatMessages ({ messages }: Props) {
                                     <div
                                           className={`px-3 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl
                                            ${message.sender._id === user._id ?
-                                                      'bg-primary text-white' : 'bg-secondary'}
+                                                      'bg-blue-400 text-white' : 'bg-slate-300'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :
                                                       'ml-0 rounded-br-xl flex-row-reverse'}`}

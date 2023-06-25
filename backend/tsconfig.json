@@ -9,5 +9,5 @@
     "allowJs": true,                                     
     "outDir": "./build",                                   
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "middleware/setupAls.middelware.ts"],
 }

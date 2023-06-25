@@ -30,7 +30,7 @@ export default function DynamicList (props: Props) {
 
 
       return (
-            <section className={`${selectedChat ? 'hidden' : 'block'} w-full md:w-[364px] border-r-2 border-[#EEEEEE] `}>
+            <section className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-[364px] border-r-2 border-[#EEEEEE] `}>
                   {getContent()}
             </section>
       )

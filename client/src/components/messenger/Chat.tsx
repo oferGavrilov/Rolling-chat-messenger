@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react'
 import { chatService } from '../../services/chat.service'
 import { IMessage } from '../../model/message.model'
 import ChatMessages from './ChatMessages'
+import { io } from 'socket.io-client'
+
+let socket, selectedChatCompare
 
 export default function Chat () {
       const [messages, setMessages] = useState<IMessage[]>([])
@@ -14,6 +17,10 @@ export default function Chat () {
       useEffect(() => {
             fetchMessages()
       }, [selectedChat])
+
+      useEffect(() => {
+            socket = io('http://localhost:5000', { transports: ['websocket'] })
+      }, [])
 
       async function fetchMessages () {
             if (!selectedChat) return
@@ -52,7 +59,7 @@ export default function Chat () {
                               />
                               <button disabled={!newMessage} type='submit'
                                     className={`text-primary ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg
-                                    ${newMessage ? 'mr-2' : 'disabled:!text-gray-400 disabled:cursor-not-allowed w-0 translate-x-6'}`
+                                    ${newMessage ? 'mr-2' : 'disabled:!text-gray-400 disabled:cursor-not-allowed w-0 translate-x-28'}`
                                     }>
                                     Send
                               </button>

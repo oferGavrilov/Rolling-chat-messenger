@@ -24,7 +24,6 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             // setMode(true)
       }, [selectedChat])
 
-
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
                   <div className='flex items-center px-4 py-3'>
@@ -49,10 +48,10 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                                     )}
                               </div>
                               <div className='flex items-center gap-x-2'>
-                                    <div className='text-primary text-xl md:text-2xl hover:bg-gray-100 py-3 px-2 rounded-lg cursor-pointer'>
+                                    <div className='text-primary text-2xl hover:bg-gray-100 py-2 px-2 rounded-lg cursor-pointer'>
                                           <BsCameraVideo  />
                                     </div>
-                                    <div className='text-gray-500 hover:bg-gray-100 text-xl md:text-2xl p-3 rounded-lg cursor-pointer' onClick={() => setMode(!isChatMode)}>
+                                    <div className='text-gray-500 hover:bg-gray-100 text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setMode(!isChatMode)}>
                                           <AiOutlineInfoCircle  />
                                     </div>
                               </div>

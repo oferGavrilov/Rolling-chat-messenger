@@ -64,7 +64,7 @@ export default function UsersToMessage ({ setIsOpen }) {
                         <input
                               type="text"
                               autoFocus
-                              className="w-full h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
+                              className="w-full h-10 md:h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
                               placeholder="Search by name or email"
                               value={search}
                               onKeyUp={handleKeyPress}
@@ -81,7 +81,7 @@ export default function UsersToMessage ({ setIsOpen }) {
                               <CloseIcon className='cursor-pointer absolute right-28 top-9' color='disabled' fontSize="medium" onClick={clearSearch} />}
                   </div>
 
-                  <div className='border-t '>
+                  <div className={`${users.length && 'border-t'}`}>
                         {isLoading && <Loading type="users" />}
                         {(users.length > 0 && !isLoading) && (
                               <ul className='flex flex-col main-text px-8 gap-y-4 py-8'>
