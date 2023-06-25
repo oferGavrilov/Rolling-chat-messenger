@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { IChat } from '../model/chat.model'
 
-
 interface ChatState {
       chats: IChat[]
       setChats: (chats: IChat[]) => void
@@ -21,7 +20,7 @@ export const useChat = create<ChatState>((set, get) => ({
       updateChat: (chat: IChat) => set({ chats: get().chats.map(c => c._id === chat._id ? chat : c) }),
       clearChats: () => set({ chats: [] }),
       selectedChat: null,
-      setSelectedChat: (chat: IChat | null) => set({ selectedChat: chat })
+      setSelectedChat: (chat: IChat | null) => set({ selectedChat: chat }),
 }))
 
 export default useChat

@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import SideMenu from './SideMenu'
+import SideMenu from './Navigation'
 import SearchUsers from './SideModal/Search'
 import { useState } from 'react'
 import DynamicList from './DynamicList'
@@ -14,10 +14,10 @@ export default function Layout () {
 
       return (
             <div>
-                  <div className='flex h-screen  slide-right'>
+                  <div className='flex h-screen slide-right'>
                         <SideMenu contentType={contentType} setContentType={setContentType} />
                         <DynamicList contentType={contentType} setShowSearch={setShowSearch} />
-                        {selectedChat && <Messenger  setShowSearch={setShowSearch}/>}
+                        {selectedChat && <Messenger setShowSearch={setShowSearch} />}
                   </div>
                   <Outlet />
                   <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />

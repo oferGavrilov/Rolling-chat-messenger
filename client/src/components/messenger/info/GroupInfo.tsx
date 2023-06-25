@@ -58,16 +58,20 @@ export default function GroupInfo () {
             setSelectedChat(updatedChat)
       }
 
+      function onAddUsers () {
+            console.log('asf')
+      }
 
       return (
             <section className="w-full ">
                   <div className="border-b-8 pb-6 border-gray-200 text-center">
                         {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
-                        ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-32 h-32 mx-auto rounded-full" />)}
+                        ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
                         {!isEditName ? (
                               <div className="flex items-center justify-center gap-x-2 pt-4">
-                                    <span className="text-2xl font-semibold">{selectedChat.chatName}</span>
-                                    {isAdmin(selectedChat) && <EditOutlinedIcon fontSize="small" color="primary" className="cursor-pointer" onClick={() => setIsEditName(true)} />}
+                                    <span className="text-xl md:text-2xl font-semibold">{selectedChat.chatName}</span>
+                                    {isAdmin(selectedChat) &&
+                                          <EditOutlinedIcon fontSize="small" color="primary" className="cursor-pointer" onClick={() => setIsEditName(true)} />}
                               </div>
                         ) : (
                               <div className="flex justify-center items-center">
@@ -91,13 +95,13 @@ export default function GroupInfo () {
                         <div className="text-gray-400">Group - {selectedChat.users.length} Participants</div>
                   </div>
 
-                  <div className="flex flex-col gap-y-4 pt-8 px-10 text-gray-500 border-b-8 pb-6 border-gray-200">
-                        <div className="flex justify-between items-center text-gray-500 ">
+                  <div className="flex flex-col gap-y-4 pt-8 px-4 md:px-10 text-gray-500 border-b-8 pb-6 border-gray-200">
+                        <div className="flex justify-between items-center px-2 text-gray-500 ">
                               <span>{selectedChat.users.length} Participants</span>
                               <SearchOutlinedIcon className="cursor-pointer" />
                         </div>
-                        {isAdmin(selectedChat) && <div className="flex px-2 items-center gap-x-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg" >
-                              <div className="bg-primary text-white p-2 r-2 rounded-full">
+                        {isAdmin(selectedChat) && <div className="flex px-1 items-center gap-x-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg" onClick={onAddUsers}>
+                              <div className="bg-primary text-white p-2  rounded-full">
                                     <PersonAddAltOutlinedIcon />
                               </div>
                               <span>Adding participants</span>

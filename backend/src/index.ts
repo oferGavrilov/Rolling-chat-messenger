@@ -12,6 +12,7 @@ import { errorHandler } from '../middleware/errorMiddleware'
 
 import { router as userRoutes } from '../api/user/router'
 import { router as chatRoutes } from '../api/chat/router'
+import { router as messageRoutes } from '../api/message/router'
 
 const app = express()
 dotenv.config()
@@ -42,6 +43,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/api/auth', userRoutes)
 app.use('/api/chat', chatRoutes)
+app.use('/api/message', messageRoutes)
 
 app.use(notFound)
 app.use(errorHandler)

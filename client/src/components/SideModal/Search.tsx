@@ -14,7 +14,7 @@ interface Props {
 export default function SearchUsers (props: Props): JSX.Element {
 
       const list = () => (
-            <Box sx={{ width: 420 }} role="presentation"  >
+            <Box  role="presentation"  >
                   {switchContent()}
             </Box>
       )

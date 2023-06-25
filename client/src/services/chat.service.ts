@@ -1,5 +1,5 @@
 import axios from "axios"
-import { authConfig } from "../helpers/config"
+import { authConfig, config } from "../helpers/config"
 import { IGroup } from "../model/chat.model"
 import { userService } from "./user.service"
 
@@ -9,7 +9,9 @@ export const chatService = {
       createGroup,
       updateGroupImage,
       updateGroupName,
-      removeFromGroup
+      removeFromGroup,
+      getMessages,
+      sendMessage
 }
 
 async function getChats () {
@@ -75,5 +77,24 @@ async function removeFromGroup (chatId: string, userId?: string) {
       } catch (err) {
             console.log(err)
             return []
+      }
+}
+
+async function getMessages (chatId: string) {
+      try {
+            const { data } = await axios.get(`/api/message/${chatId}`, config)
+            return data
+      } catch (err) {
+            console.log(err)
+            return []
+      }
+}
+
+async function sendMessage (message: { content: string, chatId: string }) {
+      try {
+            const { data } = await axios.post('/api/message', message, config)
+            return data
+      } catch (err) {
+            console.log(err)
       }
 }

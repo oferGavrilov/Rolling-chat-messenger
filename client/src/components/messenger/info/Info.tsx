@@ -16,11 +16,11 @@ export default function Info ({ conversationUser, setMode }: Props) {
       const { selectedChat } = useChat()
 
       return (
-            <div className="flex flex-col items-center py-2 relative slide-right">
+            <div className="flex flex-col items-center py-2 relative slide-right overflow-y-auto hide-scrollbar">
                   {selectedChat.isGroupChat ?
                         (<GroupInfo />) :
                         (<ChatInfo conversationUser={conversationUser} />)}
-                  <CloseIcon className="absolute top-0 right-8 cursor-pointer !text-3xl" onClick={() => setMode('chat')} />
+                  <CloseIcon className="absolute top-0 right-5 cursor-pointer !text-2xl md:!text-3xl" onClick={() => setMode('chat')} />
             </div>
       )
 }

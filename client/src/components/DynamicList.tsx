@@ -2,6 +2,7 @@ import Messages from "./ChatList/messages/Messages"
 import Videos from "./ChatList/videos/Videos"
 import Story from "./ChatList/stories/Stories"
 import Communities from "./ChatList/groups/Groups"
+import useChat from "../store/useChat"
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export default function DynamicList (props: Props) {
+
+      const {selectedChat} = useChat()
 
       function getContent (): JSX.Element {
             switch (props.contentType) {
@@ -27,7 +30,7 @@ export default function DynamicList (props: Props) {
 
 
       return (
-            <section className="w-[364px]  border-r-2 border-[#EEEEEE] ">
+            <section className={`${selectedChat ? 'hidden' : 'block'} w-full md:w-[364px] border-r-2 border-[#EEEEEE] `}>
                   {getContent()}
             </section>
       )

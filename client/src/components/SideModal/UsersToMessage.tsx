@@ -60,11 +60,25 @@ export default function UsersToMessage ({ setIsOpen }) {
                               setIsOpen(false)
                         }} />
                   </div>
-                  <div className='py-6 px-4 flex gap-x-2 relative'>
-                        <input type="text" autoFocus className="w-full  h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
-                              placeholder="Search by name or email" value={search} onKeyUp={handleKeyPress} onChange={(e) => setSearch(e.target.value)} />
-                        <Button color='inherit' style={{ color: '#6294f1' }} onClick={handleSearch} className="!rounded-lg hover:!text-[#3573e8]">{isLoading ? <div className='spinner'></div> : <SendIcon fontSize="large"/>}</Button>
-                        {search && <CloseIcon className='cursor-pointer absolute right-28 top-9' color='disabled' fontSize="medium" onClick={clearSearch} />}
+                  <div className='py-6 pl-4 flex relative mx-2 gap-x-2'>
+                        <input
+                              type="text"
+                              autoFocus
+                              className="w-full h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
+                              placeholder="Search by name or email"
+                              value={search}
+                              onKeyUp={handleKeyPress}
+                              onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <Button
+                              color='inherit'
+                              style={{ color: '#6294f1' }}
+                              onClick={handleSearch}
+                              className="!rounded-lg hover:!text-[#3573e8]">
+                              {isLoading ? <div className='spinner'></div> : <SendIcon className="!text-2xl " />}
+                        </Button>
+                        {search &&
+                              <CloseIcon className='cursor-pointer absolute right-28 top-9' color='disabled' fontSize="medium" onClick={clearSearch} />}
                   </div>
 
                   <div className='border-t '>

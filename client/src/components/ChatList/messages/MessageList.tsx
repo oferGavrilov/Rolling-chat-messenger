@@ -5,7 +5,7 @@ import MessagePreview from "./MessagePreview"
 export default function MessageList ({ chats }: { chats: IChat[] }) {
 
       return (
-            <ul >
+            <ul className="overflow-y-auto h-screen pb-48">
                   {chats.map(chat => (
                         <MessagePreview key={chat._id} chat={chat} />
                   ))}

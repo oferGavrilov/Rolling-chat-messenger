@@ -1,7 +1,7 @@
 import { BsSearch } from 'react-icons/bs'
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { MdKeyboardArrowDown } from 'react-icons/md'
-import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
 import { useState } from 'react'
 
@@ -14,11 +14,10 @@ export default function MessageFilter ({ setShowSearch }: Props) {
 
       return (
             <div className="mx-4">
-
                   <div className='flex justify-between items-center pb-4'>
-                        <h2 className="text-3xl font-sf-regular font-bold ">Messages</h2>
+                        <h2 className="text-2xl md:text-3xl font-sf-regular font-bold ">Messages</h2>
                         <div onClick={() => setShowSearch(true)} className='message-filter-icon'>
-                              <PersonSearchOutlinedIcon />
+                              <PersonAddIcon />
                         </div>
                   </div>
                   <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search"

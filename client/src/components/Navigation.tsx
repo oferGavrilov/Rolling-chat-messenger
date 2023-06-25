@@ -15,7 +15,7 @@ export default function SideMenu ({ contentType, setContentType }: Props) {
       const { user, logout } = AuthState()
 
       return (
-            <section className="w-[70px] flex flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10">
+            <section className="hidden w-[70px] md:flex flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10">
                   <div className='flex flex-col border-b border-gray-300 items-center py-7 gap-y-5 mx-3'>
                         <Logo />
                         <img src={user?.profileImg} className="w-11 h-11 rounded-full" alt="profile" />

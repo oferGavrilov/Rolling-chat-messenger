@@ -1,7 +1,7 @@
 import { User } from "../../models/user.model"
 import { generateToken } from "../../config/generateToken"
-import { Request, Response } from "express";
-import { AuthenticatedRequest } from "../../models/types";
+import { Request, Response } from "express"
+import { AuthenticatedRequest } from "../../models/types"
 
 export async function signUp (req: Request, res: Response) {
       const { username, email, password, profileImg } = req.body;
