@@ -31,6 +31,7 @@ async function getUserChats (userId: string) {
             }
       }
       try {
+            console.log(auth)
             const { data } = await axios.get(`/api/chat/chat/${userId}`, auth)
             return data
       } catch (err) {
@@ -81,8 +82,13 @@ async function removeFromGroup (chatId: string, userId?: string) {
 }
 
 async function getMessages (chatId: string) {
+      const auth = {
+            headers: {
+                  Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
+            }
+      }
       try {
-            const { data } = await axios.get(`/api/message/${chatId}`, config)
+            const { data } = await axios.get(`/api/message/${chatId}`, auth)
             return data
       } catch (err) {
             console.log(err)

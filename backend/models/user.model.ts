@@ -1,14 +1,14 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose, { Schema, Document } from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 export interface User extends Document {
-  username: string;
-  email: string;
-  password: string;
-  profileImg: string;
-  matchPassword: (enteredPassword: string) => Promise<boolean>;
-  createdAt: Date;
-  updatedAt: Date;
+  username: string
+  email: string
+  password: string
+  profileImg: string
+  matchPassword: (enteredPassword: string) => Promise<boolean>
+  createdAt: Date
+  updatedAt: Date
 }
 
 const userModel: Schema<User> = new Schema<User>(
@@ -19,18 +19,18 @@ const userModel: Schema<User> = new Schema<User>(
     profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
   },
   { timestamps: true }
-);
+)
 
 userModel.methods.matchPassword = async function (enteredPassword: string): Promise<boolean> {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+  return await bcrypt.compare(enteredPassword, this.password)
+}
 
 userModel.pre<User>('save', async function (next) {
   if (!this.isModified('password')) {
-    next();
+    next()
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
+  const salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
+})
 
-export const User = mongoose.model<User>('User', userModel);
+export const User = mongoose.model<User>('User', userModel)

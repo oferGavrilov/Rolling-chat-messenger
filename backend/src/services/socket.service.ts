@@ -14,8 +14,20 @@ export function setupSocketAPI (http: HttpServer) {
       })
 
       gIo.on('connection', (socket: Socket) => {
-            console.log('socket.handshake.auth', socket.id)
+            console.log('connected to socket.io')
+
             logger.info(`New connected socket [id: ${socket.id}]`)
+
+            socket.on('setup', (userId: string) => {
+                  socket.join(userId)
+                  socket.emit('connected')
+                  console.log('socket id', socket.id, 'joined userId', userId)
+                  logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
+            })
+
+
+
+
 
             socket.on('disconnect', () => {
                   logger.info(`Socket [id: ${socket.id}] disconnected`)
@@ -24,32 +36,6 @@ export function setupSocketAPI (http: HttpServer) {
             socket.on('unset-user-socket', () => {
                   logger.info(`Socket [id: ${socket.id}] disconnected`)
                   delete socket.handshake.auth.user
-            })
-
-
-            socket.on('chat newMsg', msg => {
-                  console.log('Emitting chat addMsg', msg)
-                  gIo.emit('chat addMsg', msg)
-            })
-
-            socket.on('user typing', (userName) => {
-                  console.log('Emitting user typing', userName)
-                  gIo.emit('user typing', userName)
-            })
-
-            socket.on('user stop typing', (userName) => {
-                  console.log('Emitting user stop typing', userName)
-                  gIo.emit('user stop typing', userName)
-            })
-
-            socket.on('user join', (userName) => {
-                  console.log('Emitting user join', userName)
-                  gIo.emit('user join', userName)
-            })
-
-            socket.on('user leave', (userName) => {
-                  console.log('Emitting user leave', userName)
-                  gIo.emit('user leave', userName)
             })
       })
 }

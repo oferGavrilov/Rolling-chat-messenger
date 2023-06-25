@@ -22,6 +22,7 @@ export default function Messages ({ setShowSearch }: Props) {
             async function loadChats (): Promise<void> {
                   setIsLoading(true)
                   const user = await userService.getLoggedinUser()
+                  if(!user) return
                   const chats = await chatService.getUserChats(user._id)
                   setChats(chats)
                   setIsLoading(false)

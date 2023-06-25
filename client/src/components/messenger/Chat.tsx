@@ -6,27 +6,32 @@ import { chatService } from '../../services/chat.service'
 import { IMessage } from '../../model/message.model'
 import ChatMessages from './ChatMessages'
 import { io } from 'socket.io-client'
+import { AuthState } from '../../context/useAuth'
 
+const ENDPOINT = 'http://localhost:5000'
 let socket, selectedChatCompare
 
 export default function Chat () {
       const [messages, setMessages] = useState<IMessage[]>([])
       const [newMessage, setNewMessage] = useState<string>('')
       const { selectedChat } = useChat()
+      const { user } = AuthState()
 
       useEffect(() => {
             fetchMessages()
       }, [selectedChat])
 
       useEffect(() => {
-            socket = io('http://localhost:5000', { transports: ['websocket'] })
+            socket = io(ENDPOINT, { transports: ['websocket'] })
+            socket.emit('setup', user._id)
+            socket.on('connection', () => console.log('connected'))
       }, [])
 
       async function fetchMessages () {
             if (!selectedChat) return
             const data = await chatService.getMessages(selectedChat._id)
-            console.log('messages', data)
             setMessages(data)
+            socket.emit('join', selectedChat._id)
       }
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
