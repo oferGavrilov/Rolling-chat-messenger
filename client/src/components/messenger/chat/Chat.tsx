@@ -1,12 +1,12 @@
 
 import { AiOutlinePaperClip } from 'react-icons/ai'
-import useChat from '../../store/useChat'
+import useChat from '../../../store/useChat'
 import { useEffect, useState } from 'react'
-import { chatService } from '../../services/chat.service'
-import { IMessage } from '../../model/message.model'
+import { chatService } from '../../../services/chat.service'
+import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
 import { io } from 'socket.io-client'
-import { AuthState } from '../../context/useAuth'
+import { AuthState } from '../../../context/useAuth'
 
 const ENDPOINT = 'http://localhost:5000'
 let socket, selectedChatCompare

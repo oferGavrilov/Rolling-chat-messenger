@@ -1,6 +1,6 @@
-import { AuthState } from "../../context/useAuth"
-import { IMessage } from "../../model/message.model"
-import { formatTime, isLastMessage, isSameSender, isSameSenderMargin } from "../../utils/functions"
+import { AuthState } from "../../../context/useAuth"
+import { IMessage } from "../../../model/message.model"
+import { formatTime, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
 
 interface Props {
       messages: IMessage[]

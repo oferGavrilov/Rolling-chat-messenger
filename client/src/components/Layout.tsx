@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom'
 import SideMenu from './Navigation'
-import SearchUsers from './SideModal/Search'
+import SearchUsers from './SideModal'
 import { useState } from 'react'
-import DynamicList from './DynamicList'
+import DynamicList from './ChatList/DynamicList'
 import { useChat } from '../store/useChat'
-import Messenger from './messenger/Messenger'
+import Messenger from './messenger'
 
 export default function Layout () {
       const [showSearch, setShowSearch] = useState<boolean>(false)

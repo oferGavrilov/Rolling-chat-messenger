@@ -6,6 +6,7 @@ import { IChat } from "../../model/chat.model"
 import { Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close'
 import Loading from "../Loading"
+import UsersInput from "../input/UsersInput"
 
 export default function UsersToMessage ({ setIsOpen }) {
       const [filter, setFilter] = useState<string>('')
@@ -42,35 +43,24 @@ export default function UsersToMessage ({ setIsOpen }) {
             }
 
             setSelectedChat(data)
-            clearSearch()
+            setFilter('')
             setIsOpen(false)
       }
 
 
-      function clearSearch (): void {
-            setFilter('')
-            setUsers([])
-      }
+ 
       return (
             <Typography variant="h6" component='div' className="relative">
                   <div className='flex justify-between items-center py-4 px-4 shadow-sm shadow-secondary'>
                         <h2 className="">Search Users</h2>
                         <CloseIcon className='cursor-pointer' fontSize="medium" onClick={() => {
-                              clearSearch()
+                              setFilter('')
                               setIsOpen(false)
                         }} />
                   </div>
-                  <div className='py-6  flex relative px-2 gap-x-2'>
-                        <input
-                              type="text"
-                              autoFocus
-                              className="w-full h-10 md:h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
-                              placeholder="Filter by name or email"
-                              value={filter}
-                              onChange={(e) => setFilter(e.target.value)}
-                        />
-                        {filter &&
-                              <CloseIcon className='cursor-pointer absolute right-4 top-8' color='disabled' fontSize="medium" onClick={clearSearch} />}
+
+                  <div className='py-6 mx-3 flex relative px-2 gap-x-2'>
+                        <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                   </div>
 
                   <div className={`${users.length && 'border-t'}`}>

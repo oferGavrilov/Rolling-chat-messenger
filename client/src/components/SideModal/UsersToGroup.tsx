@@ -1,27 +1,51 @@
 import CloseIcon from '@mui/icons-material/Close'
-import { debounce } from "../../utils/functions"
 import { userService } from "../../services/user.service"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { User } from "../../model/user.model"
 import Loading from "../Loading"
 import { toast } from 'react-toastify'
 import { chatService } from '../../services/chat.service'
 import useChat from '../../store/useChat'
 import UploadImage from '../UploadImage'
-
+import UsersInput from '../input/UsersInput'
 
 interface Props {
       setIsOpen: CallableFunction
 }
 
 export default function UsersToGroup ({ setIsOpen }: Props) {
-      const [search, setSearch] = useState<string>('')
-      const [searchResult, setSearchResult] = useState<User[]>([])
+      const [filter, setFilter] = useState<string>('')
+      const [users, setUsers] = useState<User[]>([])
       const [group, setGroup] = useState({ chatName: '', users: [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
 
       const { chats, setChats } = useChat()
+
+      useEffect(() => {
+            loadUsers()
+      }, [])
+
+      async function loadUsers () {
+            try {
+                  setIsLoading(true)
+                  const users = await userService.getUsers()
+                  setUsers(users)
+            } catch (err) {
+                  console.error("An error occurred while loading users:", err)
+            } finally {
+                  setIsLoading(false)
+            }
+      }
+
+      const filteredUsers = useMemo(() => {
+            if (filter) {
+                  return users.filter(user =>
+                        user.username.toLowerCase().includes(filter.toLowerCase()) ||
+                        user.email.toLowerCase().includes(filter.toLowerCase()))
+            }
+            return users
+      }, [users, filter])
 
       async function onCreateGroup () {
             if (!group.chatName) return toast.error('Please enter a group name')
@@ -37,23 +61,6 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
             }
       }
 
-      async function handleSearch (e: React.ChangeEvent<HTMLInputElement>) {
-            setSearch(e.target.value)
-            if (!search) return
-            setIsLoading(true)
-            const debouncedSearch = debounce(async (search: string) => {
-                  try {
-                        const data = await userService.searchUsers(search)
-                        setSearchResult(data)
-                  } catch (error) {
-                        console.error("An error occurred while searching:", error)
-                  } finally {
-                        setIsLoading(false)
-                  }
-            })
-            debouncedSearch(search)
-      }
-
       function handleGroup (user: User) {
             if (group.users.find(u => u._id === user._id)) {
                   return setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
@@ -61,34 +68,32 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
 
             setGroup({ ...group, users: [...group.users, user] })
       }
+
       function removeFromGroup (userId: string) {
             setGroup({ ...group, users: group.users.filter(u => u._id !== userId) })
       }
 
       return (
-            <div className="py-6 px-4 w-screen md:w-[400px]">
+            <div className="py-6 w-screen md:w-[400px]">
                   <h2 className='text-2xl text-center pb-5'>Create Group Chat</h2>
 
-                  <div className='flex flex-col gap-y-6'>
+                  <div className='flex flex-col  gap-y-6 px-4 mx-auto'>
                         <UploadImage image={image} setImage={setImage} />
                         <input
                               type="text"
-                              className='bg-gray-100 p-2 rounded-lg border-2 w-full px-3 border-gray-100 focus:border-blue-400'
+                              className='bg-gray-100 p-2 rounded-lg border-2 px-3 border-gray-100 focus:border-blue-400'
                               value={group.chatName}
                               onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
                               placeholder="Group Name"
                         />
-                        <input type="text"
-                              className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'
-                              value={search}
-                              onChange={handleSearch}
-                              placeholder="Search users to Add"
-                        />
-                        <button onClick={onCreateGroup} className='self-end  mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>Create Chat</button>
+                        <div className='py-6 flex relative px-2 '>
+                              <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email"/>
+                        </div>
+                        <button onClick={onCreateGroup} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>Create Chat</button>
                   </div>
 
                   {group.users.length > 0 && (
-                        <div className="flex py-4">
+                        <div className="flex p-4">
                               {group.users.map((user) => (
                                     <div key={user._id} className='relative p-2 [&>*]:hover:!block'>
                                           <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-green-400" />
@@ -98,9 +103,9 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                         </div>
                   )}
 
-                  {(!isLoading && search) && (
+                  {(!isLoading) ? (
                         <ul className='flex flex-col main-text px-4 gap-y-4 py-8'>
-                              {searchResult.map((user: User) => (
+                              {filteredUsers.map((user: User) => (
                                     <li key={user._id} className='text-main-color py-2 px-4 rounded-lg bg-gray-100 transition-colors duration-200 cursor-pointer hover:bg-gray-200'>
                                           <div className='flex gap-x-4 items-center' onClick={() => handleGroup(user)}>
                                                 <img className='w-12 h-12 object-cover rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
@@ -113,8 +118,10 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                                           </div>
                                     </li>
                               ))}
-                        </ul>)}
-                  {(isLoading && search) && <Loading type="users" />}
+                        </ul>) : (
+                        <Loading type="users" />
+                  )}
+
                   <CloseIcon className='cursor-pointer absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
             </div>
       )

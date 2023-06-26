@@ -90,3 +90,6 @@
 .MuiPopover-paper{
       @apply !top-[81px] !right-[40px] !left-auto;
 }
+.MuiAvatar-img{
+      @apply object-top;
+}
