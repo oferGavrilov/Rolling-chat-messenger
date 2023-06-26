@@ -1,5 +1,5 @@
 import axios from "axios"
-import { authConfig, config } from "../helpers/config"
+import { authConfig } from "../helpers/config"
 import { IGroup } from "../model/chat.model"
 import { userService } from "./user.service"
 
@@ -97,6 +97,12 @@ async function getMessages (chatId: string) {
 }
 
 async function sendMessage (message: { content: string, chatId: string }) {
+      const config = {
+            headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
+            }
+      }
       try {
             const { data } = await axios.post('/api/message', message, config)
             return data

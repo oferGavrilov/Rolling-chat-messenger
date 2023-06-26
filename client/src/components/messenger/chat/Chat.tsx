@@ -1,52 +1,119 @@
 
 import { AiOutlinePaperClip } from 'react-icons/ai'
 import useChat from '../../../store/useChat'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { chatService } from '../../../services/chat.service'
 import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
-import { io } from 'socket.io-client'
+import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
+import { IChat } from '../../../model/chat.model'
+import { clearTypingTimeout, startTypingTimeout } from '../../../utils/functions'
 
 const ENDPOINT = 'http://localhost:5000'
-let socket, selectedChatCompare
 
-export default function Chat () {
+interface Props {
+      isTyping: boolean
+      setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+let socket: Socket, selectedChatCompare: IChat | null = null
+
+export default function Chat ({ isTyping, setIsTyping }: Props) {
+
       const [messages, setMessages] = useState<IMessage[]>([])
       const [newMessage, setNewMessage] = useState<string>('')
+      const [socketConnected, setSocketConnected] = useState<boolean>(false)
+
       const { selectedChat } = useChat()
       const { user } = AuthState()
-
-      useEffect(() => {
-            fetchMessages()
-      }, [selectedChat])
+      const chatRef = useRef<HTMLDivElement>(null)
+      const typingTimeoutRef = useRef<number | undefined>()
 
       useEffect(() => {
             socket = io(ENDPOINT, { transports: ['websocket'] })
             socket.emit('setup', user._id)
-            socket.on('connection', () => console.log('connected'))
+            socket.on('connected', () => setSocketConnected(true))
+            socket.on('typing', () => setIsTyping(true))
+            socket.on('stop typing', () => setIsTyping(false))
+      }, [setIsTyping, user._id])
+
+      useEffect(() => {
+            async function fetchMessages () {
+                  if (!selectedChat) return
+                  const data = await chatService.getMessages(selectedChat._id)
+                  setMessages(data)
+                  socket.emit('join chat', selectedChat._id)
+
+                  scrollToBottom()
+            }
+
+            fetchMessages()
+            selectedChatCompare = selectedChat
+      }, [selectedChat])
+
+      useEffect(() => {
+            socket.on('message received', (newMessage: IMessage) => {
+                  if (!selectedChatCompare || selectedChatCompare._id !== newMessage.chat._id) return
+                  setMessages((prevMessages) => [...prevMessages, newMessage])
+
+                  scrollToBottom()
+            })
+
+            return () => {
+                  socket.off('message received')
+            }
       }, [])
 
-      async function fetchMessages () {
-            if (!selectedChat) return
-            const data = await chatService.getMessages(selectedChat._id)
-            setMessages(data)
-            socket.emit('join', selectedChat._id)
-      }
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
             if (!newMessage) return
+            socket.emit('stop typing', selectedChat._id)
             setNewMessage('')
             const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat._id })
-            console.log(messageToUpdate)
+            socket.emit('new message', messageToUpdate)
             setMessages([...messages, messageToUpdate])
+
+            scrollToBottom()
+      }
+
+      function typingHandler (e: React.ChangeEvent<HTMLInputElement>) {
+            const { value } = e.target
+            setNewMessage(value)
+
+            if (!socketConnected) return
+
+            if (!isTyping) {
+                  setIsTyping(true)
+                  socket.emit('typing', selectedChat._id)
+            }
+
+            if (typingTimeoutRef.current) {
+                  clearTypingTimeout(typingTimeoutRef.current)
+            }
+
+            typingTimeoutRef.current = startTypingTimeout(() => {
+                  if (isTyping) {
+                        socket.emit('stop typing', selectedChat._id)
+                        setIsTyping(false)
+                  }
+            }, 2000)
+      }
+
+      function scrollToBottom () {
+            setTimeout(() => {
+                  chatRef.current?.scrollTo({
+                        top: chatRef.current.scrollHeight,
+                        behavior: 'smooth',
+                  })
+            }, 0)
       }
 
 
       return (
             <>
-                  <div className='bg-gray-100 border-y border-1 overflow-auto slide-left'>
+                  <div className='bg-gray-100 border-y py-4 border-1 overflow-auto slide-left' ref={chatRef}>
                         {messages && <ChatMessages messages={messages} />}
                   </div>
 
@@ -60,7 +127,7 @@ export default function Chat () {
                                     className='bg-gray-100 w-full px-4 rounded-xl py-2 focus-visible:outline-none'
                                     placeholder='Type a message...'
                                     value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    onChange={typingHandler}
                               />
                               <button disabled={!newMessage} type='submit'
                                     className={`text-primary ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg

@@ -9,7 +9,7 @@
 
 @layer base {
       body {
-            @apply text-[#242424] font-sf-regular overflow-y-hidden;
+            @apply text-[#242424] font-sf-regular overflow-y-hidden scroll-smooth;
 
       }
       
