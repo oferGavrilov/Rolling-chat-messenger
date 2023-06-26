@@ -55,15 +55,25 @@ export async function login (req: Request, res: Response) {
       }
 }
 
-export async function getUsers (req: AuthenticatedRequest, res: Response) {
+export async function searchUsersByKeyword (req: AuthenticatedRequest, res: Response) {
+      const clearString = req.query.search?.toString().replace(/[\/>]/g, '')
       try {
-            const keyword = req.query.search ? {
+            const filter = clearString ? {
                   $or: [
-                        { username: { $regex: req.query.search.toString(), $options: 'i' } },
-                        { email: { $regex: req.query.search.toString(), $options: 'i' } }
+                        { username: { $regex: clearString, $options: 'i' } },
+                        { email: { $regex: clearString, $options: 'i' } }
                   ]
             } : {}
-            const users = await User.find(keyword).find({ _id: { $ne: req.user?._id } })
+            const users = await User.find({ ...filter, _id: { $ne: req.user?._id } });
+            res.send(users)
+      } catch (err) {
+            throw new Error(err)
+      }
+}
+
+export async function getUsers (req: AuthenticatedRequest, res: Response) {
+      try {
+            const users = await User.find({ _id: { $ne: req.user?._id } });
             res.send(users)
       } catch (err) {
             throw new Error(err)

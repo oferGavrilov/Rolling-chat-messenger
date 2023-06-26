@@ -66,14 +66,14 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
       }
 
       return (
-            <div className="p-6">
+            <div className="py-6 px-4 w-screen md:w-[400px]">
                   <h2 className='text-2xl text-center pb-5'>Create Group Chat</h2>
 
                   <div className='flex flex-col gap-y-6'>
                         <UploadImage image={image} setImage={setImage} />
                         <input
                               type="text"
-                              className='bg-gray-100 p-2 rounded-lg border-2 border-gray-100 focus:border-blue-400'
+                              className='bg-gray-100 p-2 rounded-lg border-2 w-full px-3 border-gray-100 focus:border-blue-400'
                               value={group.chatName}
                               onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
                               placeholder="Group Name"
@@ -115,6 +115,7 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                               ))}
                         </ul>)}
                   {(isLoading && search) && <Loading type="users" />}
+                  <CloseIcon className='cursor-pointer absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
             </div>
       )
 }

@@ -14,7 +14,7 @@ interface Props {
 export default function SearchUsers (props: Props): JSX.Element {
 
       const list = () => (
-            <Box  role="presentation"  >
+            <Box role="presentation" className="w-screen md:w-[420px]" >
                   {switchContent()}
             </Box>
       )
@@ -30,7 +30,7 @@ export default function SearchUsers (props: Props): JSX.Element {
       }
 
       return (
-            <Drawer
+            <Drawer 
                   anchor='left'
                   open={props.isOpen}
                   onClose={() => {

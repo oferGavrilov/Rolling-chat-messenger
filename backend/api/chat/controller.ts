@@ -12,6 +12,8 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
             return res.status(400).json({ message: 'No user id send to server' })
       }
 
+      const user = await User.findById(userId)
+
       const isChat: ChatDocument[] = await Chat.find({
             isGroupChat: false,
             $and: [
@@ -31,7 +33,7 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
             return res.status(200).json(isChat[0])
       } else {
             let chatData = {
-                  chatName: "New Chat",
+                  chatName: user.username,
                   isGroupChat: false,
                   users: [req.user?._id, userId]
             }
@@ -129,7 +131,7 @@ export async function createGroupChat (req: AuthenticatedRequest, res: Response)
 
 export async function renameGroupChat (req: AuthenticatedRequest, res: Response) {
       const { chatId, groupName } = req.body
-      console.log('chatId',chatId, 'groupName',groupName)
+      console.log('chatId', chatId, 'groupName', groupName)
 
       if (!chatId || !groupName) {
             console.log('No chat id or chat name sent to server')

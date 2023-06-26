@@ -1,4 +1,4 @@
-import { baseConfig} from "../helpers/config"
+import { baseConfig } from "../helpers/config"
 import { FormData, User } from "../model/user.model"
 import axios from 'axios'
 
@@ -28,13 +28,24 @@ export const userService = {
       loginSignUp,
       getLoggedinUser,
       logout,
-      searchUsers,
+      // searchUsers,
+      getUsers,
       createChat
 }
 
-async function searchUsers (keyword: string): Promise<User[] | []> {
+// async function searchUsers (keyword: string): Promise<User[] | []> {
+//       try {
+//             const { data } = await axios.get(`/api/auth?search=${keyword}`, authConfig)
+//             return data
+//       } catch (err) {
+//             console.log(err)
+//             return []
+//       }
+// }
+
+async function getUsers ():Promise<User[] | []> {
       try {
-            const { data } = await axios.get(`/api/auth?search=${keyword}`, authConfig)
+            const { data } = await axios.get('/api/auth', authConfig)
             return data
       } catch (err) {
             console.log(err)
@@ -52,12 +63,10 @@ async function createChat (userId: string) {
       }
 }
 
-
 async function loginSignUp (credentials: FormData, login: boolean) {
       const url = login ? '/api/auth/login' : '/api/auth/signup'
       const { data } = await axios.post(url, credentials, baseConfig)
       if (data) _saveToSessionStorage(data)
-      console.log(data)
       return data
 }
 
