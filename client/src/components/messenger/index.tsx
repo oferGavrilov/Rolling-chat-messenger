@@ -27,7 +27,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             if (selectedChat) setConversationUser(getConversationUser())
             // setMode(true)
       }, [getConversationUser, selectedChat])
-
+      
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
                   <div className='flex items-center px-4 h-20'>

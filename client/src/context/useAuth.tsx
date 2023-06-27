@@ -6,7 +6,7 @@ import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
       user: User | null
-      setUser: React.Dispatch<React.SetStateAction<null>>
+      setUser: React.Dispatch<React.SetStateAction<User | null>>
       logout: () => void,
       isAdmin: (chat: IChat, userId?: string) => boolean
 }

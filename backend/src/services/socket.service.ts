@@ -2,13 +2,13 @@ import { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import { logger } from './logger.service'
 import { User } from '../../models/user.model'
+import { userInfo } from 'os'
 
 
 let gIo: Server | null = null
 
 export function setupSocketAPI (http: HttpServer) {
       gIo = new Server(http, {
-            pingTimeout: 60000,
             cors: {
                   origin: 'http://localhost:3000',
             }
@@ -22,18 +22,16 @@ export function setupSocketAPI (http: HttpServer) {
             socket.on('setup', (userId: string) => {
                   socket.join(userId)
                   socket.emit('connected')
-                  console.log('socket id', socket.id, 'joined userId', userId)
                   logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
             })
 
             socket.on('join chat', (room) => {
                   socket.join(room)
-                  console.log('user joined room', room)
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`)
             })
 
-            socket.on('typing', (room) => socket.in(room).emit('typing'))
-            
+            socket.on('typing', (room, userId) => socket.in(room).emit('typing', userId))
+
             socket.on('stop typing', (room) => socket.in(room).emit('stop typing'))
 
             socket.on('new message', (newMessageReceived) => {
@@ -47,17 +45,8 @@ export function setupSocketAPI (http: HttpServer) {
                   })
             })
 
-
-
-
-
-            socket.on('disconnect', () => {
-                  logger.info(`Socket [id: ${socket.id}] disconnected`)
-            })
-
-            socket.on('unset-user-socket', () => {
-                  logger.info(`Socket [id: ${socket.id}] disconnected`)
-                  delete socket.handshake.auth.user
+            socket.off('setup', () => {
+                  socket.leave(socket.id)
             })
       })
 }

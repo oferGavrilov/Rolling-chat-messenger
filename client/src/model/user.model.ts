@@ -15,4 +15,5 @@ export interface User {
       createdAt: string
       updatedAt: string
       about?: string
+      typing?: boolean
 }

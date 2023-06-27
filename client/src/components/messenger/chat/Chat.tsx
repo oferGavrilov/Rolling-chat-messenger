@@ -8,7 +8,6 @@ import ChatMessages from './ChatMessages'
 import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
 import { IChat } from '../../../model/chat.model'
-import { clearTypingTimeout, startTypingTimeout } from '../../../utils/functions'
 
 const ENDPOINT = 'http://localhost:5000'
 
@@ -19,16 +18,16 @@ interface Props {
 
 let socket: Socket, selectedChatCompare: IChat | null = null
 
-export default function Chat ({ isTyping, setIsTyping }: Props) {
+export default function Chat ({ setIsTyping }: Props) {
 
       const [messages, setMessages] = useState<IMessage[]>([])
       const [newMessage, setNewMessage] = useState<string>('')
       const [socketConnected, setSocketConnected] = useState<boolean>(false)
+      const [typing, setTyping] = useState<boolean>(false)
 
       const { selectedChat } = useChat()
       const { user } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
-      const typingTimeoutRef = useRef<number | undefined>()
 
       useEffect(() => {
             socket = io(ENDPOINT, { transports: ['websocket'] })
@@ -36,7 +35,7 @@ export default function Chat ({ isTyping, setIsTyping }: Props) {
             socket.on('connected', () => setSocketConnected(true))
             socket.on('typing', () => setIsTyping(true))
             socket.on('stop typing', () => setIsTyping(false))
-      }, [setIsTyping, user._id])
+      }, [setIsTyping, user])
 
       useEffect(() => {
             async function fetchMessages () {
@@ -84,21 +83,21 @@ export default function Chat ({ isTyping, setIsTyping }: Props) {
 
             if (!socketConnected) return
 
-            if (!isTyping) {
-                  setIsTyping(true)
-                  socket.emit('typing', selectedChat._id)
+            if (!typing) {
+                  setTyping(true)
+                  socket.emit('typing', selectedChat._id, user._id)
             }
 
-            if (typingTimeoutRef.current) {
-                  clearTypingTimeout(typingTimeoutRef.current)
-            }
-
-            typingTimeoutRef.current = startTypingTimeout(() => {
-                  if (isTyping) {
-                        socket.emit('stop typing', selectedChat._id)
-                        setIsTyping(false)
+            const lastTypingTime = new Date().getTime();
+            const timerLength = 2000;
+            setTimeout(() => {
+                  const timeNow = new Date().getTime();
+                  const timeDiff = timeNow - lastTypingTime;
+                  if (timeDiff >= timerLength && typing) {
+                        socket.emit("stop typing", selectedChat._id);
+                        setTyping(false);
                   }
-            }, 2000)
+            }, timerLength);
       }
 
       function scrollToBottom () {
@@ -109,7 +108,6 @@ export default function Chat ({ isTyping, setIsTyping }: Props) {
                   })
             }, 0)
       }
-
 
       return (
             <>
