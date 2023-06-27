@@ -1,20 +1,21 @@
 import { useChat } from '../../../store/useChat'
 import { IChat } from '../../../model/chat.model'
-import { getLoggedinUser } from '../../../helpers/config'
 import { User } from '../../../model/user.model'
 import { useCallback } from 'react'
 import { Avatar, Badge } from '@mui/material'
 import { styled } from '@mui/system'
+import { AuthState } from '../../../context/useAuth'
+import { formatTime } from '../../../utils/functions'
 
 export default function MessagePreview ({ chat }: { chat: IChat }) {
       const { setSelectedChat, selectedChat } = useChat()
+      const { user: loggedinUser } = AuthState()
 
       const getSender = useCallback(
             (users: User[]): User => {
-                  const loggedinUser = getLoggedinUser()
                   return users.find((currUser) => currUser._id !== loggedinUser?._id) || users[0]
             },
-            []
+            [loggedinUser?._id]
       )
 
 
@@ -46,11 +47,13 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                   },
             },
       }))
+
+      console.log(chat)
       return (
             <li onClick={() => setSelectedChat(chat)}
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200
                    ${selectedChat?._id === chat._id && 'bg-gray-100'}`}>
-                  <div className="flex items-center">
+                  <div className="flex items-center w-full">
                         {!chat.isGroupChat ? (
                               <StyledBadge overlap="circular"
                                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -60,12 +63,16 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                               <Avatar alt='' src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} />
                         )}
 
-                        <div className="ml-3">
-                              <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
-                              <p className="text-sm  text-[#00000085]">Hey, how are you?</p>
+                        <div className="ml-3 w-full ">
+                              <div className='flex justify-between items-center '>
+                                    <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
+                                    <span className='text-gray-400 text-sm'>
+                                          {formatTime(chat.latestMessage ?  chat?.latestMessage?.createdAt : chat.createdAt)}
+                                    </span>
+                              </div>
+                              <p className="text-base  text-[#00000085]">{chat?.latestMessage?.sender._id === loggedinUser?._id && 'you:'}    {chat.latestMessage?.content}</p>
                         </div>
                   </div>
-                  <div className="text-sm  text-[#00000085]">1h</div>
             </li>
       )
 }

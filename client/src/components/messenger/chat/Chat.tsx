@@ -25,9 +25,10 @@ export default function Chat ({ setIsTyping }: Props) {
       const [socketConnected, setSocketConnected] = useState<boolean>(false)
       const [typing, setTyping] = useState<boolean>(false)
 
-      const { selectedChat } = useChat()
+      const { selectedChat , notification , setNotification } = useChat()
       const { user } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
+      const typingTimeoutRef = useRef<number | null>(null)
 
       useEffect(() => {
             socket = io(ENDPOINT, { transports: ['websocket'] })
@@ -53,17 +54,21 @@ export default function Chat ({ setIsTyping }: Props) {
 
       useEffect(() => {
             socket.on('message received', (newMessage: IMessage) => {
-                  if (!selectedChatCompare || selectedChatCompare._id !== newMessage.chat._id) return
-                  setMessages((prevMessages) => [...prevMessages, newMessage])
 
+                  if (!selectedChatCompare || selectedChatCompare._id !== newMessage.chat._id) {
+                        if(!notification.includes(newMessage)) {
+                              setNotification([...notification, newMessage])
+                        }
+                  } else {
+                        setMessages((prevMessages) => [...prevMessages, newMessage])
+                  }
                   scrollToBottom()
             })
 
             return () => {
                   socket.off('message received')
             }
-      }, [])
-
+      }, [notification, setNotification])
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
@@ -88,16 +93,15 @@ export default function Chat ({ setIsTyping }: Props) {
                   socket.emit('typing', selectedChat._id, user._id)
             }
 
-            const lastTypingTime = new Date().getTime();
-            const timerLength = 2000;
-            setTimeout(() => {
-                  const timeNow = new Date().getTime();
-                  const timeDiff = timeNow - lastTypingTime;
-                  if (timeDiff >= timerLength && typing) {
-                        socket.emit("stop typing", selectedChat._id);
-                        setTyping(false);
-                  }
-            }, timerLength);
+            if (typingTimeoutRef.current) {
+                  clearTimeout(typingTimeoutRef.current)
+            }
+
+            const timerLength = 2000
+            typingTimeoutRef.current = setTimeout(() => {
+                  socket.emit('stop typing', selectedChat._id)
+                  setTyping(false)
+            }, timerLength)
       }
 
       function scrollToBottom () {

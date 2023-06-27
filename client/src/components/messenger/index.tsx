@@ -30,7 +30,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
       
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
-                  <div className='flex items-center px-4 h-20'>
+                  <div className='flex items-center px-2 h-16 md:h-20'>
                         <IoIosArrowBack size={30} className='md:hidden text-blue-400 mr-3' onClick={() => setSelectedChat(null)} />
                         <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setMode(false)} />
                         <div className='flex items-center gap-4 ml-4 justify-between w-full'>

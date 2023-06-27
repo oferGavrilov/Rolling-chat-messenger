@@ -48,9 +48,27 @@ export function isLastMessage (messages: IMessage[], i: number, userId: string) 
   )
 }
 
-export function formatTime (timestamp: string) {
+export function formatTime(timestamp: string) {
   const date = new Date(timestamp)
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const now = new Date()
+
+  const diffMilliseconds = now.getTime() - date.getTime()
+  const diffMinutes = Math.floor(diffMilliseconds / 60000)
+
+  if (diffMinutes < 1) {
+    return 'now'
+  }
+  
+  if (date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  }
+
+  if (date.getDate() === now.getDate() - 1 && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
+    return 'yesterday'
+  }
+
+  const formattedDate = `${date.getDate()}.${date.getMonth() + 1}`
+  return formattedDate
 }
 
 

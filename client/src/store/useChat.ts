@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { IChat } from '../model/chat.model'
+import { IMessage } from '../model/message.model'
 
 interface ChatState {
       chats: IChat[]
@@ -10,6 +11,8 @@ interface ChatState {
       clearChats: () => void
       selectedChat: IChat | null
       setSelectedChat: (chat: IChat | null) => void
+      notification: IMessage[] 
+      setNotification: (notification: IMessage[]) => void
 }
 
 export const useChat = create<ChatState>((set, get) => ({
@@ -21,6 +24,8 @@ export const useChat = create<ChatState>((set, get) => ({
       clearChats: () => set({ chats: [] }),
       selectedChat: null,
       setSelectedChat: (chat: IChat | null) => set({ selectedChat: chat }),
+      notification: [],
+      setNotification: (notification: IMessage[]) => set({ notification })
 }))
 
 export default useChat
