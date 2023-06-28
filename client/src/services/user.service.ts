@@ -28,20 +28,9 @@ export const userService = {
       loginSignUp,
       getLoggedinUser,
       logout,
-      // searchUsers,
       getUsers,
       createChat
 }
-
-// async function searchUsers (keyword: string): Promise<User[] | []> {
-//       try {
-//             const { data } = await axios.get(`/api/auth?search=${keyword}`, authConfig)
-//             return data
-//       } catch (err) {
-//             console.log(err)
-//             return []
-//       }
-// }
 
 async function getUsers ():Promise<User[] | []> {
       try {

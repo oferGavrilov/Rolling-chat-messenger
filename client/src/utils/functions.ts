@@ -48,7 +48,7 @@ export function isLastMessage (messages: IMessage[], i: number, userId: string) 
   )
 }
 
-export function formatTime(timestamp: string) {
+export function formatTime (timestamp: string) {
   const date = new Date(timestamp)
   const now = new Date()
 
@@ -58,7 +58,7 @@ export function formatTime(timestamp: string) {
   if (diffMinutes < 1) {
     return 'now'
   }
-  
+
   if (date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
@@ -69,6 +69,13 @@ export function formatTime(timestamp: string) {
 
   const formattedDate = `${date.getDate()}.${date.getMonth() + 1}`
   return formattedDate
+}
+
+export function formatDate (timestamp: string) {
+  const date = new Date(timestamp)
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
 }
 
 

@@ -18,7 +18,7 @@ const chatSchema: Schema<ChatDocument> = new Schema(
     groupAdmin: { type: Schema.Types.ObjectId, ref: 'User' },
     groupImage: {
       type: String,
-      default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg', // Replace with your default group image URL
+      default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg', 
     },
   },
   { timestamps: true }

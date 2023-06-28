@@ -1,6 +1,6 @@
 import { AuthState } from "../../../context/useAuth"
 import { IMessage } from "../../../model/message.model"
-import { formatTime, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
+import { formatDate, formatTime, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
 
 interface Props {
       messages: IMessage[]
@@ -29,7 +29,7 @@ export default function ChatMessages ({ messages }: Props) {
                                           <span className={`text-xs mr-2 text-gray-100 relative -bottom-1
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       '-left-1' : '-right-2'}`}>
-                                                {formatTime(message.createdAt)}
+                                                {formatDate(message.createdAt)}
                                           </span>
                                           <span>{message.content}</span>
                                     </div>
