@@ -1,13 +1,4 @@
-
-const STORAGE_KEY = 'loggedin-user'
-
-export function getLoggedinUser () {
-      const storedItem = sessionStorage.getItem(STORAGE_KEY);
-      if (storedItem) {
-            return JSON.parse(storedItem);
-      }
-      return null
-}
+import { userService } from "../services/user.service"
 
 export const baseConfig = {
       headers: {
@@ -17,12 +8,12 @@ export const baseConfig = {
 
 export const authConfig = {
       headers: {
-            Authorization: `Bearer ${getLoggedinUser()?.token}`
+            Authorization: `Bearer ${userService?.getLoggedinUser()?.token}`
       }
 }
 export const config = {
       headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${getLoggedinUser()?.token}`
+            Authorization: `Bearer ${userService?.getLoggedinUser()?.token}`
       }
 }

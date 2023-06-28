@@ -4,7 +4,9 @@ import Chat from "./pages/Chat"
 import Login from "./pages/Auth"
 
 import { ToastContainer } from 'react-toastify'
+
 import 'react-toastify/dist/ReactToastify.css'
+
 import AuthProvider from "./context/useAuth"
 import Layout from "./components/Layout"
 
