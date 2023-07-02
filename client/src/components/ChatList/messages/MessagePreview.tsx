@@ -48,7 +48,13 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
             },
       }))
 
-      console.log(chat)
+      function getLatestMessageSender (): string {
+            if (chat.latestMessage?.sender._id === loggedinUser?._id) return 'you: '
+            if (chat.isGroupChat && chat.latestMessage) return `${chat.latestMessage?.sender.username}: `
+            return ''
+      }
+
+      // console.log(chat)
       return (
             <li onClick={() => setSelectedChat(chat)}
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200
@@ -67,10 +73,10 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                               <div className='flex justify-between items-center '>
                                     <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
                                     <span className='text-gray-400 text-sm'>
-                                          {formatTime(chat.latestMessage ?  chat?.latestMessage?.createdAt : chat.createdAt)}
+                                          {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt)}
                                     </span>
                               </div>
-                              <p className="text-base  text-[#00000085]">{chat?.latestMessage?.sender._id === loggedinUser?._id && 'you:'}    {chat.latestMessage?.content}</p>
+                              <p className="text-base  text-[#00000085]">{getLatestMessageSender()} {chat.latestMessage?.content}</p>
                         </div>
                   </div>
             </li>

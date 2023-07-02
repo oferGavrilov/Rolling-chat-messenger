@@ -59,7 +59,7 @@ export async function getChats (req: AuthenticatedRequest, res: Response) {
                   .then(async (result) => {
                         await User.populate(result, {
                               path: "latestMessage.sender",
-                              select: "name pic email",
+                              select: "username profileImg email",
                         })
                         res.status(200).send(result);
                   })
@@ -69,35 +69,37 @@ export async function getChats (req: AuthenticatedRequest, res: Response) {
       }
 }
 
-export async function getUserChats (req: AuthenticatedRequest, res: Response) {
-      const { userId } = req.params
-
+export async function getUserChats(req: AuthenticatedRequest, res: Response) {
+      const { userId } = req.params;
+    
       if (!userId) {
-            console.log('No user id send to server')
-            return res.status(400).json({ message: 'No user id send to server' })
+        console.log('No user id sent to the server');
+        return res.status(400).json({ message: 'No user id sent to the server' });
       }
+    
       try {
-            Chat.find({
-                  $and: [
-                        { users: { $elemMatch: { $eq: req.user?._id } } },
-                        { users: { $elemMatch: { $eq: userId } } },
-                  ],
-            })
-                  .populate("users", "-password")
-                  .populate("groupAdmin", "-password")
-                  .populate("latestMessage")
-                  .then(async (result) => {
-                        await User.populate(result, {
-                              path: "latestMessage.sender",
-                              select: "name pic email",
-                        })
-                        res.status(200).send(result);
-                  })
-
+        const result = await Chat.find({
+          $and: [
+            { users: { $elemMatch: { $eq: req.user?._id } } },
+            { users: { $elemMatch: { $eq: userId } } },
+          ],
+        })
+          .populate('users', '-password')
+          .populate('groupAdmin', '-password')
+          .populate({
+            path: 'latestMessage',
+            populate: {
+              path: 'sender',
+              select: 'username profileImg email',
+            },
+          })
+         
+        res.status(200).send(result);
       } catch (error) {
-            throw new Error(error.message)
+        throw new Error(error.message);
       }
-}
+    }
+    
 
 export async function createGroupChat (req: AuthenticatedRequest, res: Response) {
       const { users, chatName, groupImage } = req.body

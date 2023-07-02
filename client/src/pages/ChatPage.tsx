@@ -1,15 +1,13 @@
-import { Outlet } from 'react-router-dom'
-import SideMenu from './Navigation'
-import SearchUsers from './SideModal'
+import SideMenu from '../components/Navigation'
+import SearchUsers from '../components/SideModal'
 import { useState } from 'react'
-import DynamicList from './ChatList/DynamicList'
+import DynamicList from '../components/ChatList/DynamicList'
 import { useChat } from '../store/useChat'
-import Messenger from './messenger'
+import Messenger from '../components/messenger'
 
-export default function Layout () {
+export default function ChatPage (): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<string>('messages')
-
       const { selectedChat } = useChat()
 
       return (
@@ -19,7 +17,6 @@ export default function Layout () {
                         <DynamicList contentType={contentType} setShowSearch={setShowSearch} />
                         {selectedChat && <Messenger setShowSearch={setShowSearch} />}
                   </div>
-                  <Outlet />
                   <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />
             </div>
       )

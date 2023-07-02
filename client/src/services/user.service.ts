@@ -1,4 +1,3 @@
-import { baseConfig } from "../helpers/config"
 import { FormData, User } from "../model/user.model"
 import axios from 'axios'
 
@@ -54,7 +53,7 @@ async function createChat (userId: string) {
 
 async function loginSignUp (credentials: FormData, login: boolean) {
       const url = login ? '/api/auth/login' : '/api/auth/signup'
-      const { data } = await axios.post(url, credentials, baseConfig)
+      const { data } = await axios.post(url, credentials, config)
       if (data) _saveToSessionStorage(data)
       return data
 }

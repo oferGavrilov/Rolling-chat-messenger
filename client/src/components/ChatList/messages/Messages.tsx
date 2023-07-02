@@ -1,12 +1,13 @@
 import MessageList from './MessageList'
 import { useState, useMemo, useEffect } from 'react'
 import { chatService } from '../../../services/chat.service'
-import { userService } from '../../../services/user.service'
 import useChat from '../../../store/useChat'
 import ChatLoading from '../../Loading'
 import MessagesInput from '../../input/MessagesInput'
+import { userService } from '../../../services/user.service'
 
 export default function Messages ({ contentType }: { contentType: string }) {
+
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [filter, setFilter] = useState<string>('')
       const { chats, setChats } = useChat()
@@ -19,7 +20,7 @@ export default function Messages ({ contentType }: { contentType: string }) {
                   return chats.filter(chat => chat.isGroupChat)
             }
             return chats;
-      }, [chats, filter , contentType]);
+      }, [chats, filter, contentType]);
 
       useEffect(() => {
             async function loadChats (): Promise<void> {
@@ -32,7 +33,7 @@ export default function Messages ({ contentType }: { contentType: string }) {
             }
 
             loadChats()
-      }, [setChats])
+      }, [])
 
       return (
             <div className="pt-4 relative">

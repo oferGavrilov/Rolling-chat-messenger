@@ -4,28 +4,56 @@ import { IMessage } from '../model/message.model'
 
 interface ChatState {
       chats: IChat[]
+      selectedChat: IChat | null
+      notification: IMessage[]
+      selectedChatCompare: IChat | null
+}
+
+interface ChatActions {
       setChats: (chats: IChat[]) => void
       addChat: (chat: IChat) => void
       removeChat: (chat: IChat) => void
-      updateChat: (chat: IChat) => void
       clearChats: () => void
-      selectedChat: IChat | null
       setSelectedChat: (chat: IChat | null) => void
-      notification: IMessage[] 
-      setNotification: (notification: IMessage[]) => void
+      setNotification: (notification: IMessage) => void
+      setSelectedChatCompare: (chat: IChat | null) => void
 }
 
-export const useChat = create<ChatState>((set, get) => ({
-      chats: [],
-      setChats: (chats: IChat[]) => set({ chats }),
-      addChat: (chat: IChat) => set({ chats: [...get().chats, chat] }),
-      removeChat: (chat: IChat) => set({ chats: get().chats.filter(c => c._id !== chat._id) }),
-      updateChat: (chat: IChat) => set({ chats: get().chats.map(c => c._id === chat._id ? chat : c) }),
-      clearChats: () => set({ chats: [] }),
-      selectedChat: null,
-      setSelectedChat: (chat: IChat | null) => set({ selectedChat: chat }),
-      notification: [],
-      setNotification: (notification: IMessage[]) => set({ notification })
-}))
+export const useChat = create<ChatState & ChatActions>((set) => {
+      const storedNotification = localStorage.getItem('notification')
+      const initialNotification = storedNotification ? JSON.parse(storedNotification) : []
+
+      return {
+            chats: [],
+            selectedChat: null,
+            notification: initialNotification,
+            selectedChatCompare: null,
+            setSelectedChatCompare: (chat) => set({ selectedChatCompare: chat }),
+
+
+            setChats: (chats) => set({ chats }),
+            addChat: (chat) => set((state) => ({ chats: [...state.chats, chat] })),
+            removeChat: (chat) => set((state) => ({ chats: state.chats.filter((c) => c._id !== chat._id) })),
+            clearChats: () => set({ chats: [] }),
+            setSelectedChat: (chat) => set({ selectedChat: chat }),
+            setNotification: (newNotification) => {
+                  set((state) => {
+                        const currentNotification = state.notification
+                        const existingChatIndex = currentNotification.findIndex(
+                              (notificationItem) => notificationItem.chat._id === newNotification.chat._id
+                        )
+                        let updatedNotification
+                        if (existingChatIndex !== -1) {
+                              updatedNotification = [...currentNotification]
+                              updatedNotification[existingChatIndex].count += 1
+                        } else {
+                              updatedNotification = [...currentNotification, { ...newNotification, count: 1 }]
+                        }
+                        localStorage.setItem('notification', JSON.stringify(updatedNotification))
+                        return { notification: updatedNotification }
+                  })
+            },
+      }
+})
 
 export default useChat

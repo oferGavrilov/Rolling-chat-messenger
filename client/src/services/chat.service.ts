@@ -1,5 +1,4 @@
 import axios from "axios"
-import { authConfig } from "../helpers/config"
 import { IGroup } from "../model/chat.model"
 import { userService } from "./user.service"
 
@@ -12,6 +11,11 @@ export const chatService = {
       removeFromGroup,
       getMessages,
       sendMessage
+}
+const authConfig = {
+      headers: {
+            Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
+      }
 }
 
 async function getChats () {
@@ -31,9 +35,12 @@ async function getUserChats (userId: string) {
             }
       }
       try {
-            console.log(auth)
             const { data } = await axios.get(`/api/chat/chat/${userId}`, auth)
-            return data
+            const sortedData = data.sort((a: any, b: any) => {
+                  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            })
+
+            return sortedData
       } catch (err) {
             console.log(err)
             return []
@@ -105,6 +112,7 @@ async function sendMessage (message: { content: string, chatId: string }) {
       }
       try {
             const { data } = await axios.post('/api/message', message, config)
+            console.log('from chat service', data)
             return data
       } catch (err) {
             console.log(err)

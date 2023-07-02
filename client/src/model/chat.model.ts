@@ -1,3 +1,4 @@
+import { IMessage } from "./message.model"
 import { User } from "./user.model"
 
 export interface IChat {
@@ -7,9 +8,10 @@ export interface IChat {
       users: User[]
       groupAdmin?: User
       groupImage?: string
-      latestMessage?: LatestMessage
+      latestMessage: IMessage 
       createdAt: string
       updatedAt: string
+      count: number
 }
 
 export interface IGroup {
@@ -17,11 +19,12 @@ export interface IGroup {
       users: User[]
 }
 
-interface LatestMessage {
+export type LatestMessage =  {
       _id: string
       sender: {
             _id: string
-            email: string
+            username: string
+            profileImg: string
       }
       content: string
       chat: string

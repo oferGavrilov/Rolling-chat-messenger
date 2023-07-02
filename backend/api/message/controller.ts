@@ -23,7 +23,6 @@ export async function sendMessage(req: AuthenticatedRequest, res: Response) {
             message = await message.populate('sender', 'username profileImg')
             message = await message.populate('chat')
             message = await User.populate(message , {path: 'chat.users' , select: 'username email profileImg'})
-            console.log(message)
             await Chat.findByIdAndUpdate(chatId , {latestMessage: message})
 
             res.status(201).json(message)
@@ -34,7 +33,6 @@ export async function sendMessage(req: AuthenticatedRequest, res: Response) {
 }
 
 export async function getAllMessages(req: AuthenticatedRequest, res: Response) {
-      console.log(req.params)
       const {chatId} = req.params
 
       if(!chatId) {

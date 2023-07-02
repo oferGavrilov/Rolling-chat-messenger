@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 import Home from "./pages/Home"
-import Chat from "./pages/Chat"
+import ChatPage from "./pages/ChatPage"
 import Login from "./pages/Auth"
 
 import { ToastContainer } from 'react-toastify'
@@ -8,7 +8,6 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import AuthProvider from "./context/useAuth"
-import Layout from "./components/Layout"
 
 function App () {
 
@@ -16,10 +15,8 @@ function App () {
     <Router>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Layout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/chat" element={<Chat />} />
-          </Route>
+            <Route path="/chat" element={<ChatPage />} />
           <Route path="/login" element={<Login />} />
         </Routes>
         <ToastContainer />

@@ -25,6 +25,15 @@ export function setupSocketAPI (http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
             })
 
+            // socket.on('isOnline', (userId: string) => {
+            //       socket.broadcast.emit('isOnline', userId)
+            // })
+
+            // socket.on('disconnect', (userId: string) => {
+            //       socket.leave(userId)
+            //       logger.info(`Socket [id: ${socket.id}] disconnected`)
+            // })
+
             socket.on('join chat', (room) => {
                   socket.join(room)
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`)
@@ -39,8 +48,9 @@ export function setupSocketAPI (http: HttpServer) {
                   if (!chat.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
 
                   chat.users.forEach((user: User) => {
+                        console.log(user._id, newMessageReceived.sender._id)
                         if (user._id === newMessageReceived.sender._id) return
-
+                        console.log('after If')
                         socket.in(user._id).emit('message received', newMessageReceived)
                   })
             })

@@ -7,7 +7,7 @@ import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
 import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
-import { IChat } from '../../../model/chat.model'
+import { IChat, LatestMessage } from '../../../model/chat.model'
 
 const ENDPOINT = 'http://localhost:5000'
 
@@ -16,7 +16,7 @@ interface Props {
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-let socket: Socket, selectedChatCompare: IChat | null = null
+let socket: Socket
 
 export default function Chat ({ setIsTyping }: Props) {
 
@@ -25,18 +25,25 @@ export default function Chat ({ setIsTyping }: Props) {
       const [socketConnected, setSocketConnected] = useState<boolean>(false)
       const [typing, setTyping] = useState<boolean>(false)
 
-      const { selectedChat , notification , setNotification } = useChat()
+      const { selectedChat,chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
       const { user } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
       const typingTimeoutRef = useRef<number | null>(null)
 
       useEffect(() => {
+
             socket = io(ENDPOINT, { transports: ['websocket'] })
             socket.emit('setup', user._id)
+
+            console.log('is connected!')
             socket.on('connected', () => setSocketConnected(true))
+
+      }, [])
+
+      useEffect(() => {
             socket.on('typing', () => setIsTyping(true))
             socket.on('stop typing', () => setIsTyping(false))
-      }, [setIsTyping, user])
+      }, [setIsTyping])
 
       useEffect(() => {
             async function fetchMessages () {
@@ -49,26 +56,19 @@ export default function Chat ({ setIsTyping }: Props) {
             }
 
             fetchMessages()
-            selectedChatCompare = selectedChat
+            setSelectedChatCompare(selectedChat)
       }, [selectedChat])
 
       useEffect(() => {
             socket.on('message received', (newMessage: IMessage) => {
-
-                  if (!selectedChatCompare || selectedChatCompare._id !== newMessage.chat._id) {
-                        if(!notification.includes(newMessage)) {
-                              setNotification([...notification, newMessage])
-                        }
-                  } else {
-                        setMessages((prevMessages) => [...prevMessages, newMessage])
-                  }
+                  if (selectedChatCompare._id !== newMessage.chat._id) return
+                  setMessages((prevMessages) => [...prevMessages, newMessage])
                   scrollToBottom()
             })
-
             return () => {
                   socket.off('message received')
             }
-      }, [notification, setNotification])
+      })
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
@@ -79,7 +79,19 @@ export default function Chat ({ setIsTyping }: Props) {
             socket.emit('new message', messageToUpdate)
             setMessages([...messages, messageToUpdate])
 
+            setChatOnTop(messageToUpdate)
+
             scrollToBottom()
+      }
+
+      function setChatOnTop (message: IMessage): void {
+            const chatToUpdateIndex = chats.findIndex(chat => chat._id === selectedChat._id)
+            if (chatToUpdateIndex !== -1) {
+                  const chatToUpdate = chats[chatToUpdateIndex]
+                  chatToUpdate.latestMessage = message
+                  const updatedChats = [chatToUpdate, ...chats.slice(0, chatToUpdateIndex), ...chats.slice(chatToUpdateIndex + 1)]
+                  setChats(updatedChats)
+            }
       }
 
       function typingHandler (e: React.ChangeEvent<HTMLInputElement>) {

@@ -5,7 +5,7 @@ import { RxExit } from 'react-icons/rx'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import Logo from "../assets/icons/Logo"
 import Story from "../assets/icons/Story"
-import { Avatar } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 
 interface Props {
       contentType: string
@@ -19,7 +19,9 @@ export default function SideMenu ({ contentType, setContentType }: Props) {
             <section className="hidden w-[70px] md:flex flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10">
                   <div className='flex flex-col border-b border-gray-300 items-center py-7 gap-y-5 mx-3'>
                         <Logo />
-                        <Avatar src={user?.profileImg} sx={{ width: 50, height: 50 }}/>
+                        <Tooltip title="Profile" arrow>
+                              <Avatar src={user?.profileImg} sx={{ width: 45, height: 45 }} className="hover:scale-110 transition-all duration-300 cursor-pointer" />
+                        </Tooltip>
                   </div>
                   <div className="flex flex-col justify-between h-full">
                         <div className="flex flex-col gap-y-4">
