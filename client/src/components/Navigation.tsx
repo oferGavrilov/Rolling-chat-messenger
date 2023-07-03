@@ -2,10 +2,10 @@ import { AuthState } from "../context/useAuth"
 import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import Logo from "../assets/icons/Logo"
 import Story from "../assets/icons/Story"
-import { Avatar, Tooltip } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material"
 
 interface Props {
       contentType: string
@@ -39,7 +39,7 @@ export default function SideMenu ({ contentType, setContentType }: Props) {
                               </div>
                         </div>
                         <div className="flex flex-col ">
-                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary">
+                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary" onClick={() => setContentType('settings')}>
                                     <FiSettings size={27} />
                               </div>
                               <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={logout}>

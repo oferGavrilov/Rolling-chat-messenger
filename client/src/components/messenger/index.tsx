@@ -4,7 +4,7 @@ import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { User } from "../../model/user.model"
 import useChat from "../../store/useChat"
-import Info from "./info/Info"
+import Info from "./info/Index"
 import { IoIosArrowBack } from 'react-icons/io'
 import { Avatar } from "@mui/material"
 import { AuthState } from "../../context/useAuth"
@@ -27,20 +27,26 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             if (selectedChat) setConversationUser(getConversationUser())
             // setMode(true)
       }, [getConversationUser, selectedChat])
-      
+
+
+      function getConversationUserConnection (): string {
+            console.log(conversationUser)
+            return conversationUser?.isOnline ? 'Online' : ''
+      }
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
                   <div className='flex items-center px-2 h-16 md:h-20'>
-                        <IoIosArrowBack size={30} className='md:hidden text-blue-400 mr-3' onClick={() => setSelectedChat(null)} />
+                        <IoIosArrowBack size={30} className='md:hidden text-blue-400 mr-3 cursor-pointer' onClick={() => setSelectedChat(null)} />
                         <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setMode(false)} />
                         <div className='flex items-center gap-4 ml-4 justify-between w-full'>
                               <div className='flex flex-col'>
                                     <h2 className='md:text-lg font-semibold cursor-pointer underline-offset-2 hover:underline' onClick={() => setMode(false)}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
-                                    {!selectedChat.isGroupChat ? <span className='text-primary text-xs md:text-base'>{isTyping ? 'Typing...' : 'Online'}</span> : (
+                                    {!selectedChat.isGroupChat ? <span className='text-primary text-xs md:text-base'>{isTyping ? 'Typing...' : getConversationUserConnection()}</span> : (
                                           <div className="flex gap-x-2 text-sm tracking-wide">
-                                                {selectedChat.users.slice(0, 4).map(user =>
-                                                      <span key={user._id} className="text-gray-400   ">
+                                                {selectedChat.users.slice(0, 4).map((user, index) =>
+                                                      <span key={user._id} className="text-gray-400">
                                                             {user.username}
+                                                            {index !== selectedChat.users.length - 1 && ","}
                                                       </span>
                                                 )}
                                           </div>

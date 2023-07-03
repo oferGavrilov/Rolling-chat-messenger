@@ -47,7 +47,7 @@
       }
 }
 
-.slide-right{
+.slide-right {
       animation-name: slide-right;
       animation-fill-mode: forwards;
       animation-duration: .4s;
@@ -79,7 +79,7 @@
             opacity: 0;
             transform: translateX(75vw);
       }
-      
+
       100% {
             opacity: 1;
             transform: translateX(0);
@@ -96,13 +96,13 @@
       0% {
             transform: rotate(0deg);
       }
-      
+
       100% {
             transform: rotate(-90deg);
       }
 }
 
-.reverse-rotate{
+.reverse-rotate {
       animation-name: reverse-rotate;
       animation-duration: .3s;
       animation-fill-mode: forwards;
@@ -113,7 +113,7 @@
             opacity: 1;
             transform: rotate(-90deg);
       }
-      
+
       100% {
             transform: rotate(0deg);
       }
@@ -130,9 +130,28 @@
             opacity: 1;
             transform: translateX(-25vw);
       }
-      
+
       100% {
             opacity: 0;
             transform: translateX(0);
+      }
+}
+
+.slide-up {
+      animation-name: slide-up;
+      animation-duration: 1.2s;
+      animation-fill-mode: forwards;
+      animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@keyframes slide-up {
+      0% {
+            opacity: 0;
+            transform: translateY(125vh);
+      }
+
+      100% {
+            opacity: 1;
+            transform: translateY(0);
       }
 }

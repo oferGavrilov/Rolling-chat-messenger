@@ -15,8 +15,8 @@ function App () {
     <Router>
       <AuthProvider>
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/chat" element={<ChatPage />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/login" element={<Login />} />
         </Routes>
         <ToastContainer />

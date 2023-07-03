@@ -2,20 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-      font-family: 'sf-pro-display';
-      src: url('../assets/fonts/SF-Pro-Text-Regular.ttf');
-}
+
 
 @layer base {
-      body {
-            @apply text-[#242424] font-sf-regular overflow-y-hidden scroll-smooth;
 
+      :root {
+            --color-text-base: #242424;
+            --color-text-muted: #c7d2fe;
+      }
+
+      body {
+            @apply text-[#242424] font-sf-regular scroll-smooth;
       }
       
       *::-webkit-scrollbar,
       *::-webkit-scrollbar-thumb {
-        width: 26px;
+        width: 0;
         border-radius: 13px;
         border: 10px solid transparent;
       }
@@ -26,6 +28,23 @@
       
       :focus-visible {
             outline: none;
+      }
+
+      @font-face {
+            font-family: 'sf-pro-display';
+            src: url('../assets/fonts/SF-Pro-Text-Regular.ttf');
+      }
+      
+      @font-face {
+            font-family: 'litia';
+            src: url('../assets/fonts/LilitaOne-Regular.ttf');
+      }
+      
+      @font-face {
+            font-family: 'alfa';
+            font-weight: 600;
+            color: #242424;
+            src: local('alfa') url('../assets/fonts/AlfaSlabOne-Regular.ttf') format('ttf');
       }
 }
 
@@ -50,10 +69,11 @@
       }
       /* SIDE MENU */
       .side-icon {
-            @apply flex justify-center h-12 text-[#27AE60] my-1 mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
+            @apply flex justify-center h-12 text-primary my-1 mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
       }
       .active-side-icon {
-            @apply bg-[#27AE60] text-white shadow-md shadow-[#27AE60] hover:bg-[#129047];
+            @apply bg-primary text-white  hover:bg-[#2286c9];
+            box-shadow: 0 6px 9px 3px #95c1df;
       }
       .messenger{
             display: grid;
@@ -84,6 +104,11 @@
             display: none;
             -ms-overflow-style: none; 
             scrollbar-width: none; 
+      }
+      .custom-shadow {
+            box-shadow: 0 10px 62px 6px #0099ff4f;
+            transform: scale(1.02);
+            font-weight: bold;
       }
 }
 

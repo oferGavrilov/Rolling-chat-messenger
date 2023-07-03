@@ -11,13 +11,15 @@ const ENDPOINT = 'http://localhost:5000'
 let socket: Socket
 
 export default function MessageList ({ chats }: { chats: IChat[] }) {
-      const { notification, setNotification, selectedChatCompare, setChats } = useChat()
+      const { notification, setNotification, selectedChat, setChats } = useChat()
 
       useEffect(() => {
             const user = userService.getLoggedinUser()
             socket = io(ENDPOINT, { transports: ['websocket'] })
             socket.emit('setup', user._id)
             console.log('is connected!')
+
+            socket.on('new group', handleNewGroup)
       }, [])
 
       useEffect(() => {
@@ -26,10 +28,14 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
             return () => {
                   socket.off('message received', handleNewMessage)
             }
-      }, [])
+      }, [selectedChat])
+
+      function handleNewGroup (chat: IChat) {
+            setChats([chat, ...chats])
+      }
 
       function handleNewMessage (newMessage: IMessage) {
-            if (!selectedChatCompare || selectedChatCompare._id !== newMessage.chat._id) {
+            if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
                   setNotification(newMessage)
                   updateChat(newMessage, chats)
             }
@@ -45,7 +51,6 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
                   updatedChats.unshift(chat)
                   setChats(updatedChats)
             }
-
       }
 
       return (

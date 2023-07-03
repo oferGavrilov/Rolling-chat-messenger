@@ -13,6 +13,7 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
       }
 
       const user = await User.findById(userId)
+      console.log('user', user)
 
       const isChat: ChatDocument[] = await Chat.find({
             isGroupChat: false,
@@ -22,12 +23,12 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
             ],
       })
             .populate("users", "-password")
-            .populate("latestMessage");
+            .populate("latestMessage")
 
       // isChat = await User.populate(isChat, {
       //       path: "latestMessage.sender",
       //       select: "name pic email",
-      // });
+      // })
 
       if (isChat.length > 0) {
             return res.status(200).json(isChat[0])
@@ -61,7 +62,7 @@ export async function getChats (req: AuthenticatedRequest, res: Response) {
                               path: "latestMessage.sender",
                               select: "username profileImg email",
                         })
-                        res.status(200).send(result);
+                        res.status(200).send(result)
                   })
 
       } catch (error) {
@@ -70,11 +71,11 @@ export async function getChats (req: AuthenticatedRequest, res: Response) {
 }
 
 export async function getUserChats(req: AuthenticatedRequest, res: Response) {
-      const { userId } = req.params;
+      const { userId } = req.params
     
       if (!userId) {
-        console.log('No user id sent to the server');
-        return res.status(400).json({ message: 'No user id sent to the server' });
+        console.log('No user id sent to the server')
+        return res.status(400).json({ message: 'No user id sent to the server' })
       }
     
       try {
@@ -94,9 +95,9 @@ export async function getUserChats(req: AuthenticatedRequest, res: Response) {
             },
           })
          
-        res.status(200).send(result);
+        res.status(200).send(result)
       } catch (error) {
-        throw new Error(error.message);
+        throw new Error(error.message)
       }
     }
     

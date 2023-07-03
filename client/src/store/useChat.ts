@@ -17,6 +17,7 @@ interface ChatActions {
       setSelectedChat: (chat: IChat | null) => void
       setNotification: (notification: IMessage) => void
       setSelectedChatCompare: (chat: IChat | null) => void
+      removeNotification: (notification: IMessage) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -24,19 +25,25 @@ export const useChat = create<ChatState & ChatActions>((set) => {
       const initialNotification = storedNotification ? JSON.parse(storedNotification) : []
 
       return {
+            // State
             chats: [],
             selectedChat: null,
             notification: initialNotification,
-            selectedChatCompare: null,
-            setSelectedChatCompare: (chat) => set({ selectedChatCompare: chat }),
-
-
+            
+            // Chat
             setChats: (chats) => set({ chats }),
             addChat: (chat) => set((state) => ({ chats: [...state.chats, chat] })),
             removeChat: (chat) => set((state) => ({ chats: state.chats.filter((c) => c._id !== chat._id) })),
             clearChats: () => set({ chats: [] }),
             setSelectedChat: (chat) => set({ selectedChat: chat }),
+            
+            // For compare chat sockets
+            selectedChatCompare: null,
+            setSelectedChatCompare: (chat) => set({ selectedChatCompare: chat }),
+            
+            // Notification
             setNotification: (newNotification) => {
+                  console.log('newNotification', newNotification)
                   set((state) => {
                         const currentNotification = state.notification
                         const existingChatIndex = currentNotification.findIndex(
@@ -49,6 +56,16 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                         } else {
                               updatedNotification = [...currentNotification, { ...newNotification, count: 1 }]
                         }
+                        localStorage.setItem('notification', JSON.stringify(updatedNotification))
+                        return { notification: updatedNotification }
+                  })
+            },
+            removeNotification: (notificationToRemove) => {
+                  set((state) => {
+                        const currentNotification = state.notification
+                        const updatedNotification = currentNotification.filter(
+                              (notificationItem) => notificationItem.chat._id !== notificationToRemove.chat._id
+                        )
                         localStorage.setItem('notification', JSON.stringify(updatedNotification))
                         return { notification: updatedNotification }
                   })

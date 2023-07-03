@@ -26,29 +26,29 @@ export async function protect (req: AuthenticatedRequest, res: Response, next: N
 }
 
 export async function admin (req: AuthenticatedRequest, res: Response, next: NextFunction) {
-      const { chatId } = req.body;
-      let token: string;
+      const { chatId } = req.body
+      let token: string
 
       if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             try {
-                  token = req.headers.authorization.split(' ')[1];
+                  token = req.headers.authorization.split(' ')[1]
                   if (!token) {
-                        return res.status(401).json({ msg: 'Not authorized, no token' });
+                        return res.status(401).json({ msg: 'Not authorized, no token' })
                   }
 
-                  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                  req.user = await User.findById(decoded.id).select('-password');
+                  const decoded = jwt.verify(token, process.env.JWT_SECRET)
+                  req.user = await User.findById(decoded.id).select('-password')
 
-                  const chat = await Chat.findById(chatId);
-                  console.log('GroupAdmin', chat.groupAdmin, 'user', req.user?._id);
+                  const chat = await Chat.findById(chatId)
+                  console.log('GroupAdmin', chat.groupAdmin, 'user', req.user?._id)
                   if (chat.groupAdmin.toString() === req.user?._id.toString()) {
-                        next();
+                        next()
                   } else {
-                        return res.status(401).json({ msg: 'Not authorized as an admin' });
+                        return res.status(401).json({ msg: 'Not authorized as an admin' })
                   }
             } catch (error) {
-                  console.error(error);
-                  return res.status(401).json({ msg: 'Not authorized, token failed' });
+                  console.error(error)
+                  return res.status(401).json({ msg: 'Not authorized, token failed' })
             }
       }
 }

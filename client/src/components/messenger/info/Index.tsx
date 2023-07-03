@@ -16,7 +16,7 @@ export default function Info ({ conversationUser, setMode }: Props) {
       const { selectedChat } = useChat()
 
       return (
-            <div className="flex flex-col items-center py-2 relative slide-right overflow-y-auto hide-scrollbar">
+            <div className="flex flex-col items-center py-2 relative slide-right overflow-y-auto hide-scrollbar h-[calc(100vh-64px)]">
                   {selectedChat.isGroupChat ?
                         (<GroupInfo />) :
                         (<ChatInfo conversationUser={conversationUser} />)}

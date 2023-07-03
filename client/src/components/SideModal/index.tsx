@@ -40,7 +40,7 @@ export default function SearchUsers (props: Props): JSX.Element {
                   {list()}
 
             </Drawer>
-      );
+      )
 
 }
 

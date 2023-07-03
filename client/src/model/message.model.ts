@@ -1,4 +1,4 @@
-import { IChat } from "./chat.model";
+import { IChat } from "./chat.model"
 
 export interface IMessage {
       count: number

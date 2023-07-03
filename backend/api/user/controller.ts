@@ -4,16 +4,16 @@ import { Request, Response } from "express"
 import { AuthenticatedRequest } from "../../models/types"
 
 export async function signUp (req: Request, res: Response) {
-      const { username, email, password, profileImg } = req.body;
+      const { username, email, password, profileImg } = req.body
 
       if (!username || !email || !password) {
-            return res.status(400).json({ msg: 'Please enter all fields' });
+            return res.status(400).json({ msg: 'Please enter all fields' })
       }
 
       const userExists = await User.findOne({ email })
 
       if (userExists) {
-            return res.status(400).json({ msg: 'User already exists' });
+            return res.status(400).json({ msg: 'User already exists' })
       }
 
       const newUser = await User.create({
@@ -21,6 +21,8 @@ export async function signUp (req: Request, res: Response) {
             email,
             password,
             profileImg,
+            about: User.schema.path('about').default('Available'),
+            theme: User.schema.path('theme').default('light')
       })
 
       if (newUser) {
@@ -29,6 +31,8 @@ export async function signUp (req: Request, res: Response) {
                   username: newUser.username,
                   email: newUser.email,
                   profileImg: newUser.profileImg,
+                  about: newUser.about,
+                  theme: newUser.theme,
                   token: generateToken(newUser._id)
             })
       } else {
@@ -48,6 +52,8 @@ export async function login (req: Request, res: Response) {
                   username: user.username,
                   email: user.email,
                   profileImg: user.profileImg,
+                  about: user.about,
+                  theme: user.theme,
                   token: generateToken(user._id)
             })
       } else {
@@ -64,7 +70,7 @@ export async function searchUsersByKeyword (req: AuthenticatedRequest, res: Resp
                         { email: { $regex: clearString, $options: 'i' } }
                   ]
             } : {}
-            const users = await User.find({ ...filter, _id: { $ne: req.user?._id } });
+            const users = await User.find({ ...filter, _id: { $ne: req.user?._id } })
             res.send(users)
       } catch (err) {
             throw new Error(err)
@@ -73,7 +79,7 @@ export async function searchUsersByKeyword (req: AuthenticatedRequest, res: Resp
 
 export async function getUsers (req: AuthenticatedRequest, res: Response) {
       try {
-            const users = await User.find({ _id: { $ne: req.user?._id } });
+            const users = await User.find({ _id: { $ne: req.user?._id } })
             res.send(users)
       } catch (err) {
             throw new Error(err)

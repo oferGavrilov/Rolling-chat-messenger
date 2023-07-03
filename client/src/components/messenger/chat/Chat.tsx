@@ -7,7 +7,7 @@ import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
 import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
-import { IChat, LatestMessage } from '../../../model/chat.model'
+import { IChat } from '../../../model/chat.model'
 
 const ENDPOINT = 'http://localhost:5000'
 
@@ -25,7 +25,7 @@ export default function Chat ({ setIsTyping }: Props) {
       const [socketConnected, setSocketConnected] = useState<boolean>(false)
       const [typing, setTyping] = useState<boolean>(false)
 
-      const { selectedChat,chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
+      const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
       const { user } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
       const typingTimeoutRef = useRef<number | null>(null)
@@ -63,12 +63,24 @@ export default function Chat ({ setIsTyping }: Props) {
             socket.on('message received', (newMessage: IMessage) => {
                   if (selectedChatCompare._id !== newMessage.chat._id) return
                   setMessages((prevMessages) => [...prevMessages, newMessage])
+                  updateChat(newMessage, chats)
+
                   scrollToBottom()
             })
             return () => {
                   socket.off('message received')
             }
       })
+            function updateChat (latestMessage: IMessage, chats: IChat[]) {
+            const chatIndex = chats.findIndex((chat) => chat._id === latestMessage.chat._id)
+            if (chatIndex !== -1) {
+                  const updatedChats = [...chats]
+                  updatedChats[chatIndex] = { ...updatedChats[chatIndex], latestMessage }
+                  const chat = updatedChats.splice(chatIndex, 1)[0]
+                  updatedChats.unshift(chat)
+                  setChats(updatedChats)
+            }
+      }
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
@@ -131,7 +143,7 @@ export default function Chat ({ setIsTyping }: Props) {
                         {messages && <ChatMessages messages={messages} />}
                   </div>
 
-                  <div className='py-3 flex items-center ml-5  md:px-5 gap-x-5 overflow-x-hidden'>
+                  <div className='py-3 flex items-center ml-1  md:px-5 gap-x-5 overflow-x-hidden'>
                         <div className='text-gray-500 text-2xl hover:text-gray-600 cursor-pointer'>
                               <AiOutlinePaperClip />
                         </div>

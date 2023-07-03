@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io'
 import { logger } from './logger.service'
 import { User } from '../../models/user.model'
 import { userInfo } from 'os'
+import { ChatDocument } from '../../models/chat.model'
 
 
 let gIo: Server | null = null
@@ -25,14 +26,21 @@ export function setupSocketAPI (http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
             })
 
-            // socket.on('isOnline', (userId: string) => {
-            //       socket.broadcast.emit('isOnline', userId)
+            // user is online
+            // socket.on('user online', (userId: string) => {
+            //       socket.broadcast.emit('user online', userId)
             // })
 
-            // socket.on('disconnect', (userId: string) => {
-            //       socket.leave(userId)
-            //       logger.info(`Socket [id: ${socket.id}] disconnected`)
-            // })
+            // on create group with users and return the new group chat
+            socket.on('create group', (users: User[], adminId: string, group: ChatDocument) => {
+                  users.forEach((user: User) => {
+                        if (user._id !== adminId) {
+                              socket.to(user._id).emit('new group', group);
+                        }
+                  })
+            })
+
+
 
             socket.on('join chat', (room) => {
                   socket.join(room)

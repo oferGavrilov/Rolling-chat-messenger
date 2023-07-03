@@ -7,7 +7,9 @@ import { toast } from 'react-toastify'
 import { chatService } from '../../services/chat.service'
 import useChat from '../../store/useChat'
 import UploadImage from '../UploadImage'
-import UsersInput from '../input/UsersInput'
+import UsersInput from '../common/UsersInput'
+import { io } from 'socket.io-client'
+import { AuthState } from '../../context/useAuth'
 
 interface Props {
       setIsOpen: CallableFunction
@@ -19,6 +21,7 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
       const [group, setGroup] = useState({ chatName: '', users: [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
+      const { user } = AuthState()
 
       const { chats, setChats } = useChat()
 
@@ -56,6 +59,9 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                   setChats([newChat, ...chats])
                   toast.success('Group created successfully')
                   setIsOpen(false)
+
+                  const socket = io('http://localhost:5000', { transports: ['websocket'] })
+                  socket.emit('create group', group.users, user._id, newChat)
             } catch (error) {
                   console.error("An error occurred while creating group:", error)
             }
@@ -87,7 +93,7 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                               placeholder="Group Name"
                         />
                         <div className='py-6 flex relative px-2 '>
-                              <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email"/>
+                              <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                         </div>
                         <button onClick={onCreateGroup} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>Create Chat</button>
                   </div>

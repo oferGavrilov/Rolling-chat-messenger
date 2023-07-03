@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { userService } from "../services/user.service"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { User } from "../model/user.model"
 import { IChat } from "../model/chat.model"
 
@@ -27,11 +27,14 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
       const [user, setUser] = useState(null)
 
       const navigate = useNavigate()
-
+      const location = useLocation().pathname
+      console.log(location)
       useEffect(() => {
-            const user = userService.getLoggedinUser()
-            if (user) setUser(user)
-            else navigate('/login')
+            if (location === '/chat') {
+                  const user = userService.getLoggedinUser()
+                  if (user) setUser(user)
+                  else navigate('/login')
+            }
       }, [navigate])
 
       const isAdmin = useCallback((chat: IChat, userId?: string): boolean => {

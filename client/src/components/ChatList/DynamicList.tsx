@@ -5,6 +5,7 @@ import useChat from "../../store/useChat"
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
+import Settings from "../Settings"
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
@@ -23,6 +24,8 @@ export default function DynamicList (props: Props) {
                         return <Videos />
                   case 'story':
                         return <Story />
+                  case 'settings':
+                        return <Settings />
                   case 'groups':
                         return <Messages contentType={props.contentType}  />
                   default:
@@ -47,7 +50,7 @@ export default function DynamicList (props: Props) {
 
 
       return (
-            <section className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-[364px] border-r-2 border-[#EEEEEE] `}>
+            <section className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-[364px] border-r-2 border-[#EEEEEE] slide-right`}>
 
                   <div className='flex justify-between items-center pb-4 pt-7 mx-4'>
                         <h2 className="text-2xl md:text-3xl font-sf-regular font-bold ">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>

@@ -6,7 +6,7 @@ import { IChat } from "../../model/chat.model"
 import { Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close'
 import Loading from "../Loading"
-import UsersInput from "../input/UsersInput"
+import UsersInput from "../common/UsersInput"
 
 export default function UsersToMessage ({ setIsOpen }) {
       const [filter, setFilter] = useState<string>('')

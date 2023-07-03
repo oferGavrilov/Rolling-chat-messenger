@@ -6,9 +6,10 @@ import { Avatar, Badge } from '@mui/material'
 import { styled } from '@mui/system'
 import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
+import { IMessage } from '../../../model/message.model'
 
 export default function MessagePreview ({ chat }: { chat: IChat }) {
-      const { setSelectedChat, selectedChat } = useChat()
+      const { setSelectedChat, selectedChat, notification, removeNotification } = useChat()
       const { user: loggedinUser } = AuthState()
 
       const getSender = useCallback(
@@ -17,7 +18,6 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
             },
             [loggedinUser?._id]
       )
-
 
       const StyledBadge = styled(Badge)(() => ({
             '& .MuiBadge-badge': {
@@ -54,9 +54,25 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
             return ''
       }
 
-      // console.log(chat)
+      function isNotification (): boolean {
+            const notificationChat = getCurrentNotificationChat()
+            return notificationChat && notificationChat?.sender._id !== loggedinUser?._id
+      }
+
+      function getCurrentNotificationChat (): IMessage | undefined {
+            return notification?.find((item) => item.chat._id === chat._id)
+      }
+
+      function onSelectChat (): void {
+            setSelectedChat(chat)
+            if (isNotification()) {
+                  removeNotification(getCurrentNotificationChat())
+            }
+      }
+
+      console.log('chat',chat)
       return (
-            <li onClick={() => setSelectedChat(chat)}
+            <li onClick={() => onSelectChat()}
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200
                    ${selectedChat?._id === chat._id && 'bg-gray-100'}`}>
                   <div className="flex items-center w-full">
@@ -76,7 +92,17 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                                           {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt)}
                                     </span>
                               </div>
-                              <p className="text-base  text-[#00000085]">{getLatestMessageSender()} {chat.latestMessage?.content}</p>
+                              <div className='flex justify-between'>
+                                    <p
+                                          className={`text-base 
+                                    ${isNotification() ?
+                                                      'text-blue-500'
+                                                      : 'text-[#00000085]'
+                                                }`}>
+                                          {getLatestMessageSender()} {chat.latestMessage?.content}
+                                    </p>
+                                    {isNotification() && <span className='bg-blue-400 text-white text-sm flex items-center h-[90%] w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
+                              </div>
                         </div>
                   </div>
             </li>

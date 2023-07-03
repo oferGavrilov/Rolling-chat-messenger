@@ -32,7 +32,7 @@ export default function MessagesInput ({ filter, setFilter }: Props) {
                         Sort by
                         <div className='text-[#2D9CDB] px-2 flex items-center cursor-pointer hover:underline'>
                               Newest
-                              <MdKeyboardArrowDown size={20} className="mt-1" />
+                              <MdKeyboardArrowDown size={20} />
                         </div>
                   </div>
             </div>
