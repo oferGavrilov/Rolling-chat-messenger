@@ -1,24 +1,82 @@
 .fade-down {
       animation-name: fade-down;
-      animation-duration: .7s;
+      animation-duration: .5s;
 }
 
 @keyframes fade-down {
       0% {
             opacity: 0;
-            transform: translateY(-80px);
+            transform: translateY(-80vh);
       }
 
-      80% {
+      70% {
             opacity: 1;
             transform: translateY(10px);
       }
 
       100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(-10px);
       }
 }
+
+.logo-fade-down {
+      animation-name: logo-fade-down;
+      animation-duration: 3s;
+      animation-fill-mode: forwards;
+}
+
+@keyframes logo-fade-down {
+      0% {
+            opacity: 0;
+            transform: translateY(-80vh);
+      }
+
+      80% {
+            opacity: 1;
+            transform: translateY(30vh);
+      }
+
+      100% {
+            opacity: .5;
+            transform: translateY(120vh);
+      }
+}
+
+.home-btn-animation {
+      animation-name: home-btn-animation;
+      animation-duration: 1s;
+      animation-fill-mode: forwards;
+}
+
+@keyframes home-btn-animation {
+      from {
+            top: 130px
+      }
+
+      to {
+            top: 94px;
+      }
+}
+
+@media (min-width: 768px) {
+      .home-btn-animation {
+            left: unset;
+            transform: unset;
+      }
+
+      @keyframes home-btn-animation {
+            from {
+                  right: 40px;
+            }
+
+            to {
+                  right: -47px;
+            }
+      }
+
+}
+
 
 .spinner {
       display: inline-block;

@@ -51,7 +51,7 @@ export default function UsersToMessage ({ setIsOpen }) {
  
       return (
             <Typography variant="h6" component='div' className="relative">
-                  <div className='flex justify-between items-center py-4 px-4 shadow-sm shadow-secondary'>
+                  <div className='flex justify-between items-center py-4 px-4 shadow-lg shadow-quinary'>
                         <h2 className="">Search Users</h2>
                         <CloseIcon className='cursor-pointer' fontSize="medium" onClick={() => {
                               setFilter('')

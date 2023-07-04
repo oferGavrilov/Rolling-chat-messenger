@@ -32,6 +32,8 @@ export const userService = {
 }
 
 async function getUsers ():Promise<User[] | []> {
+
+      console.log(authConfig)
       try {
             const { data } = await axios.get('/api/auth', authConfig)
             return data

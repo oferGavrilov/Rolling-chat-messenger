@@ -14,7 +14,7 @@ import { AuthState } from "../../../context/useAuth"
 
 export default function GroupInfo () {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
-      const { isAdmin } = AuthState()
+      const { isAdmin, user: loggedInUser } = AuthState()
 
       const [image, setImage] = useState<string>(selectedChat.groupImage)
       const [isEditName, setIsEditName] = useState<boolean>(false)
@@ -114,10 +114,10 @@ export default function GroupInfo () {
                                                       <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
                                                       <span className="text-lg">{user.username}</span>
                                                 </div>
-                                                {isAdmin(selectedChat, user._id) ? (
-                                                      <span className="bg-slate-300 text-white px-2 py-[1px] rounded-md text-sm">Admin</span>) : (
-                                                      <div className="flex justify-end text-red-500 hover:bg-red-100 px-1 rounded-md" onClick={() => onRemoveFromGroup(user._id)}>Remove</div>
+                                                {isAdmin(selectedChat, user._id) && (
+                                                      <span className="bg-slate-300 text-white px-2 py-[1px] rounded-md text-sm">Admin</span>
                                                 )}
+                                                {(isAdmin(selectedChat, loggedInUser._id) && user._id !== loggedInUser._id) && <div className="flex justify-end text-red-500 hover:bg-red-100 px-1 rounded-md" onClick={() => onRemoveFromGroup(user._id)}>Remove</div>}
                                           </div>
                                     </div>
                               ))}

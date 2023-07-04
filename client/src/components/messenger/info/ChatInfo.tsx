@@ -26,7 +26,7 @@ export default function ChatInfo ({ conversationUser }: Props) {
                               <span className="text-gray-500">{conversationUser.email}</span>
                         </div>
 
-                        <div className="[&>*]:border-y-[6px] flex flex-col justify-between h-full gap-y-6 w-full [&>*]:border-gray-200 [&>*]:px-6">
+                        <div className="[&>*]:border-y-[6px] flex flex-col  h-full gap-y-6 w-full [&>*]:border-gray-200 [&>*]:px-6">
                               <div className="mt-5">
                                     <div className="flex flex-col pt-2">
                                           <h2 className="text-lg">About</h2>
