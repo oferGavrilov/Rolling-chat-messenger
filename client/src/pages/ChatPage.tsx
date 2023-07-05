@@ -1,4 +1,4 @@
-import SideMenu from '../components/Navigation'
+import Navigation from '../components/Navigation'
 import SearchUsers from '../components/SideModal'
 import { useState } from 'react'
 import DynamicList from '../components/ChatList/DynamicList'
@@ -9,15 +9,16 @@ import { AuthState } from '../context/useAuth'
 export default function ChatPage (): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<string>('messages')
+      const [showNavigation, setShowNavigation] = useState<boolean>(true)
       const { selectedChat } = useChat()
-      const {user} = AuthState()
+      const { user } = AuthState()
 
       if (!user) return <div></div>
       return (
             <div>
-                  <div className='flex h-screen slide-right overflow-y-hidden'>
-                        <SideMenu contentType={contentType} setContentType={setContentType} />
-                        <DynamicList contentType={contentType} setShowSearch={setShowSearch} />
+                  <div className='flex  h-screen slide-right overflow-y-hidden'>
+                        <Navigation contentType={contentType} setContentType={setContentType} showNavigation={showNavigation} setShowNavigation={setShowNavigation}/>
+                        <DynamicList contentType={contentType} setContentType={setContentType} setShowSearch={setShowSearch} showNavigation={showNavigation} setShowNavigation={setShowNavigation} />
                         {selectedChat && <Messenger setShowSearch={setShowSearch} />}
                   </div>
                   <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />

@@ -30,8 +30,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
 
 
       function getConversationUserConnection (): string {
-            console.log(conversationUser)
-            return conversationUser?.isOnline ? 'Online' : ''
+            return selectedChat.isOnline ? 'Online' : `Last seen ${selectedChat.lastSeen}`
       }
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>

@@ -2,7 +2,6 @@ import { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import { logger } from './logger.service'
 import { User } from '../../models/user.model'
-import { userInfo } from 'os'
 import { ChatDocument } from '../../models/chat.model'
 
 
@@ -22,16 +21,20 @@ export function setupSocketAPI (http: HttpServer) {
 
             socket.on('setup', (userId: string) => {
                   socket.join(userId)
-                  socket.emit('connected')
+                  socket.broadcast.emit('connected', userId)
                   logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
             })
 
-            // user is online
-            // socket.on('user online', (userId: string) => {
-            //       socket.broadcast.emit('user online', userId)
-            // })
+            socket.on('disconnected', () => {
+                  const userId = getUserBySocketId(socket.id)
+                  if (userId) {
+                        console.log('User disconnected:', userId)
+                        socket.broadcast.emit('disconnected', userId) 
 
-            // on create group with users and return the new group chat
+                        socket.to(userId).emit('chatStatusUpdate', { userId, isOnline: false, lastSeen: new Date().toISOString() })
+                  }
+            })
+
             socket.on('create group', (users: User[], adminId: string, group: ChatDocument) => {
                   users.forEach((user: User) => {
                         if (user._id !== adminId) {
@@ -39,8 +42,6 @@ export function setupSocketAPI (http: HttpServer) {
                         }
                   })
             })
-
-
 
             socket.on('join chat', (room) => {
                   socket.join(room)
@@ -67,4 +68,14 @@ export function setupSocketAPI (http: HttpServer) {
                   socket.leave(socket.id)
             })
       })
+}
+
+
+function getUserBySocketId (socketId: string) {
+      const room = gIo.sockets.adapter.rooms.get(socketId)
+      if (room) {
+            const [userId] = Array.from(room)
+            return userId
+      }
+      return null
 }

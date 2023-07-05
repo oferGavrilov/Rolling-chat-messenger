@@ -35,7 +35,7 @@ async function getUsers (): Promise<User[]> {
       }
 }
 
-async function createChat (userId: string): Promise<IChat | null> {
+async function createChat (userId: string): Promise<IChat> {
       const config = getConfig()
       try {
             const response: AxiosResponse<IChat> = await axios.post('/api/chat', { userId }, config)

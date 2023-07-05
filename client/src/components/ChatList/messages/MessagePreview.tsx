@@ -70,7 +70,7 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
             }
       }
 
-      console.log('chat',chat)
+      // console.log('chat',chat)
       return (
             <li onClick={() => onSelectChat()}
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200

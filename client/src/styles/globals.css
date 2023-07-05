@@ -69,7 +69,7 @@
       }
       /* SIDE MENU */
       .side-icon {
-            @apply flex justify-center h-12 text-primary my-1 mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
+            @apply flex justify-center h-11 md:h-12 text-primary my-1 mx-3 md:mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
       }
       .active-side-icon {
             @apply bg-primary text-white  hover:bg-[#2286c9];

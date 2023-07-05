@@ -6,17 +6,74 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import Logo from "../assets/icons/Logo"
 import Story from "../assets/icons/Story"
 import { Avatar, Tooltip } from "@mui/material"
+import { useEffect } from "react"
 
 interface Props {
       contentType: string
       setContentType: React.Dispatch<React.SetStateAction<string>>
+      showNavigation: boolean
+      setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function SideMenu ({ contentType, setContentType }: Props) {
+export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props) {
+
+      useEffect(() => {
+            const handleResize = () => {
+                  if (window.innerWidth > 768) {
+                        setShowNavigation(true)
+                  } else {
+                        setShowNavigation(false)
+                  }
+            }
+
+            window.addEventListener('resize', handleResize)
+
+            handleResize()
+
+            return () => window.removeEventListener('resize', handleResize)
+      }, [])
+
+      // useEffect(() => {
+      //       socket.on('connected', (userId: string) => {
+      //             console.log('userId connected', userId)
+      //             updateChatStatus(userId, true)
+      //       })
+
+      //       socket.on('disconnected', (userId: string) => {
+      //             console.log('userId disconnected', userId)
+      //             updateChatStatus(userId, false)
+      //       })
+
+      //       socket.on('chatStatusUpdate', ({ userId, isOnline, lastSeen }) => {
+      //             console.log('chatStatusUpdate', userId, isOnline, lastSeen)
+      //             updateChatStatus(userId, isOnline, lastSeen)
+      //       })
+
+      //       return () => {
+      //             socket.off('connected')
+      //             socket.off('disconnected')
+      //             socket.off('chatStatusUpdate')
+      //       }
+      // }, [user._id])
+      
+      // const updateChatStatus = (userId: string, isOnline: boolean, lastSeen?: string) => {
+      //       const newChats = chats.map(chat => {
+      //             if (chat.users.some(user => user._id === userId)) {
+      //                   return {
+      //                         ...chat,
+      //                         isOnline,
+      //                         lastSeen
+      //                   };
+      //             }
+      //             return chat;
+      //       })
+      //       setChats(newChats);
+      // };
+
       const { user, logout } = AuthState()
 
       return (
-            <section className="hidden w-[70px] md:flex flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10">
+            <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10`}>
                   <div className='flex flex-col border-b border-gray-300 items-center py-7 gap-y-5 mx-3'>
                         <Logo />
                         <Tooltip title="Profile" arrow>

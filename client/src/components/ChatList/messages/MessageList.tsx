@@ -4,20 +4,19 @@ import useChat from "../../../store/useChat"
 
 import MessagePreview from "./MessagePreview"
 import { Socket, io } from 'socket.io-client'
-import { userService } from '../../../services/user.service'
 import { IMessage } from '../../../model/message.model'
+import { AuthState } from "../../../context/useAuth"
 
 const ENDPOINT = 'http://localhost:5000'
 let socket: Socket
 
 export default function MessageList ({ chats }: { chats: IChat[] }) {
       const { notification, setNotification, selectedChat, setChats } = useChat()
+      const { user } = AuthState()
 
       useEffect(() => {
-            const user = userService.getLoggedinUser()
             socket = io(ENDPOINT, { transports: ['websocket'] })
             socket.emit('setup', user._id)
-            console.log('is connected!')
 
             socket.on('new group', handleNewGroup)
       }, [])
@@ -54,7 +53,7 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
       }
 
       return (
-            <ul className="overflow-y-auto h-screen pb-48">
+            <ul className="overflow-y-auto h-screen pb-48 px-1">
                   {chats.map(chat => (
                         <MessagePreview key={chat._id} chat={chat} />
                   ))}
