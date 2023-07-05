@@ -7,6 +7,7 @@ import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
 import Settings from "../Settings"
 import MenuIcon from '@mui/icons-material/Menu';
+import Profile from "../Profile"
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
@@ -30,6 +31,8 @@ export default function DynamicList (props: Props) {
                         return <Story />
                   case 'settings':
                         return <Settings setContentType={props.setContentType} />
+                  case 'profile':
+                        return <Profile />
                   case 'groups':
                         return <Messages contentType={props.contentType} />
                   default:

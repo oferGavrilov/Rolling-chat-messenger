@@ -83,3 +83,17 @@ export async function getAllUsers (userId: string): Promise<User[]> {
       const users = await User.find({ _id: { $ne: userId } })
       return users
 }
+
+export async function editUserDetailsService (userId: string, newName: string): Promise<User | null> {
+      const user = await User.findById(userId)
+
+      console.log('user:', user)
+      if (user) {
+            user.username = newName
+            await user.save()
+            delete user.password
+            return user
+      }
+
+      return null
+}

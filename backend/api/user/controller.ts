@@ -1,7 +1,7 @@
 import { generateToken } from "../../config/generateToken"
 import { Response } from "express"
 import { AuthenticatedRequest } from "../../models/types"
-import { getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
+import { editUserDetailsService, getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
 
 export async function signUp (req: AuthenticatedRequest, res: Response) {
       const { username, email, password, profileImg } = req.body
@@ -68,6 +68,25 @@ export async function getUsers (req: AuthenticatedRequest, res: Response) {
             res.send(users)
       } catch (error) {
             console.error('Error retrieving users:', error)
+            return res.status(500).json({ msg: 'Internal server error' })
+      }
+}
+
+export async function editUserDetails (req: AuthenticatedRequest, res: Response) {
+      const { newName } = req.body
+      const userId = req.user?._id
+
+      try {
+            const newNameToSave = newName?.replace(/[\/>]/g, '').trim()
+            const user = await editUserDetailsService(userId, newNameToSave)
+
+            if (user) {
+                  res.send(user)
+            } else {
+                  res.status(404).json({ msg: 'User not found' })
+            }
+      } catch (error) {
+            console.error('Error during user name change:', error)
             return res.status(500).json({ msg: 'Internal server error' })
       }
 }

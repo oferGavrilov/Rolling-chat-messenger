@@ -77,7 +77,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
                   <div className='flex flex-col border-b border-gray-300 items-center py-7 gap-y-5 mx-3'>
                         <Logo />
                         <Tooltip title="Profile" arrow>
-                              <Avatar src={user?.profileImg} sx={{ width: 45, height: 45 }} className="hover:scale-110 transition-all duration-300 cursor-pointer" />
+                              <Avatar src={user?.profileImg} sx={{ width: 45, height: 45 }} className="hover:scale-110 transition-all duration-300 cursor-pointer" onClick={() => setContentType('profile')} />
                         </Tooltip>
                   </div>
                   <div className="flex flex-col justify-between h-full">

@@ -11,7 +11,8 @@ export const userService = {
       getLoggedinUser,
       logout,
       getUsers,
-      createChat
+      createChat,
+      editUserDetails
 }
 
 export function getLoggedinUser () {
@@ -54,9 +55,29 @@ async function loginSignUp (credentials: FormData, login: boolean): Promise<User
       try {
             const response: AxiosResponse<User> = await axios.post(url, credentials, config)
             const { data } = response
-
             if (data) {
                   _saveToSessionStorage(data)
+            }
+
+            return data
+      } catch (error) {
+            handleAxiosError(error)
+            throw error
+      }
+}
+
+async function editUserDetails (newName: string, key: string): Promise<User> {
+      const config = getAuthConfig()
+
+      try {
+            const response: AxiosResponse<User> = await axios.put('/api/auth/details', { newName }, config)
+            const { data } = response
+
+            const user = getLoggedinUser()
+            const userWithNewName = { ...user, [key]: newName }
+
+            if (data) {
+                  _saveToSessionStorage(userWithNewName)
             }
 
             return data
