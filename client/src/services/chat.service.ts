@@ -1,6 +1,10 @@
-import axios from "axios"
-import { IGroup } from "../model/chat.model"
+import axios, { AxiosResponse } from "axios"
+import { IChat, IGroup } from "../model/chat.model"
 import { userService } from "./user.service"
+import { getAuthConfig, getConfig } from '../utils/authConfig'
+import { IMessage } from "../model/message.model"
+
+import { handleAxiosError } from "../utils/handleErrors"
 
 export const chatService = {
       getChats,
@@ -12,109 +16,88 @@ export const chatService = {
       getMessages,
       sendMessage
 }
-const authConfig = {
-      headers: {
-            Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
-      }
-}
 
-async function getChats () {
+
+async function getChats (): Promise<IChat[]> {
       try {
-            const { data } = await axios.get('/api/chat', authConfig)
+            const { data }: AxiosResponse<IChat[]> = await axios.get('/api/chat', getAuthConfig())
             return data
-      } catch (err) {
-            console.log(err)
+      } catch (error) {
+            handleAxiosError(error)
             return []
       }
 }
 
-async function getUserChats (userId: string) {
-      const auth = {
-            headers: {
-                  Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
-            }
-      }
+async function getUserChats (userId: string): Promise<IChat[]> {
       try {
-            const { data } = await axios.get(`/api/chat/chat/${userId}`, auth)
-            const sortedData = data.sort((a: any, b: any) => {
+            const { data }: AxiosResponse<IChat[]> = await axios.get(`/api/chat/chat/${userId}`, getAuthConfig())
+            const sortedData = data.sort((a: IChat, b: IChat) => {
                   return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
             })
 
             return sortedData
-      } catch (err) {
-            console.log(err)
-            return []
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to fetch user chats.')
       }
 }
 
-async function createGroup (group: IGroup) {
+async function createGroup (group: IGroup): Promise<IGroup> {
       try {
-            const { data } = await axios.post('/api/chat/group', group, authConfig)
+            const { data }: AxiosResponse<IGroup> = await axios.post('/api/chat/group', group, getAuthConfig())
             return data
-      } catch (err) {
-            console.log(err)
-            return []
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to create group.')
       }
 }
 
-async function updateGroupImage (chatId: string, groupImage: string) {
+async function updateGroupImage (chatId: string, groupImage: string): Promise<IGroup> {
       try {
-            const { data } = await axios.put('/api/chat/groupimage', { chatId, groupImage }, authConfig)
+            const { data }: AxiosResponse<IGroup> = await axios.put('/api/chat/groupimage', { chatId, groupImage }, getAuthConfig())
             return data
-      } catch (err) {
-            console.log(err)
-            return []
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to update group image.')
       }
 }
-
-async function updateGroupName (chatId: string, groupName: string) {
+async function updateGroupName (chatId: string, groupName: string): Promise<string> {
       try {
-            const { data } = await axios.put('/api/chat/rename', { chatId, groupName }, authConfig)
+            const { data }: AxiosResponse<string> = await axios.put('/api/chat/rename', { chatId, groupName }, getAuthConfig())
             return data
-      } catch (err) {
-            console.log(err)
-            return []
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to update group name.')
       }
 }
 
-async function removeFromGroup (chatId: string, userId?: string) {
+async function removeFromGroup (chatId: string, userId?: string): Promise<IGroup> {
       userId = userId || userService.getLoggedinUser()?._id
       try {
-            const { data } = await axios.put('/api/chat/groupremove', { chatId, userId }, authConfig)
+            const { data }: AxiosResponse<IGroup> = await axios.put('/api/chat/groupremove', { chatId, userId }, getAuthConfig())
             return data
-      } catch (err) {
-            console.log(err)
-            return []
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to remove user from group.')
       }
 }
 
-async function getMessages (chatId: string) {
-      const auth = {
-            headers: {
-                  Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
-            }
-      }
+async function getMessages (chatId: string): Promise<IMessage[]> {
       try {
-            const { data } = await axios.get(`/api/message/${chatId}`, auth)
+            const { data }: AxiosResponse<IMessage[]> = await axios.get(`/api/message/${chatId}`, getAuthConfig())
             return data
-      } catch (err) {
-            console.log(err)
-            return []
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to fetch messages.')
       }
 }
 
-async function sendMessage (message: { content: string, chatId: string }) {
-      const config = {
-            headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${userService.getLoggedinUser()?.token}`
-            }
-      }
+async function sendMessage (message: { content: string, chatId: string }): Promise<IMessage> {
       try {
-            const { data } = await axios.post('/api/message', message, config)
-            console.log('from chat service', data)
+            const { data }: AxiosResponse<IMessage> = await axios.post('/api/message', message, getConfig())
             return data
-      } catch (err) {
-            console.log(err)
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to send message.')
       }
 }

@@ -1,27 +1,10 @@
+import { IChat } from "../model/chat.model"
 import { FormData, User } from "../model/user.model"
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
+import { getAuthConfig, getConfig } from '../utils/authConfig'
+import { handleAxiosError } from '../utils/handleErrors'
 
 const STORAGE_KEY = 'loggedin-user'
-
-export function getLoggedinUser () {
-      const storedItem = sessionStorage.getItem(STORAGE_KEY)
-      if (storedItem) {
-            return JSON.parse(storedItem)
-      }
-      return null
-}
-
-const authConfig = {
-      headers: {
-            Authorization: `Bearer ${getLoggedinUser()?.token}`
-      }
-}
-const config = {
-      headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getLoggedinUser()?.token}`
-      }
-}
 
 export const userService = {
       loginSignUp,
@@ -31,40 +14,63 @@ export const userService = {
       createChat
 }
 
-async function getUsers ():Promise<User[] | []> {
+export function getLoggedinUser () {
+      const storedItem = sessionStorage.getItem(STORAGE_KEY)
+      if (storedItem) {
+            return JSON.parse(storedItem)
+      }
+      return null
+}
 
-      console.log(authConfig)
+async function getUsers (): Promise<User[]> {
+      const authConfig = getAuthConfig()
+
       try {
-            const { data } = await axios.get('/api/auth', authConfig)
+            const response: AxiosResponse<User[]> = await axios.get('/api/auth/all', authConfig)
+            const { data } = response
             return data
       } catch (err) {
-            console.log(err)
-            return []
+            handleAxiosError(err)
+            throw err
       }
 }
 
-async function createChat (userId: string) {
+async function createChat (userId: string): Promise<IChat | null> {
+      const config = getConfig()
       try {
-            const { data } = await axios.post('/api/chat', { userId }, config)
+            const response: AxiosResponse<IChat> = await axios.post('/api/chat', { userId }, config)
+            const { data } = response
             return data
       } catch (err) {
-            console.log(err)
-            return null
+            handleAxiosError(err)
+            throw err
       }
 }
 
-async function loginSignUp (credentials: FormData, login: boolean) {
+async function loginSignUp (credentials: FormData, login: boolean): Promise<User> {
       const url = login ? '/api/auth/login' : '/api/auth/signup'
-      const { data } = await axios.post(url, credentials, config)
-      if (data) _saveToSessionStorage(data)
-      return data
+      const config = getConfig()
+
+      try {
+            const response: AxiosResponse<User> = await axios.post(url, credentials, config)
+            const { data } = response
+
+            if (data) {
+                  _saveToSessionStorage(data)
+            }
+
+            return data
+      } catch (error) {
+            handleAxiosError(error)
+            throw error
+      }
 }
 
-function logout () {
+function logout (): void {
       sessionStorage.removeItem(STORAGE_KEY)
 }
 
-function _saveToSessionStorage (user: FormData) {
+function _saveToSessionStorage (user: FormData): FormData {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(user))
       return user
 }

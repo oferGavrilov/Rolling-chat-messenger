@@ -1,52 +1,37 @@
-import { User } from "../../models/user.model"
 import { generateToken } from "../../config/generateToken"
-import { Request, Response } from "express"
+import { Response } from "express"
 import { AuthenticatedRequest } from "../../models/types"
+import { getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
 
-export async function signUp (req: Request, res: Response) {
+export async function signUp (req: AuthenticatedRequest, res: Response) {
       const { username, email, password, profileImg } = req.body
 
-      if (!username || !email || !password) {
-            return res.status(400).json({ msg: 'Please enter all fields' })
+      try {
+            const result = await signUpUser(username, email, password, profileImg)
+
+            if (result.error) {
+                  return res.status(400).json({ msg: result.error })
+            }
+
+            return res.status(201).json(result.user)
+      } catch (error) {
+            console.error('Error during sign up:', error)
+            return res.status(500).json({ msg: 'Internal server error' })
       }
-
-      const userExists = await User.findOne({ email })
-
-      if (userExists) {
-            return res.status(400).json({ msg: 'User already exists' })
-      }
-
-      const newUser = await User.create({
-            username,
-            email,
-            password,
-            profileImg,
-            about: User.schema.path('about').default('Available'),
-            theme: User.schema.path('theme').default('light')
-      })
-
-      if (newUser) {
-            res.status(201).json({
-                  _id: newUser._id,
-                  username: newUser.username,
-                  email: newUser.email,
-                  profileImg: newUser.profileImg,
-                  about: newUser.about,
-                  theme: newUser.theme,
-                  token: generateToken(newUser._id)
-            })
-      } else {
-            res.status(400).json({ msg: 'Invalid user data' })
-      }
-
 }
 
-export async function login (req: Request, res: Response) {
+export async function login (req: AuthenticatedRequest, res: Response) {
       const { email, password } = req.body
 
-      const user = await User.findOne({ email })
+      try {
+            const result = await loginUser(email, password)
 
-      if (user && (await user.matchPassword(password))) {
+            if (result.error) {
+                  return res.status(401).json({ msg: result.error })
+            }
+
+            const { user } = result
+
             res.json({
                   _id: user._id,
                   username: user.username,
@@ -54,34 +39,35 @@ export async function login (req: Request, res: Response) {
                   profileImg: user.profileImg,
                   about: user.about,
                   theme: user.theme,
-                  token: generateToken(user._id)
+                  token: generateToken(user._id),
             })
-      } else {
-            res.status(401).json({ msg: 'Invalid email or password' })
+      } catch (error) {
+            console.error('Error during login:', error)
+            return res.status(500).json({ msg: 'Internal server error' })
       }
 }
 
 export async function searchUsersByKeyword (req: AuthenticatedRequest, res: Response) {
-      const clearString = req.query.search?.toString().replace(/[\/>]/g, '')
+      const { search } = req.query
+      const keyword = search?.toString()
+
       try {
-            const filter = clearString ? {
-                  $or: [
-                        { username: { $regex: clearString, $options: 'i' } },
-                        { email: { $regex: clearString, $options: 'i' } }
-                  ]
-            } : {}
-            const users = await User.find({ ...filter, _id: { $ne: req.user?._id } })
+            const users = await searchUsers(keyword)
             res.send(users)
-      } catch (err) {
-            throw new Error(err)
+      } catch (error) {
+            console.error('Error during user search:', error)
+            return res.status(500).json({ msg: 'Internal server error' })
       }
 }
 
 export async function getUsers (req: AuthenticatedRequest, res: Response) {
+      const userId = req.user?._id
+
       try {
-            const users = await User.find({ _id: { $ne: req.user?._id } })
+            const users = await getAllUsers(userId)
             res.send(users)
-      } catch (err) {
-            throw new Error(err)
+      } catch (error) {
+            console.error('Error retrieving users:', error)
+            return res.status(500).json({ msg: 'Internal server error' })
       }
 }
