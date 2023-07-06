@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom"
-import { Bubble, WavesWhite, WavesBlue } from "../assets/icons/Bubble"
+import { WavesWhite, WavesBlue } from "../assets/icons/Bubble"
 export default function Home (): JSX.Element {
 
       return (

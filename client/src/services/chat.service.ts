@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from "axios"
-import { IChat, IGroup } from "../model/chat.model"
+import { IChat } from "../model/chat.model"
 import { userService } from "./user.service"
 import { getAuthConfig, getConfig } from '../utils/authConfig'
 import { IMessage } from "../model/message.model"
 
 import { handleAxiosError } from "../utils/handleErrors"
+import { User } from "../model/user.model"
 
 export const chatService = {
       getChats,
@@ -29,6 +30,7 @@ async function getChats (): Promise<IChat[]> {
 }
 
 async function getUserChats (userId: string): Promise<IChat[]> {
+      console.log('getUserChats', userId)
       try {
             const { data }: AxiosResponse<IChat[]> = await axios.get(`/api/chat/chat/${userId}`, getAuthConfig())
             const sortedData = data.sort((a: IChat, b: IChat) => {
@@ -42,9 +44,9 @@ async function getUserChats (userId: string): Promise<IChat[]> {
       }
 }
 
-async function createGroup (group: IGroup): Promise<IGroup> {
+async function createGroup (group: { chatName: string, users: User[], groupImage: string }): Promise<IChat> {
       try {
-            const { data }: AxiosResponse<IGroup> = await axios.post('/api/chat/group', group, getAuthConfig())
+            const { data }: AxiosResponse<IChat> = await axios.post('/api/chat/group', group, getAuthConfig())
             return data
       } catch (error) {
             handleAxiosError(error)
@@ -52,9 +54,9 @@ async function createGroup (group: IGroup): Promise<IGroup> {
       }
 }
 
-async function updateGroupImage (chatId: string, groupImage: string): Promise<IGroup> {
+async function updateGroupImage (chatId: string, groupImage: string): Promise<string> {
       try {
-            const { data }: AxiosResponse<IGroup> = await axios.put('/api/chat/groupimage', { chatId, groupImage }, getAuthConfig())
+            const { data }: AxiosResponse<string> = await axios.put('/api/chat/groupimage', { chatId, groupImage }, getAuthConfig())
             return data
       } catch (error) {
             handleAxiosError(error)
@@ -71,10 +73,10 @@ async function updateGroupName (chatId: string, groupName: string): Promise<stri
       }
 }
 
-async function removeFromGroup (chatId: string, userId?: string): Promise<IGroup> {
+async function removeFromGroup (chatId: string, userId?: string): Promise<IChat> {
       userId = userId || userService.getLoggedinUser()?._id
       try {
-            const { data }: AxiosResponse<IGroup> = await axios.put('/api/chat/groupremove', { chatId, userId }, getAuthConfig())
+            const { data }: AxiosResponse<IChat> = await axios.put('/api/chat/groupremove', { chatId, userId }, getAuthConfig())
             return data
       } catch (error) {
             handleAxiosError(error)

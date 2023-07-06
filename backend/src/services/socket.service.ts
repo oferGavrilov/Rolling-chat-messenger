@@ -1,8 +1,8 @@
-import { Server as HttpServer } from 'http'
+import type { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import { logger } from './logger.service'
-import { User } from '../../models/user.model'
-import { ChatDocument } from '../../models/chat.model'
+import type { User } from '../../models/user.model'
+import type { ChatDocument } from '../../models/chat.model'
 
 
 let gIo: Server | null = null
@@ -29,7 +29,7 @@ export function setupSocketAPI (http: HttpServer) {
                   const userId = getUserBySocketId(socket.id)
                   if (userId) {
                         console.log('User disconnected:', userId)
-                        socket.broadcast.emit('disconnected', userId) 
+                        socket.broadcast.emit('disconnected', userId)
 
                         socket.to(userId).emit('chatStatusUpdate', { userId, isOnline: false, lastSeen: new Date().toISOString() })
                   }
@@ -72,10 +72,12 @@ export function setupSocketAPI (http: HttpServer) {
 
 
 function getUserBySocketId (socketId: string) {
-      const room = gIo.sockets.adapter.rooms.get(socketId)
-      if (room) {
-            const [userId] = Array.from(room)
-            return userId
+      if (gIo && gIo.sockets) {
+            const room = gIo.sockets.adapter.rooms.get(socketId);
+            if (room) {
+                  const [userId] = Array.from(room);
+                  return userId;
+            }
       }
-      return null
+      return null;
 }

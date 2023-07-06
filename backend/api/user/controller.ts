@@ -1,7 +1,8 @@
 import { generateToken } from "../../config/generateToken"
-import { Response } from "express"
-import { AuthenticatedRequest } from "../../models/types"
+import type { Response } from "express"
+import type { AuthenticatedRequest } from "../../models/types"
 import { editUserDetailsService, getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
+import { handleErrorService } from "../../middleware/errorMiddleware"
 
 export async function signUp (req: AuthenticatedRequest, res: Response) {
       const { username, email, password, profileImg } = req.body
@@ -21,42 +22,44 @@ export async function signUp (req: AuthenticatedRequest, res: Response) {
 }
 
 export async function login (req: AuthenticatedRequest, res: Response) {
-      const { email, password } = req.body
+      const { email, password } = req.body;
 
       try {
-            const result = await loginUser(email, password)
+            const result = await loginUser(email, password);
 
             if (result.error) {
-                  return res.status(401).json({ msg: result.error })
+                  return res.status(401).json({ msg: result.error });
             }
 
-            const { user } = result
+            const { user } = result;
 
-            res.json({
-                  _id: user._id,
-                  username: user.username,
-                  email: user.email,
-                  profileImg: user.profileImg,
-                  about: user.about,
-                  theme: user.theme,
-                  token: generateToken(user._id),
-            })
-      } catch (error) {
-            console.error('Error during login:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
+            if (user) {
+                  res.json({
+                        _id: user._id,
+                        username: user.username,
+                        email: user.email,
+                        profileImg: user.profileImg,
+                        about: user.about,
+                        theme: user.theme,
+                        token: generateToken(user._id),
+                  });
+            } else {
+                  throw new Error('User not found');
+            }
+      } catch (error: any) {
+            throw handleErrorService(error);
       }
 }
 
 export async function searchUsersByKeyword (req: AuthenticatedRequest, res: Response) {
       const { search } = req.query
-      const keyword = search?.toString()
+      const keyword = search?.toString() || ''
 
       try {
             const users = await searchUsers(keyword)
             res.send(users)
-      } catch (error) {
-            console.error('Error during user search:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
+      } catch (error: any) {
+            throw handleErrorService(error);
       }
 }
 
@@ -66,9 +69,8 @@ export async function getUsers (req: AuthenticatedRequest, res: Response) {
       try {
             const users = await getAllUsers(userId)
             res.send(users)
-      } catch (error) {
-            console.error('Error retrieving users:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
+      } catch (error: any) {
+            throw handleErrorService(error);
       }
 }
 
@@ -85,8 +87,7 @@ export async function editUserDetails (req: AuthenticatedRequest, res: Response)
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }
-      } catch (error) {
-            console.error('Error during user name change:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
+      } catch (error: any) {
+            throw handleErrorService(error);
       }
 }

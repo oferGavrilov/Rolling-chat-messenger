@@ -11,6 +11,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import CloseIcon from '@mui/icons-material/Close'
 import useChat from "../../../store/useChat"
 import { AuthState } from "../../../context/useAuth"
+import { IChat } from "../../../model/chat.model"
 
 export default function GroupInfo () {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
@@ -23,7 +24,7 @@ export default function GroupInfo () {
 
       async function editImage (image: string) {
             const newImage = await chatService.updateGroupImage(selectedChat._id, image)
-            const updatedChat = { ...selectedChat, groupImage: newImage }
+            const updatedChat = { ...selectedChat, groupImage: newImage } as IChat
             setSelectedChat(updatedChat)
             const updatedChats = chats.map(chat => chat._id === selectedChat._id ? updatedChat : chat)
             setChats(updatedChats)

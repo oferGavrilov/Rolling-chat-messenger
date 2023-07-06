@@ -17,7 +17,7 @@ const userModel: Schema<User> = new Schema<User>(
   {
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
     about: { type: String, default: "Available" },
     theme: { type: String, default: "light" },

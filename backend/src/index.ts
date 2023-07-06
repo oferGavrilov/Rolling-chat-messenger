@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { type Request, type Response } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import path from 'path'
@@ -29,7 +29,7 @@ app.use(cookieParser())
 
 
 if (process.env.NODE_ENV === 'production') {
-      app.use(express.static(path.resolve(__dirname, 'public')))
+      app.use(express.static(path.resolve(__dirname, '../build')))
 } else {
       const corsOptions = {
             origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
@@ -46,10 +46,11 @@ setupSocketAPI(server)
 app.use(notFound)
 app.use(errorHandler)
 
-app.get('/**', (req: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'))
+app.get('/**', (_: Request, res: Response) => {
+      res.sendFile(path.join(__dirname, '../build', 'index.html'))
 })
 
+console.log(process.env.NODE_ENV)
 const port = process.env.PORT || 5000
 
 server.listen(port, () => logger.info(`Server running on port ${port}!`))
