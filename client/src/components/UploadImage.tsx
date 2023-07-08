@@ -16,7 +16,7 @@ export default function UploadImage ({ image, setImage, editImage }: Props) {
             try {
                   setImageLoading(true)
                   const data = await uploadImg(file)
-                  setImage(data.url)
+                  setImage(data?.url || image)
                   if (editImage) editImage(data.url)
             } catch (err) {
                   console.log(err)

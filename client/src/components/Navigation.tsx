@@ -1,10 +1,10 @@
-import { AuthState } from "../context/useAuth"
 import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import Logo from "../assets/icons/Logo"
 import Story from "../assets/icons/Story"
+import { AuthState } from "../context/useAuth"
 import { Avatar, Tooltip } from "@mui/material"
 import { useEffect } from "react"
 
@@ -16,6 +16,8 @@ interface Props {
 }
 
 export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props) {
+
+      const { user, logout } = AuthState()
 
       useEffect(() => {
             const handleResize = () => {
@@ -32,45 +34,6 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
 
             return () => window.removeEventListener('resize', handleResize)
       }, [])
-
-      // useEffect(() => {
-      //       socket.on('connected', (userId: string) => {
-      //             console.log('userId connected', userId)
-      //             updateChatStatus(userId, true)
-      //       })
-
-      //       socket.on('disconnected', (userId: string) => {
-      //             console.log('userId disconnected', userId)
-      //             updateChatStatus(userId, false)
-      //       })
-
-      //       socket.on('chatStatusUpdate', ({ userId, isOnline, lastSeen }) => {
-      //             console.log('chatStatusUpdate', userId, isOnline, lastSeen)
-      //             updateChatStatus(userId, isOnline, lastSeen)
-      //       })
-
-      //       return () => {
-      //             socket.off('connected')
-      //             socket.off('disconnected')
-      //             socket.off('chatStatusUpdate')
-      //       }
-      // }, [user._id])
-      
-      // const updateChatStatus = (userId: string, isOnline: boolean, lastSeen?: string) => {
-      //       const newChats = chats.map(chat => {
-      //             if (chat.users.some(user => user._id === userId)) {
-      //                   return {
-      //                         ...chat,
-      //                         isOnline,
-      //                         lastSeen
-      //                   };
-      //             }
-      //             return chat;
-      //       })
-      //       setChats(newChats);
-      // };
-
-      const { user, logout } = AuthState()
 
       return (
             <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10`}>

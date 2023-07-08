@@ -59,7 +59,7 @@ export async function signUpUser (username: string, email: string, password: str
 export async function loginUser (email: string, password: string): Promise<{ user?: User, error?: string }> {
       try {
             const user = await User.findOne({ email }).select('+password')
-            
+
             if (user && (await user.matchPassword(password))) {
                   return {
                         user,
@@ -110,6 +110,22 @@ export async function editUserDetailsService (userId: string, newName: string): 
                   user.username = newName
                   await user.save()
                   return user
+            }
+
+            return null
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
+export async function editUserImageService (userId: string, newImage: string): Promise<string | null> {
+      try {
+            const user = await User.findById(userId)
+
+            if (user) {
+                  user.profileImg = newImage
+                  await user.save()
+                  return user.profileImg
             }
 
             return null

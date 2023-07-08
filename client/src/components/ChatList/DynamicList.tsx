@@ -48,13 +48,16 @@ export default function DynamicList (props: Props) {
                         return <VideoCallIcon />
                   case 'story':
                         return <PersonAddIcon />
+                  case 'settings':
+                        return <div ></div>
+                  case 'profile':
+                        return <div className="pointer-events-none"></div>
                   case 'groups':
                         return <GroupAddOutlinedIcon />
                   default:
                         return <PersonAddIcon />
             }
       }
-      console.log(props.showNavigation)
 
       return (
             <section className={`${selectedChat ? 'hidden md:block' : 'block'} w-full md:w-[364px] border-r-2 border-[#EEEEEE] slide-right`}>

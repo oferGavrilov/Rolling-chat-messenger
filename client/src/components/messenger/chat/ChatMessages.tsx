@@ -14,10 +14,12 @@ export default function ChatMessages ({ messages }: Props) {
                   {messages &&
                         messages.map((message, idx) => (
                               <div key={message._id} className="flex items-center gap-x-2 py-[2px] px-3">
-                                    {(isSameSender(messages, message, idx, user._id) ||
-                                          isLastMessage(messages, idx, user._id)) ? (
-                                          <img className="h-10 w-10 rounded-full" src={message.sender.profileImg} alt="" />
-                                    ) : <span className="ml-10"></span>}
+                                    <div className="hidden md:flex">
+                                          {(isSameSender(messages, message, idx, user._id) ||
+                                                isLastMessage(messages, idx, user._id)) ? (
+                                                <img className="h-10 w-10 rounded-full" src={message.sender.profileImg} alt="" />
+                                          ) : <span className="ml-10"></span>}
+                                    </div>
                                     <div
                                           className={`px-3 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl
                                            ${message.sender._id === user._id ?

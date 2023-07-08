@@ -18,15 +18,23 @@ export default function Profile (): JSX.Element {
             console.log(userValues)
             if (userValues[editType] === user[editType] || userValues[editType] === '') return toast.error(`Please enter a valid ${editType}`)
 
-            const newUser = await userService.editUserDetails(userValues[editType] , editType)
+            const newUser = await userService.editUserDetails(userValues[editType], editType)
+            console.log('newUser', newUser)
             setUser(newUser)
             setEditType('')
             toast.success(`${editType} changed successfully`)
       }
 
+      async function handleImageChange (newImage: string) {
+            setImage(newImage)
+            const savedImage = await userService.updateUserImage(newImage)
+            const userToSave = { ...user, profileImg: savedImage } 
+            setUser(userToSave)
+      }
+
       return (
             <section>
-                  <UploadImage image={image} setImage={setImage} />
+                  <UploadImage image={image} setImage={handleImageChange} />
 
                   <div className='px-6 py-10'>
                         <span className='text-primary'>Your Name</span>

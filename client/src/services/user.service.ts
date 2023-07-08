@@ -12,7 +12,8 @@ export const userService = {
       logout,
       getUsers,
       createChat,
-      editUserDetails
+      editUserDetails,
+      updateUserImage
 }
 
 export function getLoggedinUser () {
@@ -66,6 +67,24 @@ async function loginSignUp (credentials: FormData, login: boolean): Promise<User
       }
 }
 
+async function updateUserImage (image: string): Promise<string> {
+      const config = getAuthConfig()
+
+      try {
+            const response: AxiosResponse<string> = await axios.put('/api/auth/image', { image }, config)
+            const { data } = response
+            if (data) {
+                  const user = getLoggedinUser()
+                  _saveToSessionStorage({ ...user, image })
+            }
+
+            return data
+      } catch (error) {
+            handleAxiosError(error)
+            throw error
+      }
+}
+
 async function editUserDetails (newName: string, key: string): Promise<User> {
       const config = getAuthConfig()
 
@@ -73,10 +92,10 @@ async function editUserDetails (newName: string, key: string): Promise<User> {
             const response: AxiosResponse<User> = await axios.put('/api/auth/details', { newName }, config)
             const { data } = response
 
-            const user = getLoggedinUser()
-            const userWithNewName = { ...user, [key]: newName }
 
             if (data) {
+                  const user = getLoggedinUser()
+                  const userWithNewName = { ...user, [key]: newName }
                   _saveToSessionStorage(userWithNewName)
             }
 

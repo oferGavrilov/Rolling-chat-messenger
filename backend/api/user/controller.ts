@@ -1,7 +1,7 @@
 import { generateToken } from "../../config/generateToken"
 import type { Response } from "express"
 import type { AuthenticatedRequest } from "../../models/types"
-import { editUserDetailsService, getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
+import { editUserDetailsService, editUserImageService, getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
 import { handleErrorService } from "../../middleware/errorMiddleware"
 
 export async function signUp (req: AuthenticatedRequest, res: Response) {
@@ -81,6 +81,23 @@ export async function editUserDetails (req: AuthenticatedRequest, res: Response)
       try {
             const newNameToSave = newName?.replace(/[\/>]/g, '').trim()
             const user = await editUserDetailsService(userId, newNameToSave)
+
+            if (user) {
+                  res.send(user)
+            } else {
+                  res.status(404).json({ msg: 'User not found' })
+            }
+      } catch (error: any) {
+            throw handleErrorService(error);
+      }
+}
+
+export async function editUserImage (req: AuthenticatedRequest, res: Response) {
+      const { image } = req.body
+      const userId = req.user?._id
+
+      try {
+            const user = await editUserImageService(userId, image)
 
             if (user) {
                   res.send(user)

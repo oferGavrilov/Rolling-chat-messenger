@@ -136,7 +136,7 @@ export async function renameGroupChatService (chatId: string, groupName: string)
 
 export async function updateGroupImageService (chatId: string, groupImage: string): Promise<string> {
       if (!chatId || !groupImage) {
-            throw new Error('Please fill all the fields')
+            return Promise.reject(new Error('Please fill all the fields'));
       }
 
       try {

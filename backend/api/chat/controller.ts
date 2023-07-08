@@ -74,7 +74,7 @@ export async function updateGroupImage (req: AuthenticatedRequest, res: Response
             const updatedGroupImage = await updateGroupImageService(chatId, groupImage)
             res.status(200).send(updatedGroupImage)
       } catch (error: any) {
-            throw handleErrorService(error)
+            return handleErrorService(error)
       }
 }
 
