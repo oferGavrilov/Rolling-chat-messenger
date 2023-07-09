@@ -25,13 +25,17 @@ export function setupSocketAPI (http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
             })
 
-            socket.on('disconnected', () => {
+            socket.on('login' , (userId: string) => {
+                  socket.join(userId)
+                  socket.broadcast.emit('login', userId)
+                  logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
+            })
+
+            socket.on('logout', () => {
                   const userId = getUserBySocketId(socket.id)
                   if (userId) {
                         console.log('User disconnected:', userId)
-                        socket.broadcast.emit('disconnected', userId)
-
-                        socket.to(userId).emit('chatStatusUpdate', { userId, isOnline: false, lastSeen: new Date().toISOString() })
+                        socket.broadcast.emit('logout', userId)
                   }
             })
 

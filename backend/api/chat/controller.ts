@@ -11,6 +11,7 @@ export async function createChat (req: AuthenticatedRequest, res: Response) {
 
       try {
             const chat = await createChatService(userId, currentUser)
+            console.log('chat', chat)
             res.status(200).json(chat)
       } catch (error: any) {
             throw handleErrorService(error)

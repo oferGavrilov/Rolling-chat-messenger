@@ -4,7 +4,6 @@ import Box from '@mui/material/Box'
 import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
 
-
 interface Props {
       isOpen: boolean
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -43,6 +42,3 @@ export default function SearchUsers (props: Props): JSX.Element {
       )
 
 }
-
-
-

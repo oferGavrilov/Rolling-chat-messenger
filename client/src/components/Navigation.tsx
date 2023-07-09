@@ -7,6 +7,7 @@ import Story from "../assets/icons/Story"
 import { AuthState } from "../context/useAuth"
 import { Avatar, Tooltip } from "@mui/material"
 import { useEffect } from "react"
+import { Socket, io } from 'socket.io-client'
 
 interface Props {
       contentType: string
@@ -14,6 +15,9 @@ interface Props {
       showNavigation: boolean
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+const ENDPOINT = 'http://localhost:5000'
+let socket: Socket
 
 export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props) {
 
@@ -34,6 +38,12 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
 
             return () => window.removeEventListener('resize', handleResize)
       }, [])
+
+      function onLogout () {
+            socket = io(ENDPOINT, { transports: ['websocket'] })
+            socket.emit('logout', user._id)
+            logout()
+      }
 
       return (
             <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10`}>
@@ -62,7 +72,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
                               <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary" onClick={() => setContentType('settings')}>
                                     <FiSettings size={27} />
                               </div>
-                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={logout}>
+                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={onLogout}>
                                     <RxExit size={27} className="rotate-180" />
                               </div>
                         </div>
@@ -70,4 +80,3 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
             </section >
       )
 }
-

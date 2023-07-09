@@ -35,7 +35,6 @@ export default function Chat ({ setIsTyping }: Props) {
             socket = io(ENDPOINT, { transports: ['websocket'] })
             socket.emit('setup', user._id)
 
-            console.log('is connected!')
             socket.on('connected', () => setSocketConnected(true))
 
       }, [])
@@ -109,11 +108,11 @@ export default function Chat ({ setIsTyping }: Props) {
       function typingHandler (e: React.ChangeEvent<HTMLInputElement>) {
             const { value } = e.target
             setNewMessage(value)
-
             if (!socketConnected) return
-
+            
             if (!typing) {
                   setTyping(true)
+                  console.log('typing')
                   socket.emit('typing', selectedChat._id, user._id)
             }
 

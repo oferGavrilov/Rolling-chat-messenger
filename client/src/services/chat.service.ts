@@ -30,7 +30,6 @@ async function getChats (): Promise<IChat[]> {
 }
 
 async function getUserChats (userId: string): Promise<IChat[]> {
-      console.log('getUserChats', userId)
       try {
             const { data }: AxiosResponse<IChat[]> = await axios.get(`/api/chat/chat/${userId}`, getAuthConfig())
             const sortedData = data.sort((a: IChat, b: IChat) => {

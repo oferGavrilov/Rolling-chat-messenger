@@ -15,5 +15,6 @@ export interface User {
       createdAt: string
       updatedAt: string
       about?: string
-      isOnline?: boolean
+      isOnline: boolean
+      lastSeen?: string
 }

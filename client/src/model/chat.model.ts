@@ -12,8 +12,6 @@ export interface IChat {
       createdAt: string
       updatedAt: string
       count: number
-      isOnline?: boolean
-      lastSeen?: string
 }
 
 export type LatestMessage =  {

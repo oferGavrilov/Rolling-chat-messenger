@@ -8,18 +8,21 @@ import { IMessage } from '../../../model/message.model'
 import { AuthState } from "../../../context/useAuth"
 
 const ENDPOINT = 'http://localhost:5000'
-let socket: Socket
+const socket: Socket = io(ENDPOINT, { transports: ['websocket'] });
 
 export default function MessageList ({ chats }: { chats: IChat[] }) {
       const { notification, setNotification, selectedChat, setChats } = useChat()
       const { user } = AuthState()
 
       useEffect(() => {
-            socket = io(ENDPOINT, { transports: ['websocket'] })
-            socket.emit('setup', user._id)
+            socket.emit('setup', user._id);
 
-            socket.on('new group', handleNewGroup)
-      }, [])
+            socket.on('new group', handleNewGroup);
+
+            return () => {
+                  socket.off('new group', handleNewGroup);
+            };
+      }, []);
 
       useEffect(() => {
             socket.on('message received', handleNewMessage)
@@ -28,6 +31,9 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
                   socket.off('message received', handleNewMessage)
             }
       }, [selectedChat])
+
+      useEffect(() => {
+      }, [])
 
       function handleNewGroup (chat: IChat) {
             setChats([chat, ...chats])

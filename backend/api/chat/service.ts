@@ -32,7 +32,9 @@ export async function createChatService (userId: string, currentUser: User): Pro
             const chatData = {
                   chatName: user.username,
                   isGroupChat: false,
-                  users: [currentUser._id, userId]
+                  users: [currentUser._id, userId],
+                  isOnline: false,
+                  lastSeen: new Date()
             }
 
             try {

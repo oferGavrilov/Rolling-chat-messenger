@@ -17,7 +17,7 @@ export default function ChatMessages ({ messages }: Props) {
                                     <div className="hidden md:flex">
                                           {(isSameSender(messages, message, idx, user._id) ||
                                                 isLastMessage(messages, idx, user._id)) ? (
-                                                <img className="h-10 w-10 rounded-full" src={message.sender.profileImg} alt="" />
+                                                <img className="h-10 w-10 rounded-full object-cover object-top" src={message.sender.profileImg} alt="" />
                                           ) : <span className="ml-10"></span>}
                                     </div>
                                     <div
