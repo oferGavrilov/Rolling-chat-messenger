@@ -10,6 +10,7 @@ import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
 import { Socket, io } from 'socket.io-client'
+import { formatLastSeenDate } from "../../utils/functions"
 
 const ENDPOINT = 'http://localhost:5000'
 const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
@@ -48,24 +49,35 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             const chatToUpdate = chats.find(chat => chat._id === selectedChat?._id)
 
             if (chatToUpdate) {
-                  chatToUpdate.users = chatToUpdate.users.map(user => {
+                  const updatedUsers = chatToUpdate.users.map(user => {
                         if (user?._id === userId) {
                               return { ...user, isOnline: status }
                         }
                         return user
                   })
-                  setChats([...chats])
+                  if (!status) {
+                        const userToUpdate = updatedUsers.find(user => user?._id === userId)
+                        if (userToUpdate) {
+                              userToUpdate.lastSeen = new Date().toISOString()
+                        }
+                  }
+                  const updatedChats = [...chats]
+                  const chatIndex = updatedChats.findIndex(chat => chat._id === chatToUpdate._id)
+                  if (chatIndex !== -1) {
+                        updatedChats[chatIndex] = { ...chatToUpdate, users: updatedUsers }
+                        setChats(updatedChats)
+                  }
             }
 
             if (conversationUser?._id === userId || !status) {
                   setConversationUser(prev => {
-                        return { ...prev, isOnline: status }
+                        return { ...prev, isOnline: status, lastSeen: !status ? new Date().toISOString() : prev.lastSeen }
                   })
             }
-      };
+      }
 
       function getConversationUserConnection (): string {
-            return conversationUser?.isOnline ? 'Online' : `Last seen ${conversationUser?.lastSeen}`
+            return conversationUser?.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen)}`
       }
 
       // TODO: Check if user is Online on mount

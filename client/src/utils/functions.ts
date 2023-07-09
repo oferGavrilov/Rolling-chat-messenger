@@ -1,6 +1,6 @@
 import { IMessage } from "../model/message.model"
 
-export const isSameSenderMargin = (messages: IMessage[], m: IMessage, i: number, userId: string) => {
+export function isSameSenderMargin (messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
   if (
     i < messages.length - 1 &&
     messages[i + 1].sender._id === m.sender._id &&
@@ -31,7 +31,7 @@ export function debounce<T extends (...args: unknown[]) => void> (
   }
 }
 
-export function isSameSender (messages: IMessage[], m: IMessage, i: number, userId: string) {
+export function isSameSender (messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
   return (
     i < messages.length - 1 &&
     (messages[i + 1].sender._id !== m.sender._id ||
@@ -48,7 +48,9 @@ export function isLastMessage (messages: IMessage[], i: number, userId: string) 
   )
 }
 
-export function formatTime (timestamp: string) {
+export function formatTime (timestamp: string): string {
+  if(!timestamp) return ''
+
   const date = new Date(timestamp)
   const now = new Date()
 
@@ -71,14 +73,32 @@ export function formatTime (timestamp: string) {
   return formattedDate
 }
 
-export function formatDate (timestamp: string) {
+export function formatDate (timestamp: string): string {
+  if(!timestamp) return ''
+
   const date = new Date(timestamp)
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${minutes}`
 }
 
+export function formatLastSeenDate (timestamp: string): string {
+  if(!timestamp) return ''
 
+  const date = new Date(timestamp)
+  const now = new Date()
+
+  const diffTime = Math.abs(now.getTime() - date.getTime())
+  const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
+
+  if (diffHours < 24) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  } else if (diffHours >= 24 && diffHours < 48) {
+    return `Yesterday, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+  } else {
+    return `${date.toLocaleDateString()}, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+  }
+}
 export function startTypingTimeout (callback: () => void, delay: number): number {
   return setTimeout(callback, delay)
 }
