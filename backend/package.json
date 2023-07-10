@@ -20,13 +20,14 @@
     "cls-hooked": "^4.2.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "cryptr": "^6.2.0",
     "dotenv": "^16.2.0",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.0",
-    "socket.io": "^4.7.0",
-    "rimraf": "^5.0.1"
+    "rimraf": "^5.0.1",
+    "socket.io": "^4.7.0"
   },
   "devDependencies": {
     "@tsconfig/node-lts-strictest-esm": "^18.12.1",
