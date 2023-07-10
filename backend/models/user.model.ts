@@ -7,7 +7,6 @@ export interface User extends Document {
   password: string
   profileImg: string
   about: string
-  theme: string
   matchPassword: (enteredPassword: string) => Promise<boolean>
   createdAt: Date
   updatedAt: Date
@@ -20,7 +19,6 @@ const userModel: Schema<User> = new Schema<User>(
     password: { type: String, required: true, select: false },
     profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
     about: { type: String, default: "Available" },
-    theme: { type: String, default: "light" },
   },
   { timestamps: true }
 )

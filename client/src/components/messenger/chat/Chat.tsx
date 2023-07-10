@@ -26,12 +26,11 @@ export default function Chat ({ setIsTyping }: Props) {
       const [typing, setTyping] = useState<boolean>(false)
 
       const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
-      const { user } = AuthState()
+      const { user, chatBackground } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
       const typingTimeoutRef = useRef<number | null>(null)
 
       useEffect(() => {
-
             socket = io(ENDPOINT, { transports: ['websocket'] })
             socket.emit('setup', user._id)
 
@@ -70,7 +69,8 @@ export default function Chat ({ setIsTyping }: Props) {
                   socket.off('message received')
             }
       })
-            function updateChat (latestMessage: IMessage, chats: IChat[]) {
+
+      function updateChat (latestMessage: IMessage, chats: IChat[]) {
             const chatIndex = chats.findIndex((chat) => chat._id === latestMessage.chat._id)
             if (chatIndex !== -1) {
                   const updatedChats = [...chats]
@@ -109,7 +109,7 @@ export default function Chat ({ setIsTyping }: Props) {
             const { value } = e.target
             setNewMessage(value)
             if (!socketConnected) return
-            
+
             if (!typing) {
                   setTyping(true)
                   console.log('typing')
@@ -138,8 +138,10 @@ export default function Chat ({ setIsTyping }: Props) {
 
       return (
             <>
-                  <div className='bg-gray-100 border-y py-4 border-1 overflow-auto slide-left' ref={chatRef}>
-                        {messages && <ChatMessages messages={messages} />}
+                  <div className='border-y py-4 border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center' style={{ background: chatBackground }} ref={chatRef}>
+                        <div className='absolute right-0 top-0 w-full h-full ' style={{ backgroundImage: 'url(imgs/chat/background.png)' }}>
+                              {messages && <ChatMessages messages={messages} />}
+                        </div>
                   </div>
 
                   <div className='py-3 flex items-center ml-1  md:px-5 gap-x-5 overflow-x-hidden'>

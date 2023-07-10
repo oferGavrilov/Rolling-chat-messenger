@@ -87,6 +87,11 @@
       .upload-img:hover .overlay{
             display: block;
       }
+
+      /* Settings */
+      .choose-bg {
+            @apply w-24 h-28  rounded-xl cursor-pointer ;
+      }
 }
 
 @layer utilities{

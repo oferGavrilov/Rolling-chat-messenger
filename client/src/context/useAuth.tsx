@@ -9,26 +9,26 @@ interface ChatContextProps {
       setUser: React.Dispatch<React.SetStateAction<User | null>>
       logout: () => void,
       isAdmin: (chat: IChat, userId?: string) => boolean
+      chatBackground: string
+      setChatBackground: React.Dispatch<React.SetStateAction<string>>
 }
 
-const useAuth = createContext<ChatContextProps>({
-      user: null,
-      setUser: () => null,
-      logout: () => null,
-      isAdmin: () => false
-})
-
+const AuthContext = createContext<ChatContextProps | null>(null);
 
 export const AuthState = () => {
-      return useContext(useAuth)
-}
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("AuthState must be used within an AuthProvider");
+  }
+  return context;
+};
 
 export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState(null)
-
+      const [chatBackground , setChatBackground] = useState<string>(userService.getBackgroundImage() || '#ccdbdc' )
       const navigate = useNavigate()
       const location = useLocation().pathname
-      console.log(location)
+
       useEffect(() => {
             if (location === '/chat') {
                   const user = userService.getLoggedinUser()
@@ -41,7 +41,6 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
             return chat.groupAdmin._id === (userId || user?._id)
       }, [user])
 
-
       const logout = useCallback((): void => {
             userService.logout()
             setUser(null)
@@ -53,14 +52,16 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
                   user,
                   setUser,
                   logout,
-                  isAdmin
+                  isAdmin,
+                  chatBackground,
+                  setChatBackground
             }),
-            [user, logout, isAdmin]
+            [user, logout, isAdmin , chatBackground]
       )
 
       return (
-            <useAuth.Provider value={memoedValue}>
+            <AuthContext.Provider value={memoedValue}>
                   {children}
-            </useAuth.Provider>
+            </AuthContext.Provider>
       )
 }

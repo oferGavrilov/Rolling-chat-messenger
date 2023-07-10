@@ -10,7 +10,6 @@ interface SignUpResult {
             email: string
             profileImg: string
             about: string
-            theme: string
             token: string
       }
 }
@@ -33,7 +32,6 @@ export async function signUpUser (username: string, email: string, password: str
                   password,
                   profileImg,
                   about: User.schema.path('about').default('Available'),
-                  theme: User.schema.path('theme').default('light')
             })
 
             if (newUser) {
@@ -43,7 +41,6 @@ export async function signUpUser (username: string, email: string, password: str
                         email: newUser.email,
                         profileImg: newUser.profileImg,
                         about: newUser.about,
-                        theme: newUser.theme,
                         token: generateToken(newUser._id)
                   }
 

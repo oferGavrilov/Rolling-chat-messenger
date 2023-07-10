@@ -13,7 +13,9 @@ export const userService = {
       getUsers,
       createChat,
       editUserDetails,
-      updateUserImage
+      updateUserImage,
+      saveUserBackgroundImage,
+      getBackgroundImage
 }
 
 export function getLoggedinUser () {
@@ -103,6 +105,24 @@ async function editUserDetails (newName: string, key: string): Promise<User> {
       } catch (error) {
             handleAxiosError(error)
             throw error
+      }
+}
+
+// function to save user background image to local storage
+function saveUserBackgroundImage (image: string): void {
+      try {
+            localStorage.setItem('backgroundImage', image)
+      } catch (error) {
+            console.log(error)
+      }
+}
+
+function getBackgroundImage (): string | null {
+      try {
+            return localStorage.getItem('backgroundImage')
+      } catch (error) {
+            console.log(error)
+            return null
       }
 }
 
