@@ -21,7 +21,7 @@ export default function ChatPage (): JSX.Element {
                         <DynamicList contentType={contentType} setContentType={setContentType} setShowSearch={setShowSearch} showNavigation={showNavigation} setShowNavigation={setShowNavigation} />
                         {selectedChat && <Messenger setShowSearch={setShowSearch} />}
                   </div>
-                  <SearchUsers contentType={contentType} isOpen={showSearch} setIsOpen={setShowSearch} />
+                  <SearchUsers contentType={contentType} isAddNewGroup={true} isOpen={showSearch} setIsOpen={setShowSearch} />
             </div>
       )
 }

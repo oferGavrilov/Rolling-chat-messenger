@@ -3,11 +3,14 @@ import Drawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
+import { IChat } from '../../model/chat.model'
 
 interface Props {
       isOpen: boolean
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
       contentType: string
+      groupToEdit?: IChat
+      isAddNewGroup?: boolean
 }
 
 export default function SearchUsers (props: Props): JSX.Element {
@@ -21,7 +24,7 @@ export default function SearchUsers (props: Props): JSX.Element {
       function switchContent () {
             switch (props.contentType) {
                   case 'messages': return <UsersToMessage {...props} />
-                  case 'groups': return <UsersToGroup {...props} />
+                  case 'groups': return <UsersToGroup {...props} isAddNewGroup={props.isAddNewGroup} groupToEdit={props.groupToEdit} />
                   case 'videos': return <div>videos</div>
                   case 'story': return <div>story</div>
                   default: return <UsersToMessage {...props} />
@@ -29,7 +32,7 @@ export default function SearchUsers (props: Props): JSX.Element {
       }
 
       return (
-            <Drawer 
+            <Drawer
                   anchor='left'
                   open={props.isOpen}
                   onClose={() => {

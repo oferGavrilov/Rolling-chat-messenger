@@ -15,7 +15,8 @@ export const chatService = {
       updateGroupName,
       removeFromGroup,
       getMessages,
-      sendMessage
+      sendMessage,
+      updateUsersGroup
 }
 
 
@@ -69,6 +70,16 @@ async function updateGroupName (chatId: string, groupName: string): Promise<stri
       } catch (error) {
             handleAxiosError(error)
             throw new Error('Failed to update group name.')
+      }
+}
+
+async function updateUsersGroup (chatId: string, users: User[]) {
+      try {
+            const { data }: AxiosResponse<IChat> = await axios.put('/api/chat/updateusers', { chatId, users }, getAuthConfig())
+            return data
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to update group users.')
       }
 }
 

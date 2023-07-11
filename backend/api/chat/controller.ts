@@ -2,7 +2,7 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../../models/types'
 import type { User } from '../../models/user.model'
-import { addToGroupChatService, createChatService, createGroupChatService, getChatsService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService } from './service'
+import { updateUsersInGroupChatService, createChatService, createGroupChatService, getChatsService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService } from './service'
 import { handleErrorService } from '../../middleware/errorMiddleware'
 
 export async function createChat (req: AuthenticatedRequest, res: Response) {
@@ -79,12 +79,15 @@ export async function updateGroupImage (req: AuthenticatedRequest, res: Response
       }
 }
 
-export async function addToGroupChat (req: AuthenticatedRequest, res: Response) {
-      const { chatId, userId } = req.body
+export async function updateUsersInGroupChat (req: AuthenticatedRequest, res: Response) {
+      const { chatId, users } = req.body
+
+      if (!users) return res.status(400).json({ message: 'No users sent to the server' })
+      if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
 
       try {
-            const addedChat = await addToGroupChatService(chatId, userId)
-            res.status(200).send(addedChat)
+            const updatedChat = await updateUsersInGroupChatService(chatId, users)
+            res.status(200).send(updatedChat)
       } catch (error: any) {
             throw handleErrorService(error)
       }

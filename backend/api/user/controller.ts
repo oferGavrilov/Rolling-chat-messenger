@@ -40,7 +40,6 @@ export async function login (req: AuthenticatedRequest, res: Response) {
                         email: user.email,
                         profileImg: user.profileImg,
                         about: user.about,
-                        theme: user.theme,
                         token: generateToken(user._id),
                   });
             } else {

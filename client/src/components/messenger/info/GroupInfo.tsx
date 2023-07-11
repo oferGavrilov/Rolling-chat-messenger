@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import useChat from "../../../store/useChat"
 import { AuthState } from "../../../context/useAuth"
 import { IChat } from "../../../model/chat.model"
+import SearchUsers from "../../SideModal"
 
 export default function GroupInfo () {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
@@ -19,8 +20,8 @@ export default function GroupInfo () {
 
       const [image, setImage] = useState<string>(selectedChat.groupImage)
       const [isEditName, setIsEditName] = useState<boolean>(false)
-
       const [groupName, setGroupName] = useState<string>(selectedChat.chatName)
+      const [isAddUsers, setIsAddUsers] = useState<boolean>(false)
 
       async function editImage (image: string) {
             const newImage = await chatService.updateGroupImage(selectedChat._id, image)
@@ -57,10 +58,6 @@ export default function GroupInfo () {
       async function onRemoveFromGroup (userId: string) {
             const updatedChat = await chatService.removeFromGroup(selectedChat._id, userId)
             setSelectedChat(updatedChat)
-      }
-
-      function onAddUsers () {
-            console.log('asf')
       }
 
       return (
@@ -101,8 +98,8 @@ export default function GroupInfo () {
                               <span>{selectedChat.users.length} Participants</span>
                               <SearchOutlinedIcon className="cursor-pointer" />
                         </div>
-                        {isAdmin(selectedChat) && <div className="flex px-1 items-center gap-x-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg" onClick={onAddUsers}>
-                              <div className="bg-primary text-white p-2  rounded-full">
+                        {isAdmin(selectedChat) && <div className="flex px-1 items-center gap-x-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg" onClick={() => setIsAddUsers(!isAddUsers)}>
+                              <div className="bg-primary text-white p-2 rounded-full">
                                     <PersonAddAltOutlinedIcon />
                               </div>
                               <span>Adding participants</span>
@@ -129,6 +126,8 @@ export default function GroupInfo () {
                         <LogoutOutlinedIcon />
                         Leave The Group
                   </div>
+
+                  <SearchUsers setIsOpen={setIsAddUsers} isAddNewGroup={false} isOpen={isAddUsers} contentType="groups" groupToEdit={selectedChat} />
             </section>
       )
 }

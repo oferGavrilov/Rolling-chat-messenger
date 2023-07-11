@@ -149,23 +149,19 @@ export async function updateGroupImageService (chatId: string, groupImage: strin
       }
 }
 
-export async function addToGroupChatService (chatId: string, userId: string): Promise<ChatDocument> {
-      if (!chatId || !userId) {
-            throw new Error('Please fill all the fields')
-      }
-
+export async function updateUsersInGroupChatService (chatId: string, users: string[]): Promise<ChatDocument> {
       try {
-            const added = await Chat.findByIdAndUpdate(chatId, { $push: { users: userId } }, { new: true })
+            const updated = await Chat.findByIdAndUpdate(chatId, { users }, { new: true })
                   .populate('users', "-password")
-                  .populate('groupAdmin', "-password")
+                  .populate('groupAdmin', "-password");
 
-            if (!added) {
-                  throw new Error('Could not add user')
+            if (!updated) {
+                  throw new Error('Could not update users');
             }
 
-            return added
+            return updated;
       } catch (error: any) {
-            throw handleErrorService(error)
+            throw handleErrorService(error);
       }
 }
 

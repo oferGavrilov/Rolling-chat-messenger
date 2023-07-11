@@ -10,17 +10,20 @@ import UploadImage from '../UploadImage'
 import UsersInput from '../common/UsersInput'
 import { io } from 'socket.io-client'
 import { AuthState } from '../../context/useAuth'
+import { IChat } from '../../model/chat.model'
 
 interface Props {
       setIsOpen: CallableFunction
+      isAddNewGroup?: boolean
+      groupToEdit?: IChat
 }
 
-export default function UsersToGroup ({ setIsOpen }: Props) {
+export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupToEdit }: Props) {
       const [filter, setFilter] = useState<string>('')
       const [users, setUsers] = useState<User[]>([])
-      const [group, setGroup] = useState({ chatName: '', users: [] })
+      const [group, setGroup] = useState({ chatName: groupToEdit?.chatName || '', users: groupToEdit?.users || [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
-      const [image, setImage] = useState<string>('')
+      const [image, setImage] = useState<string>(groupToEdit?.groupImage || '')
       const { user } = AuthState()
 
       const { chats, setChats } = useChat()
@@ -67,6 +70,19 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
             }
       }
 
+      async function onEditGroup () {
+            if (group.users.length === 0) return toast.error('Please select at least one user')
+            try {
+                  const data = await chatService.updateUsersGroup(groupToEdit._id, group.users)
+                  setChats(chats.map(chat => chat._id === groupToEdit._id ? { ...chat, users: data.users } : chat))
+                  toast.success('Group updated successfully')
+                  setIsOpen(false)
+            } catch (error) {
+                  console.error("An error occurred while updating group:", error)
+            }
+
+      }
+
       function handleGroup (user: User) {
             if (group.users.find(u => u._id === user._id)) {
                   return setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
@@ -81,28 +97,33 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
 
       return (
             <div className="py-6 w-screen md:w-[400px]">
-                  <h2 className='text-2xl text-center pb-5'>Create Group Chat</h2>
+                  <h2 className='text-2xl text-center pb-5'>{isAddNewGroup ? 'Create Group Chat' : 'Edit Group Chat'}</h2>
 
                   <div className='flex flex-col  gap-y-6 px-4 mx-auto'>
-                        <UploadImage image={image} setImage={setImage} />
-                        <input
-                              type="text"
-                              className='bg-gray-100 p-2 rounded-lg border-2 px-3 border-gray-100 focus:border-blue-400'
-                              value={group.chatName}
-                              onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
-                              placeholder="Group Name"
-                        />
+                        {isAddNewGroup && <>
+                              <UploadImage image={image} setImage={setImage} />
+                              <input
+                                    type="text"
+                                    className='bg-gray-100 p-2 rounded-lg border-2 px-3 border-gray-100 focus:border-blue-400'
+                                    value={group.chatName}
+                                    onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
+                                    placeholder="Group Name"
+                              />
+                        </>
+                        }
                         <div className='py-6 flex relative px-2 '>
                               <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                         </div>
-                        <button onClick={onCreateGroup} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>Create Chat</button>
+                        <button onClick={isAddNewGroup ? onCreateGroup : onEditGroup} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>
+                              {isAddNewGroup ? 'Create Chat' : 'Edit Chat'}
+                        </button>
                   </div>
 
                   {group.users.length > 0 && (
                         <div className="flex p-4">
                               {group.users.map((user) => (
                                     <div key={user._id} className='relative p-2 [&>*]:hover:!block'>
-                                          <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-green-400" />
+                                          <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-primary object-cover object-top" />
                                           <CloseIcon onClick={() => removeFromGroup(user._id)} className='absolute cursor-pointer top-0 right-0 !hidden bg-red-500 !text-base rounded-xl text-white' />
                                     </div>
                               ))}
@@ -114,7 +135,7 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                               {filteredUsers.map((user: User) => (
                                     <li key={user._id} className='text-main-color py-2 px-4 rounded-lg bg-gray-100 transition-colors duration-200 cursor-pointer hover:bg-gray-200'>
                                           <div className='flex gap-x-4 items-center' onClick={() => handleGroup(user)}>
-                                                <img className='w-12 h-12 object-cover rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
+                                                <img className='w-12 h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
                                                 <div>
                                                       <span className='text-xl'>{user.username}</span>
                                                       <p className='cut-text text-lg max-w-[270px]'>

@@ -110,6 +110,13 @@
             -ms-overflow-style: none; 
             scrollbar-width: none; 
       }
+
+      .drop-shadow-gray {
+            filter: drop-shadow(0px 10px 6px gray);
+      }
+      .drop-shadow-primary {
+            filter: drop-shadow(0px 0px 18px #71c6ff);
+      }
       .custom-shadow {
             box-shadow: 0 10px 62px 6px #0099ff4f;
             transform: scale(1.02);
