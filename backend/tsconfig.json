@@ -3,17 +3,21 @@
     "verbatimModuleSyntax": true,
     "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": false,
-    "target": "esnext",
+    "target": "ES2022",
     "lib": [
-      "es6"
+      "ES2022"
     ],
-    "module": "NodeNext",
-    "moduleResolution": "node",
+    "module": "ES2022",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "baseUrl": "./src",
     "allowJs": true,
     "outDir": "./build",
     "ignoreDeprecations": "5.0"
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   },
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node-lts-strictest-esm/tsconfig.json",
