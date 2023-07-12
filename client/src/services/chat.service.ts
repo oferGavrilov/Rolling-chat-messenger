@@ -16,7 +16,8 @@ export const chatService = {
       removeFromGroup,
       getMessages,
       sendMessage,
-      updateUsersGroup
+      updateUsersGroup,
+      removeChat
 }
 
 
@@ -111,5 +112,15 @@ async function sendMessage (message: { content: string, chatId: string }): Promi
       } catch (error) {
             handleAxiosError(error)
             throw new Error('Failed to send message.')
+      }
+}
+
+async function removeChat (chatId: string, userId: string) {
+      try {
+            const { data }: AxiosResponse<IChat> = await axios.put('/api/chat/remove', { chatId, userId }, getAuthConfig())
+            return data
+      } catch (error) {
+            handleAxiosError(error)
+            throw new Error('Failed to remove chat.')
       }
 }

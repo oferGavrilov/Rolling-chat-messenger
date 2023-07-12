@@ -41,6 +41,10 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
 
       function handleNewMessage (newMessage: IMessage) {
             if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
+                  // console.log('newMessage notification', newMessage)
+                  const isChatExists = chats.find(chat => chat._id === newMessage.chat._id)
+                  if (!isChatExists) setChats([newMessage.chat, ...chats])
+                  
                   setNotification(newMessage)
                   updateChat(newMessage, chats)
             }

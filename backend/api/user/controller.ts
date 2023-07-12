@@ -1,5 +1,5 @@
 import { generateToken } from "../../config/generateToken"
-import type { Response } from "express"
+import type { Response , Request } from "express"
 import type { AuthenticatedRequest } from "../../models/types"
 import { editUserDetailsService, editUserImageService, getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
 import { handleErrorService } from "../../middleware/errorMiddleware"
@@ -50,7 +50,7 @@ export async function login (req: AuthenticatedRequest, res: Response) {
       }
 }
 
-export async function searchUsersByKeyword (req: AuthenticatedRequest, res: Response) {
+export async function searchUsersByKeyword (req: Request, res: Response) {
       const { search } = req.query
       const keyword = search?.toString() || ''
 

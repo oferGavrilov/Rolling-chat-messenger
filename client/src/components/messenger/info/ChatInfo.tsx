@@ -2,6 +2,8 @@ import { User } from "../../../model/user.model"
 import { MdKeyboardArrowRight } from "react-icons/md"
 import { MdDelete } from "react-icons/md"
 import useChat from "../../../store/useChat"
+import { AuthState } from "../../../context/useAuth"
+import { chatService } from "../../../services/chat.service"
 interface Props {
       conversationUser: User
 }
@@ -9,12 +11,17 @@ interface Props {
 export default function ChatInfo ({ conversationUser }: Props) {
 
       const { chats, setChats, selectedChat, setSelectedChat } = useChat()
+      const { user } = AuthState()
 
       async function onRemoveChat () {
-            const chatId = selectedChat._id
-            const newChats = chats.filter(chat => chat._id !== chatId)
+            const chat = chats.find(chat => chat._id === selectedChat._id)
+
+            await chatService.removeChat(chat._id, user._id)
+            const newChats = chats.filter(chat => chat._id !== selectedChat._id)
             setChats(newChats)
             setSelectedChat(null)
+
+
       }
 
       return (

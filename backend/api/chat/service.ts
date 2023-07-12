@@ -2,6 +2,7 @@ import { User } from "../../models/user.model"
 import { Chat, type ChatDocument } from "../../models/chat.model"
 import type { PopulateOptions } from "mongoose"
 import { handleErrorService } from "../../middleware/errorMiddleware"
+import { Message } from "../../models/message.model"
 
 export async function createChatService (userId: string, currentUser: User): Promise<ChatDocument> {
       if (!userId) {
@@ -34,7 +35,7 @@ export async function createChatService (userId: string, currentUser: User): Pro
                   isGroupChat: false,
                   users: [currentUser._id, userId],
                   isOnline: false,
-                  lastSeen: new Date()
+                  lastSeen: new Date(),
             }
 
             try {
@@ -180,6 +181,40 @@ export async function removeFromGroupChatService (chatId: string, userId: string
             }
 
             return removed
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
+export async function removeChatService (chatId: string, userId: string): Promise<string> {
+      if (!chatId || !userId) {
+            throw new Error('Please fill all the fields')
+      }
+
+      try {
+            // push the userId to the chat's deletedBy array 
+
+            const chat = await Chat.findById(chatId)
+
+            if (!chat) {
+                  throw new Error('Chat not found')
+            }
+
+            if (chat.deletedBy.includes(userId)) {
+                  throw new Error('Chat already deleted')
+            }
+
+            chat.deletedBy.push(userId)
+
+            // if the chat has been deleted by all users, delete the chat from the database with all its messages
+
+            if (chat.deletedBy.length === chat.users.length) {
+                  await Message.deleteMany({ chat: chatId })
+            }
+
+            await chat.save()
+
+            return chatId
       } catch (error: any) {
             throw handleErrorService(error)
       }

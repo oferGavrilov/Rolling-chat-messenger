@@ -49,8 +49,8 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
       }))
 
       function getLatestMessageSender (): string {
-            if (chat.latestMessage?.sender._id === loggedinUser?._id) return 'you: '
-            if (chat.isGroupChat && chat.latestMessage) return `${chat.latestMessage?.sender.username}: `
+            if (chat.latestMessage?.sender?._id === loggedinUser?._id) return 'you: '
+            if (chat.isGroupChat && chat.latestMessage) return `${chat.latestMessage?.sender?.username}: `
             return ''
       }
 
@@ -70,7 +70,6 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
             }
       }
 
-      // console.log('chat',chat)
       return (
             <li onClick={() => onSelectChat()}
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200

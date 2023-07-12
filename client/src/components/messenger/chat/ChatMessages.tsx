@@ -9,6 +9,7 @@ interface Props {
 export default function ChatMessages ({ messages }: Props) {
 
       const { user } = AuthState()
+      console.log('messages', messages)
       return (
             <>
                   {messages &&
@@ -22,7 +23,7 @@ export default function ChatMessages ({ messages }: Props) {
                                     </div>
                                     <div
                                           className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl
-                                           ${message.sender._id === user._id ?
+                                           ${message?.sender._id === user._id ?
                                                       'bg-primary text-white' : 'bg-slate-300'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :

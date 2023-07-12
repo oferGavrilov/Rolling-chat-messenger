@@ -135,6 +135,8 @@ export default function Chat ({ setIsTyping }: Props) {
             }, 0)
       }
 
+      const isMessageEmpty = !newMessage || newMessage.trim() === '';
+      
       return (
             <>
                   <div className='border-y py-4 border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center' style={{ background: chatBackground }} ref={chatRef}>
@@ -155,9 +157,9 @@ export default function Chat ({ setIsTyping }: Props) {
                                     value={newMessage}
                                     onChange={typingHandler}
                               />
-                              <button disabled={!newMessage} type='submit'
+                              <button disabled={isMessageEmpty} type='submit'
                                     className={`text-primary ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg
-                                    ${newMessage ? 'mr-2' : 'disabled:!text-gray-400 disabled:cursor-not-allowed w-0 translate-x-28'}`
+                                    ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed w-0 translate-x-28' : 'mr-2'}`
                                     }>
                                     Send
                               </button>

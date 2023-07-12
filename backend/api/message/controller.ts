@@ -1,12 +1,14 @@
-import type { AuthenticatedRequest } from "../../models/types"
-import type { Response } from "express"
+import type { Response, Request } from "express"
 
 import { getAllMessagesByChatId, sendMessageService } from "./service"
 import { handleErrorService } from "../../middleware/errorMiddleware"
+import { RequestWithUser } from "../../models/types"
 
-export async function sendMessage (req: AuthenticatedRequest, res: Response) {
+export async function sendMessage (req: RequestWithUser, res: Response) {
       const { content, chatId } = req.body
       const senderId = req.user?._id
+
+      if(!senderId) throw new Error('User not found')
 
       try {
             const message = await sendMessageService(senderId, content, chatId)
@@ -16,7 +18,7 @@ export async function sendMessage (req: AuthenticatedRequest, res: Response) {
       }
 }
 
-export async function getAllMessages (req: AuthenticatedRequest, res: Response) {
+export async function getAllMessages (req: Request, res: Response) {
       const { chatId } = req.params
 
       try {

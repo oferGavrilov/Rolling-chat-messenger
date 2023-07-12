@@ -41,10 +41,11 @@ export function isSameSender (messages: IMessage[], m: IMessage, i: number, user
 }
 
 export function isLastMessage (messages: IMessage[], i: number, userId: string) {
+  if(!messages.length || !messages[messages.length - 1]?.sender?._id) return false
   return (
     i === messages.length - 1 &&
-    messages[messages.length - 1].sender._id !== userId &&
-    messages[messages.length - 1].sender._id
+    messages[messages.length - 1]?.sender?._id !== userId &&
+    messages[messages.length - 1]?.sender?._id
   )
 }
 

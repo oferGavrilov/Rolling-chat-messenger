@@ -12,6 +12,7 @@ export interface IChat {
       createdAt: string
       updatedAt: string
       count: number
+      deletedBy: string[]
 }
 
 export type LatestMessage =  {

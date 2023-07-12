@@ -1,6 +1,6 @@
 import express from 'express'
 import { admin, protect } from '../../middleware/authMiddleware'
-import { updateUsersInGroupChat, createChat, createGroupChat, getChats, getUserChats, removeFromGroupChat, renameGroupChat, updateGroupImage } from './controller'
+import { updateUsersInGroupChat, createChat, createGroupChat, getChats, getUserChats, removeFromGroupChat, renameGroupChat, updateGroupImage, removeChat } from './controller'
 
 export const router = express.Router()
 
@@ -12,3 +12,4 @@ router.put('/rename', admin, renameGroupChat)
 router.put('/groupimage', protect, updateGroupImage)
 router.put('/updateusers', admin, updateUsersInGroupChat)
 router.put('/groupremove', protect, removeFromGroupChat)
+router.put('/remove', protect, removeChat)
