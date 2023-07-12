@@ -91,9 +91,9 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                               <div className='flex flex-col'>
                                     <h2 className='md:text-lg font-semibold cursor-pointer underline-offset-2 hover:underline' onClick={() => setMode(false)}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
                                     {!selectedChat.isGroupChat ? <span className='text-primary text-xs md:text-base'>{isTyping ? 'Typing...' : getConversationUserConnection()}</span> : (
-                                          <div className="flex gap-x-2 text-sm tracking-wide">
-                                                {selectedChat.users.slice(0, 4).map((user, index) =>
-                                                      <span key={user._id} className="text-gray-400">
+                                          <div className="flex gap-x-1 text-xs tracking-wide">
+                                                {selectedChat.users.map((user, index) =>
+                                                      <span key={user._id} className="text-slate-400">
                                                             {user.username}
                                                             {index !== selectedChat.users.length - 1 && ","}
                                                       </span>

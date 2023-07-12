@@ -26,7 +26,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
       const [image, setImage] = useState<string>(groupToEdit?.groupImage || '')
       const { user } = AuthState()
 
-      const { chats, setChats } = useChat()
+      const { chats, setChats, selectedChat, setSelectedChat } = useChat()
 
       useEffect(() => {
             loadUsers()
@@ -70,11 +70,12 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
             }
       }
 
-      async function onEditGroup () {
+      async function onAddUsers () {
             if (group.users.length === 0) return toast.error('Please select at least one user')
             try {
                   const data = await chatService.updateUsersGroup(groupToEdit._id, group.users)
                   setChats(chats.map(chat => chat._id === groupToEdit._id ? { ...chat, users: data.users } : chat))
+                  setSelectedChat({ ...selectedChat, users: data.users })
                   toast.success('Group updated successfully')
                   setIsOpen(false)
             } catch (error) {
@@ -83,7 +84,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
 
       }
 
-      function handleGroup (user: User) {
+      function handleGroupUsers (user: User) {
             if (group.users.find(u => u._id === user._id)) {
                   return setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
             }
@@ -114,7 +115,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                         <div className='py-6 flex relative px-2 '>
                               <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                         </div>
-                        <button onClick={isAddNewGroup ? onCreateGroup : onEditGroup} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>
+                        <button onClick={isAddNewGroup ? onCreateGroup : onAddUsers} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>
                               {isAddNewGroup ? 'Create Chat' : 'Edit Chat'}
                         </button>
                   </div>
@@ -134,7 +135,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                         <ul className='flex flex-col main-text px-4 gap-y-4 py-8'>
                               {filteredUsers.map((user: User) => (
                                     <li key={user._id} className='text-main-color py-2 px-4 rounded-lg bg-gray-100 transition-colors duration-200 cursor-pointer hover:bg-gray-200'>
-                                          <div className='flex gap-x-4 items-center' onClick={() => handleGroup(user)}>
+                                          <div className='flex gap-x-4 items-center' onClick={() => handleGroupUsers(user)}>
                                                 <img className='w-12 h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
                                                 <div>
                                                       <span className='text-xl'>{user.username}</span>

@@ -112,7 +112,6 @@ export default function Chat ({ setIsTyping }: Props) {
 
             if (!typing) {
                   setTyping(true)
-                  console.log('typing')
                   socket.emit('typing', selectedChat._id, user._id)
             }
 
