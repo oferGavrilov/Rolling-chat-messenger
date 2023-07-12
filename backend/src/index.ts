@@ -50,7 +50,6 @@ app.get('/**', (_: Request, res: Response) => {
       res.sendFile(path.join(__dirname, '../build', 'index.html'))
 })
 
-console.log(process.env.NODE_ENV)
 const port = process.env.PORT || 5000
 
 server.listen(port, () => logger.info(`Server running on port ${port}!`))

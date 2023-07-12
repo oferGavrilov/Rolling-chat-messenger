@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "node src/index.ts",
+    "start": "ts-node src/index.ts",
     "dev": "nodemon -L src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf ./build && tsc -p ."
@@ -14,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@maxmind/geoip2-node": "^4.0.0",
     "async_hooks": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
