@@ -12,7 +12,7 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { Socket, io } from 'socket.io-client'
 import { formatLastSeenDate } from "../../utils/functions"
 
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000';
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000';
 const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
 
 export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }) {

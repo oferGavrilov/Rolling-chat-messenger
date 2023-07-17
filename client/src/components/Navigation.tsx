@@ -15,7 +15,7 @@ interface Props {
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000';
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000';
 let socket: Socket
 
 export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props) {

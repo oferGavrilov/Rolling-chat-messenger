@@ -5,7 +5,7 @@ import { userService } from "../../services/user.service"
 import { IChat } from "../../model/chat.model"
 import { Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close'
-import Loading from "../Loading"
+import Loading from "../SkeltonLoading"
 import UsersInput from "../common/UsersInput"
 
 export default function UsersToMessage ({ setIsOpen }) {

@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { userService } from "../../services/user.service"
 import { useEffect, useMemo, useState } from "react"
 import { User } from "../../model/user.model"
-import Loading from "../Loading"
+import Loading from "../SkeltonLoading"
 import { toast } from 'react-toastify'
 import { chatService } from '../../services/chat.service'
 import useChat from '../../store/useChat'
@@ -63,7 +63,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                   toast.success('Group created successfully')
                   setIsOpen(false)
 
-                  const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000', { transports: ['websocket'] })
+                  const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000', { transports: ['websocket'] })
                   socket.emit('create group', group.users, user?._id, newChat)
             } catch (error) {
                   console.error("An error occurred while creating group:", error)

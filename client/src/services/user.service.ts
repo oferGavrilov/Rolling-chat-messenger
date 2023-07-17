@@ -5,7 +5,7 @@ import { getAuthConfig, getConfig } from '../utils/authConfig'
 import { handleAxiosError } from "../utils/handleErrors"
 
 const STORAGE_KEY = 'loggedin-user'
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000'
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
 export const userService = {
       loginSignUp,
       getLoggedinUser,
