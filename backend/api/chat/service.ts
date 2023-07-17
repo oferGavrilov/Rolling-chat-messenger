@@ -71,6 +71,8 @@ export async function getChatsService (user: User): Promise<ChatDocument[]> {
 }
 
 export async function getUserChatsService (user: User, userId: string): Promise<ChatDocument[]> {
+      if (!userId || !user) return Promise.reject(new Error('Please fill all the fields'))
+
       const populateOptions: PopulateOptions[] = [
             { path: "users", select: "-password" },
             { path: "groupAdmin", select: "-password" },
@@ -91,6 +93,7 @@ export async function getUserChatsService (user: User, userId: string): Promise<
 
             return result
       } catch (error: any) {
+            console.log('crashed in getUserChatsService')
             throw handleErrorService(error)
       }
 }

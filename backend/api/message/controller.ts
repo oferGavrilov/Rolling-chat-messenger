@@ -2,9 +2,9 @@ import type { Response, Request } from "express"
 
 import { getAllMessagesByChatId, sendMessageService } from "./service"
 import { handleErrorService } from "../../middleware/errorMiddleware"
-import { RequestWithUser } from "../../models/types"
+import { RequestMessage } from "../../models/message.model"
 
-export async function sendMessage (req: RequestWithUser, res: Response) {
+export async function sendMessage (req: RequestMessage, res: Response) {
       const { content, chatId } = req.body
       const senderId = req.user?._id
 

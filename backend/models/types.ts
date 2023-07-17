@@ -1,4 +1,3 @@
-import type { Document } from 'mongoose'
 import type { User } from '../models/user.model.js'
 import type { Request } from 'express'
 
@@ -15,10 +14,15 @@ export interface AuthenticatedRequest extends Request {
     newName?: string;
     image?: string;
     chatId?: string;
-    userId: string;
+    userId?: string;
   };
 }
 
 export interface RequestWithUser extends Request {
   user: User;
+  body: {
+    users: string[];
+    chatName: string
+    groupImage: string;
+  }
 }

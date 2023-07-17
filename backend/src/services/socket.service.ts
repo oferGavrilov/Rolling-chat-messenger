@@ -9,7 +9,7 @@ let gIo: Server | null = null
 export function setupSocketAPI (http: HttpServer) {
       gIo = new Server(http, {
             cors: {
-                  origin: 'http://localhost:3000',
+                  origin: '*',
             }
       })
 

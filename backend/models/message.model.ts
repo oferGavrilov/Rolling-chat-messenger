@@ -1,4 +1,15 @@
+import { Request } from 'express'
 import mongoose from 'mongoose'
+
+export interface RequestMessage extends Request {
+      user?: {
+            _id: string;
+      }
+      body: {
+            content: string;
+            chatId: string;
+      }
+}
 
 const messageModel = new mongoose.Schema({
       sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

@@ -1,4 +1,4 @@
-import express, { type Request, type Response } from 'express'
+import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import path from 'path'
@@ -6,7 +6,7 @@ import http from 'http'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 
-import {fileURLToPath} from 'url'
+import { fileURLToPath } from 'url' 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -20,7 +20,6 @@ import { router as userRoutes } from '../api/user/router'
 import { router as chatRoutes } from '../api/chat/router'
 import { router as messageRoutes } from '../api/message/router'
 import { setupSocketAPI } from './services/socket.service'
-
 const app = express()
 dotenv.config()
 connectDB()
@@ -31,13 +30,18 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 
-
 if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.resolve(__dirname, '../build')))
+
+      const corsOptions = {
+            origin: 'https://rolling-chat.netlify.app',
+            credentials: true,
+      }
+      app.use(cors(corsOptions))
 } else {
       const corsOptions = {
             origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
-            credentials: true
+            credentials: true,
       }
       app.use(cors(corsOptions))
 }
@@ -49,10 +53,6 @@ setupSocketAPI(server)
 
 app.use(notFound)
 app.use(errorHandler)
-
-app.get('/**', (_: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, '../build', 'index.html'))
-})
 
 const port = process.env.PORT || 5000
 
