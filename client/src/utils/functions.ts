@@ -21,14 +21,14 @@ export function debounce<T extends (...args: unknown[]) => void> (
   func: T,
   timeout = 700
 ) {
-  let timer: ReturnType<typeof setTimeout>
+  let timer: ReturnType<typeof setTimeout>;
 
-  return (...args: Parameters<T>) => {
-    clearTimeout(timer)
+  return function (this: unknown, ...args: Parameters<T>) {
+    clearTimeout(timer);
     timer = setTimeout(() => {
-      func.apply(this, args)
-    }, timeout)
-  }
+      func.apply(this, args);
+    }, timeout);
+  };
 }
 
 export function isSameSender (messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
@@ -41,7 +41,7 @@ export function isSameSender (messages: IMessage[], m: IMessage, i: number, user
 }
 
 export function isLastMessage (messages: IMessage[], i: number, userId: string) {
-  if(!messages.length || !messages[messages.length - 1]?.sender?._id) return false
+  if (!messages.length || !messages[messages.length - 1]?.sender?._id) return false
   return (
     i === messages.length - 1 &&
     messages[messages.length - 1]?.sender?._id !== userId &&
@@ -50,7 +50,7 @@ export function isLastMessage (messages: IMessage[], i: number, userId: string) 
 }
 
 export function formatTime (timestamp: string): string {
-  if(!timestamp) return ''
+  if (!timestamp) return ''
 
   const date = new Date(timestamp)
   const now = new Date()
@@ -75,7 +75,7 @@ export function formatTime (timestamp: string): string {
 }
 
 export function formatDate (timestamp: string): string {
-  if(!timestamp) return ''
+  if (!timestamp) return ''
 
   const date = new Date(timestamp)
   const hours = date.getHours().toString().padStart(2, '0')
@@ -84,7 +84,7 @@ export function formatDate (timestamp: string): string {
 }
 
 export function formatLastSeenDate (timestamp: string): string {
-  if(!timestamp) return ''
+  if (!timestamp) return ''
 
   const date = new Date(timestamp)
   const now = new Date()
@@ -100,7 +100,7 @@ export function formatLastSeenDate (timestamp: string): string {
     return `${date.toLocaleDateString()}, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
   }
 }
-export function startTypingTimeout (callback: () => void, delay: number): number {
+export function startTypingTimeout (callback: () => void, delay: number): NodeJS.Timeout {
   return setTimeout(callback, delay)
 }
 

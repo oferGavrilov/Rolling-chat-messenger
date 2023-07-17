@@ -12,7 +12,7 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { Socket, io } from 'socket.io-client'
 import { formatLastSeenDate } from "../../utils/functions"
 
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000';
 const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
 
 export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }) {
@@ -71,17 +71,20 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
 
             if (conversationUser?._id === userId || !status) {
                   setConversationUser(prev => {
+                        if (!prev) return prev
                         return { ...prev, isOnline: status, lastSeen: !status ? new Date().toISOString() : prev.lastSeen }
                   })
             }
       }
 
       function getConversationUserConnection (): string {
-            return conversationUser?.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen)}`
+            if (!conversationUser) return ''
+            return conversationUser?.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser.lastSeen as string)}`
       }
 
       // TODO: Check if user is Online on mount
 
+      if (!selectedChat) return null
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
                   <div className='flex items-center px-2 h-16 md:h-20'>

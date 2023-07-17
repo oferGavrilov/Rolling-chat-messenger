@@ -9,12 +9,13 @@ import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
 import { IChat } from '../../../model/chat.model'
 
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000';
 
 interface Props {
       isTyping: boolean
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
 }
+type Timer = NodeJS.Timeout | number;
 
 let socket: Socket
 
@@ -27,12 +28,14 @@ export default function Chat ({ setIsTyping }: Props) {
 
       const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
       const { user, chatBackground } = AuthState()
+      
       const chatRef = useRef<HTMLDivElement>(null)
-      const typingTimeoutRef = useRef<number | null>(null)
+
+      const typingTimeoutRef = useRef<Timer | null>(null);
 
       useEffect(() => {
             socket = io(ENDPOINT, { transports: ['websocket'] })
-            socket.emit('setup', user._id)
+            socket.emit('setup', user?._id)
 
             socket.on('connected', () => setSocketConnected(true))
 
@@ -59,7 +62,7 @@ export default function Chat ({ setIsTyping }: Props) {
 
       useEffect(() => {
             socket.on('message received', (newMessage: IMessage) => {
-                  if (selectedChatCompare._id !== newMessage.chat._id) return
+                  if (selectedChatCompare?._id !== newMessage.chat._id) return
                   setMessages((prevMessages) => [...prevMessages, newMessage])
                   updateChat(newMessage, chats)
 
@@ -83,10 +86,10 @@ export default function Chat ({ setIsTyping }: Props) {
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
-            if (!newMessage) return
-            socket.emit('stop typing', selectedChat._id)
+            if (!newMessage || !selectedChat) return
+            socket.emit('stop typing', selectedChat?._id)
             setNewMessage('')
-            const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat._id })
+            const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id })
             socket.emit('new message', messageToUpdate)
             setMessages([...messages, messageToUpdate])
 
@@ -96,7 +99,7 @@ export default function Chat ({ setIsTyping }: Props) {
       }
 
       function setChatOnTop (message: IMessage): void {
-            const chatToUpdateIndex = chats.findIndex(chat => chat._id === selectedChat._id)
+            const chatToUpdateIndex = chats.findIndex(chat => chat._id === selectedChat?._id)
             if (chatToUpdateIndex !== -1) {
                   const chatToUpdate = chats[chatToUpdateIndex]
                   chatToUpdate.latestMessage = message
@@ -112,7 +115,7 @@ export default function Chat ({ setIsTyping }: Props) {
 
             if (!typing) {
                   setTyping(true)
-                  socket.emit('typing', selectedChat._id, user._id)
+                  socket.emit('typing', selectedChat?._id, user?._id)
             }
 
             if (typingTimeoutRef.current) {
@@ -121,9 +124,9 @@ export default function Chat ({ setIsTyping }: Props) {
 
             const timerLength = 2000
             typingTimeoutRef.current = setTimeout(() => {
-                  socket.emit('stop typing', selectedChat._id)
+                  socket.emit('stop typing', selectedChat?._id)
                   setTyping(false)
-            }, timerLength)
+            }, timerLength) 
       }
 
       function scrollToBottom () {

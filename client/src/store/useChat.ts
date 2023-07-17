@@ -17,7 +17,7 @@ interface ChatActions {
       setSelectedChat: (chat: IChat | null) => void
       setNotification: (notification: IMessage) => void
       setSelectedChatCompare: (chat: IChat | null) => void
-      removeNotification: (notification: IMessage) => void
+      removeNotification: (notification: IMessage | undefined) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -61,10 +61,11 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                   })
             },
             removeNotification: (notificationToRemove) => {
+                  if (!notificationToRemove) return
                   set((state) => {
                         const currentNotification = state.notification
                         const updatedNotification = currentNotification.filter(
-                              (notificationItem) => notificationItem.chat._id !== notificationToRemove.chat._id
+                              (notificationItem) => notificationItem.chat._id !== notificationToRemove?.chat._id
                         )
                         localStorage.setItem('notification', JSON.stringify(updatedNotification))
                         return { notification: updatedNotification }

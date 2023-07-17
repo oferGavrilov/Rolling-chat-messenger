@@ -16,16 +16,16 @@ interface ChatContextProps {
 const AuthContext = createContext<ChatContextProps | null>(null);
 
 export const AuthState = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("AuthState must be used within an AuthProvider");
-  }
-  return context;
+      const context = useContext(AuthContext);
+      if (!context) {
+            throw new Error("AuthState must be used within an AuthProvider");
+      }
+      return context;
 };
 
 export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
-      const [user, setUser] = useState(null)
-      const [chatBackground , setChatBackground] = useState<string>(userService.getBackgroundImage() || '#ccdbdc' )
+      const [user, setUser] = useState<User | null>(null)
+      const [chatBackground, setChatBackground] = useState<string>(userService.getBackgroundImage() || '#ccdbdc')
       const navigate = useNavigate()
       const location = useLocation().pathname
 
@@ -38,8 +38,10 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
       }, [navigate])
 
       const isAdmin = useCallback((chat: IChat, userId?: string): boolean => {
-            return chat.groupAdmin._id === (userId || user?._id)
-      }, [user])
+            const currentUserId = userId || (user! as User | undefined)?._id;
+
+            return !!chat.groupAdmin && chat.groupAdmin._id === currentUserId;
+      }, [user]);
 
       const logout = useCallback((): void => {
             userService.logout()
@@ -56,7 +58,7 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
                   chatBackground,
                   setChatBackground
             }),
-            [user, logout, isAdmin , chatBackground]
+            [user, logout, isAdmin, chatBackground]
       )
 
       return (

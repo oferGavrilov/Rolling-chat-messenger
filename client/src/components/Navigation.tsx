@@ -8,7 +8,6 @@ import { AuthState } from "../context/useAuth"
 import { Avatar, Tooltip } from "@mui/material"
 import { useEffect } from "react"
 import { Socket, io } from 'socket.io-client'
-
 interface Props {
       contentType: string
       setContentType: React.Dispatch<React.SetStateAction<string>>
@@ -16,7 +15,7 @@ interface Props {
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000';
 let socket: Socket
 
 export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props) {
@@ -41,7 +40,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
 
       function onLogout () {
             socket = io(ENDPOINT, { transports: ['websocket'] })
-            socket.emit('logout', user._id)
+            socket.emit('logout', user?._id)
             logout()
       }
 

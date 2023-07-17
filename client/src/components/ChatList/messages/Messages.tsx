@@ -23,7 +23,7 @@ export default function Messages ({ contentType }: MessagesProps) {
       const filteredChats = useMemo(() => {
             if (filter) {
               return chats.filter((chat: IChat) =>
-                chat.users.some((user: User) => user._id !== loggedinUser._id && user.username.toLowerCase().includes(filter.toLowerCase()))
+                chat.users.some((user: User) => user._id !== loggedinUser?._id && user.username.toLowerCase().includes(filter.toLowerCase()))
               );
             }
             if (contentType === 'groups') {

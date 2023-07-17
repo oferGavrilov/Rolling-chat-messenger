@@ -24,10 +24,10 @@ export default function Settings ({ setContentType }: SettingsProps) {
       return (
             <section className=''>
                   <div className='p-4 flex hover:bg-gray-100 cursor-pointer'>
-                        <img src={user.profileImg} alt="profile" className='h-20 w-20 rounded-full object-cover object-top' />
+                        <img src={user?.profileImg} alt="profile" className='h-20 w-20 rounded-full object-cover object-top' />
                         <div className='flex flex-col justify-center ml-4'>
-                              <span className='text-2xl'>{user.username}</span>
-                              <span className='text-[#00000065] text-lg'>{user.about}</span>
+                              <span className='text-2xl'>{user?.username}</span>
+                              <span className='text-[#00000065] text-lg'>{user?.about}</span>
                         </div>
                   </div>
                   <ul >

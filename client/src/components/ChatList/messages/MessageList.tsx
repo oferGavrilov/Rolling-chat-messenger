@@ -7,7 +7,7 @@ import { Socket, io } from 'socket.io-client'
 import { IMessage } from '../../../model/message.model'
 import { AuthState } from "../../../context/useAuth"
 
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-2szg.onrender.com' : 'http://localhost:5000';
 const socket: Socket = io(ENDPOINT, { transports: ['websocket'] });
 
 export default function MessageList ({ chats }: { chats: IChat[] }) {
@@ -15,7 +15,7 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
       const { user } = AuthState()
 
       useEffect(() => {
-            socket.emit('setup', user._id);
+            socket.emit('setup', user?._id);
 
             socket.on('new group', handleNewGroup);
 

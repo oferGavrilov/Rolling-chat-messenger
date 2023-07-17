@@ -56,7 +56,7 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
 
       function isNotification (): boolean {
             const notificationChat = getCurrentNotificationChat()
-            return notificationChat && notificationChat?.sender._id !== loggedinUser?._id
+            return notificationChat && notificationChat?.sender._id !== loggedinUser?._id || false 
       }
 
       function getCurrentNotificationChat (): IMessage | undefined {

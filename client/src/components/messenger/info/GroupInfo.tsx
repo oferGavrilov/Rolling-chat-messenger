@@ -18,12 +18,13 @@ export default function GroupInfo () {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
       const { isAdmin, user: loggedInUser } = AuthState()
 
-      const [image, setImage] = useState<string>(selectedChat.groupImage)
+      const [image, setImage] = useState<string>(selectedChat?.groupImage || '')
       const [isEditName, setIsEditName] = useState<boolean>(false)
-      const [groupName, setGroupName] = useState<string>(selectedChat.chatName)
+      const [groupName, setGroupName] = useState<string>(selectedChat?.chatName || '')
       const [isAddUsers, setIsAddUsers] = useState<boolean>(false)
 
       async function editImage (image: string) {
+            if (!selectedChat) return
             const newImage = await chatService.updateGroupImage(selectedChat._id, image)
             const updatedChat = { ...selectedChat, groupImage: newImage } as IChat
             setSelectedChat(updatedChat)
@@ -32,6 +33,8 @@ export default function GroupInfo () {
       }
 
       async function handleChangeName () {
+            if (!selectedChat) return
+
             setGroupName(groupName.trim())
             if (groupName === selectedChat.chatName || !groupName) return toast.warn('Please enter a valid name')
             const newGroupName = await chatService.updateGroupName(selectedChat._id, groupName)
@@ -48,6 +51,8 @@ export default function GroupInfo () {
       }
 
       async function onLeaveFromGroup () {
+            if (!selectedChat) return
+
             const updatedChat = await chatService.removeFromGroup(selectedChat._id)
 
             const chatsToUpdate = chats.filter(chat => chat._id !== updatedChat._id)
@@ -56,10 +61,12 @@ export default function GroupInfo () {
       }
 
       async function onRemoveFromGroup (userId: string) {
+            if (!selectedChat) return
+
             const updatedChat = await chatService.removeFromGroup(selectedChat._id, userId)
             setSelectedChat(updatedChat)
       }
-
+      if (!selectedChat) return null
       return (
             <section className="w-full ">
                   <div className="border-b-8 pb-6 border-gray-200 text-center">
@@ -117,7 +124,7 @@ export default function GroupInfo () {
                                                             Admin
                                                       </span>
                                                 )}
-                                                {(isAdmin(selectedChat, loggedInUser._id) && user._id !== loggedInUser._id) &&
+                                                {(isAdmin(selectedChat, loggedInUser?._id) && user._id !== loggedInUser?._id) &&
                                                       <div className="flex justify-end text-red-500 hover:bg-red-100 px-1 rounded-md" onClick={() => onRemoveFromGroup(user._id)}>
                                                             Remove
                                                       </div>

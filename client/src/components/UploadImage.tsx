@@ -4,14 +4,14 @@ import { uploadImg } from '../utils/upload-img'
 
 interface Props {
       image: string
-      setImage: React.Dispatch<React.SetStateAction<string>>
+      setImage: CallableFunction
       editImage?: CallableFunction
 }
 
 export default function UploadImage ({ image, setImage, editImage }: Props) {
       const [imageLoading, setImageLoading] = React.useState<boolean>(false)
       
-      async function uploadImage (file: File) {
+      async function uploadImage (file: File | undefined) {
             if (!file) return toast.error('Upload image went wrong')
             try {
                   setImageLoading(true)
