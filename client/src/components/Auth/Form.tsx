@@ -17,8 +17,9 @@ interface FormData {
       confirmPassword?: string
       profileImg?: string
 }
-const ENDPOINT = 'http://localhost:5000'
-const socket: Socket = io(ENDPOINT, { transports: ['websocket'] });
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
+
+const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
 
 export default function Form ({ }) {
       const [isLogin, setIsLogin] = useState<boolean>(true)

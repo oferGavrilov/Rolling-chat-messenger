@@ -29,7 +29,7 @@ async function getChats (): Promise<IChat[]> {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             return []
       }
@@ -45,9 +45,9 @@ async function getUserChats (userId: string): Promise<IChat[]> {
             return sortedData
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
-            throw new Error('Failed to fetch user chats.');
+            throw new Error('Failed to fetch user chats.')
       }
 }
 
@@ -57,7 +57,7 @@ async function createGroup (group: { chatName: string, users: User[], groupImage
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to create group.')
       }
@@ -69,7 +69,7 @@ async function updateGroupImage (chatId: string, groupImage: string): Promise<st
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to update group image.')
       }
@@ -80,7 +80,7 @@ async function updateGroupName (chatId: string, groupName: string): Promise<stri
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to update group name.')
       }
@@ -92,7 +92,7 @@ async function updateUsersGroup (chatId: string, users: User[]) {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to update group users.')
       }
@@ -105,7 +105,7 @@ async function removeFromGroup (chatId: string, userId?: string): Promise<IChat>
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to remove user from group.')
       }
@@ -117,7 +117,7 @@ async function getMessages (chatId: string): Promise<IMessage[]> {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to fetch messages.')
       }
@@ -129,7 +129,7 @@ async function sendMessage (message: { content: string, chatId: string }): Promi
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to send message.')
       }
@@ -141,7 +141,7 @@ async function removeChat (chatId: string, userId: string) {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw new Error('Failed to remove chat.')
       }

@@ -78,7 +78,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                   const data = await chatService.updateUsersGroup(groupToEdit._id, group.users)
                   setChats(chats.map(chat => chat._id === groupToEdit._id ? { ...chat, users: data.users } : chat))
                   if (selectedChat) {
-                        setSelectedChat({ ...selectedChat, users: data.users });
+                        setSelectedChat({ ...selectedChat, users: data.users })
                   }
                   toast.success('Group updated successfully')
                   setIsOpen(false)

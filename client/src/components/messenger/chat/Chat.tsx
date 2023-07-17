@@ -9,13 +9,13 @@ import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
 import { IChat } from '../../../model/chat.model'
 
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000';
+const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
 
 interface Props {
       isTyping: boolean
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
 }
-type Timer = NodeJS.Timeout | number;
+type Timer = NodeJS.Timeout | number
 
 let socket: Socket
 
@@ -31,7 +31,7 @@ export default function Chat ({ setIsTyping }: Props) {
       
       const chatRef = useRef<HTMLDivElement>(null)
 
-      const typingTimeoutRef = useRef<Timer | null>(null);
+      const typingTimeoutRef = useRef<Timer | null>(null)
 
       useEffect(() => {
             socket = io(ENDPOINT, { transports: ['websocket'] })
@@ -138,7 +138,7 @@ export default function Chat ({ setIsTyping }: Props) {
             }, 0)
       }
 
-      const isMessageEmpty = !newMessage || newMessage.trim() === '';
+      const isMessageEmpty = !newMessage || newMessage.trim() === ''
       
       return (
             <>

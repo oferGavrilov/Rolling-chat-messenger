@@ -35,7 +35,7 @@ async function getUsers (): Promise<User[]> {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw error
       }
@@ -49,7 +49,7 @@ async function createChat (userId: string): Promise<IChat> {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw error
       }
@@ -69,7 +69,7 @@ async function loginSignUp (credentials: FormData, login: boolean): Promise<User
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw error
       }
@@ -89,7 +89,7 @@ async function updateUserImage (image: string): Promise<string> {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw error
       }
@@ -112,7 +112,7 @@ async function editUserDetails (newName: string, key: string): Promise<User> {
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error);
+                  handleAxiosError(error)
             }
             throw error
       }
