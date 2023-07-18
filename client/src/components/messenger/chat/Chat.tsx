@@ -1,13 +1,16 @@
 
-import { AiOutlinePaperClip } from 'react-icons/ai'
 import useChat from '../../../store/useChat'
 import { useEffect, useRef, useState } from 'react'
 import { chatService } from '../../../services/chat.service'
 import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
+
 import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
 import { IChat } from '../../../model/chat.model'
+
+import AddRoundedIcon from '@mui/icons-material/AddRounded'
+import { useClickOutside } from '../../../custom/useClickOutside'
 
 const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
 
@@ -25,13 +28,16 @@ export default function Chat ({ setIsTyping }: Props) {
       const [newMessage, setNewMessage] = useState<string>('')
       const [socketConnected, setSocketConnected] = useState<boolean>(false)
       const [typing, setTyping] = useState<boolean>(false)
+      const [showClipModal, setShowClipModal] = useState<boolean>(false)
 
       const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
       const { user, chatBackground } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
-
+      const modalRef = useRef<HTMLUListElement>(null)
       const typingTimeoutRef = useRef<Timer | null>(null)
+      
+      useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
       useEffect(() => {
             socket = io(ENDPOINT, { transports: ['websocket'] })
@@ -152,15 +158,31 @@ export default function Chat ({ setIsTyping }: Props) {
                               style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
                         >
                               {messages &&
-                                    <ChatMessages messages={messages}
-                                    />}
+                                    <ChatMessages messages={messages} />
+                              }
                         </div>
                   </div>
 
-                  <div className='py-3 flex items-center ml-1  md:px-5 gap-x-5 overflow-x-hidden'>
-                        <div className='text-gray-500 text-2xl hover:text-gray-600 cursor-pointer'>
-                              <AiOutlinePaperClip />
+                  <div className='py-3 flex items-center   md:px-5 gap-x-5 overflow-x-hidden'>
+                        <div className='relative'>
+                              <AddRoundedIcon
+                                    onClick={() => setShowClipModal((prev) => !prev)}
+                                    className={`text-slate-500 !text-[2rem] !transition-transform duration-500 hover:text-gray-600 cursor-pointer
+                                    ${showClipModal ? '-rotate-[135deg] bg-gray-200 rounded-full' : ''} `} />
+
+                              <ul
+                                    ref={modalRef}
+                                    className={`
+                                    fixed bottom-14 left-8 px-2 py-3 text-white rounded-lg z-20 bg-gray-400 overflow-hidden
+                                     transition-all duration-300 ease-in-out
+                                    ${showClipModal ? 'w-auto max-h-[300px] max-w-xs' : 'max-h-0 px-0 !py-0 max-w-[80px]'}`}>
+
+                                    <li className='clip-modal-option'>Images and Videos</li>
+                                    <li className='clip-modal-option my-1'>Camera</li>
+                                    <li className='clip-modal-option'>File</li>
+                              </ul>
                         </div>
+
                         <form onSubmit={handleSubmit} className='w-full flex'>
                               <input
                                     type="text"

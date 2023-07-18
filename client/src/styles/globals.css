@@ -95,6 +95,11 @@
       .choose-bg {
             @apply w-24 h-28  rounded-xl cursor-pointer ;
       }
+
+      /* Chat */
+      .clip-modal-option {
+            @apply py-1 px-2 rounded-lg cursor-pointer  hover:bg-gray-500
+      }
 }
 
 @layer utilities{
