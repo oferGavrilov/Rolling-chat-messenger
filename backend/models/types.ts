@@ -16,6 +16,9 @@ export interface AuthenticatedRequest extends Request {
     chatId?: string;
     userId?: string;
   };
+  params:{
+    userId: string;
+  }
 }
 
 export interface RequestWithUser extends Request {

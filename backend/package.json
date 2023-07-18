@@ -8,8 +8,7 @@
     "start": "node --experimental-specifier-resolution=node ./build/src/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc --project .",
-    "build-prod": "cd client && npm install && npm run build && cd .. && npm install && npm run build"
+    "build": "tsc --project ."
   },
   "keywords": [],
   "author": "",
