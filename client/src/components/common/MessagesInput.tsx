@@ -1,7 +1,6 @@
 import React from 'react'
 import { BsSearch } from 'react-icons/bs'
 import { AiOutlineArrowDown } from 'react-icons/ai'
-import { MdKeyboardArrowDown } from 'react-icons/md'
 
 interface Props {
       filter: string
@@ -27,14 +26,6 @@ export default function MessagesInput ({ filter, setFilter }: Props) {
                         onClick={() => setFilter('')}
                         size={20}
                         className={`absolute top-[1.7rem] right-[1.7rem] text-primary opacity-0 pointer-events-none cursor-pointer ${filter ? 'custom-rotate pointer-events-auto opacity-100' : 'reverse-rotate'}`} />
-
-                  <div className='p-3 flex'>
-                        Sort by
-                        <div className='text-[#2D9CDB] px-2 flex items-center cursor-pointer hover:underline'>
-                              Newest
-                              <MdKeyboardArrowDown size={20} />
-                        </div>
-                  </div>
             </div>
       )
 }

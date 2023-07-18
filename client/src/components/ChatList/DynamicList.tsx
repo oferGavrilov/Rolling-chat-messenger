@@ -18,7 +18,6 @@ interface Props {
 }
 
 export default function DynamicList (props: Props) {
-
       const { selectedChat } = useChat()
 
       function getContent (): JSX.Element {

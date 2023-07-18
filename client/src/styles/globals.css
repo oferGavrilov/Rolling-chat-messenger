@@ -67,6 +67,9 @@
       .message-filter-icon {
             @apply hover:text-blue-500 hover:bg-gray-200 p-2 text-gray-400 flex items-center justify-center rounded-xl transition-colors duration-200 cursor-pointer;
       }
+      .sort-option {
+            @apply py-2 px-4 cursor-pointer transition-colors duration-300
+      }
       /* SIDE MENU */
       .side-icon {
             @apply flex justify-center h-11 md:h-12 text-primary my-1 mx-3 md:mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
