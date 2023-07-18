@@ -5,7 +5,7 @@ import { getAuthConfig, getConfig } from '../utils/authConfig'
 import { handleAxiosError } from "../utils/handleErrors"
 
 const STORAGE_KEY = 'loggedin-user'
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com' : 'http://localhost:5000'
 export const userService = {
       loginSignUp,
       getLoggedinUser,
@@ -26,11 +26,13 @@ export function getLoggedinUser () {
       return null
 }
 
-async function getUsers (): Promise<User[]> {
+async function getUsers (userId?: string): Promise<User[] | User> {
       const authConfig = getAuthConfig()
 
       try {
-            const response: AxiosResponse<User[]> = await axios.get(BASE_URL+'/api/auth/all', authConfig)
+            const apiUrl = userId ? `/api/auth/all/${userId}` : '/api/auth/all';
+
+            const response: AxiosResponse<User[]> = await axios.get(BASE_URL + apiUrl, authConfig)
             const { data } = response
             return data
       } catch (error) {
@@ -44,7 +46,7 @@ async function getUsers (): Promise<User[]> {
 async function createChat (userId: string): Promise<IChat> {
       const config = getConfig()
       try {
-            const response: AxiosResponse<IChat> = await axios.post(BASE_URL+'/api/chat', { userId }, config)
+            const response: AxiosResponse<IChat> = await axios.post(BASE_URL + '/api/chat', { userId }, config)
             const { data } = response
             return data
       } catch (error) {
@@ -79,7 +81,7 @@ async function updateUserImage (image: string): Promise<string> {
       const config = getAuthConfig()
 
       try {
-            const response: AxiosResponse<string> = await axios.put(BASE_URL+'/api/auth/image', { image }, config)
+            const response: AxiosResponse<string> = await axios.put(BASE_URL + '/api/auth/image', { image }, config)
             const { data } = response
             if (data) {
                   const user = getLoggedinUser()
@@ -99,7 +101,7 @@ async function editUserDetails (newName: string, key: string): Promise<User> {
       const config = getAuthConfig()
 
       try {
-            const response: AxiosResponse<User> = await axios.put(BASE_URL+'/api/auth/details', { newName }, config)
+            const response: AxiosResponse<User> = await axios.put(BASE_URL + '/api/auth/details', { newName }, config)
             const { data } = response
 
 
@@ -136,8 +138,10 @@ function getBackgroundImage (): string | null {
       }
 }
 
-function logout (): void {
+async function logout ():Promise<void> {
+      const authConfig = getAuthConfig()
       sessionStorage.removeItem(STORAGE_KEY)
+      await axios.put(BASE_URL + '/api/auth/logout', {}, authConfig)
 }
 
 function _saveToSessionStorage (user: FormData): FormData {

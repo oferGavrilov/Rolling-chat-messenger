@@ -1,7 +1,7 @@
 import { generateToken } from "../../config/generateToken"
-import type { Response , Request } from "express"
+import type { Response, Request } from "express"
 import type { AuthenticatedRequest } from "../../models/types"
-import { editUserDetailsService, editUserImageService, getAllUsers, loginUser, searchUsers, signUpUser } from "./service"
+import { editUserDetailsService, editUserImageService, getUsersService, loginUser, searchUsers, signUpUser, updateUserStatus } from "./service"
 import { handleErrorService } from "../../middleware/errorMiddleware"
 
 export async function signUp (req: AuthenticatedRequest, res: Response) {
@@ -14,7 +14,12 @@ export async function signUp (req: AuthenticatedRequest, res: Response) {
                   return res.status(400).json({ msg: result.error })
             }
 
-            return res.status(201).json(result.user)
+            const { user } = result
+
+            if (user) {
+                  return res.status(201).json({ ...result.user, isOnline: true })
+            }
+
       } catch (error) {
             console.error('Error during sign up:', error)
             return res.status(500).json({ msg: 'Internal server error' })
@@ -42,6 +47,7 @@ export async function login (req: AuthenticatedRequest, res: Response) {
                         profileImg: user.profileImg,
                         about: user.about,
                         token: generateToken(user._id),
+                        isOnline: true,
                   });
             } else {
                   throw new Error('User not found');
@@ -50,6 +56,20 @@ export async function login (req: AuthenticatedRequest, res: Response) {
             throw handleErrorService(error);
       }
 }
+
+export async function logoutUser(req: Request, res: Response) {
+      const userId = (req as AuthenticatedRequest).user?._id; // Assuming you have a custom AuthenticatedRequest type.
+    
+      try {
+        // Call the service function to update user status
+        await updateUserStatus(userId);
+    
+        // Return a success response (if needed)
+        res.status(200).json({ message: 'User logged out successfully' });
+      } catch (error: any) {
+        res.status(500).json({ error: 'Server error' });
+      }
+    }
 
 export async function searchUsersByKeyword (req: Request, res: Response) {
       const { search } = req.query
@@ -64,10 +84,11 @@ export async function searchUsersByKeyword (req: Request, res: Response) {
 }
 
 export async function getUsers (req: AuthenticatedRequest, res: Response) {
-      const userId = req.user?._id
+      const loggedInUserId = req.user?._id
+      const { userId } = req.params
 
       try {
-            const users = await getAllUsers(userId)
+            const users = await getUsersService(loggedInUserId , userId)
             res.send(users)
       } catch (error: any) {
             throw handleErrorService(error);

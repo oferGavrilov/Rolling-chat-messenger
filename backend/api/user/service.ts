@@ -31,6 +31,7 @@ export async function signUpUser (username: string, email: string, password: str
                   email,
                   password,
                   profileImg,
+                  isOnline: true,
                   about: User.schema.path('about').default('Available'),
             })
 
@@ -41,7 +42,7 @@ export async function signUpUser (username: string, email: string, password: str
                         email: newUser.email,
                         profileImg: newUser.profileImg,
                         about: newUser.about,
-                        token: generateToken(newUser._id)
+                        token: generateToken(newUser._id),
                   }
 
                   return { user }
@@ -58,6 +59,9 @@ export async function loginUser (email: string, password: string): Promise<{ use
             const user = await User.findOne({ email }).select('+password')
 
             if (user && (await user.matchPassword(password))) {
+
+                  user.isOnline = true
+                  await user.save()
                   return {
                         user,
                   }
@@ -70,6 +74,19 @@ export async function loginUser (email: string, password: string): Promise<{ use
             throw handleErrorService(error)
       }
 }
+
+export async function updateUserStatus(userId: string) {
+      try {
+        // Find the user by ID and update the isOnline and lastSeen properties
+        await User.findByIdAndUpdate(
+          userId,
+          { isOnline: false, lastSeen: new Date() },
+          { new: true } // Set { new: true } to return the updated user after the update
+        );
+      } catch (error: any) {
+        throw error;
+      }
+    }
 
 export async function searchUsers (keyword: string): Promise<User[]> {
       try {
@@ -89,10 +106,18 @@ export async function searchUsers (keyword: string): Promise<User[]> {
       }
 }
 
-export async function getAllUsers (userId: string): Promise<User[]> {
+export async function getUsersService (loggedInUserId: string, userId?: string): Promise<User[]> {
       try {
-            const users = await User.find({ _id: { $ne: userId } })
-            return users
+            if (userId) {
+                  const user = await User.findOne({ _id: userId });
+                  if (!user) {
+                        throw new Error('User not found')
+                  }
+                  return [user]
+            } else {
+                  const users = await User.find({ _id: { $ne: loggedInUserId } })
+                  return users
+            }
       } catch (error: any) {
             throw handleErrorService(error)
       }

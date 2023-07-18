@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { uploadImg } from '../utils/upload-img'
-
+import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
 interface Props {
       image: string
       setImage: CallableFunction
@@ -10,7 +10,7 @@ interface Props {
 
 export default function UploadImage ({ image, setImage, editImage }: Props) {
       const [imageLoading, setImageLoading] = React.useState<boolean>(false)
-      
+
       async function uploadImage (file: File | undefined) {
             if (!file) return toast.error('Upload image went wrong')
             try {
@@ -28,9 +28,19 @@ export default function UploadImage ({ image, setImage, editImage }: Props) {
             <label
                   htmlFor="img-upload"
                   className='upload-img'
-                  style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover' }}
-            >{imageLoading && <div className='spinner'></div>}
-                  <div className='overlay hidden '> Upload Image</div>
+                  style={{ backgroundImage: `url(${image ? image : 'imgs/guest.jpg'})`, backgroundSize: 'cover' }}
+            >
+                  {imageLoading ? (
+                        <div className='spinner'></div>) : (
+
+                        <div className='overlay hidden '>
+                              <div className={`flex flex-col items-center text-sm ${image && 'text-white'}`}>
+                                    <CameraAltRoundedIcon fontSize='large' />
+                                    Change Image
+                              </div>
+                        </div>
+                  )}
+
                   <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/*' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         uploadImage(e.target.files?.[0])
                   } />

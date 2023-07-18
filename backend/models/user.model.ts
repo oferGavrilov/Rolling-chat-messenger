@@ -10,6 +10,8 @@ export interface User extends Document {
   matchPassword: (enteredPassword: string) => Promise<boolean>
   createdAt: Date
   updatedAt: Date
+  isOnline: boolean
+  lastSeen: Date
 }
 
 const userModel: Schema<User> = new Schema<User>(
@@ -19,6 +21,8 @@ const userModel: Schema<User> = new Schema<User>(
     password: { type: String, required: true, select: false },
     profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
     about: { type: String, default: "Available" },
+    isOnline: { type: Boolean, default: false },
+    lastSeen: { type: Date, default: Date.now() }
   },
   { timestamps: true }
 )

@@ -11,18 +11,21 @@ import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
 import { Socket, io } from 'socket.io-client'
 import { formatLastSeenDate } from "../../utils/functions"
+import { userService } from "../../services/user.service"
 
 const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
 const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
 
-export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }) : JSX.Element{
 
       const [conversationUser, setConversationUser] = useState<User>()
       const [isChatMode, setMode] = useState<boolean>(true)
       const [isTyping, setIsTyping] = useState<boolean>(false)
 
-      const { selectedChat, setSelectedChat, chats, setChats } = useChat()
+      const { selectedChat, setSelectedChat } = useChat()
       const { user: loggedInUser } = AuthState()
+
+      const [connectionStatus, setConnectionStatus] = useState<string>('')
 
       useEffect(() => {
             socket.on('login', (userId: string) => handleConnection(userId, true))
@@ -34,57 +37,32 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             }
       }, [])
 
-      const getConversationUser = (): User | undefined => {
-            return selectedChat?.users.find(user => user._id !== loggedInUser?._id) || selectedChat?.users[0]
-      }
+      useEffect(() => {
+            fetchConversationUser();
+      }, [selectedChat]);
 
       useEffect(() => {
-            if (selectedChat) {
-                  const user = getConversationUser()
-                  setConversationUser(user)
+            async function getConversationUserConnection () {
+                  if (!conversationUser) return
+                  const status = conversationUser.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`;
+                  setConnectionStatus(status)
             }
-      }, [selectedChat])
+
+            getConversationUserConnection();
+      }, [conversationUser]);
+
+      async function fetchConversationUser (): Promise<void> {
+            const conversationUser = selectedChat?.users.find(user => user._id !== loggedInUser?._id) || selectedChat?.users[0]
+            const users = await userService.getUsers(conversationUser?._id) as User
+            setConversationUser(users[0])
+      }
 
       const handleConnection = (userId: string, status: boolean) => {
-            const chatToUpdate = chats.find(chat => chat._id === selectedChat?._id)
-
-            if (chatToUpdate) {
-                  const updatedUsers = chatToUpdate.users.map(user => {
-                        if (user?._id === userId) {
-                              return { ...user, isOnline: status }
-                        }
-                        return user
-                  })
-                  if (!status) {
-                        const userToUpdate = updatedUsers.find(user => user?._id === userId)
-                        if (userToUpdate) {
-                              userToUpdate.lastSeen = new Date().toISOString()
-                        }
-                  }
-                  const updatedChats = [...chats]
-                  const chatIndex = updatedChats.findIndex(chat => chat._id === chatToUpdate._id)
-                  if (chatIndex !== -1) {
-                        updatedChats[chatIndex] = { ...chatToUpdate, users: updatedUsers }
-                        setChats(updatedChats)
-                  }
-            }
-
-            if (conversationUser?._id === userId || !status) {
-                  setConversationUser(prev => {
-                        if (!prev) return prev
-                        return { ...prev, isOnline: status, lastSeen: !status ? new Date().toISOString() : prev.lastSeen }
-                  })
-            }
+            if (loggedInUser?._id === userId) return
+            setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`)
       }
 
-      function getConversationUserConnection (): string {
-            if (!conversationUser) return ''
-            return conversationUser?.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser.lastSeen as string)}`
-      }
-
-      // TODO: Check if user is Online on mount
-
-      if (!selectedChat) return null
+      if (!selectedChat) return <div></div>
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
                   <div className='flex items-center px-2 h-16 md:h-20'>
@@ -93,16 +71,19 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                         <div className='flex items-center gap-4 ml-4 justify-between w-full'>
                               <div className='flex flex-col'>
                                     <h2 className='md:text-lg font-semibold cursor-pointer underline-offset-2 hover:underline' onClick={() => setMode(false)}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
-                                    {!selectedChat.isGroupChat ? <span className='text-primary text-xs md:text-base'>{isTyping ? 'Typing...' : getConversationUserConnection()}</span> : (
-                                          <div className="flex gap-x-1 text-xs tracking-wide">
-                                                {selectedChat.users.map((user, index) =>
-                                                      <span key={user._id} className="text-slate-400">
-                                                            {user.username}
-                                                            {index !== selectedChat.users.length - 1 && ","}
-                                                      </span>
-                                                )}
-                                          </div>
-                                    )}
+                                    {!selectedChat.isGroupChat ?
+                                          <span className='text-primary text-xs md:text-base'>
+                                                {isTyping ? 'Typing...' : connectionStatus}
+                                          </span> : (
+                                                <div className="flex gap-x-1 text-xs tracking-wide">
+                                                      {selectedChat.users.map((user, index) =>
+                                                            <span key={user._id} className="text-slate-400">
+                                                                  {user.username}
+                                                                  {index !== selectedChat.users.length - 1 && ","}
+                                                            </span>
+                                                      )}
+                                                </div>
+                                          )}
                               </div>
                               <div className='flex items-center gap-x-2'>
                                     <div className='text-primary text-2xl hover:bg-gray-100 py-2 px-2 rounded-lg cursor-pointer'>

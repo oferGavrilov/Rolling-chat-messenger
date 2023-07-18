@@ -7,7 +7,7 @@ import { IMessage } from "../model/message.model"
 import { handleAxiosError } from "../utils/handleErrors"
 import { User } from "../model/user.model"
 
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com' : 'http://localhost:5000'
 
 export const chatService = {
       getChats,

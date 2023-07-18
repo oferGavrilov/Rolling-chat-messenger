@@ -28,7 +28,7 @@ export default function Chat ({ setIsTyping }: Props) {
 
       const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
       const { user, chatBackground } = AuthState()
-      
+
       const chatRef = useRef<HTMLDivElement>(null)
 
       const typingTimeoutRef = useRef<Timer | null>(null)
@@ -126,7 +126,7 @@ export default function Chat ({ setIsTyping }: Props) {
             typingTimeoutRef.current = setTimeout(() => {
                   socket.emit('stop typing', selectedChat?._id)
                   setTyping(false)
-            }, timerLength) 
+            }, timerLength)
       }
 
       function scrollToBottom () {
@@ -139,12 +139,21 @@ export default function Chat ({ setIsTyping }: Props) {
       }
 
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
-      
+
       return (
             <>
-                  <div className='border-y py-4 border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center' style={{ background: chatBackground }} ref={chatRef}>
-                        <div className='absolute right-0 top-0 w-full h-full ' style={{ backgroundImage: 'url(imgs/chat/background.png)' }}>
-                              {messages && <ChatMessages messages={messages} />}
+                  <div
+                        className='border-y py-4 border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center'
+                        style={{ background: chatBackground }}
+                        ref={chatRef}
+                  >
+                        <div
+                              className='absolute right-0 top-0 w-full h-full'
+                              style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
+                        >
+                              {messages &&
+                                    <ChatMessages messages={messages}
+                                    />}
                         </div>
                   </div>
 
