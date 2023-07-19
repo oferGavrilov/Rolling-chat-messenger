@@ -10,7 +10,6 @@ export default function ChatMessages ({ messages }: Props) {
 
       const { user } = AuthState()
       if(!messages || !user) return null
-      console.log('messages', messages)
       return (
             <section className="py-4">
                   {messages &&
@@ -25,7 +24,7 @@ export default function ChatMessages ({ messages }: Props) {
                                     <div
                                           className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl
                                            ${message?.sender._id === user._id ?
-                                                      'bg-primary text-white' : 'bg-slate-300'}
+                                                      'bg-primary text-white' : 'bg-gray-500 text-white'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :
                                                       'ml-0 rounded-br-xl flex-row-reverse'}`}

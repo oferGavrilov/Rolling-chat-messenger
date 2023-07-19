@@ -170,7 +170,6 @@ export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
       }
 
       async function uploadImage (file: File | undefined) {
-            console.log('file', file)
             if (!file) return toast.error('Upload image went wrong')
             try {
                   const data = await uploadImg(file)
@@ -200,11 +199,11 @@ export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
                         </div>
                   </div>
 
-                  <div className='py-3 flex items-center   md:px-5 gap-x-5 overflow-x-hidden'>
+                  <div className='py-3 flex items-center md:px-5 gap-x-5 overflow-x-hidden'>
                         <div className='relative'>
                               <AddRoundedIcon
                                     onClick={() => setShowClipModal((prev) => !prev)}
-                                    className={`text-slate-500 !text-[2rem] !transition-transform duration-500 hover:text-gray-600 cursor-pointer
+                                    className={`text-slate-500 !text-[2rem] !transition-transform !duration-300 hover:text-gray-600 cursor-pointer
                                     ${showClipModal ? '-rotate-[135deg] bg-gray-200 rounded-full pointer-events-none' : ''} `} />
 
                               <ul
@@ -215,7 +214,7 @@ export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
                                     ${showClipModal ? 'w-auto max-h-[300px] max-w-xs' : 'max-h-0 px-0 !py-0 max-w-[80px]'}`}>
 
                                     <label className='clip-modal-option img-upload'>
-                                          <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/*' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                          <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/gif, image/jpeg, image/png' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 uploadImage(e.target.files?.[0])
                                           } />
                                           Images and Videos</label>

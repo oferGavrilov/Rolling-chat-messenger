@@ -99,7 +99,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                   </div>
                   {chatMode === 'chat' && <Chat isTyping={isTyping} setFile={setFile} setChatMode={setChatMode} setIsTyping={setIsTyping} />}
                   {chatMode === 'info' && <Info conversationUser={conversationUser} setChatMode={setChatMode} setShowSearch={setShowSearch} />}
-                  {chatMode === 'send-file' && <FileEditor file={file} setFile={setFile} />}
+                  {chatMode === 'send-file' && <FileEditor file={file} setChatMode={setChatMode} />}
             </section>
       )
 }
