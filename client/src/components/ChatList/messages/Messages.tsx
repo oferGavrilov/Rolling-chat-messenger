@@ -73,7 +73,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                   <div className='p-3 mx-4 flex'>
                         Sort by
                         <div className='px-2 relative'>
-                              <span className='flex items-center text-[#2D9CDB] cursor-pointer hover:underline' onClick={() => setShowSortModal((prev) => !prev)}>
+                              <span className={`flex items-center text-[#2D9CDB] cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
                                     {sort}
                                     <KeyboardArrowDownRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? '' : 'rotate-180'} `} />
                               </span>

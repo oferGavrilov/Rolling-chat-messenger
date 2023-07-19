@@ -11,7 +11,7 @@ export default function ChatMessages ({ messages }: Props) {
       const { user } = AuthState()
       if(!messages || !user) return null
       return (
-            <>
+            <section className="">
                   {messages &&
                         messages.map((message, idx) => (
                               <div key={message._id} className="flex items-center gap-x-2 py-[2px] px-3">
@@ -39,6 +39,6 @@ export default function ChatMessages ({ messages }: Props) {
                               </div >
                         ))
                   }
-            </>
+            </section>
       )
 }

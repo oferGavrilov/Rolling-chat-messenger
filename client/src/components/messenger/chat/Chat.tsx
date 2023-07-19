@@ -36,7 +36,7 @@ export default function Chat ({ setIsTyping }: Props) {
       const chatRef = useRef<HTMLDivElement>(null)
       const modalRef = useRef<HTMLUListElement>(null)
       const typingTimeoutRef = useRef<Timer | null>(null)
-      
+
       useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
       useEffect(() => {
@@ -91,17 +91,37 @@ export default function Chat ({ setIsTyping }: Props) {
       }
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
-            e.preventDefault()
-            if (!newMessage || !selectedChat) return
-            socket.emit('stop typing', selectedChat?._id)
-            setNewMessage('')
-            const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id })
-            socket.emit('new message', messageToUpdate)
-            setMessages([...messages, messageToUpdate])
+            e.preventDefault();
+            if (!newMessage || !selectedChat) return;
 
-            setChatOnTop(messageToUpdate)
+            // Optimistic Update: Add the new message to the state immediately
+            const optimisticMessage: IMessage = {
+                  _id: 'temp-id', 
+                  sender: user!,
+                  content: newMessage,
+                  chat: selectedChat,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+            };
 
-            scrollToBottom()
+            setNewMessage('');
+            setMessages([...messages, optimisticMessage]);
+            setChatOnTop(optimisticMessage);
+            scrollToBottom();
+
+            try {
+                  socket.emit('stop typing', selectedChat?._id);
+                  const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id });
+
+                  setMessages((prevMessages) =>
+                        prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
+                  );
+                  socket.emit('new message', messageToUpdate);
+                  
+            } catch (error) {
+                  console.error('Failed to send message:', error);
+                  setMessages([...messages]);
+            }
       }
 
       function setChatOnTop (message: IMessage): void {
@@ -168,7 +188,7 @@ export default function Chat ({ setIsTyping }: Props) {
                               <AddRoundedIcon
                                     onClick={() => setShowClipModal((prev) => !prev)}
                                     className={`text-slate-500 !text-[2rem] !transition-transform duration-500 hover:text-gray-600 cursor-pointer
-                                    ${showClipModal ? '-rotate-[135deg] bg-gray-200 rounded-full' : ''} `} />
+                                    ${showClipModal ? '-rotate-[135deg] bg-gray-200 rounded-full pointer-events-none' : ''} `} />
 
                               <ul
                                     ref={modalRef}

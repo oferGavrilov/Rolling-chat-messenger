@@ -1,7 +1,7 @@
 import { IChat } from "./chat.model"
 
 export interface IMessage {
-      count: number
+      count?: number
       _id: string
       chat:IChat
       content: string
