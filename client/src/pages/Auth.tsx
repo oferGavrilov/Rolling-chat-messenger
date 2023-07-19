@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 import { Link, useNavigate } from 'react-router-dom'
 import { userService } from '../services/user.service'
@@ -14,7 +14,7 @@ export default function Auth () {
       const [isVisible, setIsVisible] = useState(false)
       const navigate = useNavigate()
 
-      useEffect(() => {
+      useLayoutEffect(() => {
             const user = userService.getLoggedinUser()
             if (user) navigate('/chat')
       }, [navigate])

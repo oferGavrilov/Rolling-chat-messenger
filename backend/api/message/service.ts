@@ -12,13 +12,23 @@ export async function sendMessageService (senderId: string, content: string, cha
             const newMessage = {
                   sender: senderId,
                   content,
-                  chat: chatId
+                  chat: chatId,
             }
 
             let message = await Message.create(newMessage)
             message = await message.populate('sender', 'username profileImg')
             message = await message.populate('chat')
             message = await User.populate(message, { path: 'chat.users', select: 'username email profileImg' })
+
+            // Check if the other user ID is in the deletedBy array
+            const chat = await Chat.findById(chatId)
+            const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString())
+
+            if (otherUserId && chat.deletedBy.includes(otherUserId.toString())) {
+                  // Remove the other user ID from the deletedBy array
+                  chat.deletedBy = chat.deletedBy.filter((userId) => userId.toString() !== otherUserId.toString())
+                  await chat.save()
+            }
 
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message })
 

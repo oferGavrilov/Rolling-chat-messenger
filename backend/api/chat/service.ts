@@ -1,10 +1,11 @@
 import { User } from "../../models/user.model"
 import { Chat, type ChatDocument } from "../../models/chat.model"
-import type { PopulateOptions } from "mongoose"
+import { Types, type PopulateOptions } from "mongoose"
 import { handleErrorService } from "../../middleware/errorMiddleware"
 import { Message } from "../../models/message.model"
 
 export async function createChatService (userId: string, currentUser: User): Promise<ChatDocument> {
+      console.log('createChatService' , userId, currentUser)
       if (!userId) {
             console.log('No user id sent to the server')
             throw new Error('No user id sent to the server')
@@ -87,13 +88,13 @@ export async function getUserChatsService (user: User, userId: string): Promise<
                   $and: [
                         { users: { $elemMatch: { $eq: user._id } } },
                         { users: { $elemMatch: { $eq: userId } } },
+                        // Filter out chats where the user's ID exists in the deletedBy array
+                        { deletedBy: { $nin: [user._id] } },
                   ],
-            })
-                  .populate(populateOptions)
+            }).populate(populateOptions);
 
             return result
       } catch (error: any) {
-            console.log('crashed in getUserChatsService')
             throw handleErrorService(error)
       }
 }
@@ -191,34 +192,37 @@ export async function removeFromGroupChatService (chatId: string, userId: string
 
 export async function removeChatService (chatId: string, userId: string): Promise<string> {
       if (!chatId || !userId) {
-            throw new Error('Please fill all the fields')
+            throw new Error('Please fill all the fields');
       }
 
       try {
-            // push the userId to the chat's deletedBy array 
-
-            const chat = await Chat.findById(chatId)
+            const chat = await Chat.findById(chatId);
 
             if (!chat) {
-                  throw new Error('Chat not found')
+                  throw new Error('Chat not found');
             }
 
             if (chat.deletedBy.includes(userId)) {
-                  throw new Error('Chat already deleted')
+                  throw new Error('Chat already deleted');
             }
 
-            chat.deletedBy.push(userId)
+            chat.deletedBy.push(userId);
 
-            // if the chat has been deleted by all users, delete the chat from the database with all its messages
+            const allUsersDeleted = chat.users.every((user) => chat.deletedBy.includes(user.toString()));
 
-            if (chat.deletedBy.length === chat.users.length) {
-                  await Message.deleteMany({ chat: chatId })
+            if (allUsersDeleted) {
+                  await Message.deleteMany({ chat: new Types.ObjectId(chatId) });
+                  const deleteResult = await Chat.deleteOne({ _id: new Types.ObjectId(chatId) });
+
+                  if (deleteResult.deletedCount !== 1) {
+                        console.log(`Chat with ID ${chatId} could not be deleted.`);
+                  }
+            } else {
+                  await chat.save();
             }
 
-            await chat.save()
-
-            return chatId
+            return chatId;
       } catch (error: any) {
-            throw handleErrorService(error)
+            throw handleErrorService(error);
       }
 }
