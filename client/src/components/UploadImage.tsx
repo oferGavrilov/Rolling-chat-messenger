@@ -27,7 +27,7 @@ export default function UploadImage ({ image, setImage, editImage }: Props) {
       return (
             <label
                   htmlFor="img-upload"
-                  className='upload-img'
+                  className='upload-img fade-grow-up'
                   style={{ backgroundImage: `url(${image ? image : 'imgs/guest.jpg'})`, backgroundSize: 'cover' }}
             >
                   {imageLoading ? (

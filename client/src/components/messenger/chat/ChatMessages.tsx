@@ -10,15 +10,16 @@ export default function ChatMessages ({ messages }: Props) {
 
       const { user } = AuthState()
       if(!messages || !user) return null
+      console.log('messages', messages)
       return (
-            <section className="">
+            <section className="py-4">
                   {messages &&
                         messages.map((message, idx) => (
                               <div key={message._id} className="flex items-center gap-x-2 py-[2px] px-3">
                                     <div className="hidden md:flex">
                                           {(isSameSender(messages, message, idx, user._id) ||
                                                 isLastMessage(messages, idx, user._id)) ? (
-                                                <img className="h-10 w-10 rounded-full object-cover object-top" src={message.sender.profileImg} alt="" />
+                                                <img className="h-10 w-10 rounded-full object-cover object-top" src={message.sender.profileImg} alt="conversation-user" />
                                           ) : <span className="ml-10"></span>}
                                     </div>
                                     <div

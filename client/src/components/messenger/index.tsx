@@ -12,20 +12,22 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { Socket, io } from 'socket.io-client'
 import { formatLastSeenDate } from "../../utils/functions"
 import { userService } from "../../services/user.service"
+import FileEditor from "./FileEditor"
 
 const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
 const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
 
-export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }) : JSX.Element{
+export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }): JSX.Element {
 
       const [conversationUser, setConversationUser] = useState<User>()
-      const [isChatMode, setMode] = useState<boolean>(true)
+      const [chatMode, setChatMode] = useState<string>('chat')
       const [isTyping, setIsTyping] = useState<boolean>(false)
 
       const { selectedChat, setSelectedChat } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
+      const [file, setFile] = useState<File | null>(null)
 
       useEffect(() => {
             socket.on('login', (userId: string) => handleConnection(userId, true))
@@ -67,10 +69,10 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             <section className='flex-1 messenger slide-left overflow-y-hidden '>
                   <div className='flex items-center px-2 h-16 md:h-20'>
                         <IoIosArrowBack size={30} className='md:hidden text-blue-400 mr-3 cursor-pointer' onClick={() => setSelectedChat(null)} />
-                        <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setMode(false)} />
+                        <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setChatMode('info')} />
                         <div className='flex items-center gap-4 ml-4 justify-between w-full'>
                               <div className='flex flex-col'>
-                                    <h2 className='md:text-lg font-semibold cursor-pointer underline-offset-2 hover:underline' onClick={() => setMode(false)}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
+                                    <h2 className='md:text-lg font-semibold cursor-pointer underline-offset-2 hover:underline' onClick={() => setChatMode('info')}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
                                     {!selectedChat.isGroupChat ?
                                           <span className='text-primary text-xs md:text-base'>
                                                 {isTyping ? 'Typing...' : connectionStatus}
@@ -89,14 +91,15 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                                     <div className='text-primary text-2xl hover:bg-gray-100 py-2 px-2 rounded-lg cursor-pointer'>
                                           <BsCameraVideo />
                                     </div>
-                                    <div className='text-gray-500 hover:bg-gray-100 text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setMode(!isChatMode)}>
+                                    <div className='text-gray-500 hover:bg-gray-100 text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setChatMode('info')}>
                                           <AiOutlineInfoCircle />
                                     </div>
                               </div>
                         </div>
                   </div>
-                  {isChatMode ? <Chat isTyping={isTyping} setIsTyping={setIsTyping} /> :
-                        <Info conversationUser={conversationUser} setMode={setMode} setShowSearch={setShowSearch} />}
+                  {chatMode === 'chat' && <Chat isTyping={isTyping} setFile={setFile} setChatMode={setChatMode} setIsTyping={setIsTyping} />}
+                  {chatMode === 'info' && <Info conversationUser={conversationUser} setChatMode={setChatMode} setShowSearch={setShowSearch} />}
+                  {chatMode === 'send-file' && <FileEditor file={file} setFile={setFile} />}
             </section>
       )
 }

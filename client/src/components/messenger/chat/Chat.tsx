@@ -11,18 +11,22 @@ import { IChat } from '../../../model/chat.model'
 
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { useClickOutside } from '../../../custom/useClickOutside'
+import { toast } from 'react-toastify'
+import { uploadImg } from '../../../utils/upload-img'
 
 const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
 
 interface Props {
       isTyping: boolean
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
+      setChatMode: React.Dispatch<React.SetStateAction<string>>
+      setFile: React.Dispatch<React.SetStateAction<File | null>>
 }
 type Timer = NodeJS.Timeout | number
 
 let socket: Socket
 
-export default function Chat ({ setIsTyping }: Props) {
+export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
 
       const [messages, setMessages] = useState<IMessage[]>([])
       const [newMessage, setNewMessage] = useState<string>('')
@@ -36,6 +40,7 @@ export default function Chat ({ setIsTyping }: Props) {
       const chatRef = useRef<HTMLDivElement>(null)
       const modalRef = useRef<HTMLUListElement>(null)
       const typingTimeoutRef = useRef<Timer | null>(null)
+
 
       useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
@@ -96,7 +101,7 @@ export default function Chat ({ setIsTyping }: Props) {
 
             // Optimistic Update: Add the new message to the state immediately
             const optimisticMessage: IMessage = {
-                  _id: 'temp-id', 
+                  _id: 'temp-id',
                   sender: user!,
                   content: newMessage,
                   chat: selectedChat,
@@ -117,7 +122,7 @@ export default function Chat ({ setIsTyping }: Props) {
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
                   );
                   socket.emit('new message', messageToUpdate);
-                  
+
             } catch (error) {
                   console.error('Failed to send message:', error);
                   setMessages([...messages]);
@@ -164,17 +169,29 @@ export default function Chat ({ setIsTyping }: Props) {
             }, 0)
       }
 
+      async function uploadImage (file: File | undefined) {
+            console.log('file', file)
+            if (!file) return toast.error('Upload image went wrong')
+            try {
+                  const data = await uploadImg(file)
+                  setFile(data?.url)
+                  setChatMode('send-file')
+            } catch (err) {
+                  console.log(err)
+            }
+      }
+
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
 
       return (
             <>
                   <div
-                        className='border-y py-4 border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center'
+                        className='border-y border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center'
                         style={{ background: chatBackground }}
                         ref={chatRef}
                   >
                         <div
-                              className='absolute right-0 top-0 w-full h-full'
+                              className='absolute right-0 top-0 overflow-auto w-full h-full'
                               style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
                         >
                               {messages &&
@@ -197,7 +214,11 @@ export default function Chat ({ setIsTyping }: Props) {
                                      transition-all duration-300 ease-in-out
                                     ${showClipModal ? 'w-auto max-h-[300px] max-w-xs' : 'max-h-0 px-0 !py-0 max-w-[80px]'}`}>
 
-                                    <li className='clip-modal-option'>Images and Videos</li>
+                                    <label className='clip-modal-option img-upload'>
+                                          <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/*' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                uploadImage(e.target.files?.[0])
+                                          } />
+                                          Images and Videos</label>
                                     <li className='clip-modal-option my-1'>Camera</li>
                                     <li className='clip-modal-option'>File</li>
                               </ul>

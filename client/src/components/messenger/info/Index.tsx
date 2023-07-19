@@ -8,11 +8,11 @@ import GroupInfo from "./GroupInfo"
 
 interface Props {
       conversationUser: User | undefined
-      setMode: CallableFunction
+      setChatMode: React.Dispatch<React.SetStateAction<string>>
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Info ({ conversationUser, setMode }: Props) {
+export default function Info ({ conversationUser, setChatMode }: Props) {
       const { selectedChat } = useChat()
 
       return (
@@ -20,7 +20,7 @@ export default function Info ({ conversationUser, setMode }: Props) {
                   {selectedChat?.isGroupChat ?
                         (<GroupInfo />) :
                         (<ChatInfo conversationUser={conversationUser} />)}
-                  <CloseIcon className="absolute top-0 right-5 cursor-pointer !text-2xl md:!text-3xl" onClick={() => setMode('chat')} />
+                  <CloseIcon className="absolute top-0 right-5 cursor-pointer !text-2xl md:!text-3xl" onClick={() => setChatMode('chat')} />
             </div>
       )
 }
