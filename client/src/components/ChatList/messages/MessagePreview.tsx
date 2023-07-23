@@ -81,10 +81,10 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                                     variant="dot">
                                     <Avatar alt='' src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} />
                               </StyledBadge>) : (
-                              <Avatar alt='' src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} />
+                              <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='profile-image' />
                         )}
 
-                        <div className="ml-3 w-full ">
+                        <div className="ml-3 w-full">
                               <div className='flex justify-between items-center '>
                                     <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
                                     <span className='text-gray-400 text-sm'>
@@ -93,10 +93,10 @@ export default function MessagePreview ({ chat }: { chat: IChat }) {
                               </div>
                               <div className='flex justify-between'>
                                     <p
-                                          className={`text-base 
+                                          className={`text-base h-6 truncate max-h-[24px] max-w-[260px] overflow-hidden whitespace-nowrap
                                     ${isNotification() ?
-                                                      'text-blue-500'
-                                                      : 'text-[#00000085]'
+                                                      'text-blue-500' :
+                                                      'text-[#00000085]'
                                                 }`}>
                                           {getLatestMessageSender()} {chat.latestMessage?.content}
                                     </p>

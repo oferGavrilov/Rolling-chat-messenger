@@ -35,7 +35,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       const [showClipModal, setShowClipModal] = useState<boolean>(false)
 
       const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
-      const { user, chatBackground } = AuthState()
+      const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
       const modalRef = useRef<HTMLUListElement>(null)
@@ -96,8 +96,8 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       }
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
-            e.preventDefault();
-            if (!newMessage || !selectedChat) return;
+            e.preventDefault()
+            if (!newMessage || !selectedChat) return
 
             // Optimistic Update: Add the new message to the state immediately
             const optimisticMessage: IMessage = {
@@ -107,25 +107,25 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
                   chat: selectedChat,
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
-            };
+            }
 
-            setNewMessage('');
-            setMessages([...messages, optimisticMessage]);
-            setChatOnTop(optimisticMessage);
-            scrollToBottom();
+            setNewMessage('')
+            setMessages([...messages, optimisticMessage])
+            setChatOnTop(optimisticMessage)
+            scrollToBottom()
 
             try {
-                  socket.emit('stop typing', selectedChat?._id);
-                  const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id });
+                  socket.emit('stop typing', selectedChat?._id)
+                  const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id })
 
                   setMessages((prevMessages) =>
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
-                  );
-                  socket.emit('new message', messageToUpdate);
+                  )
+                  socket.emit('new message', messageToUpdate)
 
             } catch (error) {
-                  console.error('Failed to send message:', error);
-                  setMessages([...messages]);
+                  console.error('Failed to send message:', error)
+                  setMessages([...messages])
             }
       }
 
@@ -162,13 +162,11 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
       function scrollToBottom () {
             setTimeout(() => {
-                  const chatContainer = chatRef.current;
+                  const chatContainer = chatRef.current
                   if (chatContainer) {
-                        console.log('scrollTop', chatContainer.scrollTop, 'scrollHeight', chatContainer.scrollHeight)
-                        chatContainer.scrollTop = chatContainer.scrollHeight ;
-                        console.log('scrollTop', chatContainer.scrollTop)
+                        chatContainer.scrollTop = chatContainer.scrollHeight
                   }
-            }, 0);
+            }, 0)
       }
 
       async function uploadImage (file: File | undefined) {
@@ -188,12 +186,13 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
             <>
                   <div
                         className='border-y border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center'
-                        style={{ background: chatBackground }}
-                        ref={chatRef}
+                        style={{ background: chatBackgroundColor }}
                   >
                         <div
-                              className='absolute right-0 top-0 overflow-auto w-full h-full'
+                              className='absolute right-0 top-0 overflow-auto w-full h-full scroll-smooth'
                               style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
+                              ref={chatRef}
+
                         >
                               {messages &&
                                     <ChatMessages messages={messages} setChatMode={setChatMode} />

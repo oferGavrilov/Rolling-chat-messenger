@@ -9,8 +9,8 @@ interface ChatContextProps {
       setUser: React.Dispatch<React.SetStateAction<User | null>>
       logout: () => void,
       isAdmin: (chat: IChat, userId?: string) => boolean
-      chatBackground: string
-      setChatBackground: React.Dispatch<React.SetStateAction<string>>
+      chatBackgroundColor: string
+      setChatBackgroundColor: React.Dispatch<React.SetStateAction<string>>
 }
 
 const AuthContext = createContext<ChatContextProps | null>(null);
@@ -25,7 +25,7 @@ export const AuthState = () => {
 
 export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState<User | null>(null)
-      const [chatBackground, setChatBackground] = useState<string>(userService.getBackgroundImage() || '#ccdbdc')
+      const [chatBackgroundColor, setChatBackgroundColor] = useState<string>(userService.getBackgroundImage() || '#ccdbdc')
       const navigate = useNavigate()
       const location = useLocation().pathname
 
@@ -55,10 +55,10 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
                   setUser,
                   logout,
                   isAdmin,
-                  chatBackground,
-                  setChatBackground
+                  chatBackgroundColor,
+                  setChatBackgroundColor
             }),
-            [user, logout, isAdmin, chatBackground]
+            [user, logout, isAdmin, chatBackgroundColor]
       )
 
       return (

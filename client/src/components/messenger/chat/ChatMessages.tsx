@@ -7,10 +7,10 @@ interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function ChatMessages ({ messages, setChatMode }: Props) {
+export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element  {
 
       const { user } = AuthState()
-      if (!messages || !user) return null
+      if (!messages || !user) return <div></div>
       return (
             <section className="py-4">
                   {messages &&
