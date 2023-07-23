@@ -4,12 +4,13 @@ import { formatDate, isLastMessage, isSameSender, isSameSenderMargin } from "../
 
 interface Props {
       messages: IMessage[]
+      setChatMode: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function ChatMessages ({ messages }: Props) {
+export default function ChatMessages ({ messages, setChatMode }: Props) {
 
       const { user } = AuthState()
-      if(!messages || !user) return null
+      if (!messages || !user) return null
       return (
             <section className="py-4">
                   {messages &&
@@ -18,7 +19,12 @@ export default function ChatMessages ({ messages }: Props) {
                                     <div className="hidden md:flex">
                                           {(isSameSender(messages, message, idx, user._id) ||
                                                 isLastMessage(messages, idx, user._id)) ? (
-                                                <img className="h-10 w-10 rounded-full object-cover object-top" src={message.sender.profileImg} alt="conversation-user" />
+                                                <img
+                                                      className="h-10 w-10 rounded-full object-cover object-top cursor-pointer hover:scale-110 transition-all duration-300"
+                                                      src={message.sender.profileImg}
+                                                      alt="conversation-user"
+                                                      onClick={() => setChatMode('info')}
+                                                       />
                                           ) : <span className="ml-10"></span>}
                                     </div>
                                     <div

@@ -26,7 +26,7 @@ type Timer = NodeJS.Timeout | number
 
 let socket: Socket
 
-export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
+export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
       const [messages, setMessages] = useState<IMessage[]>([])
       const [newMessage, setNewMessage] = useState<string>('')
@@ -162,11 +162,13 @@ export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
 
       function scrollToBottom () {
             setTimeout(() => {
-                  chatRef.current?.scrollTo({
-                        top: chatRef.current.scrollHeight,
-                        behavior: 'smooth',
-                  })
-            }, 0)
+                  const chatContainer = chatRef.current;
+                  if (chatContainer) {
+                        console.log('scrollTop', chatContainer.scrollTop, 'scrollHeight', chatContainer.scrollHeight)
+                        chatContainer.scrollTop = chatContainer.scrollHeight ;
+                        console.log('scrollTop', chatContainer.scrollTop)
+                  }
+            }, 0);
       }
 
       async function uploadImage (file: File | undefined) {
@@ -194,7 +196,7 @@ export default function Chat ({ setIsTyping, setChatMode , setFile}: Props) {
                               style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
                         >
                               {messages &&
-                                    <ChatMessages messages={messages} />
+                                    <ChatMessages messages={messages} setChatMode={setChatMode} />
                               }
                         </div>
                   </div>

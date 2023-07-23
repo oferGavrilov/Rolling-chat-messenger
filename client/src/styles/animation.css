@@ -231,3 +231,21 @@
             transform: scale(100%);
       }
 }
+
+.fade-grow-up-profile {
+      animation-name: fade-grow-up-profile;
+      animation-duration: .5s;
+      animation-fill-mode: forwards;
+      animation-delay: 200ms;
+}
+
+@keyframes fade-grow-up-profile {
+      0% {
+            transform: scale(10%);
+      }
+      
+      100% {
+            opacity: 1;
+            transform: scale(100%);
+      }
+}
