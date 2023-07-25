@@ -41,7 +41,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       const modalRef = useRef<HTMLUListElement>(null)
       const typingTimeoutRef = useRef<Timer | null>(null)
 
-
       useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
       useEffect(() => {

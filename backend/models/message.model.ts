@@ -15,6 +15,7 @@ export interface RequestMessage extends Request {
       body: {
             content: string;
             chatId: string;
+            receiverId: string;
       }
 }
 

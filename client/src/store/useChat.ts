@@ -14,7 +14,7 @@ interface ChatActions {
       addChat: (chat: IChat) => void
       removeChat: (chat: IChat) => void
       clearChats: () => void
-      setSelectedChat: (chat: IChat | null) => void
+      setSelectedChat: (chat: any | null) => void
       setNotification: (notification: IMessage) => void
       setSelectedChatCompare: (chat: IChat | null) => void
       removeNotification: (notification: IMessage | undefined) => void

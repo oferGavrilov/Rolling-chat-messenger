@@ -20,6 +20,7 @@ export interface RequestChat extends Request {
     groupImage: string;
     chatId: string;
     groupName: string;
+    senderId: string;
   };
   user?: User;
   params: {

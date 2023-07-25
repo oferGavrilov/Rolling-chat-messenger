@@ -12,6 +12,7 @@ export interface User extends Document {
   updatedAt: Date
   isOnline: boolean
   lastSeen: Date
+  token?: string
 }
 
 const userModel: Schema<User> = new Schema<User>(

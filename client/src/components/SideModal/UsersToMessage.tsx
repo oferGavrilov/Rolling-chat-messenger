@@ -21,7 +21,7 @@ export default function UsersToMessage ({ setIsOpen }) {
 
       async function loadUsers () {
             setIsLoading(true)
-            const users = await userService.getUsers()
+            const users = await userService.getUsers() as User[]
             setUsers(users)
             setIsLoading(false)
       }
@@ -48,7 +48,7 @@ export default function UsersToMessage ({ setIsOpen }) {
       }
 
 
- 
+
       return (
             <Typography variant="h6" component='div' className="relative">
                   <div className='flex justify-between items-center py-4 px-4 shadow-lg shadow-quinary'>

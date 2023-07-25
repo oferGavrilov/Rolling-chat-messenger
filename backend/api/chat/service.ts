@@ -52,25 +52,6 @@ export async function createChatService (userId: string, currentUser: User): Pro
       }
 }
 
-export async function getChatsService (user: User): Promise<ChatDocument[]> {
-      const populateOptions: PopulateOptions[] = [
-            { path: "users", select: "-password" },
-            { path: "groupAdmin", select: "-password" },
-            { path: "latestMessage" },
-            { path: "latestMessage.sender", select: "username profileImg email" },
-      ]
-
-      try {
-            const chats = await Chat.find({ users: { $elemMatch: { $eq: user._id } } })
-                  .populate(populateOptions)
-                  .sort({ updatedAt: -1 })
-
-            return chats
-      } catch (error: any) {
-            throw handleErrorService(error)
-      }
-}
-
 export async function getUserChatsService (user: User, userId: string): Promise<ChatDocument[]> {
       if (!userId || !user) return Promise.reject(new Error('Please fill all the fields'))
 

@@ -1,5 +1,7 @@
 import mongoose, { type Mongoose } from 'mongoose'
 
+let connection: Mongoose | null = null
+
 export const connectDB = async (): Promise<void> => {
       console.log('Connecting to MongoDB...')
       try {
@@ -14,11 +16,18 @@ export const connectDB = async (): Promise<void> => {
                   throw new Error('MongoDB connection URI is not defined')
             }
 
-            const conn: Mongoose = await mongoose.connect(mongoURI)
+            connection = await mongoose.connect(mongoURI)
 
-            console.log(`MongoDB Connected: ${conn.connection.host}`)
+            console.log(`MongoDB Connected: ${connection.connection.host}`)
       } catch (error: any) {
             console.error(`Error: ${error.message}`)
             process.exit(1)
       }
 }
+
+export const disconnectDB = async (): Promise<void> => {
+      if (connection) {
+        await connection.disconnect();
+        console.log('MongoDB Disconnected');
+      }
+    };

@@ -1,7 +1,7 @@
 
 import type { Response } from 'express'
 import type { User } from '../../models/user.model'
-import { updateUsersInGroupChatService, createChatService, createGroupChatService, getChatsService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service'
+import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service'
 import { handleErrorService } from '../../middleware/errorMiddleware'
 import { RequestChat } from '../../models/chat.model'
 
@@ -12,15 +12,6 @@ export async function createChat (req: RequestChat, res: Response) {
       try {
             const chat = await createChatService(userId, currentUser)
             res.status(200).json(chat)
-      } catch (error: any) {
-            throw handleErrorService(error)
-      }
-}
-
-export async function getChats (req: RequestChat, res: Response) {
-      try {
-            const chats = await getChatsService(req.user as User)
-            res.status(200).send(chats)
       } catch (error: any) {
             throw handleErrorService(error)
       }

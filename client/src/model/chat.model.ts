@@ -7,7 +7,7 @@ export interface IChat {
       isGroupChat: boolean
       users: User[]
       groupAdmin?: User
-      groupImage: string
+      groupImage?: string
       latestMessage: IMessage 
       createdAt: string
       updatedAt: string

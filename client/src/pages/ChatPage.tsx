@@ -3,7 +3,7 @@ import SearchUsers from '../components/SideModal'
 import { useState } from 'react'
 import DynamicList from '../components/ChatList/DynamicList'
 import { useChat } from '../store/useChat'
-import Messenger from '../components/messenger'
+import Messenger from '../components/selectedChat'
 import { AuthState } from '../context/useAuth'
 
 export default function ChatPage (): JSX.Element {
