@@ -8,8 +8,13 @@ import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
 import { IMessage } from '../../../model/message.model'
 
-export default function MessagePreview ({ chat }: { chat: IChat }) {
-      const { setSelectedChat, selectedChat, notification, removeNotification } = useChat()
+interface Props {
+      chat: IChat
+      notification: IMessage[]
+}
+
+export default function MessagePreview ({ chat , notification }: Props) {
+      const { setSelectedChat, selectedChat, removeNotification } = useChat()
       const { user: loggedinUser } = AuthState()
 
       const getSender = useCallback(

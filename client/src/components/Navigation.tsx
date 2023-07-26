@@ -6,10 +6,10 @@ import Logo from "../assets/icons/Logo"
 import Story from "../assets/icons/Story"
 import { AuthState } from "../context/useAuth"
 import { Avatar, Tooltip } from "@mui/material"
-import { useEffect } from "react"
-import { Socket, io } from 'socket.io-client'
+import { useCallback, useEffect } from "react"
 import { Link } from 'react-router-dom'
 import useChat from '../store/useChat'
+import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
 interface Props {
       contentType: string
       setContentType: React.Dispatch<React.SetStateAction<string>>
@@ -17,37 +17,34 @@ interface Props {
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
-
-let socket: Socket
-
-export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props) {
-
+export default function Navigation ({ contentType, setContentType, showNavigation, setShowNavigation }: Props): JSX.Element {
       const { user, logout } = AuthState()
       const { setSelectedChat } = useChat()
 
+      const handleLogout = useCallback(() => {
+            socketService.emit(SOCKET_LOGOUT, user?._id);
+            setSelectedChat(null);
+            logout();
+      }, [user, logout, setSelectedChat]);
+
+      useEffect(() => {
+            socketService.setup();
+
+            return () => {
+                  socketService.terminate();
+            };
+      }, []);
+
       useEffect(() => {
             const handleResize = () => {
-                  if (window.innerWidth > 768) {
-                        setShowNavigation(true)
-                  } else {
-                        setShowNavigation(false)
-                  }
-            }
+                  setShowNavigation(window.innerWidth > 768);
+            };
 
-            window.addEventListener('resize', handleResize)
+            window.addEventListener('resize', handleResize);
+            handleResize();
 
-            handleResize()
-
-            return () => window.removeEventListener('resize', handleResize)
-      }, [])
-
-      function onLogout () {
-            socket = io(ENDPOINT, { transports: ['websocket'] })
-            socket.emit('logout', user?._id)
-            setSelectedChat(null)
-            logout()
-      }
+            return () => window.removeEventListener('resize', handleResize);
+      }, [setShowNavigation]);
 
       return (
             <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10`}>
@@ -88,7 +85,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
                               <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary" onClick={() => setContentType('settings')}>
                                     <FiSettings size={27} />
                               </div>
-                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={onLogout}>
+                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={handleLogout}>
                                     <RxExit size={27} className="rotate-180" />
                               </div>
                         </div>

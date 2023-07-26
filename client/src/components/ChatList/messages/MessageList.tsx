@@ -1,71 +1,65 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { IChat } from "../../../model/chat.model"
 import useChat from "../../../store/useChat"
 
 import MessagePreview from "./MessagePreview"
-import { Socket, io } from 'socket.io-client'
 import { IMessage } from '../../../model/message.model'
 import { AuthState } from "../../../context/useAuth"
-
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000';
-const socket: Socket = io(ENDPOINT, { transports: ['websocket'] });
+import socketService from "../../../services/socket.service"
 
 export default function MessageList ({ chats }: { chats: IChat[] }) {
-      const { notification, setNotification, selectedChat, setChats } = useChat()
+      const { notification, addNotification, selectedChat, setChats, updateChat } = useChat()
       const { user } = AuthState()
 
-      useEffect(() => {
-            socket.emit('setup', user?._id);
+      const latestMessageIdRef = useRef<string | null>(null);
 
-            socket.on('new group', handleNewGroup);
+      useEffect(() => {
+            if (!user) return
+
+            socketService.on('new group', handleNewGroup);
 
             return () => {
-                  socket.off('new group', handleNewGroup);
+                  socketService.off('new group', handleNewGroup);
             };
-      }, []);
+      }, [user]);
 
       useEffect(() => {
-            socket.on('message received', handleNewMessage)
+            const handleNewMessage = (newMessage: IMessage) => {
+                  console.log("new notification", newMessage);
+                  if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
+                        const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id);
+                        if (!isChatExists) setChats([newMessage.chat, ...chats]);
 
+                        // Check if the message is already processed
+                        if (latestMessageIdRef.current !== newMessage._id) {
+                              latestMessageIdRef.current = newMessage._id; // Update the latest processed message ID
+                              addNotification(newMessage);
+                              updateChat(newMessage);
+                              document.title = `${notification.length > 0 ? `(${notification.length})` : ""} Rolling`;
+                        }
+                  }
+            };
+
+            socketService.on("message received", handleNewMessage);
+
+            // Clean up
             return () => {
-                  socket.off('message received', handleNewMessage)
-            }
-      }, [selectedChat])
-
-      useEffect(() => {
-      }, [])
+                  socketService.off("message received", handleNewMessage);
+                  latestMessageIdRef.current = null; // Reset the latest processed message ID when the component unmounts
+            };
+      }, [selectedChat]);
 
       function handleNewGroup (chat: IChat) {
+            console.log(chat)
             setChats([chat, ...chats])
       }
 
-      function handleNewMessage (newMessage: IMessage) {
-            if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
-                  // console.log('newMessage notification', newMessage)
-                  const isChatExists = chats.find(chat => chat._id === newMessage.chat._id)
-                  if (!isChatExists) setChats([newMessage.chat, ...chats])
-                  
-                  setNotification(newMessage)
-                  updateChat(newMessage, chats)
-            }
-            document.title = `${notification.length > 0 ? `(${notification.length})` : ''} Rolling`
-      }
 
-      function updateChat (latestMessage: IMessage, chats: IChat[]) {
-            const chatIndex = chats.findIndex((chat) => chat._id === latestMessage.chat._id)
-            if (chatIndex !== -1) {
-                  const updatedChats = [...chats]
-                  updatedChats[chatIndex] = { ...updatedChats[chatIndex], latestMessage }
-                  const chat = updatedChats.splice(chatIndex, 1)[0]
-                  updatedChats.unshift(chat)
-                  setChats(updatedChats)
-            }
-      }
 
       return (
             <ul className="overflow-y-auto h-screen pb-48 px-1">
                   {chats.map(chat => (
-                        <MessagePreview key={chat._id} chat={chat} />
+                        <MessagePreview key={chat._id} chat={chat} notification={notification} />
                   ))}
             </ul>
       )

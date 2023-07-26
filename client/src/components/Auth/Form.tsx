@@ -8,7 +8,6 @@ import axios from 'axios'
 import { AuthState } from '../../context/useAuth'
 import { userService } from '../../services/user.service'
 import { useNavigate } from 'react-router-dom'
-import { Socket, io } from 'socket.io-client'
 
 interface FormData {
       username?: string
@@ -17,9 +16,6 @@ interface FormData {
       confirmPassword?: string
       profileImg?: string
 }
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
-
-const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
 
 export default function Form ({ }) {
       const [isLogin, setIsLogin] = useState<boolean>(true)
@@ -79,7 +75,6 @@ export default function Form ({ }) {
             try {
                   const user = await userService.loginSignUp(values, isLogin)
                   setUser(user)
-                  socket.emit('login', user._id)
                   toast.success(`Welcome ${user.username}`)
                   navigate('/chat')
             } catch (error) {

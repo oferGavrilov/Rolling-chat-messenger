@@ -14,10 +14,11 @@ interface ChatActions {
       addChat: (chat: IChat) => void
       removeChat: (chat: IChat) => void
       clearChats: () => void
-      setSelectedChat: (chat: any | null) => void
-      setNotification: (notification: IMessage) => void
+      setSelectedChat: (chat: IChat | null) => void
+      addNotification: (notification: IMessage) => void
       setSelectedChatCompare: (chat: IChat | null) => void
       removeNotification: (notification: IMessage | undefined) => void
+      updateChat: (latestMessage: IMessage) => void;
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -29,21 +30,20 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             chats: [],
             selectedChat: null,
             notification: initialNotification,
-            
+
             // Chat
             setChats: (chats) => set({ chats }),
             addChat: (chat) => set((state) => ({ chats: [...state.chats, chat] })),
             removeChat: (chat) => set((state) => ({ chats: state.chats.filter((c) => c._id !== chat._id) })),
             clearChats: () => set({ chats: [] }),
             setSelectedChat: (chat) => set({ selectedChat: chat }),
-            
+
             // For compare chat sockets
             selectedChatCompare: null,
             setSelectedChatCompare: (chat) => set({ selectedChatCompare: chat }),
-            
+
             // Notification
-            setNotification: (newNotification) => {
-                  console.log('newNotification', newNotification)
+            addNotification: (newNotification) => {
                   set((state) => {
                         const currentNotification = state.notification
                         const existingChatIndex = currentNotification.findIndex(
@@ -71,6 +71,19 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                         return { notification: updatedNotification }
                   })
             },
+            updateChat: (latestMessage: IMessage) => {
+                  set((state) => {
+                        const chatIndex = state.chats.findIndex((chat) => chat._id === latestMessage.chat._id);
+                        if (chatIndex !== -1) {
+                              const updatedChats = [...state.chats];
+                              updatedChats[chatIndex] = { ...updatedChats[chatIndex], latestMessage };
+                              const chat = updatedChats.splice(chatIndex, 1)[0];
+                              updatedChats.unshift(chat);
+                              return { chats: updatedChats };
+                        }
+                        return state; // Return the unmodified state if the chat is not found
+                  });
+            }
       }
 })
 

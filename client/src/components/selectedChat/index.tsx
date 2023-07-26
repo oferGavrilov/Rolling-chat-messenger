@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AuthState } from "../../context/useAuth"
 import { User } from "../../model/user.model"
 import useChat from "../../store/useChat"
@@ -9,13 +9,9 @@ import { Avatar } from "@mui/material"
 import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
-import { Socket, io } from 'socket.io-client'
 import { formatLastSeenDate } from "../../utils/functions"
-import { userService } from "../../services/user.service"
 import FileEditor from "./FileEditor"
-
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
-const socket: Socket = io(ENDPOINT, { transports: ['websocket'] })
+import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 
 export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }): JSX.Element {
 
@@ -29,13 +25,15 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<File | null>(null)
 
+      const conversationUserRef = useRef<User | undefined>(undefined);
+
       useEffect(() => {
-            socket.on('login', (userId: string) => handleConnection(userId, true))
-            socket.on('logout', (userId) => handleConnection(userId, false))
+            socketService.on(SOCKET_LOGIN, handleConnection, true)
+            socketService.on(SOCKET_LOGOUT, handleConnection, false)
 
             return () => {
-                  socket.off('login', handleConnection)
-                  socket.off('logout', handleConnection)
+                  socketService.off('login', handleConnection)
+                  socketService.off('logout', handleConnection)
             }
       }, [])
 
@@ -53,15 +51,21 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             getConversationUserConnection();
       }, [conversationUser]);
 
-      async function fetchConversationUser (): Promise<void> {
-            const conversationUser = selectedChat?.users.find(user => user._id !== loggedInUser?._id) || selectedChat?.users[0]
-            const users = await userService.getUsers(conversationUser?._id) as User
-            setConversationUser(users[0])
+      function fetchConversationUser (): void {
+            const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0];
+            if (conversationUser) {
+                  setConversationUser(conversationUser);
+                  conversationUserRef.current = conversationUser;
+            }
       }
 
-      const handleConnection = (userId: string, status: boolean) => {
-            if (loggedInUser?._id === userId) return
-            setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`)
+      function handleConnection (userId: string, status: boolean): void {
+            if (loggedInUser?._id === userId) return;
+
+            const conversationUser = conversationUserRef.current;
+            if (conversationUser) {
+                  setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`);
+            }
       }
 
       if (!selectedChat) return <div></div>

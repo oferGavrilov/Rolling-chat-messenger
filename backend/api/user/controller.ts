@@ -28,16 +28,16 @@ export async function signUp (req: AuthenticatedRequest, res: Response) {
 
 export async function login (req: AuthenticatedRequest, res: Response) {
       console.log('login')
-      const { email, password } = req.body;
+      const { email, password } = req.body
 
       try {
-            const result = await loginUser(email, password);
+            const result = await loginUser(email, password)
 
             if (result.error) {
-                  return res.status(401).json({ msg: result.error });
+                  return res.status(401).json({ msg: result.error })
             }
 
-            const { user } = result;
+            const { user } = result
 
             if (user) {
                   res.json({
@@ -48,26 +48,24 @@ export async function login (req: AuthenticatedRequest, res: Response) {
                         about: user.about,
                         token: generateToken(user._id),
                         isOnline: true,
-                  });
+                  })
             } else {
-                  throw new Error('User not found');
+                  throw new Error('User not found')
             }
       } catch (error: any) {
-            throw handleErrorService(error);
+            throw handleErrorService(error)
       }
 }
 
 export async function logoutUser(req: Request, res: Response) {
-      const userId = (req as AuthenticatedRequest).user?._id; // Assuming you have a custom AuthenticatedRequest type.
+      const userId = (req as AuthenticatedRequest).user?._id 
     
       try {
-        // Call the service function to update user status
-        await updateUserStatus(userId);
+        await updateUserStatus(userId)
     
-        // Return a success response (if needed)
-        res.status(200).json({ message: 'User logged out successfully' });
+        res.status(200).json({ message: 'User logged out successfully' })
       } catch (error: any) {
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' })
       }
     }
 
@@ -79,7 +77,7 @@ export async function searchUsersByKeyword (req: Request, res: Response) {
             const users = await searchUsers(keyword)
             res.send(users)
       } catch (error: any) {
-            throw handleErrorService(error);
+            throw handleErrorService(error)
       }
 }
 
@@ -91,7 +89,7 @@ export async function getUsers (req: AuthenticatedRequest, res: Response) {
             const users = await getUsersService(loggedInUserId , userId)
             res.send(users)
       } catch (error: any) {
-            throw handleErrorService(error);
+            throw handleErrorService(error)
       }
 }
 
@@ -109,7 +107,7 @@ export async function editUserDetails (req: AuthenticatedRequest, res: Response)
                   res.status(404).json({ msg: 'User not found' })
             }
       } catch (error: any) {
-            throw handleErrorService(error);
+            throw handleErrorService(error)
       }
 }
 
@@ -126,6 +124,6 @@ export async function editUserImage (req: AuthenticatedRequest, res: Response) {
                   res.status(404).json({ msg: 'User not found' })
             }
       } catch (error: any) {
-            throw handleErrorService(error);
+            throw handleErrorService(error)
       }
 }

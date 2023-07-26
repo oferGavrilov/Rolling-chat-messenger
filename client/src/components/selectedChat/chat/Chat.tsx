@@ -5,16 +5,13 @@ import { chatService } from '../../../services/chat.service'
 import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
 
-import { Socket, io } from 'socket.io-client'
+// import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
-import { IChat } from '../../../model/chat.model'
-
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { useClickOutside } from '../../../custom/useClickOutside'
 import { toast } from 'react-toastify'
 import { uploadImg } from '../../../utils/upload-img'
-
-const ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000'
+import socketService from '../../../services/socket.service'
 
 interface Props {
       isTyping: boolean
@@ -24,8 +21,6 @@ interface Props {
 }
 type Timer = NodeJS.Timeout | number
 
-let socket: Socket
-
 export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
       const [messages, setMessages] = useState<IMessage[]>([])
@@ -34,7 +29,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       const [typing, setTyping] = useState<boolean>(false)
       const [showClipModal, setShowClipModal] = useState<boolean>(false)
 
-      const { selectedChat, chats, setChats, selectedChatCompare, setSelectedChatCompare } = useChat()
+      const { selectedChat, chats, setChats, updateChat , addNotification } = useChat()
       const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
@@ -44,55 +39,64 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
       useEffect(() => {
-            socket = io(ENDPOINT, { transports: ['websocket'] })
-            socket.emit('setup', user?._id)
+            // Set up the 'connected' event listener using socketService
+            const handleSocketConnected = () => {
+                  setSocketConnected(true)
+            }
 
-            socket.on('connected', () => setSocketConnected(true))
+            socketService.on('connected', handleSocketConnected)
 
-      }, [])
+            return () => {
+                  socketService.off('connected', handleSocketConnected)
+            }
+      }, [user?._id]) 
 
       useEffect(() => {
-            socket.on('typing', () => setIsTyping(true))
-            socket.on('stop typing', () => setIsTyping(false))
-      }, [setIsTyping])
+            const handleTyping = () => setIsTyping(true);
+            const handleStopTyping = () => setIsTyping(false);
+
+            socketService.on('typing', handleTyping);
+            socketService.on('stop typing', handleStopTyping);
+
+            return () => {
+                  socketService.off('typing', handleTyping);
+                  socketService.off('stop typing', handleStopTyping);
+            };
+      }, [setIsTyping]);
 
       useEffect(() => {
             async function fetchMessages () {
                   if (!selectedChat) return
                   const data = await chatService.getMessages(selectedChat._id)
                   setMessages(data)
-                  socket.emit('join chat', selectedChat._id)
+
+                  socketService.emit('join chat', selectedChat._id)
 
                   scrollToBottom()
             }
 
-            fetchMessages()
-            setSelectedChatCompare(selectedChat)
+            fetchMessages();
       }, [selectedChat])
 
       useEffect(() => {
-            socket.on('message received', (newMessage: IMessage) => {
-                  if (selectedChatCompare?._id !== newMessage.chat._id) return
-                  setMessages((prevMessages) => [...prevMessages, newMessage])
-                  updateChat(newMessage, chats)
+            socketService.on('message received', (newMessage: IMessage) => {
+                  console.log('new message', newMessage)
+                  if (selectedChat?._id !== newMessage.chat._id) {
+                        addNotification(newMessage)
+                        return
+                  }
+
+                  setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+                  updateChat(newMessage)
 
                   scrollToBottom()
-            })
+            });
+
             return () => {
-                  socket.off('message received')
+                  socketService.off('message received')
             }
       })
-
-      function updateChat (latestMessage: IMessage, chats: IChat[]) {
-            const chatIndex = chats.findIndex((chat) => chat._id === latestMessage.chat._id)
-            if (chatIndex !== -1) {
-                  const updatedChats = [...chats]
-                  updatedChats[chatIndex] = { ...updatedChats[chatIndex], latestMessage }
-                  const chat = updatedChats.splice(chatIndex, 1)[0]
-                  updatedChats.unshift(chat)
-                  setChats(updatedChats)
-            }
-      }
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
@@ -114,13 +118,14 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
             scrollToBottom()
 
             try {
-                  socket.emit('stop typing', selectedChat?._id)
+                  // socket.emit('stop typing', selectedChat?._id)
+                  socketService.emit('stop typing', selectedChat?._id)
                   const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id })
 
                   setMessages((prevMessages) =>
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
                   )
-                  socket.emit('new message', messageToUpdate)
+                  socketService.emit('new message', messageToUpdate)
 
             } catch (error) {
                   console.error('Failed to send message:', error)
@@ -145,7 +150,8 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
             if (!typing) {
                   setTyping(true)
-                  socket.emit('typing', selectedChat?._id, user?._id)
+                  // socket.emit('typing', selectedChat?._id, user?._id)
+                  socketService.emit('typing', { chatId: selectedChat?._id, userId: user?._id })
             }
 
             if (typingTimeoutRef.current) {
@@ -154,7 +160,8 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
             const timerLength = 2000
             typingTimeoutRef.current = setTimeout(() => {
-                  socket.emit('stop typing', selectedChat?._id)
+                  // socket.emit('stop typing', selectedChat?._id)
+                  socketService.emit('stop typing', selectedChat?._id)
                   setTyping(false)
             }, timerLength)
       }
