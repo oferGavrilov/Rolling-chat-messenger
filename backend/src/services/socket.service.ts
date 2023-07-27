@@ -60,7 +60,7 @@ export function setupSocketAPI (http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`)
             })
 
-            socket.on('typing', (room, userId) => socket.in(room).emit('typing', userId))
+            socket.on('typing', ({ chatId: room, userId }) => socket.in(room).emit('typing', userId))
 
             socket.on('stop typing', (room) => socket.in(room).emit('stop typing'))
 
@@ -68,7 +68,7 @@ export function setupSocketAPI (http: HttpServer) {
                   let chat = newMessageReceived.chat
                   if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
                   if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
-                  
+
                   chat?.users.forEach((user: User) => {
                         if (user._id === newMessageReceived.sender._id) return
                         socket.in(user._id).emit('message received', newMessageReceived)

@@ -27,13 +27,13 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
             logout();
       }, [user, logout, setSelectedChat]);
 
-      useEffect(() => {
-            socketService.setup();
+      // useEffect(() => {
+      //       // socketService.setup();
 
-            return () => {
-                  socketService.terminate();
-            };
-      }, []);
+      //       return () => {
+      //             socketService.terminate();
+      //       };
+      // }, []);
 
       useEffect(() => {
             const handleResize = () => {

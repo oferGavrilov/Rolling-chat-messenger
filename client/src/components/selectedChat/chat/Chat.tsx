@@ -5,7 +5,6 @@ import { chatService } from '../../../services/chat.service'
 import { IMessage } from '../../../model/message.model'
 import ChatMessages from './ChatMessages'
 
-// import { Socket, io } from 'socket.io-client'
 import { AuthState } from '../../../context/useAuth'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { useClickOutside } from '../../../custom/useClickOutside'
@@ -25,11 +24,10 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
       const [messages, setMessages] = useState<IMessage[]>([])
       const [newMessage, setNewMessage] = useState<string>('')
-      const [socketConnected, setSocketConnected] = useState<boolean>(false)
       const [typing, setTyping] = useState<boolean>(false)
       const [showClipModal, setShowClipModal] = useState<boolean>(false)
 
-      const { selectedChat, chats, setChats, updateChat , addNotification } = useChat()
+      const { selectedChat, chats, setChats, updateChat, addNotification } = useChat()
       const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
@@ -39,30 +37,17 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
       useEffect(() => {
-            // Set up the 'connected' event listener using socketService
-            const handleSocketConnected = () => {
-                  setSocketConnected(true)
-            }
+            const handleTyping = () => setIsTyping(true)
+            const handleStopTyping = () => setIsTyping(false)
 
-            socketService.on('connected', handleSocketConnected)
-
-            return () => {
-                  socketService.off('connected', handleSocketConnected)
-            }
-      }, [user?._id]) 
-
-      useEffect(() => {
-            const handleTyping = () => setIsTyping(true);
-            const handleStopTyping = () => setIsTyping(false);
-
-            socketService.on('typing', handleTyping);
-            socketService.on('stop typing', handleStopTyping);
+            socketService.on('typing', handleTyping)
+            socketService.on('stop typing', handleStopTyping)
 
             return () => {
-                  socketService.off('typing', handleTyping);
-                  socketService.off('stop typing', handleStopTyping);
-            };
-      }, [setIsTyping]);
+                  socketService.off('typing', handleTyping)
+                  socketService.off('stop typing', handleStopTyping)
+            }
+      })
 
       useEffect(() => {
             async function fetchMessages () {
@@ -75,7 +60,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
                   scrollToBottom()
             }
 
-            fetchMessages();
+            fetchMessages()
       }, [selectedChat])
 
       useEffect(() => {
@@ -86,12 +71,12 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
                         return
                   }
 
-                  setMessages((prevMessages) => [...prevMessages, newMessage]);
+                  setMessages((prevMessages) => [...prevMessages, newMessage])
 
                   updateChat(newMessage)
 
                   scrollToBottom()
-            });
+            })
 
             return () => {
                   socketService.off('message received')
@@ -118,7 +103,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
             scrollToBottom()
 
             try {
-                  // socket.emit('stop typing', selectedChat?._id)
                   socketService.emit('stop typing', selectedChat?._id)
                   const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id })
 
@@ -146,11 +130,9 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
       function typingHandler (e: React.ChangeEvent<HTMLInputElement>) {
             const { value } = e.target
             setNewMessage(value)
-            if (!socketConnected) return
 
             if (!typing) {
                   setTyping(true)
-                  // socket.emit('typing', selectedChat?._id, user?._id)
                   socketService.emit('typing', { chatId: selectedChat?._id, userId: user?._id })
             }
 
@@ -160,7 +142,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
 
             const timerLength = 2000
             typingTimeoutRef.current = setTimeout(() => {
-                  // socket.emit('stop typing', selectedChat?._id)
                   socketService.emit('stop typing', selectedChat?._id)
                   setTyping(false)
             }, timerLength)
