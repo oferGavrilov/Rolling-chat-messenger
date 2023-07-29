@@ -7,7 +7,7 @@ interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element  {
+export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element {
 
       const { user } = AuthState()
       if (!messages || !user) return <div></div>
@@ -24,7 +24,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                       src={message.sender.profileImg}
                                                       alt="conversation-user"
                                                       onClick={() => setChatMode('info')}
-                                                       />
+                                                />
                                           ) : <span className="ml-10"></span>}
                                     </div>
                                     <div

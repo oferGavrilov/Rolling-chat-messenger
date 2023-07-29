@@ -10,7 +10,7 @@ import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
 import { formatLastSeenDate } from "../../utils/functions"
-import FileEditor from "./FileEditor"
+import FileEditor from "./file/FileEditor"
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 
 export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }): JSX.Element {

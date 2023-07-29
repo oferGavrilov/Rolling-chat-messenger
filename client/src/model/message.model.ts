@@ -11,5 +11,6 @@ export interface IMessage {
             username: string
             profileImg: string
       }
-      updatedAt: string
+      updatedAt: string,
+      messageType?: string
 }
