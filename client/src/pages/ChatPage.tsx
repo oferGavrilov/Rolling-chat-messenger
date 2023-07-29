@@ -5,7 +5,7 @@ import DynamicList from '../components/ChatList/DynamicList'
 import { useChat } from '../store/useChat'
 import Messenger from '../components/selectedChat'
 import { AuthState } from '../context/useAuth'
-import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
+import socketService from '../services/socket.service'
 
 export default function ChatPage (): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
@@ -16,17 +16,15 @@ export default function ChatPage (): JSX.Element {
 
       useEffect(() => {
             if (!user) return
-            socketService.setup(user._id);
+            socketService.setup(user._id)
             socketService.login(user._id)
-            socketService.setup(user._id);
-
 
             return () => {
-                  socketService.off('login')
-                  socketService.emit(SOCKET_LOGOUT, user._id)
-                  socketService.terminate();
-            };
-      }, [user, selectedChat]);
+                  // socketService.off('login')
+                  // socketService.emit(SOCKET_LOGOUT, user._id)
+                  socketService.terminate()
+            }
+      }, [])
 
       if (!user) return <div></div>
       return (

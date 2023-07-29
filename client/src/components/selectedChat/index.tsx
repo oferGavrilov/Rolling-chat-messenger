@@ -32,8 +32,8 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             socketService.on(SOCKET_LOGOUT, handleConnection, false)
 
             return () => {
-                  socketService.off('login', handleConnection)
-                  socketService.off('logout', handleConnection)
+                  socketService.off(SOCKET_LOGIN, handleConnection)
+                  socketService.off(SOCKET_LOGOUT, handleConnection)
             }
       }, [])
 
@@ -60,10 +60,20 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
       }
 
       function handleConnection (userId: string, status: boolean): void {
-            if (loggedInUser?._id === userId) return;
+            if (loggedInUser?._id === userId || conversationUser?._id !== userId) return;
 
-            const conversationUser = conversationUserRef.current;
-            if (conversationUser) {
+            // const updatedChats = chats.map((chat) => {
+            //       const updatedUsers = chat.users.map((user) => {
+            //             if (user._id === userId) {
+            //                   return { ...user, isOnline: status, lastSeen: new Date().toISOString() };
+            //             }
+            //             return user;
+            //       });
+            //       return { ...chat, users: updatedUsers };
+            // });
+            // setChats(updatedChats);
+
+            if (conversationUserRef.current) {
                   setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`);
             }
       }

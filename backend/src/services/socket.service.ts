@@ -8,6 +8,7 @@ import { updateUserStatus } from '../../api/user/service'
 let gIo: Server | null = null
 const activeUsers: Map<string, Socket> = new Map()
 const INACTIVITY_THRESHOLD = 15 * 60 * 1000 // 15 minute 
+// const INACTIVITY_THRESHOLD = 4 * 1000 // 15 minute 
 
 export function setupSocketAPI (http: HttpServer) {
       gIo = new Server(http, {
@@ -56,6 +57,7 @@ export function setupSocketAPI (http: HttpServer) {
             })
 
             socket.on('join chat', (room) => {
+                  socket.handshake.auth.lastActivity = Date.now();
                   socket.join(room)
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`)
             })
@@ -65,6 +67,7 @@ export function setupSocketAPI (http: HttpServer) {
             socket.on('stop typing', (room) => socket.in(room).emit('stop typing'))
 
             socket.on('new message', (newMessageReceived) => {
+                  socket.handshake.auth.lastActivity = Date.now();
                   let chat = newMessageReceived.chat
                   if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
                   if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
@@ -82,7 +85,6 @@ export function setupSocketAPI (http: HttpServer) {
 
       // Function to check for inactive users and emit 'logout' event
       function checkInactiveUsers () {
-            console.log('Checking for inactive users')
             const now = Date.now()
             for (const [userId, socket] of activeUsers.entries()) {
                   if (now - socket.handshake.auth.lastActivity > INACTIVITY_THRESHOLD) {
@@ -95,8 +97,8 @@ export function setupSocketAPI (http: HttpServer) {
             }
       }
 
-      // Run the checkInactiveUsers function every minute
-      setInterval(checkInactiveUsers, 60 * 1000)
+      // Run the checkInactiveUsers function every 5 minute
+      setInterval(checkInactiveUsers, 5 * 60 * 1000)
 }
 
 function getUserBySocketId (socketId: string) {

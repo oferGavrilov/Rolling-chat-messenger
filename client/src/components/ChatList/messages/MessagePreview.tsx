@@ -1,21 +1,23 @@
 import { useChat } from '../../../store/useChat'
 import { IChat } from '../../../model/chat.model'
 import { User } from '../../../model/user.model'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Avatar, Badge } from '@mui/material'
 import { styled } from '@mui/system'
 import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
 import { IMessage } from '../../../model/message.model'
+import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from '../../../services/socket.service'
 
 interface Props {
       chat: IChat
       notification: IMessage[]
 }
 
-export default function MessagePreview ({ chat , notification }: Props) {
+export default function MessagePreview ({ chat, notification }: Props) {
       const { setSelectedChat, selectedChat, removeNotification } = useChat()
       const { user: loggedinUser } = AuthState()
+      const [isOnline, setIsOnline] = useState<boolean>(true)
 
       const getSender = useCallback(
             (users: User[]): User => {
@@ -23,7 +25,48 @@ export default function MessagePreview ({ chat , notification }: Props) {
             },
             [loggedinUser?._id]
       )
+      // useEffect(() => {
+      //       if (chat.isGroupChat) return
 
+      //       const handleConnection = (userId: string, status: boolean): void => {
+      //             console.log(userId, status)
+      //             if (getSender(chat.users)._id === userId) {
+      //                   setIsOnline(status)
+      //             }
+      //       }
+
+      //       socketService.on(SOCKET_LOGIN, handleConnection, true)
+      //       socketService.on(SOCKET_LOGOUT, handleConnection, false)
+      // }, [chat.users])
+
+      // const StyledBadge = styled(Badge)(() => ({
+      //       '& .MuiBadge-badge': {
+      //             backgroundColor:isOnline ? '#44b700' : '#e85d04',
+      //             color: isOnline ? '#44b700' : '#ef233c',
+      //             boxShadow: `0 0 0 2px ${isOnline ? 'lightgreen' : '#ef233c'}`,
+      //             '&::after': {
+      //                   position: 'absolute',
+      //                   top: 0,
+      //                   left: 0,
+      //                   width: '100%',
+      //                   height: '100%',
+      //                   borderRadius: '50%',
+      //                   animation: isOnline && 'ripple 1.2s infinite ease-in-out',
+      //                   border: '1px solid currentColor',
+      //                   content: '""',
+      //             },
+      //       },
+      //       '@keyframes ripple': {
+      //             '0%': {
+      //                   transform: 'scale(.8)',
+      //                   opacity: 1,
+      //             },
+      //             '100%': {
+      //                   transform: 'scale(2.4)',
+      //                   opacity: 0,
+      //             },
+      //       },
+      // }))
       const StyledBadge = styled(Badge)(() => ({
             '& .MuiBadge-badge': {
                   backgroundColor: '#44b700',
@@ -61,7 +104,7 @@ export default function MessagePreview ({ chat , notification }: Props) {
 
       function isNotification (): boolean {
             const notificationChat = getCurrentNotificationChat()
-            return notificationChat && notificationChat?.sender._id !== loggedinUser?._id || false 
+            return notificationChat && notificationChat?.sender._id !== loggedinUser?._id || false
       }
 
       function getCurrentNotificationChat (): IMessage | undefined {

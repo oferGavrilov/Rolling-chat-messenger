@@ -116,7 +116,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile }: Props) {
                   setMessages([...messages])
             }
       }
-
+      // TODO: call the function when send a message
       function setChatOnTop (message: IMessage): void {
             const chatToUpdateIndex = chats.findIndex(chat => chat._id === selectedChat?._id)
             if (chatToUpdateIndex !== -1) {

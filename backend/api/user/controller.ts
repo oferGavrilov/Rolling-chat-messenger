@@ -27,7 +27,6 @@ export async function signUp (req: AuthenticatedRequest, res: Response) {
 }
 
 export async function login (req: AuthenticatedRequest, res: Response) {
-      console.log('login')
       const { email, password } = req.body
 
       try {

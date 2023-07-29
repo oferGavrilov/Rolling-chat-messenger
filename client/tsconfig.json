@@ -7,6 +7,9 @@
     "skipLibCheck": true,
     "noImplicitAny": false,
 
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
     /* Bundler mode */
     "moduleResolution": "Node",
     "allowImportingTsExtensions": true,
