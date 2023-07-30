@@ -123,7 +123,7 @@ async function getMessages (chatId: string): Promise<IMessage[]> {
       }
 }
 
-async function sendMessage (message: { content: string, chatId: string }): Promise<IMessage> {
+async function sendMessage (message: { content: string | File, chatId: string, messageType:string }): Promise<IMessage> {
       try {
             const { data }: AxiosResponse<IMessage> = await axios.post(BASE_URL+'/api/message', message, getConfig())
             return data

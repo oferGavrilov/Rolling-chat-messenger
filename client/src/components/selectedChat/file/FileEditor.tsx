@@ -4,14 +4,12 @@ import CloseIcon from '@mui/icons-material/Close'
 interface Props {
       file: File | null
       setChatMode: React.Dispatch<React.SetStateAction<string>>
+      onSendMessage: (message: string | File) => Promise<void>
+
 }
 
-export default function FileEditor ({ file, setChatMode }: Props) {
+export default function FileEditor ({ file, setChatMode, onSendMessage }: Props) {
       console.log(file)
-
-      function onSendFile () {
-            setChatMode('chat')
-      }
 
       if (!file) return <div></div>
       return (
@@ -30,7 +28,7 @@ export default function FileEditor ({ file, setChatMode }: Props) {
                   />
 
                   <div className='absolute bottom-10 left-10'>
-                        <button className='bg-primary text-white p-2 rounded-xl' onClick={onSendFile}>Send File</button>
+                        <button className='bg-primary text-white p-2 rounded-xl' onClick={() => onSendMessage(file)}>Send File</button>
                   </div>
             </div>
       )

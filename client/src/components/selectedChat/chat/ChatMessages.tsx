@@ -10,6 +10,7 @@ interface Props {
 export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element {
 
       const { user } = AuthState()
+      console.log(messages)
       if (!messages || !user) return <div></div>
       return (
             <section className="py-4">
@@ -28,19 +29,24 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                           ) : <span className="ml-10"></span>}
                                     </div>
                                     <div
-                                          className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl
+                                          className={`pr-3 pl-4 py-1  flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl
                                            ${message?.sender._id === user._id ?
                                                       'bg-primary text-white' : 'bg-gray-500 text-white'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :
                                                       'ml-0 rounded-br-xl flex-row-reverse'}`}
                                     >
-                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1
+                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1 ${message.messageType === 'image' && 'mt-[45%]'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       '-left-1' : '-right-2'}`}>
                                                 {formatDate(message.createdAt)}
                                           </span>
-                                          <span>{message.content}</span>
+                                          {message.messageType === 'text' ? <span>{message.content}</span> :
+                                                <img
+                                                      className="max-h-[300px] max-w-[200px] object-cover object-top py-1 cursor-pointer"
+                                                      src={message.content}
+                                                      alt="conversation-user"
+                                                />}
                                     </div>
                               </div >
                         ))

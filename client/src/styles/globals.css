@@ -98,7 +98,7 @@
 
       /* Chat */
       .clip-modal-option {
-            @apply py-1 px-2 rounded-lg cursor-pointer  hover:bg-gray-500
+            @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500
       }
 }
 

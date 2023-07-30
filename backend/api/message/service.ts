@@ -1,11 +1,12 @@
-import { Message } from "../../models/message.model"
+import { IMessage, Message } from "../../models/message.model"
 import { User } from "../../models/user.model"
-import { Chat } from "../../models/chat.model"
+import { Chat, ChatDocument } from "../../models/chat.model"
 import { handleErrorService } from "../../middleware/errorMiddleware"
+import { PopulatedDoc } from "mongoose"
 
-export async function sendMessageService (senderId: string, content: string, chatId: string) {
-      if (!content || !chatId) {
-            throw new Error('Invalid message data passed into request')
+export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string) {
+      if (!content || !chatId || !messageType) {
+            throw new Error('Invalid message data passed into request');
       }
 
       try {
@@ -13,28 +14,32 @@ export async function sendMessageService (senderId: string, content: string, cha
                   sender: senderId,
                   content,
                   chat: chatId,
-            }
+                  messageType: messageType, // Include the messageType in the new message object
+            };
 
-            let message = await Message.create(newMessage)
-            message = await message.populate('sender', 'username profileImg')
-            message = await message.populate('chat')
-            message = await User.populate(message, { path: 'chat.users', select: 'username email profileImg' })
+            let message = await Message.create(newMessage);
+
+            // Populate the sender field
+            message = (await message.populate('sender', 'username profileImg')) as PopulatedDoc<IMessage>;
+
+            // Populate the chat field
+            message = (await message.populate('chat')) as PopulatedDoc<IMessage>;
 
             // Check if the other user ID is in the deletedBy array
-            const chat = await Chat.findById(chatId)
-            const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString())
+            const chat = await Chat.findById(chatId);
+            const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString());
 
             if (otherUserId && chat.deletedBy.includes(otherUserId.toString())) {
                   // Remove the other user ID from the deletedBy array
-                  chat.deletedBy = chat.deletedBy.filter((userId) => userId.toString() !== otherUserId.toString())
-                  await chat.save()
+                  chat.deletedBy = chat.deletedBy.filter((userId) => userId.toString() !== otherUserId.toString());
+                  await chat.save();
             }
 
-            await Chat.findByIdAndUpdate(chatId, { latestMessage: message })
+            await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
 
-            return message
+            return message;
       } catch (error: any) {
-            throw handleErrorService(error)
+            throw handleErrorService(error);
       }
 }
 
