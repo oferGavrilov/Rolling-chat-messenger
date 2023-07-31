@@ -22,7 +22,7 @@ export default function ChatPage (): JSX.Element {
             return () => {
                   // socketService.off('login')
                   // socketService.emit(SOCKET_LOGOUT, user._id)
-                  socketService.terminate()
+                  // socketService.terminate()
             }
       }, [])
 

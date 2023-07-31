@@ -13,6 +13,7 @@ export const socketService = createSocketService()
 interface SocketService {
       setup (userId: string): void
       login (userId: string): void
+      logout (userId: string): void
       on (eventName: string, cb: (...args: any[]) => void, boolParam?: boolean): void
       off (eventName: string, cb?: (...args: any[]) => void): void
       emit (eventName: string, data: any): void
@@ -48,6 +49,9 @@ function createSocketService (): SocketService {
             },
             login (userId) {
                   this.emit(SOCKET_LOGIN, userId)
+            },
+            logout (userId) {
+                  this.emit(SOCKET_LOGOUT, userId)
             },
             emit (eventName, data) {
                   if (socket) {

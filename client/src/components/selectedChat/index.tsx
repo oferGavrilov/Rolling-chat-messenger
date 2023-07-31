@@ -9,7 +9,7 @@ import { Avatar } from "@mui/material"
 import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
-import { formatLastSeenDate } from "../../utils/functions"
+import { formatLastSeenDate} from "../../utils/functions"
 import FileEditor from "./file/FileEditor"
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
@@ -22,7 +22,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
       const [isTyping, setIsTyping] = useState<boolean>(false)
       const [messages, setMessages] = useState<IMessage[]>([])
 
-      const { selectedChat, setSelectedChat } = useChat()
+      const { selectedChat, setSelectedChat, addNotification, updateChat } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
@@ -40,20 +40,35 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
             }
       }, [])
 
+
       useEffect(() => {
+            socketService.on('message received', (newMessage: IMessage) => {
+                  if (selectedChat?._id !== newMessage.chat._id) {
+                        addNotification(newMessage)
+                        return
+                  }
 
-            async function fetchMessages () {
-                  if (!selectedChat) return
-                  const data = await chatService.getMessages(selectedChat._id)
-                  console.log(data)
-                  setMessages(data)
+                  setMessages((prevMessages) => [...prevMessages, newMessage])
+                  
+                  updateChat(newMessage)
 
-                  socketService.emit('join chat', selectedChat._id)
+                  // scrollToBottom()
+            })
+
+            return () => {
+                  socketService.off('message received')
             }
+      })
 
-            fetchMessages()
+      useEffect(() => {
             fetchConversationUser()
       }, [selectedChat])
+
+      async function fetchMessages () {
+            if (!selectedChat) return
+            const data = await chatService.getMessages(selectedChat._id)
+            setMessages(data)
+      }
 
       useEffect(() => {
             async function getConversationUserConnection () {
@@ -74,25 +89,16 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
       }
 
       function handleConnection (userId: string, status: boolean): void {
-            if (loggedInUser?._id === userId || conversationUser?._id !== userId) return
-
-            // const updatedChats = chats.map((chat) => {
-            //       const updatedUsers = chat.users.map((user) => {
-            //             if (user._id === userId) {
-            //                   return { ...user, isOnline: status, lastSeen: new Date().toISOString() }
-            //             }
-            //             return user
-            //       })
-            //       return { ...chat, users: updatedUsers }
-            // })
-            // setChats(updatedChats)
+            if ( userId !== conversationUserRef.current?._id ) return;
 
             if (conversationUserRef.current) {
-                  setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`)
+              setConnectionStatus(
+                status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUserRef.current?.lastSeen as string)}`
+              );
             }
       }
 
-      async function onSendMessage (message: string | File) {
+      async function onSendMessage (message: string | File): Promise<void> {
             if (!selectedChat) return
 
             let messageType = 'text'
@@ -104,15 +110,37 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                   messageType = 'image'
             }
 
-            const messageToUpdate = await chatService.sendMessage({
+            const optimisticMessage: IMessage = {
+                  _id: 'temp-id',
+                  sender: loggedInUser!,
+                  messageType,
                   content: message,
-                  chatId: selectedChat._id,
-                  messageType: messageType,
-            })
+                  chat: selectedChat,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+            }
+            setMessages([...messages, optimisticMessage])
 
-            setMessages((prevMessages) => [...prevMessages, messageToUpdate])
+            try {
+                  socketService.emit('stop typing', selectedChat._id)
 
-            if (chatMode !== 'chat') setChatMode('chat')
+                  const messageToUpdate = await chatService.sendMessage({
+                        content: message,
+                        chatId: selectedChat._id,
+                        messageType: messageType,
+                  })
+
+                  setMessages((prevMessages) =>
+                        prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
+                  )
+                  // setChatOnTop(messageToUpdate)
+                  socketService.emit('new message', messageToUpdate)
+            } catch (error) {
+                  console.error('Failed to send message:', error)
+                  setMessages([...messages])
+            } finally {
+                  if (chatMode !== 'chat') setChatMode('chat')
+            }
 
       }
 
@@ -149,7 +177,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                               </div>
                         </div>
                   </div>
-                  {chatMode === 'chat' && <Chat setFile={setFile} setChatMode={setChatMode} setIsTyping={setIsTyping} messages={messages} setMessages={setMessages} />}
+                  {chatMode === 'chat' && <Chat setFile={setFile} setChatMode={setChatMode} setIsTyping={setIsTyping} messages={messages} setMessages={setMessages} fetchMessages={fetchMessages} />}
                   {chatMode === 'info' && <Info conversationUser={conversationUser} setChatMode={setChatMode} setShowSearch={setShowSearch} />}
                   {chatMode === 'send-file' && <FileEditor file={file} setChatMode={setChatMode} onSendMessage={onSendMessage} />}
             </section>

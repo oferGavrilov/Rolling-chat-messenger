@@ -7,6 +7,7 @@ import ChatMessages from './ChatMessages'
 import { AuthState } from '../../../context/useAuth'
 import socketService from '../../../services/socket.service'
 import AddFileModal from './AddFileModal'
+import { scrollToBottom } from '../../../utils/functions'
 
 interface Props {
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
@@ -14,15 +15,16 @@ interface Props {
       setFile: React.Dispatch<React.SetStateAction<File | null>>
       messages: IMessage[]
       setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>
+      fetchMessages: () => Promise<void>
 }
 type Timer = NodeJS.Timeout | number
 
-export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages }: Props) {
+export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages, fetchMessages }: Props) {
 
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
 
-      const { selectedChat, chats, setChats, updateChat, addNotification } = useChat()
+      const { selectedChat, chats, setChats } = useChat()
       const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
@@ -43,24 +45,36 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       })
 
       useEffect(() => {
-            socketService.on('message received', (newMessage: IMessage) => {
-                  console.log('new message', newMessage)
-                  if (selectedChat?._id !== newMessage.chat._id) {
-                        addNotification(newMessage)
-                        return
-                  }
+            if (!selectedChat) return
+            socketService.emit('join chat', selectedChat._id)
 
-                  setMessages((prevMessages) => [...prevMessages, newMessage])
+            const fetchData = async () => {
+                  await fetchMessages();
+                  scrollToBottom(chatRef);
+            };
 
-                  updateChat(newMessage)
+            fetchData();
+      }, [selectedChat])
 
-                  scrollToBottom()
-            })
+      // useEffect(() => {
+      //       socketService.on('message received', (newMessage: IMessage) => {
+      //             console.log('new message', newMessage.chat._id, 'selectedChat',selectedChat?._id)
+      //             if (selectedChat?._id !== newMessage.chat._id) {
+      //                   addNotification(newMessage)
+      //                   return
+      //             }
 
-            return () => {
-                  socketService.off('message received')
-            }
-      })
+      //             setMessages((prevMessages) => [...prevMessages, newMessage])
+
+      //             updateChat(newMessage)
+
+      //             scrollToBottom()
+      //       })
+
+      //       return () => {
+      //             socketService.off('message received')
+      //       }
+      // })
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
@@ -79,11 +93,11 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             setNewMessage('')
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
-            scrollToBottom()
+            scrollToBottom(chatRef)
 
             try {
                   socketService.emit('stop typing', selectedChat?._id)
-                  const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id , messageType:'text'})
+                  const messageToUpdate = await chatService.sendMessage({ content: newMessage, chatId: selectedChat?._id, messageType: 'text' })
 
                   setMessages((prevMessages) =>
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
@@ -95,14 +109,17 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                   setMessages([...messages])
             }
       }
-      // TODO: call the function when send a message
+
       function setChatOnTop (message: IMessage): void {
-            const chatToUpdateIndex = chats.findIndex(chat => chat._id === selectedChat?._id)
+            const chatToUpdateIndex = chats.findIndex((chat) => chat._id === selectedChat?._id);
+
             if (chatToUpdateIndex !== -1) {
-                  const chatToUpdate = chats[chatToUpdateIndex]
-                  chatToUpdate.latestMessage = message
-                  const updatedChats = [chatToUpdate, ...chats.slice(0, chatToUpdateIndex), ...chats.slice(chatToUpdateIndex + 1)]
-                  setChats(updatedChats)
+                  const updatedChats = [...chats];
+                  updatedChats[chatToUpdateIndex] = {
+                        ...updatedChats[chatToUpdateIndex],
+                        latestMessage: message,
+                  };
+                  setChats(updatedChats);
             }
       }
 
@@ -126,14 +143,14 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             }, timerLength)
       }
 
-      function scrollToBottom () {
-            setTimeout(() => {
-                  const chatContainer = chatRef.current
-                  if (chatContainer) {
-                        chatContainer.scrollTop = chatContainer.scrollHeight
-                  }
-            }, 0)
-      }
+      // function scrollToBottom () {
+      //       setTimeout(() => {
+      //             const chatContainer = chatRef.current
+      //             if (chatContainer) {
+      //                   chatContainer.scrollTop = chatContainer.scrollHeight
+      //             }
+      //       }, 0)
+      // }
 
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
 
@@ -156,7 +173,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                   </div>
 
                   <div className='py-3 flex items-center md:px-5 gap-x-5 overflow-x-hidden'>
-                       <AddFileModal setFile={setFile} setChatMode={setChatMode}/>
+                        <AddFileModal setFile={setFile} setChatMode={setChatMode} />
 
                         <form onSubmit={handleSubmit} className='w-full flex'>
                               <input

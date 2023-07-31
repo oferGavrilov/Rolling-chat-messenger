@@ -107,3 +107,11 @@ export function startTypingTimeout (callback: () => void, delay: number): NodeJS
 export function clearTypingTimeout (timeoutId: number): void {
   clearTimeout(timeoutId)
 }
+
+export function scrollToBottom (chatRef: React.RefObject<HTMLDivElement>): void {
+  setTimeout(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, 0);
+}

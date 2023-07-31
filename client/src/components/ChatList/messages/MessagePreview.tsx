@@ -1,13 +1,12 @@
 import { useChat } from '../../../store/useChat'
 import { IChat } from '../../../model/chat.model'
 import { User } from '../../../model/user.model'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { Avatar, Badge } from '@mui/material'
 import { styled } from '@mui/system'
 import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
 import { IMessage } from '../../../model/message.model'
-import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from '../../../services/socket.service'
 
 interface Props {
       chat: IChat
@@ -17,7 +16,6 @@ interface Props {
 export default function MessagePreview ({ chat, notification }: Props) {
       const { setSelectedChat, selectedChat, removeNotification } = useChat()
       const { user: loggedinUser } = AuthState()
-      const [isOnline, setIsOnline] = useState<boolean>(true)
 
       const getSender = useCallback(
             (users: User[]): User => {
@@ -25,48 +23,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
             },
             [loggedinUser?._id]
       )
-      // useEffect(() => {
-      //       if (chat.isGroupChat) return
 
-      //       const handleConnection = (userId: string, status: boolean): void => {
-      //             console.log(userId, status)
-      //             if (getSender(chat.users)._id === userId) {
-      //                   setIsOnline(status)
-      //             }
-      //       }
-
-      //       socketService.on(SOCKET_LOGIN, handleConnection, true)
-      //       socketService.on(SOCKET_LOGOUT, handleConnection, false)
-      // }, [chat.users])
-
-      // const StyledBadge = styled(Badge)(() => ({
-      //       '& .MuiBadge-badge': {
-      //             backgroundColor:isOnline ? '#44b700' : '#e85d04',
-      //             color: isOnline ? '#44b700' : '#ef233c',
-      //             boxShadow: `0 0 0 2px ${isOnline ? 'lightgreen' : '#ef233c'}`,
-      //             '&::after': {
-      //                   position: 'absolute',
-      //                   top: 0,
-      //                   left: 0,
-      //                   width: '100%',
-      //                   height: '100%',
-      //                   borderRadius: '50%',
-      //                   animation: isOnline && 'ripple 1.2s infinite ease-in-out',
-      //                   border: '1px solid currentColor',
-      //                   content: '""',
-      //             },
-      //       },
-      //       '@keyframes ripple': {
-      //             '0%': {
-      //                   transform: 'scale(.8)',
-      //                   opacity: 1,
-      //             },
-      //             '100%': {
-      //                   transform: 'scale(2.4)',
-      //                   opacity: 0,
-      //             },
-      //       },
-      // }))
       const StyledBadge = styled(Badge)(() => ({
             '& .MuiBadge-badge': {
                   backgroundColor: '#44b700',
@@ -117,7 +74,6 @@ export default function MessagePreview ({ chat, notification }: Props) {
                   removeNotification(getCurrentNotificationChat())
             }
       }
-
       return (
             <li onClick={() => onSelectChat()}
                   className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200
@@ -127,7 +83,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                               <StyledBadge overlap="circular"
                                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                     variant="dot">
-                                    <Avatar alt='' src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} />
+                                    <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt=''/>
                               </StyledBadge>) : (
                               <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='profile-image' />
                         )}
@@ -146,7 +102,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                                                       'text-blue-500' :
                                                       'text-[#00000085]'
                                                 }`}>
-                                          {getLatestMessageSender()} {chat.latestMessage?.content}
+                                          {getLatestMessageSender()} {chat.latestMessage?.content.toString()}
                                     </p>
                                     {isNotification() && <span className='bg-blue-400 text-white text-sm flex items-center h-[90%] w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>

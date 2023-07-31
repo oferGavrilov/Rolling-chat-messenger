@@ -11,7 +11,6 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
       const { notification, addNotification, selectedChat, setChats, updateChat } = useChat()
       const { user } = AuthState()
 
-      const latestMessageIdRef = useRef<string | null>(null);
 
       useEffect(() => {
             if (!user) return
@@ -23,29 +22,35 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
             };
       }, [user]);
 
-      useEffect(() => {
-            const handleNewMessage = (newMessage: IMessage) => {
-                  console.log("new notification", newMessage);
-                  if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
-                        const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id);
-                        if (!isChatExists) setChats([newMessage.chat, ...chats]);
+      const isMountedRef = useRef<boolean>(false);
 
-                        // Check if the message is already processed
-                        if (latestMessageIdRef.current !== newMessage._id) {
-                              latestMessageIdRef.current = newMessage._id; // Update the latest processed message ID
+      useEffect(() => {
+            // Set the component as mounted when the useEffect is called
+            isMountedRef.current = true;
+
+            // Cleanup function
+            return () => {
+                  // Reset the component state when unmounted
+                  isMountedRef.current = false;
+            };
+      }, []);
+
+      useEffect(() => {
+            socketService.on("message received", (newMessage: IMessage) => {
+                  if (isMountedRef.current) {
+                        if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
+                              const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id);
+                              if (!isChatExists) setChats([newMessage.chat, ...chats]);
+
                               addNotification(newMessage);
                               updateChat(newMessage);
                               document.title = `${notification.length > 0 ? `(${notification.length})` : ""} Rolling`;
                         }
                   }
-            };
+            });
 
-            socketService.on("message received", handleNewMessage);
-
-            // Clean up
             return () => {
-                  socketService.off("message received", handleNewMessage);
-                  latestMessageIdRef.current = null; // Reset the latest processed message ID when the component unmounts
+                  socketService.off("message received");
             };
       }, [selectedChat]);
 
@@ -53,9 +58,6 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
             console.log(chat)
             setChats([chat, ...chats])
       }
-
-
-
       return (
             <ul className="overflow-y-auto h-screen pb-48 px-1">
                   {chats.map(chat => (

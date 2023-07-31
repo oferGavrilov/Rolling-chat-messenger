@@ -4,7 +4,7 @@ export interface IMessage {
       count?: number
       _id: string
       chat:IChat
-      content: string
+      content: string | File 
       createdAt: string
       sender: {
             _id: string

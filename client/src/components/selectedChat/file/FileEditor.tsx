@@ -9,11 +9,12 @@ interface Props {
 }
 
 export default function FileEditor ({ file, setChatMode, onSendMessage }: Props) {
+
       console.log(file)
 
       if (!file) return <div></div>
       return (
-            <div className='bg-gray-400 relative'>
+            <div className='bg-gradient-to-b from-blue-200 to-blue-100 relative'>
                   <div className='flex items-center justify-center w-full h-full'>
                         <img
                               src={file.toString()}
@@ -27,8 +28,10 @@ export default function FileEditor ({ file, setChatMode, onSendMessage }: Props)
                         onClick={() => setChatMode('chat')}
                   />
 
-                  <div className='absolute bottom-10 left-10'>
-                        <button className='bg-primary text-white p-2 rounded-xl' onClick={() => onSendMessage(file)}>Send File</button>
+                  <div className='border-t-2 border-gray-300 py-5 w-full absolute bottom-0'>
+                        <div className='mx-4'>
+                              <button className='bg-primary text-white p-2 rounded-xl' onClick={() => onSendMessage(file)}>Send File</button>
+                        </div>
                   </div>
             </div>
       )

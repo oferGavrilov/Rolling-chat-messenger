@@ -22,7 +22,7 @@ export type LatestMessage =  {
             username: string
             profileImg: string
       }
-      content: string
+      content: string | File
       chat: string
       createdAt: string
       updatedAt: string
