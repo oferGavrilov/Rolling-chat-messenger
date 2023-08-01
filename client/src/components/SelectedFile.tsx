@@ -88,8 +88,8 @@ export default function SelectedFile (): JSX.Element {
                         </div>
                   </div>
 
-                  <section className='h-screen w-screen flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
-                        <div className='flex justify-center mt-8 opacity-0 fade-grow-up-selected-file'>
+                  <section className='h-screen w-screen flex flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
+                        <div className='flex justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
                               <img src={selectedFile?.content?.toString()} className='max-w-sm md:max-w-md lg:max-w-lg object-cover' alt='' />
                         </div>
                   </section>

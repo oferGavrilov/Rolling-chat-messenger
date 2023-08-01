@@ -1,6 +1,5 @@
 import { IMessage, Message } from "../../models/message.model"
-import { User } from "../../models/user.model"
-import { Chat, ChatDocument } from "../../models/chat.model"
+import { Chat } from "../../models/chat.model"
 import { handleErrorService } from "../../middleware/errorMiddleware"
 import { PopulatedDoc } from "mongoose"
 
@@ -37,6 +36,7 @@ export async function sendMessageService (senderId: string, content: string, cha
 
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
 
+            console.log('message', message)
             return message;
       } catch (error: any) {
             throw handleErrorService(error);

@@ -53,10 +53,27 @@ export default function MessagePreview ({ chat, notification }: Props) {
             },
       }))
 
-      function getLatestMessageSender (): string {
-            if (chat.latestMessage?.sender?._id === loggedinUser?._id) return 'you: '
-            if (chat.isGroupChat && chat.latestMessage) return `${chat.latestMessage?.sender?.username}: `
-            return ''
+      function getLatestMessage (): string {
+            let sender: string = ''
+            let content: string = ''
+
+            if (chat.latestMessage?.sender?._id === loggedinUser?._id) {
+                  sender = 'you: ';
+            }
+
+            if (chat.isGroupChat && chat.latestMessage) {
+                  sender = chat.latestMessage?.sender?.username || '';
+            }
+
+            if (chat.latestMessage?.messageType === 'text') {
+                  content = chat.latestMessage?.content?.toString();
+            }
+
+            if (chat.latestMessage?.messageType === 'image') {
+                  content = 'Image';
+            }
+
+            return sender + content;
       }
 
       function isNotification (): boolean {
@@ -83,7 +100,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                               <StyledBadge overlap="circular"
                                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                     variant="dot">
-                                    <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt=''/>
+                                    <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='' />
                               </StyledBadge>) : (
                               <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='profile-image' />
                         )}
@@ -98,11 +115,11 @@ export default function MessagePreview ({ chat, notification }: Props) {
                               <div className='flex justify-between'>
                                     <p
                                           className={`text-base h-6 truncate max-h-[24px] max-w-[260px] overflow-hidden whitespace-nowrap
-                                    ${isNotification() ?
+                                                      ${isNotification() ?
                                                       'text-blue-500' :
                                                       'text-[#00000085]'
                                                 }`}>
-                                          {getLatestMessageSender()} {chat.latestMessage?.content.toString()}
+                                          {getLatestMessage()}
                                     </p>
                                     {isNotification() && <span className='bg-blue-400 text-white text-sm flex items-center h-[90%] w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>

@@ -21,6 +21,7 @@ interface ChatActions {
       removeNotification: (notification: IMessage | undefined) => void
       updateChat: (latestMessage: IMessage) => void;
       setSelectedFile: (file: IMessage | null) => void
+      setChatOnTop: (message: IMessage) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -85,7 +86,24 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                               updatedChats.unshift(chat);
                               return { chats: updatedChats };
                         }
-                        return state; // Return the unmodified state if the chat is not found
+                        return state
+                  });
+            },
+
+            setChatOnTop: (message: IMessage) => {
+                  set((state) => {
+                        const chatToUpdateIndex = state.chats.findIndex((chat) => chat._id === state.selectedChat?._id);
+
+                        if (chatToUpdateIndex !== -1) {
+                              const updatedChats = [...state.chats];
+                              updatedChats[chatToUpdateIndex] = {
+                                    ...updatedChats[chatToUpdateIndex],
+                                    latestMessage: message,
+                              };
+                              return { chats: updatedChats };
+                        }
+
+                        return state;
                   });
             }
       }

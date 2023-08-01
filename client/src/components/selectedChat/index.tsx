@@ -9,20 +9,19 @@ import { Avatar } from "@mui/material"
 import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
-import { formatLastSeenDate} from "../../utils/functions"
+import { formatLastSeenDate } from "../../utils/functions"
 import FileEditor from "./file/FileEditor"
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
 import { IMessage } from "../../model/message.model"
 
 export default function Messenger (): JSX.Element {
-
       const [conversationUser, setConversationUser] = useState<User>()
       const [chatMode, setChatMode] = useState<string>('chat')
       const [isTyping, setIsTyping] = useState<boolean>(false)
       const [messages, setMessages] = useState<IMessage[]>([])
 
-      const { selectedChat, setSelectedChat, addNotification, updateChat } = useChat()
+      const { selectedChat, setSelectedChat, addNotification, updateChat, setChatOnTop } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
@@ -49,7 +48,7 @@ export default function Messenger (): JSX.Element {
                   }
 
                   setMessages((prevMessages) => [...prevMessages, newMessage])
-                  
+
                   updateChat(newMessage)
 
                   // scrollToBottom()
@@ -89,12 +88,12 @@ export default function Messenger (): JSX.Element {
       }
 
       function handleConnection (userId: string, status: boolean): void {
-            if ( userId !== conversationUserRef.current?._id ) return;
+            if (userId !== conversationUserRef.current?._id) return;
 
             if (conversationUserRef.current) {
-              setConnectionStatus(
-                status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUserRef.current?.lastSeen as string)}`
-              );
+                  setConnectionStatus(
+                        status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUserRef.current?.lastSeen as string)}`
+                  );
             }
       }
 
@@ -120,7 +119,7 @@ export default function Messenger (): JSX.Element {
                   updatedAt: new Date().toISOString(),
             }
             setMessages([...messages, optimisticMessage])
-
+            setChatOnTop(optimisticMessage)
             try {
                   socketService.emit('stop typing', selectedChat._id)
 

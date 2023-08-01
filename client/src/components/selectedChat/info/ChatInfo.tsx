@@ -16,19 +16,14 @@ interface Props {
 }
 
 export default function ChatInfo ({ conversationUser, messages }: Props) {
-      const { chats, setChats, selectedChat, setSelectedChat } = useChat()
+      const { chats, setChats, selectedChat, setSelectedChat, setSelectedFile } = useChat()
       const { user } = AuthState()
+
       const [showLeftButton, setShowLeftButton] = useState(false)
       const [showRightButton, setShowRightButton] = useState(false)
       const [showMessagesFiles, setShowMessagesFiles] = useState(false)
-      const [messagesFiles, setMessagesFiles] = useState<IMessage[]>([])
-      const messagesFilesRef = useRef<HTMLDivElement>(null)
 
-      useEffect(() => {
-            if (!selectedChat) return
-            const messagesFiles = messages.filter(message => message.messageType === 'image')
-            setMessagesFiles(messagesFiles)
-      }, [selectedChat])
+      const messagesFilesRef = useRef<HTMLDivElement>(null)
 
       useEffect(() => {
             if (!messagesFilesRef.current) return
@@ -56,7 +51,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props) {
             if (!messagesFilesRef.current) return
 
             const container = messagesFilesRef.current
-            const scrollAmount = 300
+            const scrollAmount = 450
 
             if (direction === 'left') {
                   container.scrollLeft -= scrollAmount
@@ -64,6 +59,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props) {
                   container.scrollLeft += scrollAmount
             }
       }
+
       async function onRemoveChat () {
             const chat = chats.find(chat => chat._id === selectedChat?._id)
 
@@ -77,7 +73,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props) {
       }
 
 
-      // const messagesFiles = messages.filter(message => message.messageType === 'image')
+      const messagesFiles = messages.filter(message => message.messageType === 'image')
 
       return (
             <section className="w-full h-full">
@@ -116,6 +112,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props) {
                                                       className="h-full w-full object-cover min-w-[200px] min-h-[250px] object-center py-1 cursor-pointer"
                                                       src={message.content.toString()}
                                                       alt="conversation-user"
+                                                      onClick={() => setSelectedFile(message)}
                                                 />
                                           ))}
 

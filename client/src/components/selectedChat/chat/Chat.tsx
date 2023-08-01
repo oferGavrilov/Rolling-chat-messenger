@@ -24,7 +24,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
 
-      const { selectedChat, chats, setChats } = useChat()
+      const { selectedChat, setChatOnTop } = useChat()
       const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
@@ -56,26 +56,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             fetchData();
       }, [selectedChat])
 
-      // useEffect(() => {
-      //       socketService.on('message received', (newMessage: IMessage) => {
-      //             console.log('new message', newMessage.chat._id, 'selectedChat',selectedChat?._id)
-      //             if (selectedChat?._id !== newMessage.chat._id) {
-      //                   addNotification(newMessage)
-      //                   return
-      //             }
-
-      //             setMessages((prevMessages) => [...prevMessages, newMessage])
-
-      //             updateChat(newMessage)
-
-      //             scrollToBottom()
-      //       })
-
-      //       return () => {
-      //             socketService.off('message received')
-      //       }
-      // })
-
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault()
             if (!newMessage || !selectedChat) return
@@ -86,6 +66,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                   sender: user!,
                   content: newMessage,
                   chat: selectedChat,
+                  messageType: 'text',
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
             }
@@ -107,19 +88,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             } catch (error) {
                   console.error('Failed to send message:', error)
                   setMessages([...messages])
-            }
-      }
-
-      function setChatOnTop (message: IMessage): void {
-            const chatToUpdateIndex = chats.findIndex((chat) => chat._id === selectedChat?._id);
-
-            if (chatToUpdateIndex !== -1) {
-                  const updatedChats = [...chats];
-                  updatedChats[chatToUpdateIndex] = {
-                        ...updatedChats[chatToUpdateIndex],
-                        latestMessage: message,
-                  };
-                  setChats(updatedChats);
             }
       }
 
