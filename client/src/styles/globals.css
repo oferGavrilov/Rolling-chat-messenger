@@ -101,8 +101,12 @@
             @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500
       }
 
+      /* Chat Info */
+      .scroll-arrow-btn {
+            @apply text-white bg-gray-500 w-max rounded-full p-2 opacity-90 fixed top-[56%] 
+            cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-500;
+      }
       /* Selected File */
-
       .tools-icon {
             @apply cursor-pointer h-max p-1 rounded-full hover:bg-gray-500;
       }

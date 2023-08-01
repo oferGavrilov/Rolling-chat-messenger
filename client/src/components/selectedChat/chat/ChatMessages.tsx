@@ -31,7 +31,6 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
       };
 
       if (!messages || !user) return <div></div>
-      console.log(messages)
       return (
             <section className="py-4">
                   {messages &&

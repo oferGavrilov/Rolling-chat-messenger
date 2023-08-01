@@ -4,11 +4,11 @@ import useChat from "../../../store/useChat"
 import { AuthState } from "../../../context/useAuth"
 import { chatService } from "../../../services/chat.service"
 import { IMessage } from "../../../model/message.model"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react"
 
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 interface Props {
       conversationUser: User | undefined
@@ -16,20 +16,68 @@ interface Props {
 }
 
 export default function ChatInfo ({ conversationUser, messages }: Props) {
-      const [showFiles, setShowFiles] = useState<boolean>(false)
       const { chats, setChats, selectedChat, setSelectedChat } = useChat()
       const { user } = AuthState()
+      const [showLeftButton, setShowLeftButton] = useState(false)
+      const [showRightButton, setShowRightButton] = useState(false)
+      const [showMessagesFiles, setShowMessagesFiles] = useState(false)
+      const [messagesFiles, setMessagesFiles] = useState<IMessage[]>([])
+      const messagesFilesRef = useRef<HTMLDivElement>(null)
 
+      useEffect(() => {
+            if (!selectedChat) return
+            const messagesFiles = messages.filter(message => message.messageType === 'image')
+            setMessagesFiles(messagesFiles)
+      }, [selectedChat])
+
+      useEffect(() => {
+            if (!messagesFilesRef.current) return
+
+            const container = messagesFilesRef.current
+            setShowLeftButton(container.scrollLeft > 0)
+            setShowRightButton(
+                  container.scrollLeft + container.clientWidth < container.scrollWidth
+            )
+
+            const handleScroll = () => {
+                  setShowLeftButton(container.scrollLeft > 0)
+                  setShowRightButton(
+                        container.scrollLeft + container.clientWidth < container.scrollWidth
+                  )
+            }
+
+            container.addEventListener('scroll', handleScroll)
+            return () => {
+                  container.removeEventListener('scroll', handleScroll)
+            }
+      }, [messagesFilesRef])
+
+      const scrollMessagesFiles = (direction: 'left' | 'right') => {
+            if (!messagesFilesRef.current) return
+
+            const container = messagesFilesRef.current
+            const scrollAmount = 300
+
+            if (direction === 'left') {
+                  container.scrollLeft -= scrollAmount
+            } else if (direction === 'right') {
+                  container.scrollLeft += scrollAmount
+            }
+      }
       async function onRemoveChat () {
             const chat = chats.find(chat => chat._id === selectedChat?._id)
+
             if (!chat || !user) return
+
             await chatService.removeChat(chat._id, user._id)
+
             const newChats = chats.filter(chat => chat._id !== selectedChat?._id)
             setChats(newChats)
             setSelectedChat(null)
       }
 
-      const messagesFiles = messages.filter(message => message.messageType === 'image')
+
+      // const messagesFiles = messages.filter(message => message.messageType === 'image')
 
       return (
             <section className="w-full h-full">
@@ -53,7 +101,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props) {
                               </div>
 
                               <div className="px-6">
-                                    <div className="flex justify-between items-center py-2 pt-2 text-gray-400 cursor-pointer hover:text-gray-700">
+                                    <div className="flex justify-between items-center py-2 pt-2 text-gray-400 cursor-pointer hover:text-gray-700" onClick={() => setShowMessagesFiles(!showMessagesFiles)}>
                                           <h2 className="text-lg">Media links and documents</h2>
                                           <div className="flex items-center">
                                                 {messagesFiles.length}
@@ -61,25 +109,33 @@ export default function ChatInfo ({ conversationUser, messages }: Props) {
                                           </div>
                                     </div>
 
-                                    <div className="flex h-[200px] gap-x-3 py-4 overflow-x-auto relative" >
+                                    <div className={`flex gap-x-3 overflow-x-auto overflow-y-hidden relative scroll-smooth transition-[height] duration-300 ease-in-out ${showMessagesFiles ? 'h-[280px]' : 'h-[0px]'}`} ref={messagesFilesRef} >
                                           {messagesFiles.map(message => (
                                                 <img
                                                       key={message._id}
-                                                      className="h-full w-full object-cover  py-1 cursor-pointer"
+                                                      className="h-full w-full object-cover min-w-[200px] min-h-[250px] object-center py-1 cursor-pointer"
                                                       src={message.content.toString()}
                                                       alt="conversation-user"
                                                 />
                                           ))}
 
-                                          <div className="text-white bg-gray-500 w-max rounded-full p-2 opacity-90 absolute right-0 bottom-[40%]">
-                                                <KeyboardArrowRightIcon />
-                                          </div>
+                                          {showMessagesFiles && showRightButton && (
+                                                <div
+                                                      className="scroll-arrow-btn right-2"
+                                                      onClick={() => scrollMessagesFiles('right')}
+                                                >
+                                                      <KeyboardArrowRightIcon />
+                                                </div>
+                                          )}
 
-                                          <div className="text-white bg-gray-500 w-max rounded-full p-2 opacity-90 absolute left-0 bottom-[40%]">
-                                                <KeyboardArrowLeftIcon />
-                                          </div>
+                                          {showMessagesFiles && showLeftButton && (
+                                                <div
+                                                      className="scroll-arrow-btn left-2 "
+                                                      onClick={() => scrollMessagesFiles('left')}
+                                                >
+                                                      <KeyboardArrowLeftIcon />
+                                                </div>)}
                                     </div>
-
                               </div>
 
                               <div>
