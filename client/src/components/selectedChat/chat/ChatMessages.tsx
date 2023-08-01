@@ -2,6 +2,7 @@ import { ReactNode } from "react"
 import { AuthState } from "../../../context/useAuth"
 import { IMessage } from "../../../model/message.model"
 import { formatDate, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
+import useChat from "../../../store/useChat"
 
 interface Props {
       messages: IMessage[]
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element {
-
+      const { setSelectedFile } = useChat()
       const { user } = AuthState()
 
       const renderMessageContent = (message: IMessage): ReactNode => {
@@ -19,6 +20,8 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                               className="max-h-[300px] max-w-[200px] object-cover object-top py-1 cursor-pointer"
                               src={message.content}
                               alt="conversation-user"
+                              onClick={() => setSelectedFile(message)}
+
                         />
                   );
             } else if (typeof message.content === 'string') {
@@ -28,6 +31,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
       };
 
       if (!messages || !user) return <div></div>
+      console.log(messages)
       return (
             <section className="py-4">
                   {messages &&
@@ -55,7 +59,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                 ${message.messageType === 'image' && 'flex-col-reverse pl-2'}
                                                 `}
                                     >
-                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1 ${message.messageType === 'image' && 'left-4 bottom-2 !absolute z-10'}
+                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1 ${message.messageType === 'image' && 'left-5 bottom-2 !absolute z-10'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       '-left-1' : '-right-2'}`}>
                                                 {formatDate(message.createdAt)}

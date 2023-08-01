@@ -6,12 +6,13 @@ import { useChat } from '../store/useChat'
 import Messenger from '../components/selectedChat'
 import { AuthState } from '../context/useAuth'
 import socketService from '../services/socket.service'
+import SelectedFile from '../components/SelectedFile'
 
 export default function ChatPage (): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<string>('messages')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
-      const { selectedChat } = useChat()
+      const { selectedChat, selectedFile} = useChat()
       const { user } = AuthState()
 
       useEffect(() => {
@@ -29,12 +30,33 @@ export default function ChatPage (): JSX.Element {
       if (!user) return <div></div>
       return (
             <div>
-                  <div className='flex  h-screen slide-right overflow-y-hidden'>
-                        <Navigation contentType={contentType} setContentType={setContentType} showNavigation={showNavigation} setShowNavigation={setShowNavigation} />
-                        <DynamicList contentType={contentType} setContentType={setContentType} setShowSearch={setShowSearch} showNavigation={showNavigation} setShowNavigation={setShowNavigation} />
-                        {selectedChat && <Messenger setShowSearch={setShowSearch} />}
+                  <div className='flex h-screen slide-right overflow-y-hidden' >
+                        <Navigation
+                              contentType={contentType}
+                              setContentType={setContentType}
+                              showNavigation={showNavigation}
+                              setShowNavigation={setShowNavigation}
+                        />
+                        <DynamicList
+                              contentType={contentType}
+                              setContentType={setContentType}
+                              setShowSearch={setShowSearch}
+                              showNavigation={showNavigation}
+                              setShowNavigation={setShowNavigation}
+                        />
+                        {selectedChat && <Messenger />}
                   </div>
-                  <SearchUsers contentType={contentType} isAddNewGroup={true} isOpen={showSearch} setIsOpen={setShowSearch} />
+                  {selectedFile && (
+                        <SelectedFile />
+                  )}
+                  <SearchUsers
+                        contentType={contentType}
+                        isAddNewGroup={true}
+                        isOpen={showSearch}
+                        setIsOpen={setShowSearch}
+                  />
             </div>
-      )
+      );
+
+
 }

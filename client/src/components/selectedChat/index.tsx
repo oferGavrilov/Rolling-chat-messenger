@@ -15,7 +15,7 @@ import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socke
 import { chatService } from "../../services/chat.service"
 import { IMessage } from "../../model/message.model"
 
-export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dispatch<React.SetStateAction<boolean>> }): JSX.Element {
+export default function Messenger (): JSX.Element {
 
       const [conversationUser, setConversationUser] = useState<User>()
       const [chatMode, setChatMode] = useState<string>('chat')
@@ -178,7 +178,7 @@ export default function Messenger ({ setShowSearch }: { setShowSearch: React.Dis
                         </div>
                   </div>
                   {chatMode === 'chat' && <Chat setFile={setFile} setChatMode={setChatMode} setIsTyping={setIsTyping} messages={messages} setMessages={setMessages} fetchMessages={fetchMessages} />}
-                  {chatMode === 'info' && <Info conversationUser={conversationUser} setChatMode={setChatMode} setShowSearch={setShowSearch} />}
+                  {chatMode === 'info' && <Info conversationUser={conversationUser} messages={messages} setChatMode={setChatMode} />}
                   {chatMode === 'send-file' && <FileEditor file={file} setChatMode={setChatMode} onSendMessage={onSendMessage} />}
             </section>
       )

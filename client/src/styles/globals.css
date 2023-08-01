@@ -100,6 +100,12 @@
       .clip-modal-option {
             @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500
       }
+
+      /* Selected File */
+
+      .tools-icon {
+            @apply cursor-pointer h-max p-1 rounded-full hover:bg-gray-500;
+      }
 }
 
 @layer utilities{
@@ -130,7 +136,6 @@
             transform: scale(1.02);
             font-weight: bold;
       }
-
 }
 
 .MuiPopover-paper{

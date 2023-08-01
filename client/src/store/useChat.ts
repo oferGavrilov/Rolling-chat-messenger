@@ -7,6 +7,7 @@ interface ChatState {
       selectedChat: IChat | null
       notification: IMessage[]
       selectedChatCompare: IChat | null
+      selectedFile: IMessage | null;
 }
 
 interface ChatActions {
@@ -16,9 +17,10 @@ interface ChatActions {
       clearChats: () => void
       setSelectedChat: (chat: IChat | null) => void
       addNotification: (notification: IMessage) => void
-      setSelectedChatCompare: (chat: IChat | null) => void
+      setSelectedChatCompare: (chat: IChat | null) => void // TODO: Remove this
       removeNotification: (notification: IMessage | undefined) => void
       updateChat: (latestMessage: IMessage) => void;
+      setSelectedFile: (file: IMessage | null) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -30,6 +32,7 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             chats: [],
             selectedChat: null,
             notification: initialNotification,
+            selectedFile: null,
 
             // Chat
             setChats: (chats) => set({ chats }),
@@ -37,6 +40,7 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             removeChat: (chat) => set((state) => ({ chats: state.chats.filter((c) => c._id !== chat._id) })),
             clearChats: () => set({ chats: [] }),
             setSelectedChat: (chat) => set({ selectedChat: chat }),
+            setSelectedFile: (file) => set({ selectedFile: file }),
 
             // For compare chat sockets
             selectedChatCompare: null,
