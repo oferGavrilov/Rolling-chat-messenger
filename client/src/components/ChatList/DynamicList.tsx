@@ -5,9 +5,9 @@ import useChat from "../../store/useChat"
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
-import Settings from "../Settings"
+import Settings from "../user/Settings"
 import MenuIcon from '@mui/icons-material/Menu';
-import Profile from "../Profile"
+import Profile from "../user/Profile"
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>

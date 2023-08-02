@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import UploadImage from './UploadImage'
-import { AuthState } from '../context/useAuth'
+import UploadImage from '../UploadImage'
+import { AuthState } from '../../context/useAuth'
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { Tooltip } from '@mui/material';
 import { toast } from 'react-toastify';
-import { userService } from '../services/user.service';
-import { User } from '../model/user.model';
+import { userService } from '../../services/user.service';
+import { User } from '../../model/user.model';
 
 interface UserValues {
       username: string | undefined;

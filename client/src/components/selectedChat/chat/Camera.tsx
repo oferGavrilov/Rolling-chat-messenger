@@ -21,10 +21,11 @@ const Camera: React.FC<Props> = ({ onCapture }) => {
             <Webcam
               audio={false}
               ref={webcamRef}
+              mirrored={true}
               screenshotFormat="image/jpeg"
               style={{ width: "100%", height: "auto" }}
             />
-            <div onClick={captureImage} className="bg-primary p-3 rounded-full absolute -bottom-8">
+            <div onClick={captureImage} className="bg-primary p-3 rounded-full absolute -bottom-8 cursor-pointer">
               <PhotoCameraIcon className="text-white" fontSize="large"/>
             </div>
           </div>
