@@ -11,8 +11,6 @@ interface Props {
 
 export default function FileEditor ({ file, setChatMode, onSendMessage }: Props) {
 
-      console.log(file)
-
       if (!file) return <div></div>
       return (
             <div className='bg-gradient-to-b from-blue-100 to-white relative'>

@@ -90,7 +90,7 @@ export default function SelectedFile (): JSX.Element {
 
                   <section className='h-screen w-screen flex flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
                         <div className='flex justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
-                              <img src={selectedFile?.content?.toString()} className='max-w-sm md:max-w-md lg:max-w-lg object-cover' alt='' />
+                              <img src={selectedFile?.content?.toString()} className='max-w-sm md:max-w-md lg:max-w-lg max-h-[700px] object-cover' alt='' />
                         </div>
                   </section>
             </div>

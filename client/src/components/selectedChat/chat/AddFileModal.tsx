@@ -4,9 +4,10 @@ import { toast } from 'react-toastify'
 import { uploadImg } from '../../../utils/upload-img'
 import { useClickOutside } from '../../../custom/useClickOutside'
 
-import PermMediaIcon from '@mui/icons-material/PermMedia';
-import LocalSeeIcon from '@mui/icons-material/LocalSee';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import PermMediaIcon from '@mui/icons-material/PermMedia'
+import LocalSeeIcon from '@mui/icons-material/LocalSee'
+import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import Camera from './Camera'
 
 interface Props {
       setFile: React.Dispatch<React.SetStateAction<File | null>>
@@ -15,26 +16,45 @@ interface Props {
 
 export default function AddFileModal ({ setFile, setChatMode }: Props) {
       const [showClipModal, setShowClipModal] = useState<boolean>(false)
+      const [showCamera, setShowCamera] = useState<boolean>(false)
 
       const modalRef = useRef<HTMLUListElement>(null)
 
       useClickOutside(modalRef, () => setShowClipModal(false), showClipModal)
 
-      async function uploadImage(file: File | undefined) {
-            if (!file) return toast.error('Upload image went wrong');
+      const handleCapture = async (image: string) => {
             try {
-              const response = await uploadImg(file); // Make sure uploadImg returns the Cloudinary response
-              if (!response || !response.url) {
-                return toast.error('Invalid response from Cloudinary');
-              }
-          
-              // Use the URL from the response
-              setFile(response.url);
-              setChatMode('send-file');
+                  const blob = await fetch(image).then((r) => r.blob())
+                  const file = new File([blob], 'captured-image.jpeg', { type: 'image/jpeg' })
+
+                  const cloudinaryResponse = await uploadImg(file)
+                  if (!cloudinaryResponse || !cloudinaryResponse.url) {
+                        return toast.error('Upload failed')
+                  }
+
+                  setFile(cloudinaryResponse.url)
+                  setChatMode('send-file')
+                  setShowCamera(false)
             } catch (err) {
-              console.log(err);
+                  console.log(err)
+                  toast.error('Upload error')
             }
-          }
+      }
+
+      async function uploadImage (file: File | undefined) {
+            if (!file) return toast.error('Upload image went wrong')
+            try {
+                  const response = await uploadImg(file)
+                  if (!response || !response.url) {
+                        return toast.error('Invalid response from Cloudinary')
+                  }
+
+                  setFile(response.url)
+                  setChatMode('send-file')
+            } catch (err) {
+                  console.log(err)
+            }
+      }
 
       return (
             <div className='relative'>
@@ -46,9 +66,9 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                   <ul
                         ref={modalRef}
                         className={`
-            fixed bottom-14 left-8 px-2 pb-3 text-white rounded-lg z-20 bg-gray-400 overflow-hidden
-             transition-all duration-300 ease-in-out max-w-[40px] !shadow-2xl
-            ${showClipModal ? 'max-h-[300px] max-w-full' : 'max-h-0 px-0 !py-0 '}`}>
+                        fixed bottom-14 left-8 px-2 pb-3 text-white rounded-lg z-20 bg-gray-400 overflow-hidden
+                        transition-all duration-300 ease-in-out max-w-[40px] !shadow-2xl
+                        ${showClipModal ? 'max-h-[300px] max-w-full' : 'max-h-0 px-0 !py-0 '}`}>
 
                         <label className='clip-modal-option py-1 inline-flex '>
                               <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/gif, image/jpeg, image/png' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -59,12 +79,24 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                                     Images and Videos
                               </span>
                         </label>
-                        <li className='clip-modal-option my-2 py-1 flex items-center'>
+                        <li className='clip-modal-option my-2 py-1 flex items-center' onClick={() => setShowCamera(true)}>
                               <LocalSeeIcon className='mr-2 text-[#ff2e74]' />
                               Camera</li>
                         <li className='clip-modal-option py-1 flex items-center'>
                               <TextSnippetIcon className='mr-2 text-purple-500' />
                               File</li>
                   </ul>
+
+                  {showCamera && (
+                        <div className="fixed top-0 left-0 right-0 bottom-0 bg-gray-900 z-30">
+                              <button
+                                    className="absolute top-4 right-4 text-white text-xl"
+                                    onClick={() => setShowCamera(false)}
+                              >
+                                    Close
+                              </button>
+                              <Camera onCapture={handleCapture} />
+                        </div>
+                  )}
             </div>)
 }

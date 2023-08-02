@@ -36,7 +36,6 @@ export async function sendMessageService (senderId: string, content: string, cha
 
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
 
-            console.log('message', message)
             return message;
       } catch (error: any) {
             throw handleErrorService(error);
