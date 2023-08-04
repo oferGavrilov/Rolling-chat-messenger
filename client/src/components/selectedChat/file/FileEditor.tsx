@@ -5,8 +5,7 @@ import SendIcon from '@mui/icons-material/Send';
 interface Props {
       file: File | null
       setChatMode: React.Dispatch<React.SetStateAction<string>>
-      onSendMessage: (message: string | File) => Promise<void>
-
+      onSendMessage: (file: File, type: "text" | "image" | "audio") => void
 }
 
 export default function FileEditor ({ file, setChatMode, onSendMessage }: Props) {
@@ -28,7 +27,7 @@ export default function FileEditor ({ file, setChatMode, onSendMessage }: Props)
                   />
 
                   <div className='border-t-2 border-gray-300 py-5 w-full absolute bottom-0'>
-                        <div onClick={() => onSendMessage(file)}
+                        <div onClick={() => onSendMessage(file, 'image')}
                               className='mx-4 bg-primary w-10 h-10 rounded-full text-white inline-flex items-center justify-center transition-transform duration-300 hover:scale-110 cursor-pointer'>
                               <SendIcon className='rotate-180' fontSize='small' />
                               {/* <button className='bg-primary text-white p-2 rounded-xl' onClick={() => onSendMessage(file)}>Send File</button> */}

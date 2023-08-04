@@ -23,12 +23,23 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                               onClick={() => setSelectedFile(message)}
 
                         />
+                  )
+
+            } else if (message.messageType === 'text') {
+                  return <span>{message.content.toString()}</span>
+
+            } else if (message.messageType === 'audio') {
+                  return (
+                        <div>
+                              <audio controls={true}>
+                                    <source src={message.content.toString()} type="audio/webm" />
+                              </audio>
+                        </div>
                   );
-            } else if (typeof message.content === 'string') {
-                  return <span>{message.content}</span>;
             }
+
             return null
-      };
+      }
 
       if (!messages || !user) return <div></div>
       return (
@@ -58,8 +69,10 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                 ${message.messageType === 'image' && 'flex-col-reverse pl-2'}
                                                 `}
                                     >
-                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1 ${message.messageType === 'image' && 'left-5 bottom-2 !absolute z-10'}
-                                           ${isSameSenderMargin(messages, message, idx, user._id) ?
+                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1 
+                                                            ${message.messageType === 'image' && 'left-5 bottom-2 !absolute z-10'}
+                                                            ${message.messageType === 'audio' && 'mt-auto bottom-0'}
+                                          ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       '-left-1' : '-right-2'}`}>
                                                 {formatDate(message.createdAt)}
                                           </span>
@@ -68,6 +81,6 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                               </div >
                         ))
                   }
-            </section>
+            </section >
       )
 }

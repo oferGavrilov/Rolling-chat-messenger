@@ -73,6 +73,10 @@ export default function MessagePreview ({ chat, notification }: Props) {
                   content = 'Image';
             }
 
+            if (chat.latestMessage?.messageType === 'audio') {
+                  content = 'Audio';
+            }
+
             return sender + content;
       }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import { uploadImg } from '../utils/upload-img'
+import { uploadImg } from '../utils/cloudinary'
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
 interface Props {
       image: string

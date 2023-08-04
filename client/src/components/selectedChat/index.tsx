@@ -97,17 +97,9 @@ export default function Messenger (): JSX.Element {
             }
       }
 
-      async function onSendMessage (message: string | File): Promise<void> {
+      async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio"): Promise<void> {
+            console.log(message)
             if (!selectedChat) return
-
-            let messageType = 'text'
-
-            // Check if the message parameter is an image URL based on its extension
-            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']
-            const lowerCaseMessage = (message as string).toLowerCase()
-            if (imageExtensions.some((ext) => lowerCaseMessage.endsWith(ext))) {
-                  messageType = 'image'
-            }
 
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
@@ -118,8 +110,10 @@ export default function Messenger (): JSX.Element {
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
             }
+            // Show the message immediately 
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
+
             try {
                   socketService.emit('stop typing', selectedChat._id)
 
@@ -132,15 +126,14 @@ export default function Messenger (): JSX.Element {
                   setMessages((prevMessages) =>
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
                   )
-                  // setChatOnTop(messageToUpdate)
                   socketService.emit('new message', messageToUpdate)
+
             } catch (error) {
                   console.error('Failed to send message:', error)
                   setMessages([...messages])
             } finally {
                   if (chatMode !== 'chat') setChatMode('chat')
             }
-
       }
 
       if (!selectedChat) return <div></div>
@@ -176,9 +169,31 @@ export default function Messenger (): JSX.Element {
                               </div>
                         </div>
                   </div>
-                  {chatMode === 'chat' && <Chat setFile={setFile} setChatMode={setChatMode} setIsTyping={setIsTyping} messages={messages} setMessages={setMessages} fetchMessages={fetchMessages} />}
-                  {chatMode === 'info' && <Info conversationUser={conversationUser} messages={messages} setChatMode={setChatMode} />}
-                  {chatMode === 'send-file' && <FileEditor file={file} setChatMode={setChatMode} onSendMessage={onSendMessage} />}
+                  {chatMode === 'chat' && (
+                        <Chat
+                              setFile={setFile}
+                              setChatMode={setChatMode}
+                              setIsTyping={setIsTyping}
+                              messages={messages}
+                              setMessages={setMessages}
+                              fetchMessages={fetchMessages}
+                              onSendMessage={onSendMessage}
+                        />
+                  )}
+                  {chatMode === 'info' && (
+                        <Info
+                              conversationUser={conversationUser}
+                              messages={messages}
+                              setChatMode={setChatMode}
+                        />
+                  )}
+                  {chatMode === 'send-file' && (
+                        <FileEditor
+                              file={file}
+                              setChatMode={setChatMode}
+                              onSendMessage={onSendMessage}
+                        />
+                  )}
             </section>
       )
 }

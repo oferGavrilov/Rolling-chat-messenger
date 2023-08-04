@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { toast } from 'react-toastify'
-import { uploadImg } from '../../../utils/upload-img'
+import { uploadImg } from '../../../utils/cloudinary'
 import { useClickOutside } from '../../../custom/useClickOutside'
 
 import PermMediaIcon from '@mui/icons-material/PermMedia'
@@ -60,7 +60,7 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
             <div className='relative'>
                   <AddRoundedIcon
                         onClick={() => setShowClipModal((prev) => !prev)}
-                        className={`text-slate-500 !text-[2rem] !transition-transform !duration-300 hover:text-gray-600 cursor-pointer
+                        className={`text-slate-500 !text-[2rem]  ml-2 md:ml-0 !transition-transform !duration-300 hover:text-gray-600 cursor-pointer
             ${showClipModal ? '-rotate-[135deg] bg-gray-200 rounded-full pointer-events-none' : ''} `} />
 
                   <ul

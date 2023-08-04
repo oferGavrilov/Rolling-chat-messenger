@@ -8,7 +8,7 @@ import { userService } from '../../../services/user.service'
 import { AuthState } from '../../../context/useAuth'
 import { User } from '../../../model/user.model'
 import { IChat } from '../../../model/chat.model'
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import { useClickOutside } from '../../../custom/useClickOutside'
 
 interface MessagesProps {
@@ -75,7 +75,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                         <div className='px-2 relative'>
                               <span className={`flex items-center text-[#2D9CDB] cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
                                     {sort}
-                                    <KeyboardArrowDownRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? '' : 'rotate-180'} `} />
+                                    <KeyboardArrowUpRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? 'rotate-180' : ''} `} />
                               </span>
 
                               <ul

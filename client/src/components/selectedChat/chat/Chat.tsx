@@ -9,6 +9,11 @@ import socketService from '../../../services/socket.service'
 import AddFileModal from './AddFileModal'
 import { scrollToBottom } from '../../../utils/functions'
 
+import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
+
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline'
+import { uploadAudio } from '../../../utils/cloudinary'
+
 interface Props {
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
       setChatMode: React.Dispatch<React.SetStateAction<string>>
@@ -16,10 +21,11 @@ interface Props {
       messages: IMessage[]
       setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>
       fetchMessages: () => Promise<void>
+      onSendMessage: (message: string, messageType: "text" | "image" | "audio") => void
 }
 type Timer = NodeJS.Timeout | number
 
-export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages, fetchMessages }: Props) {
+export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages, fetchMessages, onSendMessage }: Props) {
 
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
@@ -29,6 +35,11 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
 
       const chatRef = useRef<HTMLDivElement>(null)
       const typingTimeoutRef = useRef<Timer | null>(null)
+
+      const [isRecording, setIsRecording] = useState(false)
+      const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+      const chunksRef = useRef<Blob[]>([])
+      // const [audioURL, setAudioURL] = useState<string | null>(null)
 
 
       useEffect(() => {
@@ -49,11 +60,11 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             socketService.emit('join chat', selectedChat._id)
 
             const fetchData = async () => {
-                  await fetchMessages();
-                  scrollToBottom(chatRef);
-            };
+                  await fetchMessages()
+                  scrollToBottom(chatRef)
+            }
 
-            fetchData();
+            fetchData()
       }, [selectedChat])
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
@@ -120,6 +131,48 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       //       }, 0)
       // }
 
+      const handleRecord = async () => {
+            if (!isRecording) {
+                  try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+                        mediaRecorderRef.current = new MediaRecorder(stream)
+                        mediaRecorderRef.current.ondataavailable = (e) => {
+                              if (e.data.size > 0) {
+                                    chunksRef.current.push(e.data)
+                              }
+                        }
+                        mediaRecorderRef.current.onstop = async () => {
+                              const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
+                              setIsRecording(false)
+
+                              try {
+                                    const url = await uploadAudio(audioBlob)
+                                    if (url !== undefined) { // Check if url is not undefined before calling onSendMessage
+                                          await new Promise((resolve) => setTimeout(resolve, 2500)); // Delay for demonstration purposes (optional)
+                                          onSendMessage(url, 'audio');
+                                          console.log(url)
+                                    }
+
+                              } catch (err) {
+                                    console.log(err)
+                              }
+
+                              mediaRecorderRef.current = null
+                              stream.getTracks().forEach((track) => track.stop())
+                        }
+
+                        mediaRecorderRef.current.start()
+                        setIsRecording(true)
+                  } catch (error) {
+                        console.error('Error accessing media devices:', error)
+                        setIsRecording(false)
+                  }
+            } else {
+                  mediaRecorderRef.current?.stop()
+            }
+      }
+
+
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
 
       return (
@@ -140,23 +193,35 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                         </div>
                   </div>
 
-                  <div className='py-3 flex items-center md:px-5 gap-x-5 overflow-x-hidden'>
+                  <div className='py-3 flex items-center md:px-4 gap-x-3 overflow-x-hidden'>
                         <AddFileModal setFile={setFile} setChatMode={setChatMode} />
 
-                        <form onSubmit={handleSubmit} className='w-full flex'>
-                              <input
+                        <form onSubmit={handleSubmit} className='w-full flex items-center'>
+
+                              {!isRecording && <input
                                     type="text"
                                     className='bg-gray-100 w-full px-4 rounded-xl py-2 focus-visible:outline-none'
                                     placeholder='Type a message...'
                                     value={newMessage}
                                     onChange={typingHandler}
-                              />
-                              <button disabled={isMessageEmpty} type='submit'
-                                    className={`text-primary ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg
-                                    ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed w-0 translate-x-28' : 'mr-2'}`
-                                    }>
-                                    Send
-                              </button>
+                              />}
+
+                              {isMessageEmpty ? (
+                                    <div onClick={handleRecord}>
+                                          {isRecording ? (
+                                                <PauseCircleOutlineIcon className="text-red-500" />
+                                          ) : (
+                                                <KeyboardVoiceIcon className='text-gray-500 mx-4 md:ml-4 md:mx-0 !transition-colors duration-300 cursor-pointer hover:text-gray-700' />
+                                          )}
+                                    </div>
+                              ) : (
+                                    <button disabled={isMessageEmpty} type='submit'
+                                          className={`text-primary ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg
+                                    ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed  ' : ''}`
+                                          }>
+                                          Send
+                                    </button>
+                              )}
                         </form>
                   </div>
             </>
