@@ -110,6 +110,11 @@
       .tools-icon {
             @apply cursor-pointer h-max p-1 rounded-full hover:bg-gray-500;
       }
+
+      /* Message Preview */
+      .content-preview {
+            @apply text-gray-400 mx-1;
+      }
 }
 
 @layer utilities{

@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import { useChat } from '../../../store/useChat'
+import { Image, Audiotrack, Description } from '@mui/icons-material'
 
 import { IChat } from '../../../model/chat.model'
 import { IUser } from '../../../model/user.model'
@@ -56,34 +57,44 @@ export default function MessagePreview ({ chat, notification }: Props) {
             },
       }))
 
-      function getLatestMessage (): string {
+      function getLatestMessage (): React.ReactNode {
             let sender: string = ''
-            let content: string = ''
+            let content: React.ReactNode = ''
 
             if (chat.latestMessage?.sender?._id === loggedinUser?._id) {
                   sender = 'you: '
+            } else if (chat.isGroupChat && chat.latestMessage) {
+                  sender = chat.latestMessage?.sender?.username + ': ' || ''
             }
-
-            else if (chat.isGroupChat && chat.latestMessage) {
-                  sender = chat.latestMessage?.sender?.username + ": " || ''
-            }
-
+           
             if (chat.latestMessage?.messageType === 'text') {
                   content = chat.latestMessage?.content?.toString()
+            } else if (chat.latestMessage?.messageType === 'image') {
+                  content = (
+                        <>
+                              Image <Image fontSize="small" className='content-preview'/>
+                        </>
+                  )
+            } else if (chat.latestMessage?.messageType === 'audio') {
+                  content = (
+                        <>
+                              Audio <Audiotrack fontSize="small" className='content-preview'/>
+                        </>
+                  )
+            } else if (chat.latestMessage?.messageType === 'file') {
+                  content = (
+                        <>
+                              File <Description fontSize="small" className='content-preview' />
+                        </>
+                  )
             }
 
-            else if (chat.latestMessage?.messageType === 'image') {
-                  content = 'Image'
-            }
-
-            else if (chat.latestMessage?.messageType === 'audio') {
-                  content = 'Audio'
-            }
-            else if (chat.latestMessage?.messageType === 'file') {
-                  content = 'File'
-            }
-
-            return sender + content
+            return (
+                  <>
+                        {sender}
+                        {content}
+                  </>
+            )
       }
 
       function isNotification (): boolean {
@@ -116,21 +127,21 @@ export default function MessagePreview ({ chat, notification }: Props) {
                         )}
 
                         <div className="ml-3 w-full">
-                              <div className='flex justify-between items-center '>
+                              <div className='flex justify-between items-center'>
                                     <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
                                     <span className='text-gray-400 text-sm'>
                                           {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt)}
                                     </span>
                               </div>
                               <div className='flex justify-between'>
-                                    <p
-                                          className={`text-base h-6 truncate max-h-[24px] max-w-[260px] overflow-hidden whitespace-nowrap
+                                    <div
+                                          className={`text-base h-6 truncate max-h-[24px] max-w-[260px] overflow-hidden whitespace-nowrap flex items-center
                                                       ${isNotification() ?
                                                       'text-blue-500' :
                                                       'text-[#00000085]'
                                                 }`}>
-                                          {getLatestMessage()}
-                                    </p>
+                                                {getLatestMessage()}
+                                    </div>
                                     {isNotification() && <span className='bg-blue-400 text-white text-sm flex items-center h-[90%] w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>
                         </div>
