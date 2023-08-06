@@ -1,5 +1,5 @@
 import { IChat } from "../model/chat.model"
-import { FormData, User } from "../model/user.model"
+import { FormData, IUser } from "../model/user.model"
 import axios, { AxiosResponse } from 'axios'
 import { getAuthConfig, getConfig } from '../utils/authConfig'
 import { handleAxiosError } from "../utils/handleErrors"
@@ -26,13 +26,13 @@ export function getLoggedinUser () {
       return null
 }
 
-async function getUsers (userId?: string): Promise<User[] | User> {
+async function getUsers (userId?: string): Promise<IUser[] | IUser> {
       const authConfig = getAuthConfig()
 
       try {
             const apiUrl = userId ? `/api/auth/all/${userId}` : '/api/auth/all'
 
-            const response: AxiosResponse<User[]> = await axios.get(BASE_URL + apiUrl, authConfig)
+            const response: AxiosResponse<IUser[]> = await axios.get(BASE_URL + apiUrl, authConfig)
             const { data } = response
             return data
       } catch (error) {
@@ -57,12 +57,12 @@ async function createChat (userId: string): Promise<IChat> {
       }
 }
 
-async function loginSignUp (credentials: FormData, login: boolean): Promise<User> {
+async function loginSignUp (credentials: FormData, login: boolean): Promise<IUser> {
       const path = login ? '/api/auth/login' : '/api/auth/signup'
       const config = getConfig()
 
       try {
-            const response: AxiosResponse<User> = await axios.post(BASE_URL + path, credentials, config)
+            const response: AxiosResponse<IUser> = await axios.post(BASE_URL + path, credentials, config)
             const { data } = response
             if (data) {
                   _saveToSessionStorage(data)
@@ -97,11 +97,11 @@ async function updateUserImage (image: string): Promise<string> {
       }
 }
 
-async function editUserDetails (newName: string, key: string): Promise<User> {
+async function editUserDetails (newName: string, key: string): Promise<IUser> {
       const config = getAuthConfig()
 
       try {
-            const response: AxiosResponse<User> = await axios.put(BASE_URL + '/api/auth/details', { newName }, config)
+            const response: AxiosResponse<IUser> = await axios.put(BASE_URL + '/api/auth/details', { newName }, config)
             const { data } = response
 
 

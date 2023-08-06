@@ -1,7 +1,12 @@
 import { useState } from "react"
 import { toast } from "react-toastify"
+
+import useChat from "../../../store/useChat"
+import { AuthState } from "../../../context/useAuth"
+
 import UploadImage from "../../UploadImage"
 import { chatService } from "../../../services/chat.service"
+import SearchUsers from "../../SideModal"
 
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
@@ -9,12 +14,10 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import CloseIcon from '@mui/icons-material/Close'
-import useChat from "../../../store/useChat"
-import { AuthState } from "../../../context/useAuth"
-import { IChat } from "../../../model/chat.model"
-import SearchUsers from "../../SideModal"
 
-export default function GroupInfo () {
+import { IChat } from "../../../model/chat.model"
+
+export default function GroupInfo (): JSX.Element {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
       const { isAdmin, user: loggedInUser } = AuthState()
 
@@ -66,7 +69,7 @@ export default function GroupInfo () {
             const updatedChat = await chatService.removeFromGroup(selectedChat._id, userId)
             setSelectedChat(updatedChat)
       }
-      if (!selectedChat) return null
+      if (!selectedChat) return <div></div>
       return (
             <section className="w-full ">
                   <div className="border-b-8 pb-6 border-gray-200 text-center">

@@ -55,8 +55,10 @@ export default function SelectedFile (): JSX.Element {
                   console.error('Error downloading the image:', error)
             }
       }
-
+      
       if (!selectedFile) return <div></div>
+      
+      const isImage = selectedFile.messageType === 'image'
 
       return (
             <div className='flex flex-col fixed top-0 left-0 w-full'>
@@ -69,11 +71,11 @@ export default function SelectedFile (): JSX.Element {
                                           </div>
                                     </ToolTip>
 
-                                    <ToolTip title="Download" arrow placement='bottom'>
+                                    {isImage && <ToolTip title="Download" arrow placement='bottom'>
                                           <div className='tools-icon' onClick={handleDownload}>
                                                 <DownloadIcon />
                                           </div>
-                                    </ToolTip>
+                                    </ToolTip>}
                               </div>
 
                               <div className='flex'>
@@ -91,7 +93,15 @@ export default function SelectedFile (): JSX.Element {
 
                   <section className='h-screen w-screen flex flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
                         <div className='flex justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
-                              <img src={selectedFile?.content?.toString()} className='max-w-sm md:max-w-md lg:max-w-lg max-h-[700px] object-cover' alt='' />
+                              {isImage ? (
+                                    <img src={selectedFile?.content?.toString()} className='max-w-sm md:max-w-md lg:max-w-lg max-h-[700px] object-cover' alt='' />
+                                    ): (
+                                          <iframe
+                                                src={selectedFile?.content?.toString()}
+                                                title='picked-pdf'
+                                                className='w-[700px] h-[700px]'
+                                          ></iframe>
+                                    )}
                         </div>
                   </section>
             </div>

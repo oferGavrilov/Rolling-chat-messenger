@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import UploadImage from '../UploadImage'
 import { AuthState } from '../../context/useAuth'
 import { userService } from '../../services/user.service'
-import { User } from '../../model/user.model'
+import { IUser } from '../../model/user.model'
 
 import { Tooltip } from '@mui/material'
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline'
@@ -42,7 +42,7 @@ export default function Profile (): JSX.Element {
             const userToSave = {
                   ...user,
                   profileImg: savedImage,
-            } as User
+            } as IUser
             setUser(userToSave)
       }
 

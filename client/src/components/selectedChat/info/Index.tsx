@@ -1,5 +1,5 @@
 import useChat from "../../../store/useChat"
-import { User } from "../../../model/user.model"
+import { IUser } from "../../../model/user.model"
 
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -8,12 +8,12 @@ import GroupInfo from "./GroupInfo"
 import { IMessage } from "../../../model/message.model"
 
 interface Props {
-      conversationUser: User | undefined
+      conversationUser: IUser | undefined
       setChatMode: React.Dispatch<React.SetStateAction<string>>
       messages: IMessage[]
 }
 
-export default function Info ({ conversationUser, setChatMode, messages }: Props) {
+export default function Info ({ conversationUser, setChatMode, messages }: Props): JSX.Element {
       const { selectedChat } = useChat()
 
       return (

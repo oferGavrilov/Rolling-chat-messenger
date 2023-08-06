@@ -6,7 +6,7 @@ interface Props {
       placeholder: string
 }
 
-export default function UsersInput ({ filter, setFilter , placeholder}: Props) {
+export default function UsersInput ({ filter, setFilter , placeholder}: Props): JSX.Element {
       return (
             <>
                   <input

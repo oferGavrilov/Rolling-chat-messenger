@@ -1,7 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close'
 import { userService } from "../../services/user.service"
 import { useEffect, useMemo, useState } from "react"
-import { User } from "../../model/user.model"
+import { IUser } from "../../model/user.model"
 import Loading from "../SkeltonLoading"
 import { toast } from 'react-toastify'
 import { chatService } from '../../services/chat.service'
@@ -20,7 +20,7 @@ interface Props {
 
 export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupToEdit }: Props) {
       const [filter, setFilter] = useState<string>('')
-      const [users, setUsers] = useState<User[]>([])
+      const [users, setUsers] = useState<IUser[]>([])
       const [group, setGroup] = useState({ chatName: groupToEdit?.chatName || '', users: groupToEdit?.users || [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>(groupToEdit?.groupImage || '')
@@ -35,7 +35,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
       async function loadUsers () {
             try {
                   setIsLoading(true)
-                  const users = await userService.getUsers() as User[]
+                  const users = await userService.getUsers() as IUser[]
                   setUsers(users)
             } catch (err) {
                   console.error("An error occurred while loading users:", err)
@@ -87,7 +87,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
             }
       }
 
-      function handleGroupUsers (user: User) {
+      function handleGroupUsers (user: IUser) {
             if (group.users.find(u => u._id === user._id)) {
                   return setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
             }
@@ -95,7 +95,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
             setGroup({ ...group, users: [...group.users, user] })
       }
 
-      function removeFromGroup (userId: string) {
+      function removeFromGroup (userId: string): void {
             setGroup({ ...group, users: group.users.filter(u => u._id !== userId) })
       }
 
@@ -125,7 +125,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
 
                   {group.users.length > 0 && (
                         <div className="flex p-4">
-                              {group.users.map((user) => (
+                              {group.users.map((user: IUser) => (
                                     <div key={user._id} className='relative p-2 [&>*]:hover:!block'>
                                           <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-primary object-cover object-top" />
                                           <CloseIcon onClick={() => removeFromGroup(user._id)} className='absolute cursor-pointer top-0 right-0 !hidden bg-red-500 !text-base rounded-xl text-white' />
@@ -136,7 +136,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
 
                   {(!isLoading) ? (
                         <ul className='flex flex-col main-text px-4 gap-y-4 py-8'>
-                              {filteredUsers.map((user: User) => (
+                              {filteredUsers.map((user: IUser) => (
                                     <li key={user._id} className='text-main-color py-2 px-4 rounded-lg bg-gray-100 transition-colors duration-200 cursor-pointer hover:bg-gray-200'>
                                           <div className='flex gap-x-4 items-center' onClick={() => handleGroupUsers(user)}>
                                                 <img className='w-12 h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />

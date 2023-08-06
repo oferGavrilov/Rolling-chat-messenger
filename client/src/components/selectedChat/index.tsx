@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { AuthState } from "../../context/useAuth"
-import { User } from "../../model/user.model"
+import { IUser } from "../../model/user.model"
 import useChat from "../../store/useChat"
 import Info from "./info/Index"
 import Chat from "./chat/Chat"
@@ -16,7 +16,7 @@ import { chatService } from "../../services/chat.service"
 import { IMessage } from "../../model/message.model"
 
 export default function Messenger (): JSX.Element {
-      const [conversationUser, setConversationUser] = useState<User>()
+      const [conversationUser, setConversationUser] = useState<IUser>()
       const [chatMode, setChatMode] = useState<string>('chat')
       const [isTyping, setIsTyping] = useState<boolean>(false)
       const [messages, setMessages] = useState<IMessage[]>([])
@@ -27,7 +27,7 @@ export default function Messenger (): JSX.Element {
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<File | null>(null)
 
-      const conversationUserRef = useRef<User | undefined>(undefined)
+      const conversationUserRef = useRef<IUser | undefined>(undefined)
 
       useEffect(() => {
             socketService.on(SOCKET_LOGIN, handleConnection, true)
@@ -61,12 +61,21 @@ export default function Messenger (): JSX.Element {
 
       useEffect(() => {
             fetchConversationUser()
+            // setChatMode('chat')
       }, [selectedChat])
 
       async function fetchMessages () {
             if (!selectedChat) return
             const data = await chatService.getMessages(selectedChat._id)
             setMessages(data)
+      }
+
+      function fetchConversationUser (): void {
+            const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0]
+            if (conversationUser) {
+                  setConversationUser(conversationUser)
+                  conversationUserRef.current = conversationUser
+            }
       }
 
       useEffect(() => {
@@ -79,13 +88,6 @@ export default function Messenger (): JSX.Element {
             getConversationUserConnection()
       }, [conversationUser])
 
-      function fetchConversationUser (): void {
-            const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0]
-            if (conversationUser) {
-                  setConversationUser(conversationUser)
-                  conversationUserRef.current = conversationUser
-            }
-      }
 
       function handleConnection (userId: string, status: boolean): void {
             if (userId !== conversationUserRef.current?._id) return
@@ -97,8 +99,7 @@ export default function Messenger (): JSX.Element {
             }
       }
 
-      async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio"): Promise<void> {
-            console.log(message)
+      async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio" | "file"): Promise<void> {
             if (!selectedChat) return
 
             const optimisticMessage: IMessage = {
@@ -110,6 +111,7 @@ export default function Messenger (): JSX.Element {
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
             }
+
             // Show the message immediately 
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
@@ -152,7 +154,7 @@ export default function Messenger (): JSX.Element {
                                                 <div className="flex gap-x-1 text-xs tracking-wide">
                                                       {selectedChat.users.map((user, index) =>
                                                             <span key={user._id} className="text-slate-400">
-                                                                  {user.username}
+                                                                  {user._id === loggedInUser?._id ? 'You' : user.username}
                                                                   {index !== selectedChat.users.length - 1 && ","}
                                                             </span>
                                                       )}
@@ -191,7 +193,7 @@ export default function Messenger (): JSX.Element {
                         <FileEditor
                               file={file}
                               setChatMode={setChatMode}
-                              onSendMessage={onSendMessage}
+                              sendMessage={onSendMessage}
                         />
                   )}
             </section>

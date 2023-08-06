@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { Client } from 'filestack-js'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { toast } from 'react-toastify'
 import { uploadImg } from '../../../utils/cloudinary'
@@ -48,6 +49,7 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                   if (!response || !response.url) {
                         return toast.error('Invalid response from Cloudinary')
                   }
+                  console.log(response)
 
                   setFile(response.url)
                   setChatMode('send-file')
@@ -55,6 +57,33 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                   console.log(err)
             }
       }
+
+      async function handleFileUpload () {
+            try {
+                  const apiKey = 'AlByYY7HGT6Fwh5ghBpSZz'
+                  const client = new Client(apiKey) 
+
+                  const pickerOptions = {
+                        accept: ['.pdf'],
+                        maxFiles: 1,
+                        fromSources: ['local_file_system', 'googledrive', 'dropbox', 'onedrive'],
+                        onUploadDone: (result) => {
+                              console.log(result)
+                              if (result.filesUploaded && result.filesUploaded.length > 0) {
+                                    const fileUrl = result.filesUploaded[0]
+                                    setFile(fileUrl)
+                                    setChatMode('send-file')
+                              }
+                        },
+                  }
+
+                  await client.picker(pickerOptions).open()
+
+            } catch (error) {
+                  console.error(error)
+            }
+      }
+
 
       return (
             <div className='relative'>
@@ -81,10 +110,12 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                         </label>
                         <li className='clip-modal-option my-2 py-1 flex items-center' onClick={() => setShowCamera(true)}>
                               <LocalSeeIcon className='mr-2 text-[#ff2e74]' />
-                              Camera</li>
-                        <li className='clip-modal-option py-1 flex items-center'>
+                              Camera
+                        </li>
+                        <li className='clip-modal-option py-1 flex items-center' onClick={handleFileUpload}>
                               <TextSnippetIcon className='mr-2 text-purple-500' />
-                              File</li>
+                              File
+                        </li>
                   </ul>
 
                   {showCamera && (

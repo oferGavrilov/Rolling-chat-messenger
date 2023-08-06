@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { User } from "../../model/user.model"
+import { IUser } from "../../model/user.model"
 import useChat from "../../store/useChat"
 import { userService } from "../../services/user.service"
 import { IChat } from "../../model/chat.model"
@@ -8,10 +8,10 @@ import CloseIcon from '@mui/icons-material/Close'
 import Loading from "../SkeltonLoading"
 import UsersInput from "../common/UsersInput"
 
-export default function UsersToMessage ({ setIsOpen }) {
+export default function UsersToMessage ({ setIsOpen }): JSX.Element {
       const [filter, setFilter] = useState<string>('')
       const [isLoading, setIsLoading] = useState<boolean>(false)
-      const [users, setUsers] = useState<User[]>([])
+      const [users, setUsers] = useState<IUser[]>([])
 
       const { setSelectedChat, chats, setChats } = useChat()
 
@@ -21,7 +21,7 @@ export default function UsersToMessage ({ setIsOpen }) {
 
       async function loadUsers () {
             setIsLoading(true)
-            const users = await userService.getUsers() as User[]
+            const users = await userService.getUsers() as IUser[]
             setUsers(users)
             setIsLoading(false)
       }
@@ -67,7 +67,7 @@ export default function UsersToMessage ({ setIsOpen }) {
                         {isLoading && <Loading type="users" />}
                         {(filteredUsers.length > 0 && !isLoading) && (
                               <ul className='flex flex-col main-text px-4 md:px-8 gap-y-4 py-8'>
-                                    {filteredUsers.map((user: User) => (
+                                    {filteredUsers.map((user: IUser) => (
                                           <li key={user._id} onClick={() => onSelectChat(user._id)} className='custom-hover text-main-color py-2 px-4 rounded-lg bg-[#dee2e6]'>
                                                 <div className='flex gap-x-4 items-center'>
                                                       <img className='w-10 h-10 md:w-12 md:h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />

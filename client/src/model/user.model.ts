@@ -6,7 +6,7 @@ export interface FormData {
       profileImg?: string
 }
 
-export interface User {
+export interface IUser {
       _id: string
       username: string
       email: string

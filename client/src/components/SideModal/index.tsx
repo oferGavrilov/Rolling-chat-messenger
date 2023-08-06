@@ -25,8 +25,8 @@ export default function SearchUsers (props: Props): JSX.Element {
             switch (props.contentType) {
                   case 'messages': return <UsersToMessage {...props} />
                   case 'groups': return <UsersToGroup {...props} isAddNewGroup={props.isAddNewGroup} groupToEdit={props.groupToEdit} />
-                  case 'videos': return <div>videos</div>
-                  case 'story': return <div>story</div>
+                  case 'videos': return <div>Videos Coming soon...</div>
+                  case 'story': return <div>Story Coming soon...</div>
                   default: return <UsersToMessage {...props} />
             }
       }

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { uploadImg } from '../utils/cloudinary'
-import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
+import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded'
+
 interface Props {
       image: string
       setImage: CallableFunction
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default function UploadImage ({ image, setImage, editImage }: Props) {
-      const [imageLoading, setImageLoading] = React.useState<boolean>(false)
+      const [imageLoading, setImageLoading] = useState<boolean>(false)
 
       async function uploadImage (file: File | undefined) {
             if (!file) return toast.error('Upload image went wrong')

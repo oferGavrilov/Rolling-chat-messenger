@@ -1,4 +1,4 @@
-import { User } from "../../../model/user.model"
+import { IUser } from "../../../model/user.model"
 import { MdDelete } from "react-icons/md"
 import useChat from "../../../store/useChat"
 import { AuthState } from "../../../context/useAuth"
@@ -11,11 +11,11 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 interface Props {
-      conversationUser: User | undefined
+      conversationUser: IUser | undefined
       messages: IMessage[]
 }
 
-export default function ChatInfo ({ conversationUser, messages }: Props) {
+export default function ChatInfo ({ conversationUser, messages }: Props): JSX.Element {
       const { chats, setChats, selectedChat, setSelectedChat, setSelectedFile } = useChat()
       const { user } = AuthState()
 

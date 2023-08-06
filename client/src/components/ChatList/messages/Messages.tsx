@@ -6,7 +6,7 @@ import ChatLoading from '../../SkeltonLoading'
 import MessagesInput from '../../common/MessagesInput'
 import { userService } from '../../../services/user.service'
 import { AuthState } from '../../../context/useAuth'
-import { User } from '../../../model/user.model'
+import { IUser } from '../../../model/user.model'
 import { IChat } from '../../../model/chat.model'
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
 import { useClickOutside } from '../../../custom/useClickOutside'
@@ -33,7 +33,7 @@ export default function Messages ({ contentType }: MessagesProps) {
       const filteredChats = useMemo(() => {
             if (filter) {
                   return chats.filter((chat: IChat) =>
-                        chat.users.some((user: User) => user._id !== loggedinUser?._id && user.username.toLowerCase().includes(filter.toLowerCase()))
+                        chat.users.some((user: IUser) => user._id !== loggedinUser?._id && user.username.toLowerCase().includes(filter.toLowerCase()))
                   )
             }
             if (contentType === 'groups') {

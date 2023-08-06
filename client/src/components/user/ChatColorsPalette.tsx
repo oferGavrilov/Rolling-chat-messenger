@@ -10,7 +10,7 @@ interface Props {
       setIsChooseColor: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function ChatColorsPalette ({ isChooseColor, setIsChooseColor }: Props) {
+export default function ChatColorsPalette ({ isChooseColor, setIsChooseColor }: Props): JSX.Element {
       const { chatBackgroundColor, setChatBackgroundColor } = AuthState()
 
 

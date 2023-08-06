@@ -12,5 +12,22 @@ export interface IMessage {
             profileImg: string
       }
       updatedAt: string,
-      messageType: "text" | "image" | "audio"
+      messageType: "text" | "image" | "audio" | "file"
+}
+
+export interface UploadedFile {
+      filename: string
+      handle: string
+      mimetype: string
+      originalFile: {
+            name: string
+            type: string
+            size: number
+      }
+      originalPath: string
+      size: number
+      source: string
+      status: string
+      uploadId: string
+      url: string
 }

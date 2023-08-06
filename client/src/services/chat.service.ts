@@ -5,7 +5,7 @@ import { getAuthConfig, getConfig } from '../utils/authConfig'
 import { IMessage } from "../model/message.model"
 
 import { handleAxiosError } from "../utils/handleErrors"
-import { User } from "../model/user.model"
+import { IUser } from "../model/user.model"
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com' : 'http://localhost:5000'
 
@@ -51,7 +51,7 @@ async function getUserChats (userId: string): Promise<IChat[]> {
       }
 }
 
-async function createGroup (group: { chatName: string, users: User[], groupImage: string }): Promise<IChat> {
+async function createGroup (group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
       try {
             const { data }: AxiosResponse<IChat> = await axios.post(BASE_URL+'/api/chat/group', group, getAuthConfig())
             return data
@@ -86,7 +86,7 @@ async function updateGroupName (chatId: string, groupName: string): Promise<stri
       }
 }
 
-async function updateUsersGroup (chatId: string, users: User[]) {
+async function updateUsersGroup (chatId: string, users: IUser[]) {
       try {
             const { data }: AxiosResponse<IChat> = await axios.put(BASE_URL+'/api/chat/updateusers', { chatId, users }, getAuthConfig())
             return data

@@ -1,12 +1,15 @@
-import { useChat } from '../../../store/useChat'
-import { IChat } from '../../../model/chat.model'
-import { User } from '../../../model/user.model'
 import { useCallback } from 'react'
+
+import { useChat } from '../../../store/useChat'
+
+import { IChat } from '../../../model/chat.model'
+import { IUser } from '../../../model/user.model'
+import { IMessage } from '../../../model/message.model'
+
 import { Avatar, Badge } from '@mui/material'
 import { styled } from '@mui/system'
 import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
-import { IMessage } from '../../../model/message.model'
 
 interface Props {
       chat: IChat
@@ -18,7 +21,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
       const { user: loggedinUser } = AuthState()
 
       const getSender = useCallback(
-            (users: User[]): User => {
+            (users: IUser[]): IUser => {
                   return users.find((currUser) => currUser._id !== loggedinUser?._id) || users[0]
             },
             [loggedinUser?._id]
@@ -62,7 +65,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
             }
 
             else if (chat.isGroupChat && chat.latestMessage) {
-                  sender = chat.latestMessage?.sender?.username || ''
+                  sender = chat.latestMessage?.sender?.username + ": " || ''
             }
 
             if (chat.latestMessage?.messageType === 'text') {
@@ -75,6 +78,9 @@ export default function MessagePreview ({ chat, notification }: Props) {
 
             else if (chat.latestMessage?.messageType === 'audio') {
                   content = 'Audio'
+            }
+            else if (chat.latestMessage?.messageType === 'file') {
+                  content = 'File'
             }
 
             return sender + content

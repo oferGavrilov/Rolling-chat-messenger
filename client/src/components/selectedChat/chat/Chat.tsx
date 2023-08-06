@@ -25,10 +25,11 @@ interface Props {
 }
 type Timer = NodeJS.Timeout | number
 
-export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages, fetchMessages, onSendMessage }: Props) {
+export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages, fetchMessages, onSendMessage }: Props): JSX.Element {
 
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
+      const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
 
       const { selectedChat, setChatOnTop } = useChat()
       const { user, chatBackgroundColor } = AuthState()
@@ -39,8 +40,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       const [isRecording, setIsRecording] = useState(false)
       const mediaRecorderRef = useRef<MediaRecorder | null>(null)
       const chunksRef = useRef<Blob[]>([])
-      // const [audioURL, setAudioURL] = useState<string | null>(null)
-
 
       useEffect(() => {
             const handleTyping = () => setIsTyping(true)
@@ -60,7 +59,9 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             socketService.emit('join chat', selectedChat._id)
 
             const fetchData = async () => {
+                  setLoadingMessages(true)
                   await fetchMessages()
+                  setLoadingMessages(false)
                   scrollToBottom(chatRef)
             }
 
@@ -178,7 +179,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       return (
             <>
                   <div
-                        className='border-y border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center'
+                        className={`border-y border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center ${loadingMessages && 'blur-[2px]'}`}
                         style={{ background: chatBackgroundColor }}
                   >
                         <div
