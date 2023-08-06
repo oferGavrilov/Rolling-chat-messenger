@@ -35,7 +35,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
       async function loadUsers () {
             try {
                   setIsLoading(true)
-                  const users = await userService.getUsers()
+                  const users = await userService.getUsers() as User[]
                   setUsers(users)
             } catch (err) {
                   console.error("An error occurred while loading users:", err)
