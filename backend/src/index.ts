@@ -28,8 +28,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 
-// const currentFilePath = fileURLToPath(import.meta.url)
-// const __dirname = path.dirname(currentFilePath)
+const currentFilePath = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(currentFilePath)
 
 console.log(process.env.NODE_ENV)
 
