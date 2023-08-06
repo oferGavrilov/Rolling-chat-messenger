@@ -6,8 +6,7 @@ interface ChatState {
       chats: IChat[]
       selectedChat: IChat | null
       notification: IMessage[]
-      selectedChatCompare: IChat | null
-      selectedFile: IMessage | null;
+      selectedFile: IMessage | null
 }
 
 interface ChatActions {
@@ -17,9 +16,8 @@ interface ChatActions {
       clearChats: () => void
       setSelectedChat: (chat: IChat | null) => void
       addNotification: (notification: IMessage) => void
-      setSelectedChatCompare: (chat: IChat | null) => void // TODO: Remove this
       removeNotification: (notification: IMessage | undefined) => void
-      updateChat: (latestMessage: IMessage) => void;
+      updateChat: (latestMessage: IMessage) => void
       setSelectedFile: (file: IMessage | null) => void
       setChatOnTop: (message: IMessage) => void
 }
@@ -35,19 +33,44 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             notification: initialNotification,
             selectedFile: null,
 
-            // Chat
+            // Chat Actions
             setChats: (chats) => set({ chats }),
             addChat: (chat) => set((state) => ({ chats: [...state.chats, chat] })),
             removeChat: (chat) => set((state) => ({ chats: state.chats.filter((c) => c._id !== chat._id) })),
             clearChats: () => set({ chats: [] }),
             setSelectedChat: (chat) => set({ selectedChat: chat }),
             setSelectedFile: (file) => set({ selectedFile: file }),
+            updateChat: (latestMessage: IMessage) => {
+                  set((state) => {
+                        const chatIndex = state.chats.findIndex((chat) => chat._id === latestMessage.chat._id)
+                        if (chatIndex !== -1) {
+                              const updatedChats = [...state.chats]
+                              updatedChats[chatIndex] = { ...updatedChats[chatIndex], latestMessage }
+                              const chat = updatedChats.splice(chatIndex, 1)[0]
+                              updatedChats.unshift(chat)
+                              return { chats: updatedChats }
+                        }
+                        return state
+                  })
+            },
+            setChatOnTop: (message: IMessage) => {
+                  set((state) => {
+                        const chatToUpdateIndex = state.chats.findIndex((chat) => chat._id === state.selectedChat?._id)
 
-            // For compare chat sockets
-            selectedChatCompare: null,
-            setSelectedChatCompare: (chat) => set({ selectedChatCompare: chat }),
+                        if (chatToUpdateIndex !== -1) {
+                              const updatedChats = [...state.chats]
+                              updatedChats[chatToUpdateIndex] = {
+                                    ...updatedChats[chatToUpdateIndex],
+                                    latestMessage: message,
+                              }
+                              return { chats: updatedChats }
+                        }
 
-            // Notification
+                        return state
+                  })
+            },
+
+            // Notification Actions
             addNotification: (newNotification) => {
                   set((state) => {
                         const currentNotification = state.notification
@@ -76,36 +99,6 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                         return { notification: updatedNotification }
                   })
             },
-            updateChat: (latestMessage: IMessage) => {
-                  set((state) => {
-                        const chatIndex = state.chats.findIndex((chat) => chat._id === latestMessage.chat._id);
-                        if (chatIndex !== -1) {
-                              const updatedChats = [...state.chats];
-                              updatedChats[chatIndex] = { ...updatedChats[chatIndex], latestMessage };
-                              const chat = updatedChats.splice(chatIndex, 1)[0];
-                              updatedChats.unshift(chat);
-                              return { chats: updatedChats };
-                        }
-                        return state
-                  });
-            },
-
-            setChatOnTop: (message: IMessage) => {
-                  set((state) => {
-                        const chatToUpdateIndex = state.chats.findIndex((chat) => chat._id === state.selectedChat?._id);
-
-                        if (chatToUpdateIndex !== -1) {
-                              const updatedChats = [...state.chats];
-                              updatedChats[chatToUpdateIndex] = {
-                                    ...updatedChats[chatToUpdateIndex],
-                                    latestMessage: message,
-                              };
-                              return { chats: updatedChats };
-                        }
-
-                        return state;
-                  });
-            }
       }
 })
 

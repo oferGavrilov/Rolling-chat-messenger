@@ -58,26 +58,26 @@ export default function MessagePreview ({ chat, notification }: Props) {
             let content: string = ''
 
             if (chat.latestMessage?.sender?._id === loggedinUser?._id) {
-                  sender = 'you: ';
+                  sender = 'you: '
             }
 
-            if (chat.isGroupChat && chat.latestMessage) {
-                  sender = chat.latestMessage?.sender?.username || '';
+            else if (chat.isGroupChat && chat.latestMessage) {
+                  sender = chat.latestMessage?.sender?.username || ''
             }
 
             if (chat.latestMessage?.messageType === 'text') {
-                  content = chat.latestMessage?.content?.toString();
+                  content = chat.latestMessage?.content?.toString()
             }
 
-            if (chat.latestMessage?.messageType === 'image') {
-                  content = 'Image';
+            else if (chat.latestMessage?.messageType === 'image') {
+                  content = 'Image'
             }
 
-            if (chat.latestMessage?.messageType === 'audio') {
-                  content = 'Audio';
+            else if (chat.latestMessage?.messageType === 'audio') {
+                  content = 'Audio'
             }
 
-            return sender + content;
+            return sender + content
       }
 
       function isNotification (): boolean {

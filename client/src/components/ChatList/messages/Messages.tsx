@@ -8,7 +8,7 @@ import { userService } from '../../../services/user.service'
 import { AuthState } from '../../../context/useAuth'
 import { User } from '../../../model/user.model'
 import { IChat } from '../../../model/chat.model'
-import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
 import { useClickOutside } from '../../../custom/useClickOutside'
 
 interface MessagesProps {

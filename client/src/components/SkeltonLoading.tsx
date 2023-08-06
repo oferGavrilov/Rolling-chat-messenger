@@ -56,8 +56,3 @@ function LoadingMessages (): JSX.Element {
             </section>
       )
 }
-
-
-
-
-

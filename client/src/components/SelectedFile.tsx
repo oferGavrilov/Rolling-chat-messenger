@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { AuthState } from '../context/useAuth'
 import useChat from '../store/useChat'
+
 import { formatTime } from '../utils/functions'
 
 import ToolTip from '@mui/material/Tooltip'

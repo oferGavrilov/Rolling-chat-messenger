@@ -1,17 +1,19 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
+
 import UploadImage from '../UploadImage'
 import { AuthState } from '../../context/useAuth'
-import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import { Tooltip } from '@mui/material';
-import { toast } from 'react-toastify';
-import { userService } from '../../services/user.service';
-import { User } from '../../model/user.model';
+import { userService } from '../../services/user.service'
+import { User } from '../../model/user.model'
+
+import { Tooltip } from '@mui/material'
+import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface UserValues {
-      username: string | undefined;
-      about: string | undefined;
+      username: string | undefined
+      about: string | undefined
 }
 
 export default function Profile (): JSX.Element {
@@ -21,13 +23,13 @@ export default function Profile (): JSX.Element {
       const [userValues, setUserValues] = useState<UserValues>({
             username: user?.username ?? '',
             about: user?.about ?? '',
-      });
+      })
       async function handleEdit () {
             if (!editType || !user) return
             if (userValues[editType as keyof UserValues] === user?.[editType] || userValues[editType as keyof UserValues] === '') {
-                  return toast.error(`Please enter a valid ${editType}`);
+                  return toast.error(`Please enter a valid ${editType}`)
             }
-            const valueToEdit = userValues[editType as keyof UserValues] as string;
+            const valueToEdit = userValues[editType as keyof UserValues] as string
             const newUser = await userService.editUserDetails(valueToEdit, editType)
             setUser(newUser)
             setEditType('')

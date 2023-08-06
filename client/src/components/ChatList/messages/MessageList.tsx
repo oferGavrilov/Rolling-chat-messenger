@@ -15,44 +15,41 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
       useEffect(() => {
             if (!user) return
 
-            socketService.on('new group', handleNewGroup);
+            socketService.on('new group', handleNewGroup)
 
             return () => {
-                  socketService.off('new group', handleNewGroup);
-            };
-      }, [user]);
+                  socketService.off('new group', handleNewGroup)
+            }
+      }, [user])
 
-      const isMountedRef = useRef<boolean>(false);
+      const isMountedRef = useRef<boolean>(false)
 
       useEffect(() => {
-            // Set the component as mounted when the useEffect is called
-            isMountedRef.current = true;
+            isMountedRef.current = true
 
-            // Cleanup function
             return () => {
-                  // Reset the component state when unmounted
-                  isMountedRef.current = false;
-            };
-      }, []);
+                  isMountedRef.current = false
+            }
+      }, [])
 
       useEffect(() => {
             socketService.on("message received", (newMessage: IMessage) => {
                   if (isMountedRef.current) {
                         if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
-                              const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id);
-                              if (!isChatExists) setChats([newMessage.chat, ...chats]);
+                              const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id)
+                              if (!isChatExists) setChats([newMessage.chat, ...chats])
 
-                              addNotification(newMessage);
-                              updateChat(newMessage);
-                              document.title = `${notification.length > 0 ? `(${notification.length})` : ""} Rolling`;
+                              addNotification(newMessage)
+                              updateChat(newMessage)
+                              document.title = `${notification.length > 0 ? `(${notification.length})` : ""} Rolling`
                         }
                   }
-            });
+            })
 
             return () => {
-                  socketService.off("message received");
-            };
-      }, [selectedChat]);
+                  socketService.off("message received")
+            }
+      }, [selectedChat])
 
       function handleNewGroup (chat: IChat) {
             console.log(chat)

@@ -147,9 +147,9 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
 
                               try {
                                     const url = await uploadAudio(audioBlob)
-                                    if (url !== undefined) { // Check if url is not undefined before calling onSendMessage
-                                          await new Promise((resolve) => setTimeout(resolve, 2500)); // Delay for demonstration purposes (optional)
-                                          onSendMessage(url, 'audio');
+                                    if (url !== undefined) { 
+                                          await new Promise((resolve) => setTimeout(resolve, 2500))
+                                          onSendMessage(url, 'audio')
                                           console.log(url)
                                     }
 

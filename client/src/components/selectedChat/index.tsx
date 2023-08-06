@@ -88,12 +88,12 @@ export default function Messenger (): JSX.Element {
       }
 
       function handleConnection (userId: string, status: boolean): void {
-            if (userId !== conversationUserRef.current?._id) return;
+            if (userId !== conversationUserRef.current?._id) return
 
             if (conversationUserRef.current) {
                   setConnectionStatus(
                         status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUserRef.current?.lastSeen as string)}`
-                  );
+                  )
             }
       }
 

@@ -30,7 +30,7 @@ async function getUsers (userId?: string): Promise<User[] | User> {
       const authConfig = getAuthConfig()
 
       try {
-            const apiUrl = userId ? `/api/auth/all/${userId}` : '/api/auth/all';
+            const apiUrl = userId ? `/api/auth/all/${userId}` : '/api/auth/all'
 
             const response: AxiosResponse<User[]> = await axios.get(BASE_URL + apiUrl, authConfig)
             const { data } = response

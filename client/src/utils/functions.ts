@@ -21,14 +21,14 @@ export function debounce<T extends (...args: unknown[]) => void> (
   func: T,
   timeout = 700
 ) {
-  let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout>
 
   return function (this: unknown, ...args: Parameters<T>) {
-    clearTimeout(timer);
+    clearTimeout(timer)
     timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
+      func.apply(this, args)
+    }, timeout)
+  }
 }
 
 export function isSameSender (messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
@@ -111,7 +111,7 @@ export function clearTypingTimeout (timeoutId: number): void {
 export function scrollToBottom (chatRef: React.RefObject<HTMLDivElement>): void {
   setTimeout(() => {
     if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      chatRef.current.scrollTop = chatRef.current.scrollHeight
     }
-  }, 0);
+  }, 0)
 }

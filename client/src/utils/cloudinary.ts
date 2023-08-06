@@ -23,24 +23,24 @@ export async function uploadImg (file: File) {
 
 export async function uploadAudio (audioBlob: Blob) {
       try {
-            const CLOUD_NAME = 'dqkstk6dw';
-            const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload/`;
-            const UPLOAD_PRESET = 'chat-app';
+            const CLOUD_NAME = 'dqkstk6dw'
+            const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload/`
+            const UPLOAD_PRESET = 'chat-app'
 
-            const formData = new FormData();
-            formData.append('file', audioBlob);
-            formData.append('upload_preset', UPLOAD_PRESET);
-            formData.append('cloud_name', CLOUD_NAME);
+            const formData = new FormData()
+            formData.append('file', audioBlob)
+            formData.append('upload_preset', UPLOAD_PRESET)
+            formData.append('cloud_name', CLOUD_NAME)
 
             const res = await fetch(UPLOAD_URL, {
                   method: 'POST',
                   body: formData,
-            });
+            })
 
-            const data = await res.json();
-            return data.secure_url;
+            const data = await res.json()
+            return data.secure_url
       } catch (err) {
-            console.log(err);
-            return null;
+            console.log(err)
+            return null
       }
 }

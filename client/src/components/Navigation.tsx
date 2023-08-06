@@ -1,15 +1,17 @@
+import { useCallback, useEffect } from "react"
+import { Link } from 'react-router-dom'
+import { AuthState } from "../context/useAuth"
+import useChat from '../store/useChat'
+
+import Logo from "../assets/icons/Logo"
+import Story from "../assets/icons/Story"
+import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
+
+import { Avatar, Tooltip } from "@mui/material"
 import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
-import Logo from "../assets/icons/Logo"
-import Story from "../assets/icons/Story"
-import { AuthState } from "../context/useAuth"
-import { Avatar, Tooltip } from "@mui/material"
-import { useCallback, useEffect } from "react"
-import { Link } from 'react-router-dom'
-import useChat from '../store/useChat'
-import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
 interface Props {
       contentType: string
       setContentType: React.Dispatch<React.SetStateAction<string>>
@@ -22,29 +24,21 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
       const { setSelectedChat } = useChat()
 
       const handleLogout = useCallback(() => {
-            socketService.emit(SOCKET_LOGOUT, user?._id);
-            setSelectedChat(null);
-            logout();
-      }, [user, logout, setSelectedChat]);
-
-      // useEffect(() => {
-      //       // socketService.setup();
-
-      //       return () => {
-      //             socketService.terminate();
-      //       };
-      // }, []);
+            socketService.emit(SOCKET_LOGOUT, user?._id)
+            setSelectedChat(null)
+            logout()
+      }, [user, logout, setSelectedChat])
 
       useEffect(() => {
             const handleResize = () => {
-                  setShowNavigation(window.innerWidth > 768);
-            };
+                  setShowNavigation(window.innerWidth > 768)
+            }
 
-            window.addEventListener('resize', handleResize);
-            handleResize();
+            window.addEventListener('resize', handleResize)
+            handleResize()
 
-            return () => window.removeEventListener('resize', handleResize);
-      }, [setShowNavigation]);
+            return () => window.removeEventListener('resize', handleResize)
+      }, [setShowNavigation])
 
       return (
             <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10`}>

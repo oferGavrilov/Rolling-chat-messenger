@@ -13,15 +13,15 @@ interface ChatContextProps {
       setChatBackgroundColor: React.Dispatch<React.SetStateAction<string>>
 }
 
-const AuthContext = createContext<ChatContextProps | null>(null);
+const AuthContext = createContext<ChatContextProps | null>(null)
 
 export const AuthState = () => {
-      const context = useContext(AuthContext);
+      const context = useContext(AuthContext)
       if (!context) {
-            throw new Error("AuthState must be used within an AuthProvider");
+            throw new Error("AuthState must be used within an AuthProvider")
       }
-      return context;
-};
+      return context
+}
 
 export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState<User | null>(null)
@@ -38,10 +38,10 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
       }, [navigate])
 
       const isAdmin = useCallback((chat: IChat, userId?: string): boolean => {
-            const currentUserId = userId || (user! as User | undefined)?._id;
+            const currentUserId = userId || (user! as User | undefined)?._id
 
-            return !!chat.groupAdmin && chat.groupAdmin._id === currentUserId;
-      }, [user]);
+            return !!chat.groupAdmin && chat.groupAdmin._id === currentUserId
+      }, [user])
 
       const logout = useCallback((): void => {
             userService.logout()

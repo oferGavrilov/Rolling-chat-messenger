@@ -1,23 +1,21 @@
-import React,{ useState } from 'react'
+import React, { useState } from 'react'
 import { AuthState } from '../../context/useAuth'
+
 import FormatColorFillOutlinedIcon from '@mui/icons-material/FormatColorFillOutlined'
 import WallpaperOutlinedIcon from '@mui/icons-material/WallpaperOutlined'
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
-import ChatColorsPalette from './ChatColorsPalette';
+import ChatColorsPalette from './ChatColorsPalette'
 interface SettingsProps {
       setContentType: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function Settings ({ setContentType }: SettingsProps) : JSX.Element{
+export default function Settings ({ setContentType }: SettingsProps): JSX.Element {
       const [isChooseColor, setIsChooseColor] = useState(false)
-
       const { user } = AuthState()
 
-
-
       return (
-            <section className=''>
+            <section>
                   <div className='p-4 flex hover:bg-gray-100 cursor-pointer'>
                         <img src={user?.profileImg} alt="profile" className='h-20 w-20 rounded-full object-cover object-top' />
                         <div className='flex flex-col justify-center ml-4'>
@@ -25,7 +23,7 @@ export default function Settings ({ setContentType }: SettingsProps) : JSX.Eleme
                               <span className='text-[#00000065] text-lg'>{user?.about}</span>
                         </div>
                   </div>
-                  <ul >
+                  <ul>
                         <li className='p-4 flex hover:bg-gray-100 cursor-pointer items-center'>
                               <FormatColorFillOutlinedIcon className='mr-4 text-[#00000085]' />
                               Theme
@@ -37,13 +35,11 @@ export default function Settings ({ setContentType }: SettingsProps) : JSX.Eleme
 
                         <ChatColorsPalette isChooseColor={isChooseColor} setIsChooseColor={setIsChooseColor} />
 
-
                         <li className='p-4 flex hover:bg-gray-100 cursor-pointer items-center' onClick={() => setContentType('messages')}>
                               <KeyboardArrowLeftIcon fontSize='small' className='mr-1 text-[#00000085]' />
                               Back
                         </li>
                   </ul>
-
             </section >
       )
 }

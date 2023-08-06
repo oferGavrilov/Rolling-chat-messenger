@@ -35,7 +35,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                     <source src={message.content.toString()} type="audio/webm" />
                               </audio>
                         </div>
-                  );
+                  )
             }
 
             return null
