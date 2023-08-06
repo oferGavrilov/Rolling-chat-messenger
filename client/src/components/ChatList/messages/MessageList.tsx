@@ -37,8 +37,9 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
                   if (isMountedRef.current) {
                         if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
                               const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id)
-                              if (!isChatExists) setChats([newMessage.chat, ...chats])
-
+                              if (!isChatExists) {
+                                    setChats([newMessage.chat, ...chats])
+                              }
                               addNotification(newMessage)
                               updateChat(newMessage)
                               document.title = `${notification.length > 0 ? `(${notification.length})` : ""} Rolling`

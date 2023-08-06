@@ -5,24 +5,23 @@ import { PopulatedDoc } from "mongoose"
 
 export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string) {
 
-      if(!content) throw new Error('No content passed into request')
-      if(!chatId) throw new Error('No chatId passed into request')
-      if(!messageType) throw new Error('No messageType passed into request')
-      if(!senderId) throw new Error('No senderId passed into request')
+      if (!content) throw new Error('No content passed into request')
+      if (!chatId) throw new Error('No chatId passed into request')
+      if (!messageType) throw new Error('No messageType passed into request')
+      if (!senderId) throw new Error('No senderId passed into request')
 
       try {
             const newMessage = {
                   sender: senderId,
                   content,
                   chat: chatId,
-                  messageType: messageType, 
+                  messageType: messageType,
             }
 
             let message = await Message.create(newMessage)
 
             message = (await message.populate('sender', 'username profileImg')) as PopulatedDoc<IMessage>
-
-            message = (await message.populate('chat')) as PopulatedDoc<IMessage>
+            message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })) as PopulatedDoc<IMessage>;
 
             // Check if the other user ID is in the deletedBy array
             const chat = await Chat.findById(chatId)

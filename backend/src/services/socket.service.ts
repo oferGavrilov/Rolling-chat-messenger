@@ -71,10 +71,10 @@ export function setupSocketAPI (http: HttpServer) {
                   if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
                   if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
                  
-                  chat?.users.forEach((user: string) => {
-                        if (user === newMessageReceived.sender._id) return
-                        socket.in(user).emit('message received', newMessageReceived)
-                        logger.info(`Socket [id: ${socket.id}] sent a message to userId: ${user}`)
+                  chat?.users.forEach((user: User) => {
+                        if (user._id === newMessageReceived.sender._id) return
+                        socket.in(user._id).emit('message received', newMessageReceived)
+                        logger.info(`Socket [id: ${socket.id}] sent a message to userId: ${user._id}`)
                   })
             })
 
