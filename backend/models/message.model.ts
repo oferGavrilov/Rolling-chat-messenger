@@ -6,6 +6,7 @@ const messageModel = new mongoose.Schema({
       content: { type: String, trim: true },
       chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
       messageType: { type: String, default: 'text'},
+      messageSize: { type: Number, default: 0 }
 },
       { timestamps: true }
 )
@@ -18,6 +19,7 @@ export interface RequestMessage extends Request {
             chatId: string
             receiverId: string
             messageType: string
+            messageSize?: number
       }
 }
 
@@ -26,6 +28,7 @@ export interface IMessage extends Document {
       content: string
       chat: string
       messageType: string
+      messageSize?: number
       createdAt: Date
       updatedAt: Date
 }

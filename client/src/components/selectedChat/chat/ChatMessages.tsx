@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { AuthState } from "../../../context/useAuth"
 import { IMessage } from "../../../model/message.model"
-import { formatDate, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
+import { formatDate, formatRecordTimer, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
 import useChat from "../../../store/useChat"
 
 interface Props {
@@ -42,10 +42,12 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                   );
             } else if (message.messageType === 'audio') {
                   return (
-                        <div>
+                        <div className="relative">
                               <audio controls={true}>
                                     <source src={message.content.toString()} type="audio/webm" />
                               </audio>
+                              <img src={message.sender.profileImg} className="w-8 h-8 rounded-full object-cover object-top absolute -left-11 top-1" alt="" />
+                              {(message?.messageSize !== 0) && <span className="absolute text-black text-xs bottom-0 right-12">{formatRecordTimer(message.messageSize as number)}</span>}
                         </div>
                   )
             }

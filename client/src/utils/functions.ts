@@ -100,6 +100,16 @@ export function formatLastSeenDate (timestamp: string): string {
     return `${date.toLocaleDateString()}, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
   }
 }
+
+export function formatRecordTimer (timeInMilliseconds: number): string {
+  if (!timeInMilliseconds) return ''
+
+  const totalSeconds = Math.floor(timeInMilliseconds / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
 export function startTypingTimeout (callback: () => void, delay: number): NodeJS.Timeout {
   return setTimeout(callback, delay)
 }

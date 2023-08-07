@@ -3,7 +3,7 @@ import { Chat } from "../../models/chat.model"
 import { handleErrorService } from "../../middleware/errorMiddleware"
 import { PopulatedDoc } from "mongoose"
 
-export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string) {
+export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string, messageSize?: number) {
 
       if (!content) throw new Error('No content passed into request')
       if (!chatId) throw new Error('No chatId passed into request')
@@ -16,6 +16,7 @@ export async function sendMessageService (senderId: string, content: string, cha
                   content,
                   chat: chatId,
                   messageType: messageType,
+                  messageSize: messageSize !== undefined ? messageSize : undefined
             }
 
             let message = await Message.create(newMessage)

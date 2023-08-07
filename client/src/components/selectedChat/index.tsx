@@ -99,7 +99,7 @@ export default function Messenger (): JSX.Element {
             }
       }
 
-      async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio" | "file"): Promise<void> {
+      async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number): Promise<void> {
             if (!selectedChat) return
 
             const optimisticMessage: IMessage = {
@@ -110,6 +110,7 @@ export default function Messenger (): JSX.Element {
                   chat: selectedChat,
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
+                  messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
             }
 
             // Show the message immediately 
@@ -123,6 +124,7 @@ export default function Messenger (): JSX.Element {
                         content: message,
                         chatId: selectedChat._id,
                         messageType: messageType,
+                        messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
                   })
 
                   setMessages((prevMessages) =>

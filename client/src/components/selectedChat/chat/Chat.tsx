@@ -7,7 +7,7 @@ import ChatMessages from './ChatMessages'
 import { AuthState } from '../../../context/useAuth'
 import socketService from '../../../services/socket.service'
 import AddFileModal from './AddFileModal'
-import { scrollToBottom } from '../../../utils/functions'
+import { formatRecordTimer, scrollToBottom } from '../../../utils/functions'
 
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 
@@ -21,7 +21,7 @@ interface Props {
       messages: IMessage[]
       setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>
       fetchMessages: () => Promise<void>
-      onSendMessage: (message: string, messageType: "text" | "image" | "audio") => void
+      onSendMessage: (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number) => Promise<void>
 }
 type Timer = NodeJS.Timeout | number
 
@@ -38,8 +38,11 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       const typingTimeoutRef = useRef<Timer | null>(null)
 
       const [isRecording, setIsRecording] = useState(false)
+      const [recordTimer, setRecordTimer] = useState(0)
+
       const mediaRecorderRef = useRef<MediaRecorder | null>(null)
       const chunksRef = useRef<Blob[]>([])
+      const startTimeRef = useRef<Timer | null>(null); // Reference to the interval ID
 
       useEffect(() => {
             const handleTyping = () => setIsTyping(true)
@@ -132,47 +135,73 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       //       }, 0)
       // }
 
+      useEffect(() => {
+            let timerId;
+            if (isRecording) {
+                  startTimeRef.current = performance.now();
+                  timerId = setInterval(() => {
+                        if (startTimeRef.current !== null) {
+                              const elapsedTime = performance.now() - +startTimeRef.current;
+                              setRecordTimer(Math.floor(elapsedTime));
+                        }
+                  }, 1000);
+            } else {
+                  clearInterval(timerId); 
+                  if (startTimeRef.current !== null) {
+                        const elapsedTime = performance.now() - +startTimeRef.current;
+                        setRecordTimer(Math.floor(elapsedTime));
+                  }
+                  startTimeRef.current = null;
+            }
+
+            return () => clearInterval(timerId); 
+      }, [isRecording]);
+
       const handleRecord = async () => {
             if (!isRecording) {
                   try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-                        mediaRecorderRef.current = new MediaRecorder(stream)
+                        chunksRef.current = [];
+                        setRecordTimer(0);
+
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorderRef.current = new MediaRecorder(stream);
+
                         mediaRecorderRef.current.ondataavailable = (e) => {
                               if (e.data.size > 0) {
-                                    chunksRef.current.push(e.data)
+                                    chunksRef.current.push(e.data);
                               }
-                        }
+                        };
+
                         mediaRecorderRef.current.onstop = async () => {
-                              const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
-                              setIsRecording(false)
+                              const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                              setIsRecording(false);
 
                               try {
-                                    const url = await uploadAudio(audioBlob)
-                                    if (url !== undefined) { 
-                                          await new Promise((resolve) => setTimeout(resolve, 2500))
-                                          onSendMessage(url, 'audio')
-                                          console.log(url)
+                                    const url = await uploadAudio(audioBlob);
+                                    if (url !== undefined) {
+                                          console.log(recordTimer)
+                                          onSendMessage(url, 'audio' , recordTimer);
+                                          console.log(url);
                                     }
-
                               } catch (err) {
-                                    console.log(err)
+                                    console.log(err);
                               }
 
-                              mediaRecorderRef.current = null
-                              stream.getTracks().forEach((track) => track.stop())
-                        }
+                              mediaRecorderRef.current = null;
+                              stream.getTracks().forEach((track) => track.stop());
+                        };
 
-                        mediaRecorderRef.current.start()
-                        setIsRecording(true)
+                        mediaRecorderRef.current.start();
+
+                        setIsRecording(true);
                   } catch (error) {
-                        console.error('Error accessing media devices:', error)
-                        setIsRecording(false)
+                        console.error('Error accessing media devices:', error);
+                        setIsRecording(false);
                   }
             } else {
-                  mediaRecorderRef.current?.stop()
+                  mediaRecorderRef.current?.stop();
             }
-      }
-
+      };
 
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
 
@@ -199,13 +228,15 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
 
-                              {!isRecording && <input
+                              {!isRecording ? (<input
                                     type="text"
                                     className='bg-gray-100 w-full px-4 rounded-xl py-2 focus-visible:outline-none'
                                     placeholder='Type a message...'
                                     value={newMessage}
                                     onChange={typingHandler}
-                              />}
+                              />) : (
+                                    <p>{formatRecordTimer(recordTimer)}</p>
+                              )}
 
                               {isMessageEmpty ? (
                                     <div onClick={handleRecord}>

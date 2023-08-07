@@ -13,6 +13,7 @@ export interface IMessage {
       }
       updatedAt: string,
       messageType: "text" | "image" | "audio" | "file"
+      messageSize?: number
 }
 
 export interface UploadedFile {
