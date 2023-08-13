@@ -62,7 +62,7 @@ export default function SelectedFile (): JSX.Element {
 
       return (
             <div className='flex flex-col fixed top-0 left-0 w-full'>
-                  <div className='bg-gray-800'>
+                  <div className='bg-gray-800 dark:bg-dark-primary-bg'>
                         <div className='flex justify-between px-4 py-3 items-center text-white' ref={headerDivRef}>
                               <div className='flex items-center gap-x-3'>
                                     <ToolTip title="Close" arrow placement='bottom'>
@@ -84,7 +84,7 @@ export default function SelectedFile (): JSX.Element {
                                                 <span>{selectedFile.chat.chatName} @</span>
                                                 <span>{selectedFile.sender._id === loggedInUser?._id ? 'You' : selectedFile.sender.username}</span>
                                           </div>
-                                          <span className='text-gray-400 text-sm text-right'>{formatTime(selectedFile.createdAt)}</span>
+                                          <span className='text-gray-400 dark:text-gray-300 text-sm text-right'>{formatTime(selectedFile.createdAt)}</span>
                                     </div>
                                     <img src={selectedFile?.sender.profileImg} alt='' className='w-12 h-12 rounded-full object-cover object-top' />
                               </div>

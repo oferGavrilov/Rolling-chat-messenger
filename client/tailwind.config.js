@@ -7,6 +7,9 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      boxShadow:{
+        dark: '0 9px 14px 1px #082818',
+      },
       fontFamily: {
         'sf-regular': ['sf-pro-display', 'sans-serif'],
         lilita: ['Lilita' ,'cursive' , 'bold'],
@@ -16,6 +19,17 @@ export default {
         'primary': 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'
       },
       colors: {
+        'dark-primary-bg':'#2d6a4f',
+        'dark-secondary-bg':'#40916c',
+        'dark-tertiary-bg':'#52b788',
+        'dark-primary-text':'#ffffff',
+        'dark-secondary-text':'#40916c',
+        'dark-tertiary-text':'#52b788',
+        'dark-black-text':'#081c15',
+        'dark-hover-color':'#1b4332',
+        'dark-navigation-bg':'#1b4332',
+        'light-navigation-bg':'#FAFAFA',
+        'bg-light-primary':'#ffffff',
         'primary': '#0099ff',
         'secondary': '#39b0ff',
         'tertiary': '#55bbff',

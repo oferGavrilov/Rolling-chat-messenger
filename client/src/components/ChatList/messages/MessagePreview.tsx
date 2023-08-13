@@ -114,8 +114,8 @@ export default function MessagePreview ({ chat, notification }: Props) {
       }
       return (
             <li onClick={() => onSelectChat()}
-                  className={`flex items-center rounded-lg justify-between px-3 py-3 hover:bg-gray-100 cursor-pointer transition-colors duration-200
-                   ${selectedChat?._id === chat._id && 'bg-gray-100'}`}>
+                  className={`flex items-center rounded-lg justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer transition-colors duration-200
+                   ${selectedChat?._id === chat._id && 'bg-gray-100 dark:bg-dark-secondary-bg'}`}>
                   <div className="flex items-center w-full">
                         {!chat.isGroupChat ? (
                               <StyledBadge overlap="circular"
@@ -129,7 +129,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                         <div className="ml-3 w-full">
                               <div className='flex justify-between items-center'>
                                     <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
-                                    <span className='text-gray-400 text-sm'>
+                                    <span className='text-gray-400 dark:text-dark-primary-text text-sm'>
                                           {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt)}
                                     </span>
                               </div>
@@ -138,7 +138,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                                           className={`text-base h-6 truncate max-h-[24px] max-w-[260px] overflow-hidden whitespace-nowrap flex items-center
                                                       ${isNotification() ?
                                                       'text-blue-500' :
-                                                      'text-[#00000085]'
+                                                      'text-[#00000085] dark:text-dark-primary-text'
                                                 }`}>
                                                 {getLatestMessage()}
                                     </div>

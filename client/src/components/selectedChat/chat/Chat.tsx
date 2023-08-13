@@ -42,7 +42,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
 
       const mediaRecorderRef = useRef<MediaRecorder | null>(null)
       const chunksRef = useRef<Blob[]>([])
-      const startTimeRef = useRef<Timer | null>(null); // Reference to the interval ID
+      const startTimeRef = useRef<Timer | null>(null)
 
       useEffect(() => {
             const handleTyping = () => setIsTyping(true)
@@ -126,89 +126,80 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             }, timerLength)
       }
 
-      // function scrollToBottom () {
-      //       setTimeout(() => {
-      //             const chatContainer = chatRef.current
-      //             if (chatContainer) {
-      //                   chatContainer.scrollTop = chatContainer.scrollHeight
-      //             }
-      //       }, 0)
-      // }
-
       useEffect(() => {
-            let timerId;
+            let timerId
             if (isRecording) {
-                  startTimeRef.current = performance.now();
+                  startTimeRef.current = performance.now()
                   timerId = setInterval(() => {
                         if (startTimeRef.current !== null) {
-                              const elapsedTime = performance.now() - +startTimeRef.current;
-                              setRecordTimer(Math.floor(elapsedTime));
+                              const elapsedTime = performance.now() - +startTimeRef.current
+                              setRecordTimer(Math.floor(elapsedTime))
                         }
-                  }, 1000);
+                  }, 1000)
             } else {
-                  clearInterval(timerId); 
+                  clearInterval(timerId) 
                   if (startTimeRef.current !== null) {
-                        const elapsedTime = performance.now() - +startTimeRef.current;
-                        setRecordTimer(Math.floor(elapsedTime));
+                        const elapsedTime = performance.now() - +startTimeRef.current
+                        setRecordTimer(Math.floor(elapsedTime))
                   }
-                  startTimeRef.current = null;
+                  startTimeRef.current = null
             }
 
-            return () => clearInterval(timerId); 
-      }, [isRecording]);
+            return () => clearInterval(timerId) 
+      }, [isRecording])
 
       const handleRecord = async () => {
             if (!isRecording) {
                   try {
-                        chunksRef.current = [];
-                        setRecordTimer(0);
+                        chunksRef.current = []
+                        setRecordTimer(0)
 
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        mediaRecorderRef.current = new MediaRecorder(stream);
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+                        mediaRecorderRef.current = new MediaRecorder(stream)
 
                         mediaRecorderRef.current.ondataavailable = (e) => {
                               if (e.data.size > 0) {
-                                    chunksRef.current.push(e.data);
+                                    chunksRef.current.push(e.data)
                               }
-                        };
+                        }
 
                         mediaRecorderRef.current.onstop = async () => {
-                              const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                              setIsRecording(false);
+                              const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
+                              setIsRecording(false)
 
                               try {
-                                    const url = await uploadAudio(audioBlob);
+                                    const url = await uploadAudio(audioBlob)
                                     if (url !== undefined) {
                                           console.log(recordTimer)
-                                          onSendMessage(url, 'audio' , recordTimer);
-                                          console.log(url);
+                                          onSendMessage(url, 'audio' , recordTimer)
+                                          console.log(url)
                                     }
                               } catch (err) {
-                                    console.log(err);
+                                    console.log(err)
                               }
 
-                              mediaRecorderRef.current = null;
-                              stream.getTracks().forEach((track) => track.stop());
-                        };
+                              mediaRecorderRef.current = null
+                              stream.getTracks().forEach((track) => track.stop())
+                        }
 
-                        mediaRecorderRef.current.start();
+                        mediaRecorderRef.current.start()
 
-                        setIsRecording(true);
+                        setIsRecording(true)
                   } catch (error) {
-                        console.error('Error accessing media devices:', error);
-                        setIsRecording(false);
+                        console.error('Error accessing media devices:', error)
+                        setIsRecording(false)
                   }
             } else {
-                  mediaRecorderRef.current?.stop();
+                  mediaRecorderRef.current?.stop()
             }
-      };
+      }
 
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
 
       return (
             <>
                   <div
-                        className={`border-y border-1 overflow-auto slide-left bg-no-repeat bg-cover bg-center ${loadingMessages && 'blur-[2px]'}`}
+                        className={`overflow-auto slide-left bg-no-repeat bg-cover bg-center ${loadingMessages && 'blur-[2px]'}`}
                         style={{ background: chatBackgroundColor }}
                   >
                         <div
@@ -243,7 +234,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                                           {isRecording ? (
                                                 <PauseCircleOutlineIcon className="text-red-500" />
                                           ) : (
-                                                <KeyboardVoiceIcon className='text-gray-500 mx-4 md:ml-4 md:mx-0 !transition-colors duration-300 cursor-pointer hover:text-gray-700' />
+                                                <KeyboardVoiceIcon className='text-gray-500 dark:text-gray-200 mx-4 md:ml-4 md:mx-0 !transition-colors duration-300 cursor-pointer dark:hover:text-dark-primary-text hover:text-gray-700' />
                                           )}
                                     </div>
                               ) : (

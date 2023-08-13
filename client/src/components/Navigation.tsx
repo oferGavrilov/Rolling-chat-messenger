@@ -41,7 +41,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
       }, [setShowNavigation])
 
       return (
-            <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-[#FAFAFA] gap-y-4 h-full sticky z-10`}>
+            <section className={`${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 pointer-events-none'} transition-all max-w-[70px] duration-300 flex justify-between flex-col bg-light-navigation-bg dark:bg-dark-navigation-bg gap-y-4 h-full sticky z-10`}>
                   <div className='flex flex-col border-b border-gray-300 items-center py-7 gap-y-5 mx-3'>
                         <Tooltip title="Home" arrow placement='right'>
                               <Link to='/'>
@@ -76,12 +76,16 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
                               </Tooltip>
                         </div>
                         <div className="flex flex-col ">
-                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary" onClick={() => setContentType('settings')}>
-                                    <FiSettings size={27} />
-                              </div>
-                              <div className="flex justify-center text-[#00000065] cursor-pointer hover:text-primary py-7" onClick={handleLogout}>
-                                    <RxExit size={27} className="rotate-180" />
-                              </div>
+                              <Tooltip title="Settings" arrow placement='right'>
+                                    <div className={`side-icon ${contentType === 'settings' && 'active-side-icon'}`} onClick={() => setContentType('settings')}>
+                                          <FiSettings className="text-2xl" />
+                                    </div>
+                              </Tooltip>
+                              <Tooltip title="Logout" arrow placement='right'>
+                                    <div className="side-icon my-6" onClick={handleLogout}>
+                                          <RxExit className="rotate-180 text-2xl" />
+                                    </div>
+                              </Tooltip>
                         </div>
                   </div>
             </section >

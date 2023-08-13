@@ -6,8 +6,8 @@ import { AuthState } from '../../context/useAuth'
 import { userService } from '../../services/user.service'
 import { IUser } from '../../model/user.model'
 
-import { Tooltip } from '@mui/material'
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline'
+import { Tooltip } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -51,7 +51,7 @@ export default function Profile (): JSX.Element {
                   <UploadImage image={image} setImage={handleImageChange} />
 
                   <div className='px-6 py-10'>
-                        <span className='text-primary'>Your Name</span>
+                        <span className='text-lg font-semibold text-primary dark:text-dark-tertiary-text'>Your Name</span>
                         <div className='flex items-center gap-x-2 py-5'>
                               {editType === 'username' ? (
                                     <>
@@ -70,13 +70,13 @@ export default function Profile (): JSX.Element {
                                           <Tooltip title='Edit Name' placement='top' arrow>
                                                 <ModeEditOutlineIcon fontSize='small' className='cursor-pointer' onClick={() => setEditType('username')} />
                                           </Tooltip>
-                                          <span className='text-gray-500'>{user?.username}</span>
+                                          <span className='text-gray-500 dark:text-dark-primary-text'>{user?.username}</span>
                                     </>
                               )}
                         </div>
 
                         <div className='py-10'>
-                              <span className='text-primary'>About</span>
+                              <span className='text-lg font-semibold text-primary dark:text-dark-tertiary-text'>About</span>
                               <div className='flex items-center gap-x-2 py-5'>
                                     {editType === 'about' ? (
                                           <>
@@ -95,7 +95,7 @@ export default function Profile (): JSX.Element {
                                                 <Tooltip title='Edit About' placement='top' arrow>
                                                       <ModeEditOutlineIcon fontSize='small' className='cursor-pointer' onClick={() => setEditType('about')} />
                                                 </Tooltip>
-                                                <span className='text-gray-500'>{user?.about}</span>
+                                                <span className='text-gray-500 dark:text-dark-primary-text'>{user?.about}</span>
                                           </>
                                     )}
                               </div>

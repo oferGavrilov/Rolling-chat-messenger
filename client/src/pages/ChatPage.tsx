@@ -7,12 +7,13 @@ import Messenger from '../components/selectedChat'
 import { AuthState } from '../context/useAuth'
 import socketService from '../services/socket.service'
 import SelectedFile from '../components/SelectedFile'
+import { userService } from '../services/user.service'
 
 export default function ChatPage (): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<string>('messages')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
-      const { selectedChat, selectedFile} = useChat()
+      const { selectedChat, selectedFile } = useChat()
       const { user } = AuthState()
 
       useEffect(() => {
@@ -27,10 +28,23 @@ export default function ChatPage (): JSX.Element {
             }
       }, [])
 
+      useEffect(() => {
+            if (!user) return
+            const theme = userService.getTheme()
+            switch (theme) {
+                  case 'dark':
+                        document.body.classList.add('dark')
+                        break;
+                  case 'light':
+                        document.body.classList.remove('dark')
+                        break;
+            }
+      }, [])
+
       if (!user) return <div></div>
       return (
             <div>
-                  <div className='flex h-screen slide-right overflow-y-hidden' >
+                  <div className='flex h-screen slide-right md:overflow-y-hidden' >
                         <Navigation
                               contentType={contentType}
                               setContentType={setContentType}

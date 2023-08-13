@@ -65,18 +65,20 @@
 
       /* MESSAGE FILTER */
       .message-filter-icon {
-            @apply hover:text-blue-500 hover:bg-gray-200 p-2 text-gray-400 flex items-center justify-center rounded-xl transition-colors duration-200 cursor-pointer;
+            @apply hover:text-blue-500 hover:bg-gray-200 p-2 dark:hover:bg-dark-secondary-bg flex items-center justify-center rounded-xl transition-colors duration-200 cursor-pointer;
       }
       .sort-option {
             @apply py-2 px-4 cursor-pointer transition-colors duration-300
       }
       /* SIDE MENU */
       .side-icon {
-            @apply flex justify-center h-11 md:h-12 text-primary my-1 mx-3 md:mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200;
+            @apply flex justify-center h-11 md:h-12 text-primary dark:text-dark-primary-text my-1 mx-3 md:mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-dark-secondary-bg;
       }
       .active-side-icon {
-            @apply bg-primary text-white  hover:bg-[#2286c9];
+            @apply bg-primary dark:bg-dark-primary-bg text-white  hover:bg-[#2286c9];
             box-shadow: 0 6px 9px 3px #95c1df;
+            @apply dark:shadow-dark;
+
       }
       .messenger{
             display: grid;
@@ -95,10 +97,13 @@
       .choose-bg {
             @apply w-24 h-28  rounded-xl cursor-pointer ;
       }
+      .theme-options {
+            @apply flex items-center gap-x-1 py-3 px-4 transition-colors duration-200 cursor-pointer hover:bg-secondary dark:hover:bg-dark-tertiary-bg;
+      }
 
       /* Chat */
       .clip-modal-option {
-            @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500
+            @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500 dark:hover:bg-dark-tertiary-bg;
       }
 
       /* Chat Info */
@@ -144,6 +149,9 @@
             box-shadow: 0 10px 62px 6px #0099ff4f;
             transform: scale(1.02);
             font-weight: bold;
+      }
+      .chat-header-shadow {
+            box-shadow: -1px 1px 18px 0px #393939;
       }
 }
 

@@ -12,8 +12,9 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import CloseIcon from '@mui/icons-material/Close'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 import { IChat } from "../../../model/chat.model"
 
@@ -72,14 +73,14 @@ export default function GroupInfo (): JSX.Element {
       if (!selectedChat) return <div></div>
       return (
             <section className="w-full ">
-                  <div className="border-b-8 pb-6 border-gray-200 text-center">
+                  <div className="text-center my-4">
                         {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
                         ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
                         {!isEditName ? (
                               <div className="flex items-center justify-center gap-x-2 pt-4">
-                                    <span className="text-xl md:text-2xl font-semibold">{selectedChat.chatName}</span>
+                                    <span className="text-2xl md:text-2xl font-semibold dark:text-dark-primary-text">{selectedChat.chatName}</span>
                                     {isAdmin(selectedChat) &&
-                                          <EditOutlinedIcon fontSize="small" color="primary" className="cursor-pointer" onClick={() => setIsEditName(true)} />}
+                                          <EditIcon className="cursor-pointer text-primary dark:text-gray-300" onClick={() => setIsEditName(true)} />}
                               </div>
                         ) : (
                               <div className="flex justify-center items-center">
@@ -100,36 +101,38 @@ export default function GroupInfo (): JSX.Element {
                               </div>
                         )}
 
-                        <div className="text-gray-400">Group - {selectedChat.users.length} Participants</div>
+                        <div className="text-gray-400 dark:text-gray-200">Group - {selectedChat.users.length} Participants</div>
                   </div>
 
-                  <div className="flex flex-col gap-y-4 pt-8 px-4 md:px-10 text-gray-500 border-b-8 pb-6 border-gray-200">
-                        <div className="flex justify-between items-center px-2 text-gray-500 ">
+                  <div className="flex flex-col gap-y-4 pt-8 px-2 md:px-10 text-gray-500 dark:text-dark-primary-text border-y-8 pb-6 border-gray-200 dark:border-dark-primary-bg">
+                        <div className="flex justify-between items-center px-3">
                               <span>{selectedChat.users.length} Participants</span>
-                              <SearchOutlinedIcon className="cursor-pointer" />
+                              <div className="hover:bg-dark-tertiary-bg p-2 rounded-full">
+                                    <SearchOutlinedIcon className="cursor-pointer" />
+                              </div>
                         </div>
-                        {isAdmin(selectedChat) && <div className="flex px-1 items-center gap-x-2 hover:bg-gray-100 p-2 cursor-pointer rounded-lg" onClick={() => setIsAddUsers(!isAddUsers)}>
-                              <div className="bg-primary text-white p-2 rounded-full">
-                                    <PersonAddAltOutlinedIcon />
+                        {isAdmin(selectedChat) && <div className="flex px-2 items-center gap-x-4 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg p-2 cursor-pointer rounded-lg" onClick={() => setIsAddUsers(!isAddUsers)}>
+                              <div className="bg-primary dark:bg-dark-primary-bg text-white h-10 w-10 flex items-center justify-center rounded-full">
+                                    <PersonAddAltOutlinedIcon fontSize="small" />
                               </div>
                               <span>Adding participants</span>
                         </div>}
-                        <div className="flex flex-col border-2 rounded-lg">
+                        <div className="flex flex-col gap-y-2 border-2 dark:border-dark-primary-bg rounded-lg">
                               {selectedChat.users.map(user => (
                                     <div key={user._id} className="flex justify-between">
-                                          <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 w-full p-2  cursor-pointer rounded-t-lg">
+                                          <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg w-full p-2  cursor-pointer rounded-lg">
                                                 <div className="flex items-center gap-x-3">
                                                       <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
                                                       <span className="text-lg">{user.username}</span>
                                                 </div>
                                                 {isAdmin(selectedChat, user._id) && (
-                                                      <span className="bg-slate-300 text-white px-2 py-[1px] rounded-md text-sm">
+                                                      <span className="bg-slate-300 dark:bg-dark-primary-bg text-white px-2 py-[1px] rounded-md text-sm">
                                                             Admin
                                                       </span>
                                                 )}
                                                 {(isAdmin(selectedChat, loggedInUser?._id) && user._id !== loggedInUser?._id) &&
-                                                      <div className="flex justify-end text-red-500 hover:bg-red-100 px-1 rounded-md" onClick={() => onRemoveFromGroup(user._id)}>
-                                                            Remove
+                                                      <div className="flex justify-end text-red-500 transition-transform duration-200 hover:scale-125" onClick={() => onRemoveFromGroup(user._id)}>
+                                                            <DeleteIcon className="!text-3xl"/>
                                                       </div>
                                                 }
                                           </div>
@@ -138,7 +141,7 @@ export default function GroupInfo (): JSX.Element {
                         </div>
                   </div>
 
-                  <div className="text-red-500 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 cursor-pointer" onClick={() => onLeaveFromGroup()}>
+                  <div className="text-red-500 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg cursor-pointer" onClick={() => onLeaveFromGroup()}>
                         <LogoutOutlinedIcon />
                         Leave The Group
                   </div>

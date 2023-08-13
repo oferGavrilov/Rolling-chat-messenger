@@ -15,7 +15,9 @@ export const userService = {
       editUserDetails,
       updateUserImage,
       saveUserBackgroundImage,
-      getBackgroundImage
+      getBackgroundImage,
+      getTheme,
+      saveTheme
 }
 
 export function getLoggedinUser () {
@@ -120,6 +122,29 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
       }
 }
 
+function getTheme (): "light" | "dark" | "black" | null {
+      try {
+            const theme = localStorage.getItem('theme');
+
+            if (theme === "light" || theme === "dark" || theme === "black") {
+                  return theme as "light" | "dark" | "black";
+            } else {
+                  return null;
+            }
+      } catch (error) {
+            console.log(error);
+            return null;
+      }
+}
+
+function saveTheme (theme: "light" | "dark" | "black"): void {
+      try {
+            localStorage.setItem('theme', theme);
+      } catch (error) {
+            console.log(error);
+      }
+}
+
 // function to save user background image to local storage
 function saveUserBackgroundImage (image: string): void {
       try {
@@ -138,7 +163,7 @@ function getBackgroundImage (): string | null {
       }
 }
 
-async function logout ():Promise<void> {
+async function logout (): Promise<void> {
       const authConfig = getAuthConfig()
       sessionStorage.removeItem(STORAGE_KEY)
       await axios.put(BASE_URL + '/api/auth/logout', {}, authConfig)

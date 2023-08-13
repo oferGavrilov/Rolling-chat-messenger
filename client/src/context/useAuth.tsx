@@ -1,12 +1,12 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { userService } from "../services/user.service"
 import { useNavigate, useLocation } from "react-router-dom"
-import { User } from "../model/user.model"
+import { IUser } from "../model/user.model"
 import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
-      user: User | null
-      setUser: React.Dispatch<React.SetStateAction<User | null>>
+      user: IUser | null
+      setUser: React.Dispatch<React.SetStateAction<IUser | null>>
       logout: () => void,
       isAdmin: (chat: IChat, userId?: string) => boolean
       chatBackgroundColor: string
@@ -24,7 +24,7 @@ export const AuthState = () => {
 }
 
 export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
-      const [user, setUser] = useState<User | null>(null)
+      const [user, setUser] = useState<IUser | null>(null)
       const [chatBackgroundColor, setChatBackgroundColor] = useState<string>(userService.getBackgroundImage() || '#ccdbdc')
       const navigate = useNavigate()
       const location = useLocation().pathname
@@ -38,7 +38,7 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
       }, [navigate])
 
       const isAdmin = useCallback((chat: IChat, userId?: string): boolean => {
-            const currentUserId = userId || (user! as User | undefined)?._id
+            const currentUserId = userId || (user! as IUser | undefined)?._id
 
             return !!chat.groupAdmin && chat.groupAdmin._id === currentUserId
       }, [user])
@@ -56,7 +56,7 @@ export default function AuthProvider ({ children }: { children: ReactNode }): JS
                   logout,
                   isAdmin,
                   chatBackgroundColor,
-                  setChatBackgroundColor
+                  setChatBackgroundColor,
             }),
             [user, logout, isAdmin, chatBackgroundColor]
       )

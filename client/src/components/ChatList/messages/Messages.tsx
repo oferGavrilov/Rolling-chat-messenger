@@ -73,7 +73,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                   <div className='p-3 mx-4 flex'>
                         Sort by
                         <div className='px-2 relative'>
-                              <span className={`flex items-center text-[#2D9CDB] cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
+                              <span className={`flex items-center text-primary dark:text-dark-tertiary-text font-semibold cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
                                     {sort}
                                     <KeyboardArrowUpRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? 'rotate-180' : ''} `} />
                               </span>
@@ -83,8 +83,8 @@ export default function Messages ({ contentType }: MessagesProps) {
                                     className={`absolute text-center left-3 z-10 top-6 overflow-hidden transition-all duration-300 bg-gray-400 text-white rounded-md 
                                ${showSortModal ? 'w-auto max-h-[300px]' : 'max-h-0 py-0'}`}
                               >
-                                    <li className={`sort-option border-b border-white ${sort === 'Newest' && 'bg-secondary hover:bg-primary'}`} onClick={() => onSetSort('Newest')}>Newest</li>
-                                    <li className={`sort-option ${sort === 'Oldest' && 'bg-secondary hover:bg-primary'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
+                                    <li className={`sort-option border-b border-white ${sort === 'Newest' && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort('Newest')}>Newest</li>
+                                    <li className={`sort-option ${sort === 'Oldest' && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
                               </ul>
                         </div>
                   </div>

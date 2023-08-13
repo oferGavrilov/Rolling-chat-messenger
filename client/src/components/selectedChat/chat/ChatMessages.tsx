@@ -75,8 +75,8 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                     <div
                                           className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl relative
                                            ${message?.sender._id === user._id ?
-                                                      'bg-primary text-white'
-                                                      : 'bg-gray-500 text-white'}
+                                                      'bg-primary dark:bg-dark-tertiary-bg text-white'
+                                                      : 'bg-gray-400 text-white'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :
                                                       'ml-0 rounded-br-xl flex-row-reverse'}

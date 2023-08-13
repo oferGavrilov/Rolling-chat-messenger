@@ -1,9 +1,8 @@
-import * as React from 'react'
-import Drawer from '@mui/material/Drawer'
-import Box from '@mui/material/Box'
+import React, { useRef } from 'react'
 import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
 import { IChat } from '../../model/chat.model'
+import { useClickOutside } from '../../custom/useClickOutside'
 
 interface Props {
       isOpen: boolean
@@ -14,12 +13,9 @@ interface Props {
 }
 
 export default function SearchUsers (props: Props): JSX.Element {
+      const menuRef = useRef<HTMLDivElement>(null)
 
-      const list = () => (
-            <Box role="presentation" className="w-screen md:w-[420px]" >
-                  {switchContent()}
-            </Box>
-      )
+      useClickOutside(menuRef, () => props.setIsOpen(false), props.isOpen)
 
       function switchContent () {
             switch (props.contentType) {
@@ -32,16 +28,9 @@ export default function SearchUsers (props: Props): JSX.Element {
       }
 
       return (
-            <Drawer
-                  anchor='left'
-                  open={props.isOpen}
-                  onClose={() => {
-                        props.setIsOpen(false)
-                  }
-                  } >
-                  {list()}
-
-            </Drawer>
+            <div ref={menuRef} className={`w-full md:w-[435px] fixed top-0 left-0 transition-all duration-300 bg-bg-light-primary h-screen shadow-xl ${props.isOpen ? 'translate-x-0' : '-translate-x-[100vh]'}`}>
+                  {switchContent()}
+            </div>
       )
 
 }

@@ -89,13 +89,13 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
             <div className='relative'>
                   <AddRoundedIcon
                         onClick={() => setShowClipModal((prev) => !prev)}
-                        className={`text-slate-500 !text-[2rem]  ml-2 md:ml-0 !transition-transform !duration-300 hover:text-gray-600 cursor-pointer
-            ${showClipModal ? '-rotate-[135deg] bg-gray-200 rounded-full pointer-events-none' : ''} `} />
+                        className={`text-slate-500 dark:text-dark-primary-text !text-[2rem]  ml-2 md:ml-0 !transition-transform !duration-300 hover:text-gray-600 cursor-pointer
+            ${showClipModal ? '-rotate-[135deg] bg-gray-200 dark:bg-dark-primary-bg rounded-full pointer-events-none' : ''} `} />
 
                   <ul
                         ref={modalRef}
                         className={`
-                        fixed bottom-14 left-8 px-2 pb-3 text-white rounded-lg z-20 bg-gray-400 overflow-hidden
+                        fixed bottom-14 left-8 px-2 pb-3 text-white rounded-lg z-20 bg-gray-400 dark:bg-dark-primary-bg overflow-hidden
                         transition-all duration-300 ease-in-out max-w-[40px] !shadow-2xl
                         ${showClipModal ? 'max-h-[300px] max-w-full' : 'max-h-0 px-0 !py-0 '}`}>
 
