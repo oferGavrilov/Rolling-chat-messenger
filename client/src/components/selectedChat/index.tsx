@@ -143,7 +143,7 @@ export default function Messenger (): JSX.Element {
       if (!selectedChat) return <div></div>
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden dark:bg-dark-secondary-bg'>
-                  <div className='flex items-center px-2 h-16 z-10 chat-header-shadow md:h-20'>
+                  <div className='flex items-center px-2 h-16 z-10 chat-header-shadow md:h-[4.4rem]'>
                         <IoIosArrowBack size={30} className='md:hidden text-primary dark:text-dark-primary-text mr-3 cursor-pointer' onClick={() => setSelectedChat(null)} />
                         <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setChatMode('info')} />
                         <div className='flex items-center gap-4 ml-4 justify-between w-full'>

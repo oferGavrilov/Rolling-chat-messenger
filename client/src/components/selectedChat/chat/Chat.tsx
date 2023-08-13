@@ -71,7 +71,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             fetchData()
       }, [selectedChat])
 
-      async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
+      async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {
             e.preventDefault()
             if (!newMessage || !selectedChat) return
 
@@ -89,6 +89,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             setNewMessage('')
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
+
             scrollToBottom(chatRef)
 
             try {
@@ -106,7 +107,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
             }
       }
 
-      function typingHandler (e: React.ChangeEvent<HTMLInputElement>) {
+      function typingHandler (e: React.ChangeEvent<HTMLTextAreaElement>) {
             const { value } = e.target
             setNewMessage(value)
 
@@ -137,7 +138,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                         }
                   }, 1000)
             } else {
-                  clearInterval(timerId) 
+                  clearInterval(timerId)
                   if (startTimeRef.current !== null) {
                         const elapsedTime = performance.now() - +startTimeRef.current
                         setRecordTimer(Math.floor(elapsedTime))
@@ -145,7 +146,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                   startTimeRef.current = null
             }
 
-            return () => clearInterval(timerId) 
+            return () => clearInterval(timerId)
       }, [isRecording])
 
       const handleRecord = async () => {
@@ -171,7 +172,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                                     const url = await uploadAudio(audioBlob)
                                     if (url !== undefined) {
                                           console.log(recordTimer)
-                                          onSendMessage(url, 'audio' , recordTimer)
+                                          onSendMessage(url, 'audio', recordTimer)
                                           console.log(url)
                                     }
                               } catch (err) {
@@ -199,13 +200,13 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
       return (
             <>
                   <div
-                        className={`overflow-auto slide-left bg-no-repeat bg-cover bg-center ${loadingMessages && 'blur-[2px]'}`}
+                        className={`overflow-y-auto overflow-x-hidden slide-left h-full bg-no-repeat bg-cover bg-center scroll-smooth ${loadingMessages && 'blur-[2px]'}`}
                         style={{ background: chatBackgroundColor }}
+                        ref={chatRef}
                   >
                         <div
-                              className='absolute right-0 top-0 overflow-auto w-full min-h-full scroll-smooth'
+                              className='absolute right-0 top-0  w-full min-h-full scroll-smooth'
                               style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
-                              ref={chatRef}
 
                         >
                               {messages &&
@@ -218,14 +219,23 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                         <AddFileModal setFile={setFile} setChatMode={setChatMode} />
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
-
-                              {!isRecording ? (<input
-                                    type="text"
-                                    className='bg-gray-100 w-full px-4 rounded-xl py-2 focus-visible:outline-none'
-                                    placeholder='Type a message...'
-                                    value={newMessage}
-                                    onChange={typingHandler}
-                              />) : (
+                              {!isRecording ? (
+                                    <>
+                                          <textarea
+                                                className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto'
+                                                placeholder='Type a message...'
+                                                value={newMessage}
+                                                onChange={typingHandler}
+                                                onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                                                      if (e.key === 'Enter' && !e.shiftKey) {
+                                                            e.preventDefault(); // Prevent newline character
+                                                            handleSubmit(e); // Call handleSubmit function
+                                                      }
+                                                }}
+                                          />
+                                          <div className='scrollbar' />
+                                    </>
+                              ) : (
                                     <p>{formatRecordTimer(recordTimer)}</p>
                               )}
 

@@ -13,9 +13,9 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
       const { setSelectedFile } = useChat()
       const { user } = AuthState()
 
-      const renderMessageContent = (message: IMessage): ReactNode => {
+      const renderMessageContent = (message: IMessage, idx: number): ReactNode => {
             if (message.messageType === 'text') {
-                  return <span>{message.content.toString()}</span>
+                  return <span className=" overflow-hidden break-all">{message.content.toString()}</span>
             }
             else if (message.messageType === 'image' && typeof message.content === 'string') {
                   return (
@@ -41,12 +41,17 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                         </div>
                   );
             } else if (message.messageType === 'audio') {
+                  if (!user) return null
                   return (
                         <div className="relative">
-                              <audio controls={true} className="max-w-[200px] md:max-w-none">
+                              <audio controls={true} className="max-w-[200px] lg:max-w-none overflow-hidden">
                                     <source src={message.content.toString()} type="audio/webm" />
                               </audio>
-                              <img src={message.sender.profileImg} className="w-8 h-8 rounded-full object-cover object-top absolute -left-11 top-1" alt="" />
+                              <img
+                                    src={message.sender.profileImg}
+                                    alt="profile-image"
+                                    className={`${isSameSenderMargin(messages, message, idx, user?._id) ? '-left-11' : '-right-10'} w-8 h-8 rounded-full object-cover object-top absolute top-1`}
+                              />
                               {(message?.messageSize !== 0) && <span className="absolute text-black text-xs bottom-0 right-12">{formatRecordTimer(message.messageSize as number)}</span>}
                         </div>
                   )
@@ -84,7 +89,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                 ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
                                                 `}
                                     >
-                                          <span className={`text-xs mr-2 text-gray-100 relative -bottom-1 
+                                          <span className={`text-xs mr-2 text-gray-100 relative mt-auto
                                                             ${message.messageType === 'image' && 'left-5 bottom-2 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}
                                                             ${message.messageType === 'file' && '!absolute bottom-1 left-3'}
@@ -92,7 +97,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                       '-left-1' : '-right-2'}`}>
                                                 {formatDate(message.createdAt)}
                                           </span>
-                                          {renderMessageContent(message)}
+                                          {renderMessageContent(message, idx)}
                                     </div>
                               </div >
                         ))
