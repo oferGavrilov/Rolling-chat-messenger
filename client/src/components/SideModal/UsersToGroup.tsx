@@ -100,15 +100,15 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
       }
 
       return (
-            <div className="py-6 w-screen md:w-[400px]">
-                  <h2 className='text-2xl text-center pb-5'>{isAddNewGroup ? 'Create Group Chat' : 'Edit Group Chat'}</h2>
+            <div className="py-6 w-screen max-w-[435px]">
+                  <h2 className='text-2xl text-center pb-5 dark:text-dark-primary-text'>{isAddNewGroup ? 'Create Group Chat' : 'Edit Group Chat'}</h2>
 
-                  <div className='flex flex-col  gap-y-6 px-4 mx-auto'>
+                  <div className='flex flex-col gap-y-6 px-4 mx-auto'>
                         {isAddNewGroup && <>
                               <UploadImage image={image} setImage={setImage} />
                               <input
                                     type="text"
-                                    className='bg-gray-100 p-2 rounded-lg border-2 px-3 border-gray-100 focus:border-blue-400'
+                                    className='bg-gray-100 p-2 py-3 rounded-lg px-3 focus:ring-blue-400 dark:focus:ring-dark-primary-bg'
                                     value={group.chatName}
                                     onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
                                     placeholder="Group Name"
@@ -118,7 +118,10 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                         <div className='py-6 flex relative px-2 '>
                               <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                         </div>
-                        <button onClick={isAddNewGroup ? onCreateGroup : onAddUsers} className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600'>
+                        <button
+                              onClick={isAddNewGroup ? onCreateGroup : onAddUsers}
+                              className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600
+                              dark:bg-dark-primary-bg dark:hover:bg-dark-tertiary-bg'>
                               {isAddNewGroup ? 'Create Chat' : 'Edit Chat'}
                         </button>
                   </div>
@@ -153,7 +156,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                         <Loading type="users" />
                   )}
 
-                  <CloseIcon className='cursor-pointer absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
+                  <CloseIcon className='cursor-pointer dark:text-dark-primary-text absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
             </div>
       )
 }

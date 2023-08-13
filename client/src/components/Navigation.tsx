@@ -45,7 +45,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
                   <div className='flex flex-col border-b border-gray-300 items-center py-7 gap-y-5 mx-3'>
                         <Tooltip title="Home" arrow placement='right'>
                               <Link to='/'>
-                                    <Logo />
+                                    <Logo theme={document.body.classList.value.includes('dark') ? 'dark' : 'light'} />
                               </Link>
                         </Tooltip>
                         <Tooltip title="Profile" arrow placement='right'>
@@ -82,7 +82,7 @@ export default function Navigation ({ contentType, setContentType, showNavigatio
                                     </div>
                               </Tooltip>
                               <Tooltip title="Logout" arrow placement='right'>
-                                    <div className="side-icon my-6" onClick={handleLogout}>
+                                    <div className="side-icon mb-5 mt-3" onClick={handleLogout}>
                                           <RxExit className="rotate-180 text-2xl" />
                                     </div>
                               </Tooltip>

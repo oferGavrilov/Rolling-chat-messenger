@@ -77,8 +77,8 @@ export default function GroupInfo (): JSX.Element {
                         {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
                         ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
                         {!isEditName ? (
-                              <div className="flex items-center justify-center gap-x-2 pt-4">
-                                    <span className="text-2xl md:text-2xl font-semibold dark:text-dark-primary-text">{selectedChat.chatName}</span>
+                              <div className="flex items-center text-2xl md:text-2xl justify-center gap-x-2 pt-4">
+                                    <span className="font-semibold dark:text-dark-primary-text">{selectedChat.chatName}</span>
                                     {isAdmin(selectedChat) &&
                                           <EditIcon className="cursor-pointer text-primary dark:text-gray-300" onClick={() => setIsEditName(true)} />}
                               </div>
@@ -131,7 +131,7 @@ export default function GroupInfo (): JSX.Element {
                                                       </span>
                                                 )}
                                                 {(isAdmin(selectedChat, loggedInUser?._id) && user._id !== loggedInUser?._id) &&
-                                                      <div className="flex justify-end text-red-500 transition-transform duration-200 hover:scale-125" onClick={() => onRemoveFromGroup(user._id)}>
+                                                      <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={() => onRemoveFromGroup(user._id)}>
                                                             <DeleteIcon className="!text-3xl"/>
                                                       </div>
                                                 }
@@ -141,7 +141,7 @@ export default function GroupInfo (): JSX.Element {
                         </div>
                   </div>
 
-                  <div className="text-red-500 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg cursor-pointer" onClick={() => onLeaveFromGroup()}>
+                  <div className="text-red-600 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg cursor-pointer" onClick={() => onLeaveFromGroup()}>
                         <LogoutOutlinedIcon />
                         Leave The Group
                   </div>

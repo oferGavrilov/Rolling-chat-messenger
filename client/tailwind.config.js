@@ -19,9 +19,9 @@ export default {
         'primary': 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'
       },
       colors: {
-        'dark-primary-bg':'#2d6a4f',
-        'dark-secondary-bg':'#40916c',
-        'dark-tertiary-bg':'#52b788',
+        'dark-primary-bg':'#1B4E3B',
+        'dark-secondary-bg':'#267055',
+        'dark-tertiary-bg':'#32926F',
         'dark-primary-text':'#ffffff',
         'dark-secondary-text':'#40916c',
         'dark-tertiary-text':'#52b788',

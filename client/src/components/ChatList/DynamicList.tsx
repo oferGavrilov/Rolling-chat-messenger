@@ -42,7 +42,7 @@ export default function DynamicList (props: Props) {
       function getIcon (): JSX.Element {
             switch (props.contentType) {
                   case 'messages':
-                        return <PersonAddIcon className="text-gray-400 dark:text-white" />
+                        return <PersonAddIcon className="text-gray-400 dark:text-dark-primary-text" />
                   case 'videos':
                         return <VideoCallIcon />
                   case 'story':
@@ -52,7 +52,7 @@ export default function DynamicList (props: Props) {
                   case 'profile':
                         return <div className="pointer-events-none"></div>
                   case 'groups':
-                        return <GroupAddOutlinedIcon />
+                        return <GroupAddOutlinedIcon className="dark:text-dark-primary-text"/>
                   default:
                         return <PersonAddIcon />
             }

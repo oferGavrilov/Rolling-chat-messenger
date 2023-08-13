@@ -43,7 +43,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
             } else if (message.messageType === 'audio') {
                   return (
                         <div className="relative">
-                              <audio controls={true}>
+                              <audio controls={true} className="max-w-[200px] md:max-w-none">
                                     <source src={message.content.toString()} type="audio/webm" />
                               </audio>
                               <img src={message.sender.profileImg} className="w-8 h-8 rounded-full object-cover object-top absolute -left-11 top-1" alt="" />

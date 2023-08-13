@@ -21,7 +21,7 @@ export default function Info ({ conversationUser, setChatMode, messages }: Props
                   {selectedChat?.isGroupChat ?
                         (<GroupInfo />) :
                         (<ChatInfo conversationUser={conversationUser} messages={messages} />)}
-                  <CloseIcon className="absolute top-0 right-5 dark:text-dark-primary-text cursor-pointer !text-2xl md:!text-3xl" onClick={() => setChatMode('chat')} />
+                  <CloseIcon className="absolute top-5 right-5 dark:text-dark-primary-text cursor-pointer !text-2xl md:!text-3xl" onClick={() => setChatMode('chat')} />
             </div>
       )
 }

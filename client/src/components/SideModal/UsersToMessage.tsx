@@ -51,9 +51,9 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
 
       return (
             <Typography variant="h6" component='div' className="relative">
-                  <div className='flex justify-between items-center py-4 px-4 shadow-lg shadow-gray-100'>
-                        <h2 className="">Search Users</h2>
-                        <CloseIcon className='cursor-pointer' fontSize="medium" onClick={() => {
+                  <div className='flex justify-between items-center py-4 px-4 shadow-lg shadow-gray-100 dark:shadow-dark-primary-bg'>
+                        <h2 className="dark:text-dark-primary-text">Search Users</h2>
+                        <CloseIcon className='cursor-pointer dark:text-dark-primary-text' fontSize="medium" onClick={() => {
                               setFilter('')
                               setIsOpen(false)
                         }} />
@@ -68,11 +68,11 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
                         {(filteredUsers.length > 0 && !isLoading) && (
                               <ul className='flex flex-col main-text px-4 md:px-8 gap-y-4 py-8'>
                                     {filteredUsers.map((user: IUser) => (
-                                          <li key={user._id} onClick={() => onSelectChat(user._id)} className='custom-hover text-main-color py-2 px-4 rounded-lg bg-[#dee2e6]'>
+                                          <li key={user._id} onClick={() => onSelectChat(user._id)} className='text-main-color cursor-pointer dark:text-dark-primary-text dark:bg-dark-tertiary-bg py-2 px-4 rounded-lg bg-white'>
                                                 <div className='flex gap-x-4 items-center'>
                                                       <img className='w-10 h-10 md:w-12 md:h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
                                                       <div>
-                                                            <span className='md:text-xl'>{user.username}</span>
+                                                            <span className='md:text-xl font-semibold'>{user.username}</span>
                                                             <p className='cut-text text-lg max-w-[270px]'>
                                                                   <span className='font-bold'>Email: </span>
                                                                   {user.email}</p>

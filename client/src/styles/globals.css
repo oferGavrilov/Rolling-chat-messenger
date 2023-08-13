@@ -25,7 +25,7 @@
       *::-webkit-scrollbar-thumb {        
         box-shadow: inset 0 0 0 5px #d9dedb90  ;
       }
-      
+
       :focus-visible {
             outline: none;
       }
@@ -75,7 +75,7 @@
             @apply flex justify-center h-11 md:h-12 text-primary dark:text-dark-primary-text my-1 mx-3 md:mx-[9px] items-center  rounded-[20px] cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-dark-secondary-bg;
       }
       .active-side-icon {
-            @apply bg-primary dark:bg-dark-primary-bg text-white  hover:bg-[#2286c9];
+            @apply bg-primary dark:bg-dark-secondary-bg text-white  hover:bg-[#2286c9];
             box-shadow: 0 6px 9px 3px #95c1df;
             @apply dark:shadow-dark;
 

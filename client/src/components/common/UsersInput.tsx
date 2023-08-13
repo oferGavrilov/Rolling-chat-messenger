@@ -12,7 +12,7 @@ export default function UsersInput ({ filter, setFilter , placeholder}: Props): 
                   <input
                         type="text"
                         autoFocus
-                        className="w-full h-10 md:h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6294f1] focus:border-transparent"
+                        className="w-full h-10 md:h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-dark-primary-bg focus:border-transparent"
                         placeholder={placeholder}
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}

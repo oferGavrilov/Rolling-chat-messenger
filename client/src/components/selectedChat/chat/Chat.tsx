@@ -203,7 +203,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                         style={{ background: chatBackgroundColor }}
                   >
                         <div
-                              className='absolute right-0 top-0 overflow-auto w-full h-full scroll-smooth'
+                              className='absolute right-0 top-0 overflow-auto w-full min-h-full scroll-smooth'
                               style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
                               ref={chatRef}
 
@@ -239,7 +239,7 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                                     </div>
                               ) : (
                                     <button disabled={isMessageEmpty} type='submit'
-                                          className={`text-primary ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary hover:text-white p-2 rounded-lg
+                                          className={`text-primary dark:text-dark-primary-text ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary dark:hover:bg-dark-primary-bg hover:text-white p-2 rounded-lg
                                     ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed  ' : ''}`
                                           }>
                                           Send
