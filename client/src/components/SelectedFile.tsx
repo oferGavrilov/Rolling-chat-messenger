@@ -63,7 +63,7 @@ export default function SelectedFile (): JSX.Element {
       return (
             <div className='flex flex-col fixed top-0 left-0 w-full'>
                   <div className='bg-gray-800 dark:bg-dark-primary-bg'>
-                        <div className='flex justify-between px-4 py-3 items-center text-white' ref={headerDivRef}>
+                        <div className='flex justify-between px-4 py-2 items-center text-white' ref={headerDivRef}>
                               <div className='flex items-center gap-x-3'>
                                     <ToolTip title="Close" arrow placement='bottom'>
                                           <div className='tools-icon' onClick={() => setSelectedFile(null)}>
@@ -94,7 +94,7 @@ export default function SelectedFile (): JSX.Element {
                   <section className='h-screen w-screen flex flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
                         <div className='flex justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
                               {isImage ? (
-                                    <img src={selectedFile?.content?.toString()} className='max-w-sm md:max-w-md lg:max-w-lg max-h-[700px] object-cover' alt='' />
+                                    <img src={selectedFile?.content?.toString()} className='max-w-full md:max-w-md lg:max-w-lg max-h-[700px] object-cover' alt='' />
                                     ): (
                                           <iframe
                                                 src={selectedFile?.content?.toString()}

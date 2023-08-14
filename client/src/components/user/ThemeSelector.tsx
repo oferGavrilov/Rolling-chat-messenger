@@ -23,7 +23,7 @@ export default function ThemeSelector ({ settings }: Props): JSX.Element {
       }
 
       return (
-            <div className={`bg-gray-100 dark:bg-dark-secondary-bg relative overflow-hidden transition-all duration-300 ease-in-out px-4 py-4 rounded-b-lg
+            <div className={`bg-gray-100 dark:bg-dark-secondary-bg relative overflow-hidden transition-all duration-300 ease-in-out p-2 md:p-4 rounded-b-lg
                     ${settings === 'theme' ? 'max-h-[400px]' : 'max-h-0  !py-0 '}`}>
 
                   <div className='flex rounded-full justify-center bg-gray-400 w-max mx-auto text-white'>

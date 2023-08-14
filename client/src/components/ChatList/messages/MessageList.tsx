@@ -57,7 +57,7 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
             setChats([chat, ...chats])
       }
       return (
-            <ul className="overflow-y-auto h-screen pb-48 px-1">
+            <ul className="overflow-y-auto pb-48 px-1">
                   {chats.map(chat => (
                         <MessagePreview key={chat._id} chat={chat} notification={notification} />
                   ))}

@@ -12,6 +12,8 @@ import { scrollToBottom } from '../../../utils/functions'
 import { uploadAudio } from '../../../utils/cloudinary'
 import AudioRecorder from './AudioRecorder'
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+
 interface Props {
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
       setChatMode: React.Dispatch<React.SetStateAction<string>>
@@ -37,12 +39,14 @@ export default function Chat ({
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
+      const [isChatScrolledToBottom, setIsChatScrolledToBottom] = useState(false)
 
       const { selectedChat } = useChat()
       const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
       const typingTimeoutRef = useRef<Timer | null>(null)
+      const scrollToBottomRef = useRef<HTMLDivElement>(null)
 
       const [isRecording, setIsRecording] = useState(false)
 
@@ -72,6 +76,19 @@ export default function Chat ({
 
             fetchData()
       }, [selectedChat])
+
+      useEffect(() => {
+            const handleScroll = () => {
+                const { scrollTop, scrollHeight, clientHeight } = chatRef.current!
+                setIsChatScrolledToBottom(scrollHeight - scrollTop <= clientHeight)
+            }
+        
+            chatRef.current?.addEventListener('scroll', handleScroll)
+        
+            return () => {
+                chatRef.current?.removeEventListener('scroll', handleScroll)
+            }
+        }, [])
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {
             e.preventDefault()
@@ -158,13 +175,13 @@ export default function Chat ({
                         </div>
                   </div>
 
-                  <div className='h-16 flex items-center md:pl-4 gap-x-3 overflow-x-hidden'>
+                  <div className='min-h-[64px] flex items-center md:pl-4 gap-x-3 overflow-x-hidden'>
                         {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
                               {!isRecording && (
                                     <textarea
-                                          className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto'
+                                          className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto focus:my-4'
                                           placeholder='Type a message...'
                                           value={newMessage}
                                           onChange={typingHandler}
@@ -187,6 +204,10 @@ export default function Chat ({
                                     </button>
                               )}
                         </form>
+                  </div>
+
+                  <div ref={scrollToBottomRef} className={`absolute right-2 bottom-20 h-10 w-10 rounded-full flex items-center justify-center bg-[#0000005a] text-white cursor-pointer ${isChatScrolledToBottom ? 'hidden' : ''}`} onClick={() => scrollToBottom(chatRef)}>
+                        <KeyboardArrowDownIcon />
                   </div>
             </>
 

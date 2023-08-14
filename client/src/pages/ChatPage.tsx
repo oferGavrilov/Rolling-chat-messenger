@@ -63,12 +63,14 @@ export default function ChatPage (): JSX.Element {
                   {selectedFile && (
                         <SelectedFile />
                   )}
+
                   <SearchUsers
                         contentType={contentType}
                         isAddNewGroup={true}
                         isOpen={showSearch}
                         setIsOpen={setShowSearch}
                   />
+
             </div>
       );
 

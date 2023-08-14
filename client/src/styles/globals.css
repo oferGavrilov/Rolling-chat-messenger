@@ -100,7 +100,7 @@
             @apply w-24 h-28  rounded-xl cursor-pointer ;
       }
       .theme-options {
-            @apply flex items-center gap-x-1 py-3 px-4 transition-colors duration-200 cursor-pointer hover:bg-secondary dark:hover:bg-dark-tertiary-bg;
+            @apply flex items-center gap-x-1 py-2 md:py-3 px-4 transition-colors duration-200 cursor-pointer text-sm md:text-base hover:bg-secondary dark:hover:bg-dark-tertiary-bg;
       }
 
       /* Chat */
