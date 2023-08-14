@@ -102,7 +102,7 @@ export function formatLastSeenDate (timestamp: string): string {
 }
 
 export function formatRecordTimer (timeInMilliseconds: number): string {
-  if (!timeInMilliseconds) return ''
+  if (timeInMilliseconds === 0) return '00:00'
 
   const totalSeconds = Math.floor(timeInMilliseconds / 1000);
   const minutes = Math.floor(totalSeconds / 60);

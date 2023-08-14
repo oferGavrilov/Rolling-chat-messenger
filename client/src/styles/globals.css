@@ -122,6 +122,11 @@
       .content-preview {
             @apply text-gray-400 mx-1;
       }
+
+      /* AudioRecorder */
+      .record-icon {
+            @apply w-10 h-10 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 dark:hover:bg-dark-tertiary-bg;
+      }
 }
 
 @layer utilities{

@@ -151,7 +151,6 @@ export default function Messenger (): JSX.Element {
                   }
                   updatedChats.splice(chatToUpdateIndex, 1)
                   updatedChats.unshift(updatedChat)
-                  console.log(updatedChats)
                   setChats([...updatedChats])
             }
       }

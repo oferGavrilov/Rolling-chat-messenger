@@ -7,12 +7,10 @@ import ChatMessages from './ChatMessages'
 import { AuthState } from '../../../context/useAuth'
 import socketService from '../../../services/socket.service'
 import AddFileModal from './AddFileModal'
-import { formatRecordTimer, scrollToBottom } from '../../../utils/functions'
+import { scrollToBottom } from '../../../utils/functions'
 
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
-
-import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline'
 import { uploadAudio } from '../../../utils/cloudinary'
+import AudioRecorder from './AudioRecorder'
 
 interface Props {
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
@@ -47,11 +45,6 @@ export default function Chat ({
       const typingTimeoutRef = useRef<Timer | null>(null)
 
       const [isRecording, setIsRecording] = useState(false)
-      const [recordTimer, setRecordTimer] = useState(0)
-
-      const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-      const chunksRef = useRef<Blob[]>([])
-      const startTimeRef = useRef<Timer | null>(null)
 
       useEffect(() => {
             const handleTyping = () => setIsTyping(true)
@@ -136,71 +129,12 @@ export default function Chat ({
             }, timerLength)
       }
 
-      useEffect(() => {
-            let timerId
-            if (isRecording) {
-                  startTimeRef.current = performance.now()
-                  timerId = setInterval(() => {
-                        if (startTimeRef.current !== null) {
-                              const elapsedTime = performance.now() - +startTimeRef.current
-                              setRecordTimer(Math.floor(elapsedTime))
-                        }
-                  }, 1000)
-            } else {
-                  clearInterval(timerId)
-                  if (startTimeRef.current !== null) {
-                        const elapsedTime = performance.now() - +startTimeRef.current
-                        setRecordTimer(Math.floor(elapsedTime))
-                  }
-                  startTimeRef.current = null
-            }
-
-            return () => clearInterval(timerId)
-      }, [isRecording])
-
-      const handleRecord = async () => {
-            if (!isRecording) {
-                  try {
-                        chunksRef.current = []
-                        setRecordTimer(0)
-
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-                        mediaRecorderRef.current = new MediaRecorder(stream)
-
-                        mediaRecorderRef.current.ondataavailable = (e) => {
-                              if (e.data.size > 0) {
-                                    chunksRef.current.push(e.data)
-                              }
-                        }
-
-                        mediaRecorderRef.current.onstop = async () => {
-                              const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
-                              setIsRecording(false)
-
-                              try {
-                                    const url = await uploadAudio(audioBlob)
-                                    if (url !== undefined) {
-                                          console.log(recordTimer)
-                                          onSendMessage(url, 'audio', recordTimer)
-                                          console.log(url)
-                                    }
-                              } catch (err) {
-                                    console.log(err)
-                              }
-
-                              mediaRecorderRef.current = null
-                              stream.getTracks().forEach((track) => track.stop())
-                        }
-
-                        mediaRecorderRef.current.start()
-
-                        setIsRecording(true)
-                  } catch (error) {
-                        console.error('Error accessing media devices:', error)
-                        setIsRecording(false)
-                  }
-            } else {
-                  mediaRecorderRef.current?.stop()
+      const handleSendAudio = async (audioBlob: Blob, recordingTimer: number): Promise<void> => {
+            try {
+                  const url = await uploadAudio(audioBlob)
+                  onSendMessage(url, 'audio', recordingTimer)
+            } catch (error) {
+                  console.error('Error uploading audio:', error)
             }
       }
 
@@ -224,11 +158,11 @@ export default function Chat ({
                         </div>
                   </div>
 
-                  <div className='py-3 flex items-center md:px-4 gap-x-3 overflow-x-hidden'>
-                        <AddFileModal setFile={setFile} setChatMode={setChatMode} />
+                  <div className='h-16 flex items-center md:pl-4 gap-x-3 overflow-x-hidden'>
+                        {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
-                              {!isRecording ? (
+                              {!isRecording && (
                                     <textarea
                                           className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto'
                                           placeholder='Type a message...'
@@ -240,18 +174,10 @@ export default function Chat ({
                                                 }
                                           }}
                                     />
-                              ) : (
-                                    <p>{formatRecordTimer(recordTimer)}</p>
                               )}
 
                               {isMessageEmpty ? (
-                                    <div onClick={handleRecord}>
-                                          {isRecording ? (
-                                                <PauseCircleOutlineIcon className="text-red-500" />
-                                          ) : (
-                                                <KeyboardVoiceIcon className='text-gray-500 dark:text-gray-200 mx-4 md:ml-4 md:mx-0 !transition-colors duration-300 cursor-pointer dark:hover:text-dark-primary-text hover:text-gray-700' />
-                                          )}
-                                    </div>
+                                    <AudioRecorder onSendAudio={handleSendAudio} isRecording={isRecording} setIsRecording={setIsRecording} />
                               ) : (
                                     <button disabled={isMessageEmpty} type='submit'
                                           className={`text-primary dark:text-dark-primary-text ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary dark:hover:bg-dark-primary-bg hover:text-white p-2 rounded-lg
