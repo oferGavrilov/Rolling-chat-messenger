@@ -19,7 +19,7 @@ export default function Messages ({ contentType }: MessagesProps) {
 
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [filter, setFilter] = useState<string>('')
-      const [sort, setSort] = useState<string>('Newest')
+      const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
 
 
@@ -32,9 +32,14 @@ export default function Messages ({ contentType }: MessagesProps) {
 
       const filteredChats = useMemo(() => {
             if (filter) {
-                  return chats.filter((chat: IChat) =>
-                        chat.users.some((user: IUser) => user._id !== loggedinUser?._id && user.username.toLowerCase().includes(filter.toLowerCase()))
-                  )
+                  const filterRegex = new RegExp(filter, 'i') // 'i' flag makes the search case-insensitive
+
+                  return chats.filter((chat: IChat) => {
+                        const includesUsername = chat.users.some((user: IUser) => user._id !== loggedinUser?._id && filterRegex.test(user.username))
+                        const includesGroupName = filterRegex.test(chat.chatName|| '')
+
+                        return includesUsername || includesGroupName
+                  })
             }
             if (contentType === 'groups') {
                   return chats.filter((chat: IChat) => chat.isGroupChat)
@@ -43,7 +48,9 @@ export default function Messages ({ contentType }: MessagesProps) {
                   if (sort === 'Newest') {
                         return chats.sort((a: IChat, b: IChat) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
                   }
-                  return chats.sort((a: IChat, b: IChat) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())
+                  else if (sort === 'Oldest') {
+                        return chats.sort((a: IChat, b: IChat) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())
+                  }
             }
             return chats
       }, [chats, filter, contentType, loggedinUser, sort])
@@ -59,9 +66,9 @@ export default function Messages ({ contentType }: MessagesProps) {
             }
 
             loadChats()
-      }, [setChats])
+      }, [])
 
-      function onSetSort (type: string) {
+      function onSetSort (type: 'Newest' | 'Oldest' | null) {
             setSort(type)
             setShowSortModal(false)
       }
@@ -74,7 +81,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                         Sort by
                         <div className='px-2 relative'>
                               <span className={`flex items-center text-primary dark:text-dark-tertiary-text font-semibold cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
-                                    {sort}
+                                    {!sort ? 'None' : sort}
                                     <KeyboardArrowUpRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? 'rotate-180' : ''} `} />
                               </span>
 
@@ -85,6 +92,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                               >
                                     <li className={`sort-option border-b border-white ${sort === 'Newest' && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort('Newest')}>Newest</li>
                                     <li className={`sort-option ${sort === 'Oldest' && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
+                                    <li className={`sort-option ${!sort && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort(null)}>None</li>
                               </ul>
                         </div>
                   </div>

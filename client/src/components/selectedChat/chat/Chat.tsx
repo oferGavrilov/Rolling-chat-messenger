@@ -22,16 +22,25 @@ interface Props {
       setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>
       fetchMessages: () => Promise<void>
       onSendMessage: (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number) => Promise<void>
+      setChatOnTop: (message: IMessage) => void
 }
 type Timer = NodeJS.Timeout | number
 
-export default function Chat ({ setIsTyping, setChatMode, setFile, messages, setMessages, fetchMessages, onSendMessage }: Props): JSX.Element {
+export default function Chat ({
+      setIsTyping,
+      setChatMode,
+      setFile,
+      messages,
+      setMessages,
+      fetchMessages,
+      onSendMessage,
+      setChatOnTop }: Props): JSX.Element {
 
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
 
-      const { selectedChat, setChatOnTop } = useChat()
+      const { selectedChat } = useChat()
       const { user, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
@@ -220,17 +229,17 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
                               {!isRecording ? (
-                                          <textarea
-                                                className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto'
-                                                placeholder='Type a message...'
-                                                value={newMessage}
-                                                onChange={typingHandler}
-                                                onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                                                      if (e.key === 'Enter' && !e.shiftKey) {
-                                                            handleSubmit(e)
-                                                      }
-                                                }}
-                                          />
+                                    <textarea
+                                          className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto'
+                                          placeholder='Type a message...'
+                                          value={newMessage}
+                                          onChange={typingHandler}
+                                          onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                      handleSubmit(e)
+                                                }
+                                          }}
+                                    />
                               ) : (
                                     <p>{formatRecordTimer(recordTimer)}</p>
                               )}

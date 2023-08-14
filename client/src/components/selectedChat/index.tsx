@@ -21,7 +21,7 @@ export default function Messenger (): JSX.Element {
       const [isTyping, setIsTyping] = useState<boolean>(false)
       const [messages, setMessages] = useState<IMessage[]>([])
 
-      const { selectedChat, setSelectedChat, addNotification, updateChat, setChatOnTop } = useChat()
+      const { selectedChat, setSelectedChat, addNotification, updateChat, chats, setChats } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
@@ -140,6 +140,22 @@ export default function Messenger (): JSX.Element {
             }
       }
 
+      function setChatOnTop (message: IMessage) {
+            const chatToUpdateIndex = chats.findIndex((chat) => chat._id === message.chat._id)
+
+            if (chatToUpdateIndex !== -1) {
+                  const updatedChats = [...chats]
+                  const updatedChat = {
+                        ...updatedChats[chatToUpdateIndex],
+                        latestMessage: message,
+                  }
+                  updatedChats.splice(chatToUpdateIndex, 1)
+                  updatedChats.unshift(updatedChat)
+                  console.log(updatedChats)
+                  setChats([...updatedChats])
+            }
+      }
+
       if (!selectedChat) return <div></div>
       return (
             <section className='flex-1 messenger slide-left overflow-y-hidden dark:bg-dark-secondary-bg'>
@@ -182,6 +198,7 @@ export default function Messenger (): JSX.Element {
                               setMessages={setMessages}
                               fetchMessages={fetchMessages}
                               onSendMessage={onSendMessage}
+                              setChatOnTop={setChatOnTop}
                         />
                   )}
                   {chatMode === 'info' && (
