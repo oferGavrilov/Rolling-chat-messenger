@@ -74,16 +74,27 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             addNotification: (newNotification) => {
                   set((state) => {
                         const currentNotification = state.notification
-                        const existingChatIndex = currentNotification.findIndex(
-                              (notificationItem) => notificationItem.chat._id === newNotification.chat._id
-                        )
+                        const existingChatIndex = currentNotification.findIndex((notificationItem) => notificationItem.chat._id === newNotification.chat._id)
                         let updatedNotification
                         if (existingChatIndex !== -1) {
                               updatedNotification = [...currentNotification]
+                              updatedNotification[existingChatIndex].content = newNotification.content
                               updatedNotification[existingChatIndex].count += 1
                         } else {
                               updatedNotification = [...currentNotification, { ...newNotification, count: 1 }]
                         }
+
+                        const chatToUpdate = state.chats.find((chat) => chat._id === newNotification.chat._id);
+                        const updatedChatToUpdate = {
+                              ...chatToUpdate,
+                              latestMessage: {
+                                    ...chatToUpdate?.latestMessage,
+                                    content: newNotification.content,
+                              },
+                        };
+                        const updatedChats = state.chats.map((chat) => (chat._id === chatToUpdate?._id ? updatedChatToUpdate : chat));
+                        state.setChats(updatedChats as IChat[]);
+
                         localStorage.setItem('notification', JSON.stringify(updatedNotification))
                         return { notification: updatedNotification }
                   })

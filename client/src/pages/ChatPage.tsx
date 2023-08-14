@@ -44,7 +44,7 @@ export default function ChatPage (): JSX.Element {
       if (!user) return <div></div>
       return (
             <div>
-                  <div className='flex h-screen slide-right md:overflow-y-hidden' >
+                  <div className='flex h-screen slide-right md:overflow-y-hidden dark:bg-dark-chat-bg' >
                         <Navigation
                               contentType={contentType}
                               setContentType={setContentType}

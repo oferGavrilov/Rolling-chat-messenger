@@ -66,19 +66,20 @@ export default function MessagePreview ({ chat, notification }: Props) {
             } else if (chat.isGroupChat && chat.latestMessage) {
                   sender = chat.latestMessage?.sender?.username + ': ' || ''
             }
-           
+
             if (chat.latestMessage?.messageType === 'text') {
                   content = chat.latestMessage?.content?.toString()
+
             } else if (chat.latestMessage?.messageType === 'image') {
                   content = (
                         <>
-                              Image <Image fontSize="small" className='content-preview'/>
+                              Image <Image fontSize="small" className='content-preview' />
                         </>
                   )
             } else if (chat.latestMessage?.messageType === 'audio') {
                   content = (
                         <>
-                              Audio <Audiotrack fontSize="small" className='content-preview'/>
+                              Audio <Audiotrack fontSize="small" className='content-preview' />
                         </>
                   )
             } else if (chat.latestMessage?.messageType === 'file') {
@@ -135,12 +136,10 @@ export default function MessagePreview ({ chat, notification }: Props) {
                               </div>
                               <div className='flex justify-between'>
                                     <div
-                                          className={`text-base h-6 truncate max-h-[24px] max-w-[260px] overflow-hidden whitespace-nowrap flex items-center
-                                                      ${isNotification() ?
-                                                      'text-blue-500' :
-                                                      'text-[#00000085] dark:text-dark-primary-text'
-                                                }`}>
-                                                {getLatestMessage()}
+                                          className={`text-base h-6 max-h-[24px] max-w-[260px] inline-block ellipsis-text
+                                           ${isNotification() ? 'text-blue-500' : 'text-[#00000085] dark:text-dark-primary-text'}`}
+                                    >
+                                          {getLatestMessage()}
                                     </div>
                                     {isNotification() && <span className='bg-blue-400 text-white text-sm flex items-center h-[90%] w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>

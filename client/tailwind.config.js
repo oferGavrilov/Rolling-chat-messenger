@@ -28,6 +28,7 @@ export default {
         'dark-black-text':'#081c15',
         'dark-hover-color':'#1b4332',
         'dark-navigation-bg':'#1b4332',
+        'dark-chat-bg':'#008F7A',
         'light-navigation-bg':'#FAFAFA',
         'bg-light-primary':'#ffffff',
         'primary': '#0099ff',

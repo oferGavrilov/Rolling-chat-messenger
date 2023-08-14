@@ -43,6 +43,7 @@ export default function Messenger (): JSX.Element {
       useEffect(() => {
             socketService.on('message received', (newMessage: IMessage) => {
                   if (selectedChat?._id !== newMessage.chat._id) {
+                        console.log(newMessage)
                         addNotification(newMessage)
                         return
                   }
@@ -51,7 +52,6 @@ export default function Messenger (): JSX.Element {
 
                   updateChat(newMessage)
 
-                  // scrollToBottom()
             })
 
             return () => {

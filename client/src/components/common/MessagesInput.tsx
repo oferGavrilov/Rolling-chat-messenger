@@ -15,7 +15,7 @@ export default function MessagesInput ({ filter, setFilter }: Props) {
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         placeholder="Search"
-                        className="bg-[#f4f2f2] h-10 w-full px-12 rounded-xl text-lg placeholder:text-lg border-2 border-gray-100 focus:border-blue-400 focus-visible:outline-none"
+                        className="bg-[#f4f2f2] h-10 w-full text-black px-12 rounded-xl text-lg placeholder:text-lg border-2 border-gray-100 focus:border-blue-400 focus-visible:outline-none"
                   />
                   <BsSearch
                         size={16}
@@ -24,7 +24,7 @@ export default function MessagesInput ({ filter, setFilter }: Props) {
                   <AiOutlineArrowDown
                         onClick={() => setFilter('')}
                         size={20}
-                        className={`absolute top-[1.7rem] right-[1.7rem] text-primary opacity-0 pointer-events-none cursor-pointer ${filter ? 'custom-rotate pointer-events-auto opacity-100' : 'reverse-rotate'}`} />
+                        className={`absolute top-[1.7rem] right-[1.7rem] text-primary dark:text-dark-tertiary-text opacity-0 pointer-events-none cursor-pointer ${filter ? 'custom-rotate pointer-events-auto opacity-100' : 'reverse-rotate'}`} />
             </div>
       )
 }

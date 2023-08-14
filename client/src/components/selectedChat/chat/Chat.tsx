@@ -220,7 +220,6 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
                               {!isRecording ? (
-                                    <>
                                           <textarea
                                                 className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto'
                                                 placeholder='Type a message...'
@@ -228,13 +227,10 @@ export default function Chat ({ setIsTyping, setChatMode, setFile, messages, set
                                                 onChange={typingHandler}
                                                 onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                                                       if (e.key === 'Enter' && !e.shiftKey) {
-                                                            e.preventDefault(); // Prevent newline character
-                                                            handleSubmit(e); // Call handleSubmit function
+                                                            handleSubmit(e)
                                                       }
                                                 }}
                                           />
-                                          <div className='scrollbar' />
-                                    </>
                               ) : (
                                     <p>{formatRecordTimer(recordTimer)}</p>
                               )}

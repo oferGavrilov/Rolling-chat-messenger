@@ -145,7 +145,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                                                 <img className='w-12 h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
                                                 <div>
                                                       <span className='text-xl'>{user.username}</span>
-                                                      <p className='cut-text text-lg max-w-[270px]'>
+                                                      <p className='ellipsis-text text-lg max-w-[270px]'>
                                                             <span className='font-bold'>Email: </span>
                                                             {user.email}</p>
                                                 </div>

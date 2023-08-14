@@ -1,12 +1,12 @@
 import { IMessage } from "./message.model"
-import { User } from "./user.model"
+import { IUser } from "./user.model"
 
 export interface IChat {
       _id: string
       chatName: string
       isGroupChat: boolean
-      users: User[]
-      groupAdmin?: User
+      users: IUser[]
+      groupAdmin?: IUser
       groupImage?: string
       latestMessage: IMessage 
       createdAt: string
