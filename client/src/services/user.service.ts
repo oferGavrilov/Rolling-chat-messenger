@@ -63,7 +63,7 @@ async function createChat (userId: string): Promise<IChat> {
 }
 
 async function loginSignUp (credentials: FormData, login: boolean): Promise<IUser> {
-      console.log(BASE_URL)
+      console.log('base url', BASE_URL)
       const path = login ? '/api/auth/login' : '/api/auth/signup'
       const config = getConfig()
 

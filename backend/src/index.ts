@@ -31,10 +31,6 @@ app.use(cookieParser())
 const currentFilePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(currentFilePath)
 
-app.use('/', (req, res) => {
-      res.send('Hello World!')
-})
-
 console.log('environment',process.env.NODE_ENV)
 
 if (process.env.NODE_ENV === 'production') {
