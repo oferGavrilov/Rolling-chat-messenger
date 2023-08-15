@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { connectDB } from '../config/db.js';
-import { logger } from '../services/logger.service.js';
+// import { logger } from '../services/logger.service.js'
 import { notFound } from '../middleware/errorMiddleware.js';
 import { errorHandler } from '../middleware/errorMiddleware.js';
 import { router as userRoutes } from '../api/user/router.js';
@@ -50,6 +50,6 @@ setupSocketAPI(server);
 app.use(notFound);
 app.use(errorHandler);
 const port = process.env.PORT || 5000;
-server.listen(port, () => logger.info(`Server running on port ${port}!`));
+server.listen(port, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}`));
 export default app;
 //# sourceMappingURL=index.js.map
