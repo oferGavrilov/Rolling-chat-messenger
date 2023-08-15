@@ -7,11 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { User } from "../../models/user.model";
-import { Chat } from "../../models/chat.model";
+import { User } from "../../models/user.model.js";
+import { Chat } from "../../models/chat.model.js";
 import { Types } from "mongoose";
-import { handleErrorService } from "../../middleware/errorMiddleware";
-import { Message } from "../../models/message.model";
+import { handleErrorService } from "../../middleware/errorMiddleware.js";
+import { Message } from "../../models/message.model.js";
 export function createChatService(userId, currentUser) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('createChatService', userId, currentUser);

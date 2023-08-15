@@ -1,8 +1,8 @@
-import { generateToken } from "../../config/generateToken"
+import { generateToken } from "../../config/generateToken.js"
 import type { Response, Request } from "express"
-import type { AuthenticatedRequest } from "../../models/types"
-import { editUserDetailsService, editUserImageService, getUsersService, loginUser, searchUsers, signUpUser, updateUserStatus } from "./service"
-import { handleErrorService } from "../../middleware/errorMiddleware"
+import type { AuthenticatedRequest } from "../../models/types.js"
+import { editUserDetailsService, editUserImageService, getUsersService, loginUser, searchUsers, signUpUser, updateUserStatus } from "./service.js"
+import { handleErrorService } from "../../middleware/errorMiddleware.js"
 
 export async function signUp (req: AuthenticatedRequest, res: Response) {
       const { username, email, password, profileImg } = req.body

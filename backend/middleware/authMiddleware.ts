@@ -1,8 +1,8 @@
 import jwt, { type Secret } from 'jsonwebtoken'
-import { User } from '../models/user.model'
+import { User } from '../models/user.model.js'
 import type { Response, NextFunction } from 'express'
 import type { AuthenticatedRequest } from '../models/types.js'
-import { Chat } from '../models/chat.model'
+import { Chat } from '../models/chat.model.js'
 
 interface DecodedToken extends jwt.JwtPayload {
       id: string

@@ -7,16 +7,16 @@ import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 
 import { fileURLToPath } from 'url'
-import { connectDB } from '../config/db'
-import { logger } from '../services/logger.service'
+import { connectDB } from '../config/db.js'
+import { logger } from '../services/logger.service.js'
 
-import { notFound } from '../middleware/errorMiddleware'
-import { errorHandler } from '../middleware/errorMiddleware'
+import { notFound } from '../middleware/errorMiddleware.js'
+import { errorHandler } from '../middleware/errorMiddleware.js'
 
-import { router as userRoutes } from '../api/user/router'
-import { router as chatRoutes } from '../api/chat/router'
-import { router as messageRoutes } from '../api/message/router'
-import { setupSocketAPI } from '../services/socket.service'
+import { router as userRoutes } from '../api/user/router.js'
+import { router as chatRoutes } from '../api/chat/router.js'
+import { router as messageRoutes } from '../api/message/router.js'
+import { setupSocketAPI } from '../services/socket.service.js'
 
 const app = express()
 dotenv.config()

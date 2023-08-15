@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user.model';
-import { Chat } from '../models/chat.model';
+import { User } from '../models/user.model.js';
+import { Chat } from '../models/chat.model.js';
 export function protect(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let token;

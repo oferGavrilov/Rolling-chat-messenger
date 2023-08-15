@@ -1,5 +1,5 @@
 import express from 'express';
-import { admin, protect } from '../../middleware/authMiddleware';
+import { admin, protect } from '../../middleware/authMiddleware.js';
 import { updateUsersInGroupChat, createChat, createGroupChat, getUserChats, removeFromGroupChat, renameGroupChat, updateGroupImage, removeChat } from './controller';
 export const router = express.Router();
 router.post('/', protect, createChat);

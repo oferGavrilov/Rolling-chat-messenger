@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { asyncLocalStorage } from './als.service'
+import { asyncLocalStorage } from './als.service.js'
 
 const logsDir = './logs'
 if (!fs.existsSync(logsDir)) {

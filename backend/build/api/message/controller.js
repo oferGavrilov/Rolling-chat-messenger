@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { getAllMessagesByChatId, sendMessageService } from "./service";
-import { handleErrorService } from "../../middleware/errorMiddleware";
+import { getAllMessagesByChatId, sendMessageService } from "./service.js";
+import { handleErrorService } from "../../middleware/errorMiddleware.js";
 export function sendMessage(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {

@@ -1,9 +1,9 @@
 
 import type { Response } from 'express'
-import type { User } from '../../models/user.model'
+import type { User } from '../../models/user.model.js'
 import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service'
-import { handleErrorService } from '../../middleware/errorMiddleware'
-import { RequestChat } from '../../models/chat.model'
+import { handleErrorService } from '../../middleware/errorMiddleware.js'
+import { RequestChat } from '../../models/chat.model.js'
 
 export async function createChat (req: RequestChat, res: Response) {
       const { userId } = req.body

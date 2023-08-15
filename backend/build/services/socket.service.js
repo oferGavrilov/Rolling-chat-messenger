@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
-import { logger } from './logger.service';
-import { updateUserStatus } from '../api/user/service';
+import { logger } from './logger.service.js';
+import { updateUserStatus } from '../api/user/service.js';
 let gIo = null;
 const activeUsers = new Map();
 const INACTIVITY_THRESHOLD = 15 * 60 * 1000; // 15 minute 

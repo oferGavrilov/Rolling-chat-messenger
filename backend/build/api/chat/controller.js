@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service';
-import { handleErrorService } from '../../middleware/errorMiddleware';
+import { handleErrorService } from '../../middleware/errorMiddleware.js';
 export function createChat(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { userId } = req.body;

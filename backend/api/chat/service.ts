@@ -1,8 +1,8 @@
-import { User } from "../../models/user.model"
-import { Chat, type ChatDocument } from "../../models/chat.model"
+import { User } from "../../models/user.model.js"
+import { Chat, type ChatDocument } from "../../models/chat.model.js"
 import { Types, type PopulateOptions } from "mongoose"
-import { handleErrorService } from "../../middleware/errorMiddleware"
-import { Message } from "../../models/message.model"
+import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import { Message } from "../../models/message.model.js"
 
 export async function createChatService (userId: string, currentUser: User): Promise<ChatDocument> {
       console.log('createChatService' , userId, currentUser)

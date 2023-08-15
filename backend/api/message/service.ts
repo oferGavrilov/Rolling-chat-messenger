@@ -1,6 +1,6 @@
-import { IMessage, Message } from "../../models/message.model"
-import { Chat } from "../../models/chat.model"
-import { handleErrorService } from "../../middleware/errorMiddleware"
+import { IMessage, Message } from "../../models/message.model.js"
+import { Chat } from "../../models/chat.model.js"
+import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { PopulatedDoc } from "mongoose"
 
 export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string, messageSize?: number) {

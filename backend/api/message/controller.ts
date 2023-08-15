@@ -1,8 +1,8 @@
 import type { Response, Request } from "express"
 
-import { getAllMessagesByChatId, sendMessageService } from "./service"
-import { handleErrorService } from "../../middleware/errorMiddleware"
-import { RequestMessage } from "../../models/message.model"
+import { getAllMessagesByChatId, sendMessageService } from "./service.js"
+import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import { RequestMessage } from "../../models/message.model.js"
 
 export async function sendMessage (req: RequestMessage, res: Response) {
       const { content, chatId, messageType, messageSize } = req.body
