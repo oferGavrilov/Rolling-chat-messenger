@@ -35,13 +35,13 @@ app.use('/', (req, res) => {
       res.send('Hello World!')
 })
 
-console.log(process.env.NODE_ENV)
+console.log('environment',process.env.NODE_ENV)
 
 if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.resolve(__dirname, '../build')))
 
       const corsOptions = {
-            origin: ['https://rolling-chat-messenger.vercel.app'],
+            origin: 'https://rolling-chat-messenger.vercel.app',
             credentials: true,
       }
       app.use(cors(corsOptions))
