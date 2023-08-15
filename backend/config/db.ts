@@ -4,8 +4,8 @@ let connection: Mongoose | null = null
 
 export const connectDB = async (): Promise<void> => {
       console.log('Connecting to MongoDB...')
-      console.log('Node Env', process.env.NODE_ENV)
       console.log('MongoUri', process.env.MONGO_ATLAS_URI)
+      
       try {
             let mongoURI
             if (process.env.NODE_ENV === 'production') {
