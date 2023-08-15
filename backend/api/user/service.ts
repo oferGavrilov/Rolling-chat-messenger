@@ -1,6 +1,6 @@
-import { User } from "../../models/user.model"
-import { generateToken } from "../../config/generateToken"
-import { handleErrorService } from "../../middleware/errorMiddleware"
+import { User } from "../../models/user.model.js"
+import { generateToken } from "../../config/generateToken.js"
+import { handleErrorService } from "../../middleware/errorMiddleware.js"
 
 interface SignUpResult {
       error?: string

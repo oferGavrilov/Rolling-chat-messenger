@@ -1,7 +1,7 @@
 
 import type { Response } from 'express'
 import type { User } from '../../models/user.model.js'
-import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service'
+import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service.js'
 import { handleErrorService } from '../../middleware/errorMiddleware.js'
 import { RequestChat } from '../../models/chat.model.js'
 
