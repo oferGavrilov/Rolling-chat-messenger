@@ -6,7 +6,7 @@ import http from 'http'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 
-import { fileURLToPath } from 'url' 
+import { fileURLToPath } from 'url'
 import { connectDB } from '../config/db'
 import { logger } from './services/logger.service'
 
@@ -31,13 +31,17 @@ app.use(cookieParser())
 const currentFilePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(currentFilePath)
 
+app.use('/', (req, res) => {
+      res.send('Hello World!')
+})
+
 console.log(process.env.NODE_ENV)
 
 if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.resolve(__dirname, '../build')))
 
       const corsOptions = {
-            origin: 'https://rolling-chat.netlify.app',
+            origin: ['https://rolling-chat.netlify.app', 'https://rolling-chat-messenger.vercel.app'],
             credentials: true,
       }
       app.use(cors(corsOptions))
