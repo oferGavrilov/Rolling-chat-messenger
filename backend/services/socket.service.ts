@@ -1,9 +1,9 @@
 import type { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import { logger } from './logger.service'
-import type { User } from '../../models/user.model'
-import type { ChatDocument } from '../../models/chat.model'
-import { updateUserStatus } from '../../api/user/service'
+import type { User } from '../models/user.model'
+import type { ChatDocument } from '../models/chat.model'
+import { updateUserStatus } from '../api/user/service'
 
 let gIo: Server | null = null
 const activeUsers: Map<string, Socket> = new Map()
