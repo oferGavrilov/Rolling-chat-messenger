@@ -7,9 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { User } from "../../models/user.model";
-import { generateToken } from "../../config/generateToken";
-import { handleErrorService } from "../../middleware/errorMiddleware";
+import { User } from "../../models/user.model.js";
+import { generateToken } from "../../config/generateToken.js";
+import { handleErrorService } from "../../middleware/errorMiddleware.js";
 export function signUpUser(username, email, password, profileImg) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
