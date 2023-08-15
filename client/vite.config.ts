@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(() => {
-  const API_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000';
+export default defineConfig(({ mode }) => {
+  const API_URL = mode === 'production' ? 'https://rolling-chat-messenger-server.vercel.app/' : 'http://localhost:5000';
+  console.log('mode', mode)
 
   return {
     plugins: [react()],

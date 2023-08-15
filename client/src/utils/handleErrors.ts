@@ -12,4 +12,5 @@ export function handleAxiosError (error: AxiosError): void {
             console.log("Error:", error.message)
       }
       console.log("Error config:", error.config)
+      console.log("Error Status:", error.status)
 }

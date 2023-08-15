@@ -5,7 +5,10 @@ import { getAuthConfig, getConfig } from '../utils/authConfig'
 import { handleAxiosError } from "../utils/handleErrors"
 
 const STORAGE_KEY = 'loggedin-user'
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com' : 'http://localhost:5000'
+const env = import.meta.env.VITE_NODE_ENV
+console.log('userService env', env)
+const BASE_URL = env === 'production' ? 'https://rolling-chat-messenger-server.vercel.app' : 'http://localhost:5000'
+
 export const userService = {
       loginSignUp,
       getLoggedinUser,
@@ -60,6 +63,7 @@ async function createChat (userId: string): Promise<IChat> {
 }
 
 async function loginSignUp (credentials: FormData, login: boolean): Promise<IUser> {
+      console.log(BASE_URL)
       const path = login ? '/api/auth/login' : '/api/auth/signup'
       const config = getConfig()
 

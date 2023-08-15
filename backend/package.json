@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --experimental-specifier-resolution=node ./build/src/index.js",
+    "start": "node build/src/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "test": "jest --coverage",
     "build": "rimraf build && tsc"
