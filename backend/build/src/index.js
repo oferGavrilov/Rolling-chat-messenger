@@ -24,11 +24,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 const currentFilePath = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(currentFilePath);
+app.use('/', (req, res) => {
+    res.send('Hello World!');
+});
 console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '../build')));
     const corsOptions = {
-        origin: 'https://rolling-chat.netlify.app',
+        origin: ['https://rolling-chat.netlify.app', 'https://rolling-chat-messenger.vercel.app'],
         credentials: true,
     };
     app.use(cors(corsOptions));
@@ -49,3 +52,4 @@ app.use(errorHandler);
 const port = process.env.PORT || 5000;
 server.listen(port, () => logger.info(`Server running on port ${port}!`));
 export default app;
+//# sourceMappingURL=index.js.map

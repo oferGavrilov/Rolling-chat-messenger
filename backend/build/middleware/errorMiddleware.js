@@ -34,3 +34,4 @@ export function handleErrorService(error) {
     customError.statusCode = statusCode;
     return customError;
 }
+//# sourceMappingURL=errorMiddleware.js.map

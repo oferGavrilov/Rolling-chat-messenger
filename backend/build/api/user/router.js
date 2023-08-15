@@ -9,3 +9,4 @@ router.get('/', protect, searchUsersByKeyword);
 router.get('/all/:userId?', protect, getUsers);
 router.put('/details', protect, editUserDetails);
 router.put('/image', protect, editUserImage);
+//# sourceMappingURL=router.js.map

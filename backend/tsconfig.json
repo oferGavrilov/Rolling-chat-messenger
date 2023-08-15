@@ -1,31 +1,17 @@
 {
   "compilerOptions": {
-    "noPropertyAccessFromIndexSignature": false,
-    "noImplicitReturns": false,
-    "target": "es2020",
-    "lib": [
-      "ES2020"
-    ],
-    "module": "es2020",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "baseUrl": "./src",
-    "allowJs": true,
-    "outDir": "./build",
-    "types":[
-      "node",
-    ],
+      "module": "ES2022",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "target": "es6",
+      "noImplicitAny": true,
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "outDir": "build",
+      "baseUrl": ".",
+      "paths": {
+          "*": ["node_modules/*", "src/types/*"]
+      }
   },
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  },
-  "include": [
-    "src/**/*",
-    "middleware/setupAls.middleware.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts"
-  ]
-}
+  "include": ["./src/**/*"]
+  }

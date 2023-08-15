@@ -4,3 +4,4 @@ import { getAllMessages, sendMessage } from './controller';
 export const router = express.Router();
 router.post('/', protect, sendMessage);
 router.get('/:chatId', protect, getAllMessages);
+//# sourceMappingURL=router.js.map

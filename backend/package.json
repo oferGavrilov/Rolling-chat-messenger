@@ -8,7 +8,7 @@
     "start": "node --experimental-specifier-resolution=node ./build/src/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "test": "jest --coverage",
-    "build": "tsc --project ."
+    "build": "rimraf build && tsc"
   },
   "keywords": [],
   "author": "",

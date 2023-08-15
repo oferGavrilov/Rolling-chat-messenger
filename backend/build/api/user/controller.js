@@ -1,112 +1,140 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { generateToken } from "../../config/generateToken";
 import { editUserDetailsService, editUserImageService, getUsersService, loginUser, searchUsers, signUpUser, updateUserStatus } from "./service";
 import { handleErrorService } from "../../middleware/errorMiddleware";
-export async function signUp(req, res) {
-    const { username, email, password, profileImg } = req.body;
-    try {
-        const result = await signUpUser(username, email, password, profileImg);
-        if (result.error) {
-            return res.status(400).json({ msg: result.error });
+export function signUp(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { username, email, password, profileImg } = req.body;
+        try {
+            const result = yield signUpUser(username, email, password, profileImg);
+            if (result.error) {
+                return res.status(400).json({ msg: result.error });
+            }
+            const { user } = result;
+            if (user) {
+                return res.status(201).json(Object.assign(Object.assign({}, result.user), { isOnline: true }));
+            }
         }
-        const { user } = result;
-        if (user) {
-            return res.status(201).json({ ...result.user, isOnline: true });
+        catch (error) {
+            console.error('Error during sign up:', error);
+            return res.status(500).json({ msg: 'Internal server error' });
         }
-    }
-    catch (error) {
-        console.error('Error during sign up:', error);
-        return res.status(500).json({ msg: 'Internal server error' });
-    }
+    });
 }
-export async function login(req, res) {
-    const { email, password } = req.body;
-    try {
-        const result = await loginUser(email, password);
-        if (result.error) {
-            return res.status(401).json({ msg: result.error });
+export function login(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { email, password } = req.body;
+        try {
+            const result = yield loginUser(email, password);
+            if (result.error) {
+                return res.status(401).json({ msg: result.error });
+            }
+            const { user } = result;
+            if (user) {
+                res.json({
+                    _id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    profileImg: user.profileImg,
+                    about: user.about,
+                    token: generateToken(user._id),
+                    isOnline: true,
+                });
+            }
+            else {
+                throw new Error('User not found');
+            }
         }
-        const { user } = result;
-        if (user) {
-            res.json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                profileImg: user.profileImg,
-                about: user.about,
-                token: generateToken(user._id),
-                isOnline: true,
-            });
+        catch (error) {
+            throw handleErrorService(error);
         }
-        else {
-            throw new Error('User not found');
-        }
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
+    });
 }
-export async function logoutUser(req, res) {
-    const userId = req.user?._id;
-    try {
-        await updateUserStatus(userId);
-        res.status(200).json({ message: 'User logged out successfully' });
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Server error' });
-    }
-}
-export async function searchUsersByKeyword(req, res) {
-    const { search } = req.query;
-    const keyword = search?.toString() || '';
-    try {
-        const users = await searchUsers(keyword);
-        res.send(users);
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
-}
-export async function getUsers(req, res) {
-    const loggedInUserId = req.user?._id;
-    const { userId } = req.params;
-    try {
-        const users = await getUsersService(loggedInUserId, userId);
-        res.send(users);
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
-}
-export async function editUserDetails(req, res) {
-    const { newName } = req.body;
-    const userId = req.user?._id;
-    try {
-        const newNameToSave = newName?.replace(/[\/>]/g, '').trim();
-        const user = await editUserDetailsService(userId, newNameToSave);
-        if (user) {
-            res.send(user);
+export function logoutUser(req, res) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        try {
+            yield updateUserStatus(userId);
+            res.status(200).json({ message: 'User logged out successfully' });
         }
-        else {
-            res.status(404).json({ msg: 'User not found' });
+        catch (error) {
+            res.status(500).json({ error: 'Server error' });
         }
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
+    });
 }
-export async function editUserImage(req, res) {
-    const { image } = req.body;
-    const userId = req.user?._id;
-    try {
-        const user = await editUserImageService(userId, image);
-        if (user) {
-            res.send(user);
+export function searchUsersByKeyword(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { search } = req.query;
+        const keyword = (search === null || search === void 0 ? void 0 : search.toString()) || '';
+        try {
+            const users = yield searchUsers(keyword);
+            res.send(users);
         }
-        else {
-            res.status(404).json({ msg: 'User not found' });
+        catch (error) {
+            throw handleErrorService(error);
         }
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
+    });
 }
+export function getUsers(req, res) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const loggedInUserId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const { userId } = req.params;
+        try {
+            const users = yield getUsersService(loggedInUserId, userId);
+            res.send(users);
+        }
+        catch (error) {
+            throw handleErrorService(error);
+        }
+    });
+}
+export function editUserDetails(req, res) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const { newName } = req.body;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        try {
+            const newNameToSave = newName === null || newName === void 0 ? void 0 : newName.replace(/[\/>]/g, '').trim();
+            const user = yield editUserDetailsService(userId, newNameToSave);
+            if (user) {
+                res.send(user);
+            }
+            else {
+                res.status(404).json({ msg: 'User not found' });
+            }
+        }
+        catch (error) {
+            throw handleErrorService(error);
+        }
+    });
+}
+export function editUserImage(req, res) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const { image } = req.body;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        try {
+            const user = yield editUserImageService(userId, image);
+            if (user) {
+                res.send(user);
+            }
+            else {
+                res.status(404).json({ msg: 'User not found' });
+            }
+        }
+        catch (error) {
+            throw handleErrorService(error);
+        }
+    });
+}
+//# sourceMappingURL=controller.js.map

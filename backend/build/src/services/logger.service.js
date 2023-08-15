@@ -12,10 +12,11 @@ function isError(e) {
     return e && e.stack && e.message;
 }
 function doLog(level, ...args) {
+    var _a;
     const strs = args.map((arg) => typeof arg === 'string' || isError(arg) ? arg : JSON.stringify(arg));
     let line = strs.join(' | ');
     const store = asyncLocalStorage.getStore();
-    const userId = store?.loggedinUser?._id;
+    const userId = (_a = store === null || store === void 0 ? void 0 : store.loggedinUser) === null || _a === void 0 ? void 0 : _a._id;
     const str = userId ? `(userId: ${userId})` : '';
     line = `${getTime()} - ${level} - ${line} ${str}\n`;
     console.log(line);
@@ -40,3 +41,4 @@ export const logger = {
         doLog('ERROR', ...args);
     },
 };
+//# sourceMappingURL=logger.service.js.map

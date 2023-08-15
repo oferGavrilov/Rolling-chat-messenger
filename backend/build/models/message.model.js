@@ -7,3 +7,4 @@ const messageModel = new mongoose.Schema({
     messageSize: { type: Number, default: 0 }
 }, { timestamps: true });
 export const Message = mongoose.model('Message', messageModel);
+//# sourceMappingURL=message.model.js.map

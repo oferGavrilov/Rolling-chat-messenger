@@ -55,9 +55,9 @@ export function setupSocketAPI(http) {
             let chat = newMessageReceived.chat;
             if (!chat)
                 return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`);
-            if (!chat?.users)
+            if (!(chat === null || chat === void 0 ? void 0 : chat.users))
                 return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`);
-            chat?.users.forEach((user) => {
+            chat === null || chat === void 0 ? void 0 : chat.users.forEach((user) => {
                 if (user._id === newMessageReceived.sender._id)
                     return;
                 socket.in(user._id).emit('message received', newMessageReceived);
@@ -94,3 +94,4 @@ function getUserBySocketId(socketId) {
     }
     return null;
 }
+//# sourceMappingURL=socket.service.js.map

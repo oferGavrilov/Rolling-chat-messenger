@@ -10,3 +10,4 @@ router.put('/groupimage', protect, updateGroupImage);
 router.put('/updateusers', admin, updateUsersInGroupChat);
 router.put('/groupremove', protect, removeFromGroupChat);
 router.put('/remove', protect, removeChat);
+//# sourceMappingURL=router.js.map

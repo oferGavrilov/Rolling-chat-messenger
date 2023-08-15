@@ -8,3 +8,4 @@ export const generateToken = (id) => {
         expiresIn: '30d'
     });
 };
+//# sourceMappingURL=generateToken.js.map

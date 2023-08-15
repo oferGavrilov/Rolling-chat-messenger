@@ -12,3 +12,4 @@ const chatSchema = new Schema({
     deletedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 }, { timestamps: true });
 export const Chat = mongoose.model('Chat', chatSchema);
+//# sourceMappingURL=chat.model.js.map
