@@ -92,7 +92,6 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                               <div className="flex justify-center items-center">
                                     <input
                                           type="text"
-                                          autoFocus
                                           className="bg-gray-100 border-b-2 text-xl border-primary py-1 pl-4 pr-8 mt-5 mb-2 rounded-t-lg"
                                           value={groupName}
                                           onKeyUp={handleKeyPress}

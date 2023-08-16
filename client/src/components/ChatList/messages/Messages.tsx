@@ -74,7 +74,7 @@ export default function Messages ({ contentType }: MessagesProps) {
       }
 
       return (
-            <div className="pt-4 relative">
+            <div className="pt-4 relative h-full">
                   <MessagesInput filter={filter} setFilter={setFilter} />
 
                   <div className='p-3 mx-4 flex'>

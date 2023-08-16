@@ -25,12 +25,12 @@ export default function Home (): JSX.Element {
                         </div>
                         <WavesBlue />
                   </div>
-                  <div className="h-screen bg-primary relative -z-10">
+                  {/* <div className="h-screen bg-primary relative -z-10">
 
                         <WavesWhite />
                   </div>
                   <div className="h-screen">
-                  </div>
+                  </div> */}
             </section>
       )
 }

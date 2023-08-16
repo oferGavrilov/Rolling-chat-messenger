@@ -34,14 +34,6 @@ export default function SignUp ({ formik, image, setImage }: SignUpProps) {
                   <Field type="password" name="confirmPassword" onChange={formik.handleChange} id="confirmPassword" value={formik.values.confirmPassword} className={`login-input ${formik.errors.confirmPassword && formik.touched.confirmPassword ? 'input-error' : ''}`} />
                   <ErrorMessage name="confirmPassword" component="div" className="error-message" />
 
-                  {/* <label htmlFor="img-upload">Profile Image</label>
-      <Field type="file"
-            name="image"
-            id="image"
-            className='login-input'
-            accept="image/*"
-            onChange={(e: { target: { files: File[] } }) => uploadImage(e.target.files[0])}
-      /> */}
                   <UploadImage image={image} setImage={setImage} />
 
                   <ErrorMessage name="image" component="div" className="error-message" />

@@ -125,3 +125,31 @@ export function scrollToBottom (chatRef: React.RefObject<HTMLDivElement>): void 
     }
   }, 0)
 }
+
+export function onDownloadFile (selectedFile: IMessage) {
+  try {
+    const imageUrl = selectedFile?.content?.toString()
+
+    if (imageUrl) {
+      fetch(imageUrl)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const blobUrl = URL.createObjectURL(blob)
+
+          const link = document.createElement('a')
+          link.href = blobUrl
+          link.download = 'downloaded-image.jpg'
+          link.click()
+
+          URL.revokeObjectURL(blobUrl)
+        })
+        .catch((error) => {
+          console.error('Error fetching the image:', error)
+        })
+    } else {
+      console.error('Image URL is not available.')
+    }
+  } catch (error) {
+    console.error('Error downloading the image:', error)
+  }
+}

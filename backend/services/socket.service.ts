@@ -66,15 +66,16 @@ export function setupSocketAPI (http: HttpServer) {
             socket.on('stop typing', (room) => socket.in(room).emit('stop typing'))
 
             socket.on('new message', (newMessageReceived) => {
+                  console.log('new message received', newMessageReceived)
                   socket.handshake.auth.lastActivity = Date.now();
                   let chat = newMessageReceived.chat
-                  // if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
-                  // if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
+                  if (!chat) return console.log(`Socket [id: ${socket.id}] tried to send a message without a chat`)
+                  if (!chat?.users) return console.log(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
                  
                   chat?.users.forEach((user: User) => {
                         if (user._id === newMessageReceived.sender._id) return
                         socket.in(user._id).emit('message received', newMessageReceived)
-                        // logger.info(`Socket [id: ${socket.id}] sent a message to userId: ${user._id}`)
+                        console.log(`Socket [id: ${socket.id}] sent a message to userId: ${user._id}`)
                   })
             })
 

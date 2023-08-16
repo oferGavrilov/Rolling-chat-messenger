@@ -1,27 +1,28 @@
 import { useEffect, useRef, useState } from "react"
+
 import { AuthState } from "../../context/useAuth"
-import { IUser } from "../../model/user.model"
 import useChat from "../../store/useChat"
+
+import ChatHeader from "./chat/ChatHeader"
 import Info from "./info/Index"
 import Chat from "./chat/Chat"
-
-import { Avatar } from "@mui/material"
-import { BsCameraVideo } from 'react-icons/bs'
-import { AiOutlineInfoCircle } from 'react-icons/ai'
-import { IoIosArrowBack } from 'react-icons/io'
-import { formatLastSeenDate } from "../../utils/functions"
 import FileEditor from "./file/FileEditor"
+
+import { formatLastSeenDate } from "../../utils/functions"
+
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
+
 import { IMessage } from "../../model/message.model"
+import { IUser } from "../../model/user.model"
 
 export default function Messenger (): JSX.Element {
-      const [conversationUser, setConversationUser] = useState<IUser>()
-      const [chatMode, setChatMode] = useState<string>('chat')
+      const [conversationUser, setConversationUser] = useState<IUser | null>(null)
+      const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
       const [isTyping, setIsTyping] = useState<boolean>(false)
       const [messages, setMessages] = useState<IMessage[]>([])
 
-      const { selectedChat, setSelectedChat, addNotification, updateChat, chats, setChats } = useChat()
+      const { selectedChat, addNotification, updateChat, chats, setChats } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
@@ -157,37 +158,16 @@ export default function Messenger (): JSX.Element {
 
       if (!selectedChat) return <div></div>
       return (
-            <section className='flex-1 messenger slide-left overflow-y-hidden dark:bg-dark-secondary-bg'>
-                  <div className='flex items-center px-2 h-16 z-10 chat-header-shadow md:h-[4.4rem]'>
-                        <IoIosArrowBack size={30} className='md:hidden text-primary dark:text-dark-primary-text mr-3 cursor-pointer' onClick={() => setSelectedChat(null)} />
-                        <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setChatMode('info')} />
-                        <div className='flex items-center gap-4 ml-4 justify-between w-full'>
-                              <div className='flex flex-col'>
-                                    <h2 className='md:text-lg font-semibold cursor-pointer dark:text-dark-primary-text underline-offset-2 hover:underline' onClick={() => setChatMode('info')}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
-                                    {!selectedChat.isGroupChat ?
-                                          <span className='text-primary dark:text-dark-primary-text text-xs md:text-base'>
-                                                {isTyping ? 'Typing...' : connectionStatus}
-                                          </span> : (
-                                                <div className="flex gap-x-1 text-xs tracking-wide">
-                                                      {selectedChat.users.map((user, index) =>
-                                                            <span key={user._id} className="text-slate-400 dark:text-slate-200">
-                                                                  {user._id === loggedInUser?._id ? 'You' : user.username}
-                                                                  {index !== selectedChat.users.length - 1 && ","}
-                                                            </span>
-                                                      )}
-                                                </div>
-                                          )}
-                              </div>
-                              <div className='flex items-center gap-x-2'>
-                                    <div className='text-primary dark:text-dark-primary-text text-2xl hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg py-2 px-2 rounded-lg cursor-pointer'>
-                                          <BsCameraVideo />
-                                    </div>
-                                    <div className='text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setChatMode('info')}>
-                                          <AiOutlineInfoCircle />
-                                    </div>
-                              </div>
-                        </div>
-                  </div>
+            <section className='flex-1 messenger slide-left overflow-y-hidden'>
+
+                  <ChatHeader
+                        isTyping={isTyping}
+                        connectionStatus={connectionStatus}
+                        conversationUser={conversationUser}
+                        setChatMode={setChatMode}
+
+                  />
+
                   {chatMode === 'chat' && (
                         <Chat
                               setFile={setFile}

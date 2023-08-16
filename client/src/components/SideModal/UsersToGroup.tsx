@@ -138,7 +138,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                   )}
 
                   {(!isLoading) ? (
-                        <ul className='flex flex-col main-text px-4 gap-y-4 py-8'>
+                        <ul className='flex flex-col main-text px-4 gap-y-4 py-8 h-[470px] overflow-auto'>
                               {filteredUsers.map((user: IUser) => (
                                     <li key={user._id} className='text-main-color py-2 px-4 rounded-lg bg-gray-100 transition-colors duration-200 cursor-pointer hover:bg-gray-200'>
                                           <div className='flex gap-x-4 items-center' onClick={() => handleGroupUsers(user)}>

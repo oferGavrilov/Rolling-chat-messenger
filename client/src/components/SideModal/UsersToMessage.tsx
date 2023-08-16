@@ -66,7 +66,7 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
                   <div className={`${users.length && 'border-t'}`}>
                         {isLoading && <Loading type="users" />}
                         {(filteredUsers.length > 0 && !isLoading) && (
-                              <ul className='flex flex-col main-text px-4 md:px-8 gap-y-4 py-8'>
+                              <ul className='flex flex-col main-text px-4 md:px-8 gap-y-4 py-8 calc-height overflow-auto'>
                                     {filteredUsers.map((user: IUser) => (
                                           <li key={user._id} onClick={() => onSelectChat(user._id)} className='text-main-color cursor-pointer dark:text-dark-primary-text dark:bg-dark-tertiary-bg py-2 px-4 rounded-lg bg-white'>
                                                 <div className='flex gap-x-4 items-center'>

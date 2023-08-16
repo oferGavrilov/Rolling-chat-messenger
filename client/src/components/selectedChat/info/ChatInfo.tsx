@@ -8,7 +8,7 @@ import { IMessage } from "../../../model/message.model"
 import MediaFiles from "./MediaFiles"
 
 interface Props {
-      conversationUser: IUser | undefined
+      conversationUser: IUser | null
       messages: IMessage[]
 }
 

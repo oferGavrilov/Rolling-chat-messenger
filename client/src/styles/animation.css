@@ -55,7 +55,7 @@
       }
 
       to {
-            top: 94px;
+            top: 80px;
       }
 }
 
@@ -90,7 +90,7 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      border: 2px solid #fff;
+      border: 2px solid #0099ff;
       border-color: #fff transparent #fff transparent;
       animation: spinner 1.2s linear infinite;
 }

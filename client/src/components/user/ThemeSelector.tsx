@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function ThemeSelector ({ settings }: Props): JSX.Element {
-      const [theme, setTheme] = useState<'light' | 'dark' | 'black' | null>(userService.getTheme() || null)
+      const [theme, setTheme] = useState<'light' | 'dark' | 'black'>(userService.getTheme() || 'light')
 
 
       function onSelectTheme (theme: "light" | "dark" | "black") {

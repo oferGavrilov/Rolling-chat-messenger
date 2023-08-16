@@ -99,7 +99,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                               <div className='flex justify-between'>
                                     <div
                                           className={`text-base h-6 max-h-[24px] max-w-[260px] inline-block ellipsis-text
-                                           ${isNotification() ? 'text-blue-500' : 'text-[#00000085] dark:text-dark-primary-text'}`}
+                                           ${isNotification() ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}
                                     >
                                           {getLatestMessage()}
                                     </div>

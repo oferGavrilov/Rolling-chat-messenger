@@ -75,7 +75,6 @@ export default function Form ({ }) {
             try {
                   const user = await userService.loginSignUp(values, isLogin)
                   setUser(user)
-                  toast.success(`Welcome ${user.username}`)
                   navigate('/chat')
             } catch (error) {
                   if (axios.isAxiosError(error)) toast.error(error?.response?.data.msg)
@@ -92,7 +91,7 @@ export default function Form ({ }) {
                         <button className={`login-btn ${!isLogin ? 'bg-primary text-white' : 'hover:bg-quinary'}`} onClick={() => toggleForm(false)}>Sign Up</button>
                   </div>
 
-                  <form className="flex flex-col gap-y-4 mt-4" onSubmit={formik.handleSubmit}>
+                  <form className="flex flex-col gap-y-4 my-4" onSubmit={formik.handleSubmit}>
                         {isLogin ? (
                               <Login formik={formik} />) : (
                               <SignUp formik={formik} image={image} setImage={setImage} />

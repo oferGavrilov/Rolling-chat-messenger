@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react'
+
 import Navigation from '../components/Navigation'
 import SearchUsers from '../components/SideModal'
-import { useEffect, useState } from 'react'
 import DynamicList from '../components/ChatList/DynamicList'
-import { useChat } from '../store/useChat'
 import Messenger from '../components/selectedChat'
-import { AuthState } from '../context/useAuth'
-import socketService from '../services/socket.service'
 import SelectedFile from '../components/SelectedFile'
+
+import { useChat } from '../store/useChat'
+import { AuthState } from '../context/useAuth'
+
+import socketService from '../services/socket.service'
 import { userService } from '../services/user.service'
 
 export default function ChatPage (): JSX.Element {
@@ -43,7 +46,7 @@ export default function ChatPage (): JSX.Element {
 
       if (!user) return <div></div>
       return (
-            <div>
+            <div className='max-h-screen'>
                   <div className='flex h-screen slide-right md:overflow-y-hidden dark:bg-dark-chat-bg' >
                         <Navigation
                               contentType={contentType}

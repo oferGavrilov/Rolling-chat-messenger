@@ -1,12 +1,15 @@
 import { ReactNode } from "react"
+
 import { AuthState } from "../../../context/useAuth"
-import { IMessage } from "../../../model/message.model"
-import { formatDate, formatRecordTimer, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
 import useChat from "../../../store/useChat"
+
+import { IMessage } from "../../../model/message.model"
+
+import { formatDate, formatRecordTimer, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
 
 interface Props {
       messages: IMessage[]
-      setChatMode: React.Dispatch<React.SetStateAction<string>>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
 }
 
 export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element {
@@ -85,12 +88,12 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :
                                                       'ml-0 rounded-br-xl flex-row-reverse'}
-                                                ${message.messageType === 'image' && 'flex-col-reverse pl-2'}
+                                                ${message.messageType === 'image' && 'flex-col-reverse !px-2 pb-5'}
                                                 ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
                                                 `}
                                     >
                                           <span className={`text-xs mr-2 text-gray-100 relative mt-auto
-                                                            ${message.messageType === 'image' && 'left-5 bottom-2 !absolute z-10'}
+                                                            ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}
                                                             ${message.messageType === 'file' && '!absolute bottom-1 left-3'}
                                           ${isSameSenderMargin(messages, message, idx, user._id) ?

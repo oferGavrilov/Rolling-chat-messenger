@@ -16,7 +16,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 interface Props {
       setIsTyping: React.Dispatch<React.SetStateAction<boolean>>
-      setChatMode: React.Dispatch<React.SetStateAction<string>>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       setFile: React.Dispatch<React.SetStateAction<File | null>>
       messages: IMessage[]
       setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>
@@ -78,17 +78,18 @@ export default function Chat ({
       }, [selectedChat])
 
       useEffect(() => {
+            // Show the scroll to bottom button if the user is not scrolled to the bottom
             const handleScroll = () => {
-                const { scrollTop, scrollHeight, clientHeight } = chatRef.current!
-                setIsChatScrolledToBottom(scrollHeight - scrollTop <= clientHeight)
+                  const { scrollTop, scrollHeight, clientHeight } = chatRef.current!
+                  setIsChatScrolledToBottom(scrollHeight - scrollTop <= clientHeight + 600)
             }
-        
+
             chatRef.current?.addEventListener('scroll', handleScroll)
-        
+
             return () => {
-                chatRef.current?.removeEventListener('scroll', handleScroll)
+                  chatRef.current?.removeEventListener('scroll', handleScroll)
             }
-        }, [])
+      }, [])
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {
             e.preventDefault()
@@ -159,23 +160,12 @@ export default function Chat ({
 
       return (
             <>
-                  <div
-                        className={`overflow-y-auto overflow-x-hidden slide-left h-full bg-no-repeat bg-cover bg-center scroll-smooth ${loadingMessages && 'blur-[2px]'}`}
-                        style={{ background: chatBackgroundColor }}
-                        ref={chatRef}
-                  >
-                        <div
-                              className='absolute right-0 top-0  w-full min-h-full scroll-smooth'
-                              style={{ backgroundImage: 'url(imgs/chat/background.png)' }}
-
-                        >
-                              {messages &&
-                                    <ChatMessages messages={messages} setChatMode={setChatMode} />
-                              }
-                        </div>
+                  <div className="fixed-bg"  style={{ backgroundColor: chatBackgroundColor }}></div>
+                  <div className={`overflow-y-auto overflow-x-hidden slide-left h-full bg-no-repeat bg-cover bg-center scroll-smooth ${loadingMessages && 'blur-[2px]'}`} ref={chatRef}>
+                        {messages && <ChatMessages messages={messages} setChatMode={setChatMode} />}
                   </div>
 
-                  <div className='min-h-[64px] flex items-center md:pl-4 gap-x-3 overflow-x-hidden'>
+                  <div className='min-h-[64px] flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-white dark:bg-dark-secondary-bg'>
                         {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>

@@ -24,11 +24,11 @@ export default function Auth () {
             document.body.style.overflow = 'hidden'
             const timer = setTimeout(() => {
                   setIsVisible(true)
+                  document.body.style.overflow = 'auto'
             }, 3000)
 
             return () =>{
                   clearTimeout(timer)
-                  document.body.style.overflow = 'auto'
             } 
       }, [])
 
@@ -37,7 +37,7 @@ export default function Auth () {
                   <div className={`flex justify-center logo-fade-down ${isVisible ? 'hidden' : 'visible'}`}>
                         <Logo width='120' height='120' />
                   </div>
-                  <section className={`max-w-lg pt-28 mx-auto relative z-20 fade-down ${isVisible ? 'visible' : 'hidden'}`}>
+                  <section className={`max-w-lg py-24 mx-auto relative z-20 fade-down ${isVisible ? 'visible' : 'hidden'}`}>
                         <div className="bg-white rounded-lg p-6 shadow-lg ">
                               <Form />
                               <Tooltip title='Home' placement='right' arrow>

@@ -1,3 +1,4 @@
+import React from 'react'
 import useChat from "../../../store/useChat"
 import { IUser } from "../../../model/user.model"
 
@@ -8,8 +9,8 @@ import GroupInfo from "./GroupInfo"
 import { IMessage } from "../../../model/message.model"
 
 interface Props {
-      conversationUser: IUser | undefined
-      setChatMode: React.Dispatch<React.SetStateAction<string>>
+      conversationUser: IUser | null
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       messages: IMessage[]
 }
 

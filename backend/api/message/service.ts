@@ -18,14 +18,15 @@ export async function sendMessageService (senderId: string, content: string, cha
                   messageType: messageType,
                   messageSize: messageSize !== undefined ? messageSize : undefined
             }
-
+            
             let message = await Message.create(newMessage)
-
+            
             message = (await message.populate('sender', 'username profileImg')) as PopulatedDoc<IMessage>
             message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })) as PopulatedDoc<IMessage>;
-
+            
             // Check if the other user ID is in the deletedBy array
             const chat = await Chat.findById(chatId)
+            console.log('sendMessageService chat:', chat)
             const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString())
 
             if (otherUserId && chat.deletedBy.includes(otherUserId.toString())) {
