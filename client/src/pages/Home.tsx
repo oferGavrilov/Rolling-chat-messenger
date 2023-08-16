@@ -5,7 +5,7 @@ export default function Home (): JSX.Element {
 
       return (
             <section className="">
-                  <div className="h-screen relative">
+                  <div className="min-h-screen relative">
                         <div className="slide-up relative">
                               <h1
                                     className="text-4xl md:text-8xl font-alfa font-bold pt-10 md:pt-16 pb-14 text-primary text-center 
@@ -25,12 +25,12 @@ export default function Home (): JSX.Element {
                         </div>
                         <WavesBlue />
                   </div>
-                  {/* <div className="h-screen bg-primary relative -z-10">
+                  <div className="min-h-screen bg-primary relative -z-10">
 
                         <WavesWhite />
                   </div>
                   <div className="h-screen">
-                  </div> */}
+                  </div>
             </section>
       )
 }

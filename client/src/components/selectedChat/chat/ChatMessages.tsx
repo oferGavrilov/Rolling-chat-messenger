@@ -5,7 +5,10 @@ import useChat from "../../../store/useChat"
 
 import { IMessage } from "../../../model/message.model"
 
-import { formatDate, formatRecordTimer, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
+import { formatDate, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
+import AudioMessage from "../chat/message-type/AudioMessage"
+import FileMessage from "./message-type/FileMessage"
+import ImageMessage from "./message-type/ImageMessage"
 
 interface Props {
       messages: IMessage[]
@@ -18,45 +21,28 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
 
       const renderMessageContent = (message: IMessage, idx: number): ReactNode => {
             if (message.messageType === 'text') {
-                  return <span className=" overflow-hidden break-all">{message.content.toString()}</span>
+                  return <span className="overflow-hidden break-all">{message.content.toString()}</span>
             }
             else if (message.messageType === 'image' && typeof message.content === 'string') {
-                  return (
-                        <img
-                              className="max-h-[300px] max-w-[200px] object-cover object-top py-1 cursor-pointer"
-                              src={message.content}
-                              alt="conversation-user"
-                              onClick={() => setSelectedFile(message)}
-                        />
-                  )
+                  return <ImageMessage
+                        message={message}
+                        setSelectedFile={setSelectedFile}
+                  />
             } else if (message.messageType === 'file') {
-                  return (
-                        <div className="relative">
-                              <iframe
-                                    src={message.content.toString()}
-                                    title={message.content.toString()}
-                                    className="h-[300px] w-[200px] pointer-events-none overflow-hidden"
-                              ></iframe>
-                              <div
-                                    className="h-[300px] w-[200px] absolute top-0 left-0 cursor-pointer"
-                                    onClick={() => setSelectedFile(message)}
-                              ></div>
-                        </div>
-                  );
+                  return <FileMessage
+                        message={message}
+                        setSelectedFile={setSelectedFile}
+                  />
+
             } else if (message.messageType === 'audio') {
                   if (!user) return null
                   return (
-                        <div className="relative">
-                              <audio controls={true} className="max-w-[200px] lg:max-w-none overflow-hidden">
-                                    <source src={message.content.toString()} type="audio/webm" />
-                              </audio>
-                              <img
-                                    src={message.sender.profileImg}
-                                    alt="profile-image"
-                                    className={`${isSameSenderMargin(messages, message, idx, user?._id) ? '-left-11' : '-right-10'} w-8 h-8 rounded-full object-cover object-top absolute top-1`}
-                              />
-                              {(message?.messageSize !== 0) && <span className="absolute text-black text-xs bottom-0 right-12">{formatRecordTimer(message.messageSize as number)}</span>}
-                        </div>
+                        <AudioMessage
+                              message={message}
+                              messages={messages}
+                              idx={idx}
+                              userId={user._id}
+                        />
                   )
             }
 
