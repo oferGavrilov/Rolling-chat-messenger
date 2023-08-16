@@ -23,6 +23,7 @@ export async function sendMessageService(senderId, content, chatId, messageType,
         message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } }));
         // Check if the other user ID is in the deletedBy array
         const chat = await Chat.findById(chatId);
+        console.log('sendMessageService chat:', chat);
         const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString());
         if (otherUserId && chat.deletedBy.includes(otherUserId.toString())) {
             // Remove the other user ID from the deletedBy array

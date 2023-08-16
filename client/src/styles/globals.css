@@ -158,7 +158,7 @@
             box-shadow: -1px 1px 13px 0px #3939395e;
       }
       .fixed-bg {
-            background-image: url(imgs/chat/background.png);
+            background-image: url('https://res.cloudinary.com/dqkstk6dw/image/upload/v1692202705/background_kcduqa.png');
             position: fixed;
             top: 0;
             left: 0;
