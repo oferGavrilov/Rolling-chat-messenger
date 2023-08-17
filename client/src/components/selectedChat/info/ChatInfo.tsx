@@ -52,7 +52,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props): JSX.El
                               <MediaFiles messages={messages}/>
 
                               <div>
-                                    <div className="py-2 text-red-500 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg" onClick={onRemoveChat}>
+                                    <div className="py-2 text-red-500 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg" onClick={onRemoveChat}>
                                           <div className="px-6 flex gap-x-2 items-center">
                                                 <MdDelete size={22} />
                                                 <span>Remove chat</span>

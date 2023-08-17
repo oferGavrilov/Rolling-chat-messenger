@@ -96,9 +96,9 @@
       .navigation-container {
             @apply
             transition-all duration-300 
-            max-w-[70px] h-screen 
+            max-w-[70px] h-full
             flex flex-col justify-between gap-y-4
-            sticky z-10
+            /* sticky z-10 */
             bg-navigation-bg /* LIGHT MODE */
             dark:bg-dark-navigation-bg; /* DARK MODE */
       }
@@ -192,12 +192,12 @@
       .scroll-arrow-btn {
             @apply 
             text-white bg-gray-500 
-            w-max p-2 
+             h-max p-2 
             rounded-full 
             opacity-90 
-            fixed top-1/2 
+            sticky top-1/2 
             transition-all duration-300 cursor-pointer 
-            hover:scale-110 hover:shadow-lg hover:shadow-gray-500;
+            hover:scale-110;
       }
       /* Selected File */
       .tools-icon {

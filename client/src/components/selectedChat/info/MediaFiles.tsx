@@ -61,7 +61,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
                         <h2 className="text-lg">Media links and documents</h2>
                         <div className="flex items-center">
                               {messagesFiles.length}
-                              <ExpandMoreIcon className={showMessagesFiles ? 'rotate-180' : ''}/>
+                              <ExpandMoreIcon className={showMessagesFiles ? 'rotate-180' : ''} />
                         </div>
                   </div>
 
@@ -69,7 +69,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
                         {messagesFiles.map(message => (
                               <img
                                     key={message._id}
-                                    className="object-cover w-[180px] h-[200px] object-center py-1 cursor-pointer"
+                                    className="object-cover min-w-[180px] h-[200px] object-center py-1 cursor-pointer"
                                     src={message.content.toString()}
                                     alt="conversation-user"
                                     onClick={() => setSelectedFile(message)}
@@ -78,7 +78,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
 
                         {showMessagesFiles && showRightButton && (
                               <div
-                                    className="scroll-arrow-btn right-2"
+                                    className="scroll-arrow-btn right-0"
                                     onClick={() => scrollMessagesFiles('right')}
                               >
                                     <KeyboardArrowRightIcon />
@@ -87,7 +87,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
 
                         {showMessagesFiles && showLeftButton && (
                               <div
-                                    className="scroll-arrow-btn left-2 "
+                                    className="scroll-arrow-btn left-0"
                                     onClick={() => scrollMessagesFiles('left')}
                               >
                                     <KeyboardArrowLeftIcon />
