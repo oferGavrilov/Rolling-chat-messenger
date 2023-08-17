@@ -8,7 +8,6 @@ import { updateUserStatus } from '../api/user/service.js'
 let gIo: Server | null = null
 const activeUsers: Map<string, Socket> = new Map()
 const INACTIVITY_THRESHOLD = 15 * 60 * 1000 // 15 minute 
-// const INACTIVITY_THRESHOLD = 4 * 1000 // 15 minute 
 
 export function setupSocketAPI (http: HttpServer) {
       gIo = new Server(http, {
@@ -20,8 +19,7 @@ export function setupSocketAPI (http: HttpServer) {
       gIo.on('connection', (socket: Socket) => {
             console.log('connected to socket.io')
             // logger.info('Users connected:', activeUsers.size)
-
-            // logger.info(`New connected socket [id: ${socket.id}]`)
+            console.log('Users connected:', activeUsers.size)
 
             socket.on('setup', (userId: string) => {
                   activeUsers.set(userId, socket)
@@ -36,6 +34,7 @@ export function setupSocketAPI (http: HttpServer) {
                   socket.broadcast.emit('login', userId)
                   // logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
                   // logger.info(`Users connected: ${activeUsers.size}`)
+                  console.log(`Users connected: ${activeUsers.size}`)
             })
 
             socket.on('logout', (userId: string) => {
@@ -89,7 +88,7 @@ export function setupSocketAPI (http: HttpServer) {
             const now = Date.now()
             for (const [userId, socket] of activeUsers.entries()) {
                   if (now - socket.handshake.auth.lastActivity > INACTIVITY_THRESHOLD) {
-                        socket.emit('logout', userId)
+                        socket.broadcast.emit('logout', userId)
                         activeUsers.delete(userId)
                         socket.disconnect(true)
                         updateUserStatus(userId)
