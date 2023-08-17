@@ -24,7 +24,7 @@ export default function ChatHeader ({ isTyping, connectionStatus, conversationUs
 
       if (!selectedChat) return <div></div>
       return (
-            <div className='flex items-center px-2 min-h-[64px] z-10 chat-header-shadow md:h-[4.4rem] bg-white dark:bg-dark-secondary-bg'>
+            <div className='flex items-center px-2 min-h-[64px] fixed w-full z-10 chat-header-shadow md:h-[4.4rem] bg-white dark:bg-dark-secondary-bg'>
                   <IoIosArrowBack size={30} className='md:hidden text-primary dark:text-dark-primary-text ml-2 mr-4 cursor-pointer' onClick={() => setSelectedChat(null)} />
                   <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setChatMode('info')} />
                   <div className='flex items-center gap-4 ml-4 justify-between w-full'>

@@ -51,7 +51,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
 
       if (!messages || !user) return <div></div>
       return (
-            <section className="py-4">
+            <section className="py-4 mt-[71px]">
                   {messages &&
                         messages.map((message, idx) => (
                               <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">

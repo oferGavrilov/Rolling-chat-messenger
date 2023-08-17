@@ -61,7 +61,7 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
       async function handleFileUpload () {
             try {
                   const apiKey = 'AlByYY7HGT6Fwh5ghBpSZz'
-                  const client = new Client(apiKey) 
+                  const client = new Client(apiKey)
 
                   const pickerOptions = {
                         accept: ['.pdf'],
@@ -96,10 +96,10 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                         ref={modalRef}
                         className={`
                         fixed bottom-14 left-8 px-2 pb-3 text-white rounded-lg z-20 bg-gray-400 dark:bg-dark-primary-bg overflow-hidden
-                        transition-all duration-300 ease-in-out max-w-[40px] !shadow-2xl
-                        ${showClipModal ? 'max-h-[300px] !max-w-[400px]' : 'max-h-0 px-0 !py-0 '}`}>
+                        transition-all duration-300 ease-in-out  !shadow-2xl 
+                        ${showClipModal ? 'max-h-[300px]  py-2' : 'max-h-0 !py-0 '}`}>
 
-                        <label className='clip-modal-option py-1 inline-flex '>
+                        <label className='clip-modal-option py-1 flex '>
                               <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/gif, image/jpeg, image/png' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     uploadImage(e.target.files?.[0])
                               } />
