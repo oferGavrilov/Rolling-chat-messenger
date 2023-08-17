@@ -1,20 +1,19 @@
-import { userService } from '../../services/user.service';
+import { useState } from 'react'
 
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined';
-import { useState } from 'react';
+import { userService } from '../../services/user.service'
 
+import LightModeIcon from '@mui/icons-material/LightMode'
+import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined'
 
 interface Props {
       settings: 'theme' | 'background' | null,
 }
 
 export default function ThemeSelector ({ settings }: Props): JSX.Element {
-      const [theme, setTheme] = useState<'light' | 'dark' | 'black'>(userService.getTheme() || 'light')
+      const [theme, setTheme] = useState<'light' | 'dark'>(userService.getTheme() || 'light')
 
 
-      function onSelectTheme (theme: "light" | "dark" | "black") {
+      function onSelectTheme (theme: "light" | "dark") {
             userService.saveTheme(theme)
             setTheme(theme)
 
@@ -31,16 +30,11 @@ export default function ThemeSelector ({ settings }: Props): JSX.Element {
                               <LightModeIcon className=' text-gray-100' />
                               Light
                         </div>
-                        <div className={`theme-options ${theme === 'dark' && 'bg-primary dark:bg-dark-tertiary-bg'}`} onClick={() => onSelectTheme('dark')}>
+                        <div className={`theme-options rounded-r-full ${theme === 'dark' && 'bg-primary'}`} onClick={() => onSelectTheme('dark')}>
                               <NightsStayOutlinedIcon className=' text-gray-100' />
                               Dark
                         </div>
-                        <div className={`theme-options rounded-r-full ${theme === 'black' && 'bg-primary'}`} onClick={() => onSelectTheme('black')}>
-                              <DarkModeIcon className='text-gray-100' />
-                              Black
-                        </div>
                   </div>
-
             </div>
       )
 }

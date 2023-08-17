@@ -42,7 +42,7 @@ export default function DynamicList (props: Props) {
       function getIcon (): JSX.Element {
             switch (props.contentType) {
                   case 'messages':
-                        return <PersonAddIcon className="text-gray-400 dark:text-dark-primary-text" />
+                        return <PersonAddIcon className="dark:text-dark-primary-text" />
                   case 'videos':
                         return <VideoCallIcon />
                   case 'story':
@@ -61,10 +61,10 @@ export default function DynamicList (props: Props) {
       return (
             <section className={`${selectedChat ? 'hidden md:block' : 'block'} 
             bg-white dark:bg-dark-primary-bg dark:text-dark-primary-text
-                  w-full md:w-[364px] border-r-2 border-[#EEEEEE] dark:border-dark-primary-bg slide-right`}>
+                  w-full md:w-[364px] border-r-2 border-[#EEEEEE] dark:border-dark-default-hover-bg slide-right`}>
                   
                   <div className='flex justify-between items-center md:pb-4 pt-3 md:pt-7 mx-4'>
-                        <div className="md:!hidden p-2 rounded-full cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-secondary-bg" onClick={() => props.setShowNavigation(!props.showNavigation)}>
+                        <div className="md:!hidden p-2 rounded-full cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg" onClick={() => props.setShowNavigation(!props.showNavigation)}>
                               <MenuIcon />
                         </div>
                         <h2 className="text-2xl md:text-3xl font-sf-regular font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>

@@ -126,18 +126,18 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
       }
 }
 
-function getTheme (): "light" | "dark" | "black" | null {
+function getTheme (): "light" | "dark"  {
       try {
             const theme = localStorage.getItem('theme');
 
-            if (theme === "light" || theme === "dark" || theme === "black") {
-                  return theme as "light" | "dark" | "black";
+            if (theme === "light" || theme === "dark") {
+                  return theme;
             } else {
-                  return null;
+                  return "light";
             }
       } catch (error) {
             console.log(error);
-            return null;
+            return "light";
       }
 }
 

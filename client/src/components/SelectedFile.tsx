@@ -14,7 +14,7 @@ export default function SelectedFile (): JSX.Element {
       const { user: loggedInUser } = AuthState()
 
       const headerDivRef = useRef<HTMLDivElement>(null)
-      const fileRef = useRef<HTMLDivElement>(null)
+      const fileRef = useRef<HTMLImageElement | HTMLIFrameElement | null>(null)
 
       const handleClickOutside = (event: MouseEvent) => {
             const clickedElement = event.target as HTMLElement
@@ -73,15 +73,20 @@ export default function SelectedFile (): JSX.Element {
                   </div>
 
                   <section className='h-screen w-screen flex flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
-                        <div ref={fileRef} className='flex justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
+                        <div className='flex w-full h-full items-center justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
                               {isImage ? (
-                                    <img  src={selectedFile?.content?.toString()} className='max-w-full md:max-w-md lg:max-w-lg max-h-[700px] object-cover' alt='' />
+                                    <img
+                                          ref={fileRef as React.MutableRefObject<HTMLImageElement>}
+                                          src={selectedFile?.content?.toString()}
+                                          className='max-w-full md:max-w-md lg:max-w-lg max-h-[700px] object-cover'
+                                          alt='' />
                               ) : (
                                     <iframe
+                                          ref={fileRef as React.MutableRefObject<HTMLIFrameElement>}
                                           src={selectedFile?.content?.toString()}
                                           title='picked-pdf'
-                                          className='w-[700px] h-[700px]'
-                                    ></iframe>
+                                          className='w-full md:w-[700px] h-full md:h-[700px]'
+                                    />
                               )}
                         </div>
                   </section>

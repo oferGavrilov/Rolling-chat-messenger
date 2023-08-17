@@ -45,10 +45,10 @@ export default function ChatHeader ({ isTyping, connectionStatus, conversationUs
                                     )}
                         </div>
                         <div className='flex items-center gap-x-2'>
-                              <div className='text-primary dark:text-dark-primary-text text-2xl hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg py-2 px-2 rounded-lg cursor-pointer'>
+                              <div className='text-primary dark:text-dark-primary-text text-2xl hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg py-2 px-2 rounded-lg cursor-pointer'>
                                     <BsCameraVideo />
                               </div>
-                              <div className='text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setChatMode('info')}>
+                              <div className='text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setChatMode('info')}>
                                     <AiOutlineInfoCircle />
                               </div>
                         </div>

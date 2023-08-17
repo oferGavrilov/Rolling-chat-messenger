@@ -101,7 +101,8 @@ export default function Messenger (): JSX.Element {
       }
 
       async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number): Promise<void> {
-            if (!selectedChat) return
+            console.log('recordTimer', recordTimer)            
+            if (!selectedChat || !message) return
 
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
@@ -158,7 +159,7 @@ export default function Messenger (): JSX.Element {
 
       if (!selectedChat) return <div></div>
       return (
-            <section className='flex-1 messenger slide-left overflow-y-hidden'>
+            <section className='flex-1 messenger-grid slide-left overflow-y-hidden max-h-screen'>
 
                   <ChatHeader
                         isTyping={isTyping}

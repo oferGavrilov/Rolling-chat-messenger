@@ -30,7 +30,7 @@ export default function SearchUsers (props: Props): JSX.Element {
       return (
             <div
                   ref={menuRef}
-                  className={`w-full md:w-[435px] fixed top-0 left-0 transition-all duration-300 bg-bg-light-primary dark:bg-dark-secondary-bg h-screen shadow-xl
+                  className={`side-modal-container
                    ${props.isOpen ? 'translate-x-0' : '-translate-x-[100vh]'}`}>
                   {switchContent()}
             </div>

@@ -28,16 +28,18 @@ const Camera: React.FC<Props> = ({ onCapture }) => {
                         screenshotFormat="image/jpeg"
                         className="w-full md:w-[90vw] lg:w-[80vw] xl:w-[50vw]"
                   />
-                  <div onClick={captureImage} className="bg-primary dark:bg-dark-secondary-bg p-3 absolute -bottom-8 rounded-full cursor-pointer">
-                        <PhotoCameraIcon className="text-white" fontSize="large" />
+                  <div className="flex flex-col items-center gap-y-4">
+                        <div onClick={captureImage} className="bg-primary dark:bg-dark-secondary-bg p-3 rounded-full cursor-pointer">
+                              <PhotoCameraIcon className="text-white" fontSize="large" />
+                        </div>
+                        <Tooltip title="Rotate Camera" arrow >
+                              <button
+                                    onClick={() => setIsMirrored(!isMirrored)}
+                                    className="bg-primary dark:bg-dark-secondary-bg p-2 rounded-full cursor-pointer">
+                                    <ThreeSixtyIcon className="text-white" />
+                              </button>
+                        </Tooltip>
                   </div>
-                  <Tooltip title="Rotate Camera" arrow >
-                        <button
-                              onClick={() => setIsMirrored(!isMirrored)}
-                              className="bg-primary dark:bg-dark-secondary-bg p-2 rounded-full absolute right-[39%] -bottom-8 cursor-pointer">
-                              <ThreeSixtyIcon className="text-white" />
-                        </button>
-                  </Tooltip>
             </div>
       )
 }

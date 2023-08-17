@@ -67,10 +67,10 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                           ) : <span className="ml-8"></span>}
                                     </div>
                                     <div
-                                          className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] rounded-t-xl rounded-tr-2xl relative
+                                          className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] text-white rounded-t-xl rounded-tr-2xl relative
                                            ${message?.sender._id === user._id ?
-                                                      'bg-primary dark:bg-dark-tertiary-bg text-white'
-                                                      : 'bg-gray-400 text-white'}
+                                                      'bg-primary dark:bg-dark-outgoing-chat-bg shadow-lg dark:shadow-gray-700'
+                                                      : 'bg-gray-400 dark:bg-dark-incoming-chat-bg shadow-lg'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :
                                                       'ml-0 rounded-br-xl flex-row-reverse'}
@@ -78,7 +78,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                 ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
                                                 `}
                                     >
-                                          <span className={`text-xs mr-2 text-gray-100 relative mt-auto
+                                          <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto
                                                             ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}
                                                             ${message.messageType === 'file' && '!absolute bottom-1 left-3'}

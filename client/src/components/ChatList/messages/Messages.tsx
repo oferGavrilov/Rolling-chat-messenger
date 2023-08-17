@@ -36,7 +36,7 @@ export default function Messages ({ contentType }: MessagesProps) {
 
                   return chats.filter((chat: IChat) => {
                         const includesUsername = chat.users.some((user: IUser) => user._id !== loggedinUser?._id && filterRegex.test(user.username))
-                        const includesGroupName = filterRegex.test(chat.chatName|| '')
+                        const includesGroupName = filterRegex.test(chat.chatName || '')
 
                         return includesUsername || includesGroupName
                   })
@@ -80,19 +80,18 @@ export default function Messages ({ contentType }: MessagesProps) {
                   <div className='p-3 mx-4 flex'>
                         Sort by
                         <div className='px-2 relative'>
-                              <span className={`flex items-center text-primary dark:text-dark-tertiary-text font-semibold cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
+                              <span className={`flex items-center text-primary font-semibold cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
                                     {!sort ? 'None' : sort}
                                     <KeyboardArrowUpRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? 'rotate-180' : ''} `} />
                               </span>
 
                               <ul
                                     ref={modalRef}
-                                    className={`absolute text-center left-3 z-10 top-6 overflow-hidden transition-all duration-300 bg-gray-400 text-white rounded-md 
-                               ${showSortModal ? 'w-auto max-h-[300px]' : 'max-h-0 py-0'}`}
+                                    className={`sort-list ${showSortModal ? 'w-auto max-h-[300px]' : 'max-h-0 py-0'}`}
                               >
-                                    <li className={`sort-option border-b border-white ${sort === 'Newest' && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort('Newest')}>Newest</li>
-                                    <li className={`sort-option ${sort === 'Oldest' && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
-                                    <li className={`sort-option ${!sort && 'bg-secondary dark:bg-dark-tertiary-bg hover:bg-primary'}`} onClick={() => onSetSort(null)}>None</li>
+                                    <li className={`sort-option  ${sort === 'Newest' && 'sort-option-active'}`} onClick={() => onSetSort('Newest')}>Newest</li>
+                                    <li className={`sort-option border-y border-white ${sort === 'Oldest' && 'sort-option-active'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
+                                    <li className={`sort-option ${!sort && 'sort-option-active'}`} onClick={() => onSetSort(null)}>None</li>
                               </ul>
                         </div>
                   </div>

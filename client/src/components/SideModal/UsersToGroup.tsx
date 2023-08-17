@@ -11,6 +11,7 @@ import UsersInput from '../common/UsersInput'
 import { io } from 'socket.io-client'
 import { AuthState } from '../../context/useAuth'
 import { IChat } from '../../model/chat.model'
+import UsersList from './UsersList'
 
 interface Props {
       setIsOpen: CallableFunction
@@ -100,59 +101,48 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
       }
 
       return (
-            <div className="py-6 w-screen max-w-[435px]">
-                  <h2 className='text-2xl text-center pb-5 dark:text-dark-primary-text'>{isAddNewGroup ? 'Create Group Chat' : 'Edit Group Chat'}</h2>
+            <div className="py-6 w-screen max-w-[435px] text-secondary-text dark:text-dark-primary-text">
+                  <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>{isAddNewGroup ? 'Create Group Chat' : 'Edit Group Chat'}</h2>
 
                   <div className='flex flex-col gap-y-6 px-4 mx-auto'>
                         {isAddNewGroup && <>
                               <UploadImage image={image} setImage={setImage} />
                               <input
                                     type="text"
-                                    className='bg-gray-100 p-2 py-3 rounded-lg px-3 focus:ring-blue-400 dark:focus:ring-dark-primary-bg'
+                                    className='bg-gray-100 p-2 py-3 rounded-lg px-3 dark:text-black focus:outline-none focus:ring-2 focus:ring-primary'
                                     value={group.chatName}
                                     onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
-                                    placeholder="Group Name"
+                                    placeholder="Group Name*"
                               />
                         </>
                         }
-                        <div className='py-6 flex relative px-2 '>
+                        <div className='flex relative'>
                               <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                         </div>
                         <button
                               onClick={isAddNewGroup ? onCreateGroup : onAddUsers}
-                              className='self-end mt-2 p-2 transition-colors duration-200 bg-blue-500 text-white rounded-lg hover:bg-blue-600
-                              dark:bg-dark-primary-bg dark:hover:bg-dark-tertiary-bg'>
+                              className='create-group-btn'>
                               {isAddNewGroup ? 'Create Chat' : 'Edit Chat'}
                         </button>
                   </div>
 
                   {group.users.length > 0 && (
-                        <div className="flex p-4">
-                              {group.users.map((user: IUser) => (
-                                    <div key={user._id} className='relative p-2 [&>*]:hover:!block'>
-                                          <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-primary object-cover object-top" />
-                                          <CloseIcon onClick={() => removeFromGroup(user._id)} className='absolute cursor-pointer top-0 right-0 !hidden bg-red-500 !text-base rounded-xl text-white' />
-                                    </div>
-                              ))}
+                        <div className='p-4'>
+                              <h2>Selected Users:</h2>
+                              <div className="flex flex-wrap">
+                                    {group.users.map((user: IUser) => (
+                                          <div key={user._id} className='relative p-2 [&>*]:hover:!block'>
+                                                <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-primary object-cover object-top" />
+                                                <CloseIcon onClick={() => removeFromGroup(user._id)} className='absolute cursor-pointer top-0 right-0 !hidden bg-red-500 !text-base rounded-xl text-white' />
+                                          </div>
+                                    ))}
+                              </div>
                         </div>
                   )}
 
                   {(!isLoading) ? (
-                        <ul className='flex flex-col main-text px-4 gap-y-4 py-8 h-[470px] overflow-auto'>
-                              {filteredUsers.map((user: IUser) => (
-                                    <li key={user._id} className='text-main-color py-2 px-4 rounded-lg bg-gray-100 transition-colors duration-200 cursor-pointer hover:bg-gray-200'>
-                                          <div className='flex gap-x-4 items-center' onClick={() => handleGroupUsers(user)}>
-                                                <img className='w-12 h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
-                                                <div>
-                                                      <span className='text-xl'>{user.username}</span>
-                                                      <p className='ellipsis-text text-lg max-w-[270px]'>
-                                                            <span className='font-bold'>Email: </span>
-                                                            {user.email}</p>
-                                                </div>
-                                          </div>
-                                    </li>
-                              ))}
-                        </ul>) : (
+                        <UsersList users={filteredUsers} onSelectChat={handleGroupUsers} />
+                  ) : (
                         <Loading type="users" />
                   )}
 

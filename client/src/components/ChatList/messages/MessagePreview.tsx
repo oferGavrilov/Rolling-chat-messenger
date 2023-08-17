@@ -85,7 +85,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
       }
       return (
             <li onClick={() => onSelectChat()}
-                  className={`flex items-center rounded-lg justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer transition-colors duration-200
+                  className={`flex items-center rounded-lg justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200
                    ${selectedChat?._id === chat._id && 'bg-gray-100 dark:bg-dark-secondary-bg'}`}>
                   <div className="flex items-center w-full">
                         <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='profile-image' />

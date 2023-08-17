@@ -160,7 +160,7 @@ export default function Chat ({
 
       return (
             <>
-                  <div className="fixed-bg"  style={{ backgroundColor: chatBackgroundColor }}></div>
+                  <div className="fixed-bg" style={{ backgroundColor: chatBackgroundColor }}></div>
                   <div className={`overflow-y-auto overflow-x-hidden slide-left h-full bg-no-repeat bg-cover bg-center scroll-smooth ${loadingMessages && 'blur-[2px]'}`} ref={chatRef}>
                         {messages && <ChatMessages messages={messages} setChatMode={setChatMode} />}
                   </div>

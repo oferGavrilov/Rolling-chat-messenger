@@ -6,6 +6,7 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SendIcon from '@mui/icons-material/Send'
+import { toast } from 'react-toastify'
 
 interface AudioRecorderProps {
       onSendAudio: (audioBlob: Blob, recordingTimer: number) => void
@@ -52,22 +53,29 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, isRecording,
                   mediaRecorderRef.current = new MediaRecorder(stream)
 
                   mediaRecorderRef.current.ondataavailable = (e) => {
+
                         if (e.data.size > 0) {
                               chunksRef.current.push(e.data)
+                        } else {
+                              toast.error('No audio recorded')
                         }
                   }
 
                   mediaRecorderRef.current.onstop = () => {
                         const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
 
-                        chunksRef.current = []
-                        setRecordingTimer(0)
-                        mediaRecorderRef.current = null
-                        stream.getTracks().forEach(track => track.stop())
-
-                        if (sendAudioRef.current) {
+                        if (sendAudioRef.current && audioBlob.size > 0) {
                               onSendAudio(audioBlob, recordingTimer)
                         }
+
+                        chunksRef.current = []
+                        mediaRecorderRef.current = null
+
+                        if (stream) {
+                              stream.getTracks().forEach(track => track.stop());
+                        }
+
+                        setRecordingTimer(0)
 
                         setIsRecording(false)
                   }
