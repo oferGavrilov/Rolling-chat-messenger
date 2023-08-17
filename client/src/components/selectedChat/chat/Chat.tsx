@@ -171,7 +171,7 @@ export default function Chat ({
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
                               {!isRecording && (
                                     <textarea
-                                          className='bg-gray-100 w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto focus:my-4'
+                                          className='bg-gray-100 dark:text-white dark:bg-[#2a3942] w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none focus:h-20 focus:overflow-y-auto focus:my-4'
                                           placeholder='Type a message...'
                                           value={newMessage}
                                           onChange={typingHandler}

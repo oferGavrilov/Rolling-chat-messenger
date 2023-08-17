@@ -20,7 +20,7 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
             sendMessage(message, type)
       }
       return (
-            <div className='bg-white dark:bg-dark-secondary-bg relative'>
+            <div className='bg-white h-full dark:bg-dark-secondary-bg relative'>
                   <div className={`flex justify-center w-full h-full ${isImage && 'items-center'}`}>
                         {isImage ? (
                               <img
@@ -44,7 +44,7 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
 
                   <div className='border-t-4 border-gray-300 dark:border-dark-primary-bg py-5 w-full absolute bottom-0'>
                         <div onClick={onSendMessage}
-                              className='mx-4 bg-primary dark:bg-dark-primary-bg w-12 h-12 rounded-full text-white flex items-center justify-center transition-transform duration-300 hover:scale-110 cursor-pointer shadow-gray-950 shadow-md'>
+                              className='mx-4 bg-primary w-12 h-12 rounded-full text-white flex items-center justify-center transition-transform duration-300 hover:scale-110 cursor-pointer shadow-gray-950 shadow-md'>
                               <SendIcon className='rotate-180' />
                         </div>
                   </div>

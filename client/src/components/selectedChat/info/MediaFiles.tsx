@@ -57,11 +57,11 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
 
       return (
             <div className="px-6">
-                  <div className={`flex justify-between items-center py-2 pt-2 text-gray-400 dark:text-gray-300 cursor-pointer dark:hover:text-dark-tertiary-text hover:text-gray-700 ${messagesFiles.length <= 0 && 'pointer-events-none'}`} onClick={() => setShowMessagesFiles(!showMessagesFiles)}>
+                  <div className={`flex justify-between items-center py-2 pt-2 text-gray-400 dark:text-gray-300 cursor-pointer dark:hover:text-primary hover:text-gray-700 ${messagesFiles.length <= 0 && 'pointer-events-none'}`} onClick={() => setShowMessagesFiles(!showMessagesFiles)}>
                         <h2 className="text-lg">Media links and documents</h2>
                         <div className="flex items-center">
                               {messagesFiles.length}
-                              <ExpandMoreIcon />
+                              <ExpandMoreIcon className={showMessagesFiles ? 'rotate-180' : ''}/>
                         </div>
                   </div>
 

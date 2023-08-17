@@ -78,7 +78,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
       }
       if (!selectedChat) return <div></div>
       return (
-            <section className="w-full ">
+            <section className="w-full">
                   <div className="text-center my-4">
                         {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
                         ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
@@ -119,8 +119,8 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                                           <SearchOutlinedIcon className="cursor-pointer" />
                                     </div>
                               </div>
-                              {isAdmin(selectedChat) && <div className="flex px-2 items-center gap-x-4 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg p-2 cursor-pointer rounded-lg" onClick={() => setIsAddUsers(!isAddUsers)}>
-                                    <div className="bg-primary dark:bg-dark-primary-bg text-white h-10 w-10 flex items-center justify-center rounded-full">
+                              {isAdmin(selectedChat) && <div className="flex px-2 items-center gap-x-4 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg p-2 cursor-pointer rounded-lg" onClick={() => setIsAddUsers(!isAddUsers)}>
+                                    <div className="bg-primary text-white h-10 w-10 flex items-center justify-center rounded-full">
                                           <PersonAddAltOutlinedIcon fontSize="small" />
                                     </div>
                                     <span>Adding participants</span>
@@ -128,7 +128,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                               <div className="flex flex-col gap-y-2 border-2 dark:border-dark-primary-bg rounded-lg">
                                     {selectedChat.users.map(user => (
                                           <div key={user._id} className="flex justify-between">
-                                                <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg w-full p-2  cursor-pointer rounded-lg">
+                                                <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg w-full p-2  cursor-pointer rounded-lg">
                                                       <div className="flex items-center gap-x-3">
                                                             <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
                                                             <span className="text-lg">{user.username}</span>
@@ -140,7 +140,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                                                       )}
                                                       {(isAdmin(selectedChat, loggedInUser?._id) && user._id !== loggedInUser?._id) &&
                                                             <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={() => onRemoveFromGroup(user._id)}>
-                                                                  <DeleteIcon className="!text-3xl" />
+                                                                  <DeleteIcon className="!text-2xl" />
                                                             </div>
                                                       }
                                                 </div>
@@ -148,7 +148,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                                     ))}
                               </div>
                         </div>
-                        <div className="text-red-600 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-tertiary-bg cursor-pointer" onClick={() => onLeaveFromGroup()}>
+                        <div className="text-red-600 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer" onClick={() => onLeaveFromGroup()}>
                               <LogoutOutlinedIcon />
                               Leave The Group
                         </div>
