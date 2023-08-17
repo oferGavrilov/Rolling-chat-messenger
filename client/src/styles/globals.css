@@ -12,7 +12,7 @@
       }
 
       body {
-            @apply text-[#242424] font-sf-regular scroll-smooth;
+            @apply text-[#242424] font-sf-regular scroll-smooth overflow-hidden;
       }
       
       ::-webkit-scrollbar {
@@ -259,8 +259,12 @@
             max-height: calc(100vh - 150px);
       }
       .messenger-grid{
-            display: grid;
-            grid-template-rows:auto 1fr auto;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            /* display: grid;
+            grid-template-rows:auto 1fr auto; */
       }
 }
 

@@ -96,8 +96,8 @@ export default function Form ({ }) {
                               <Login formik={formik} />) : (
                               <SignUp formik={formik} image={image} setImage={setImage} />
                         )}
-                        <button disabled={!formik.dirty || isLoading} className="bg-tertiary transition-colors text-white duration-200 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-secondary" type="submit">{isLoading ? <div className='spinner'></div> : 'Submit'}</button>
-                        <button className="bg-quaternary text-white rounded-md p-2 transition-colors duration-200 hover:bg-tertiary" type="button" onClick={setGuestUser}>Get Guest User Credentials</button>
+                        <button disabled={!formik.dirty || isLoading} className="bg-primary transition-colors text-white duration-300 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-[#23a7ff]" type="submit">{isLoading ? <div className='spinner'></div> : 'Submit'}</button>
+                        <button className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff]" type="button" onClick={setGuestUser}>Get Guest User Credentials</button>
                   </form>
             </FormikProvider>
       )
