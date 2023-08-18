@@ -75,18 +75,18 @@ export async function loginUser (email: string, password: string): Promise<{ use
       }
 }
 
-export async function updateUserStatus(userId: string) {
+export async function updateUserStatus (userId: string, connectionStatus: boolean): Promise<void> {
       try {
-        // Find the user by ID and update the isOnline and lastSeen properties
-        await User.findByIdAndUpdate(
-          userId,
-          { isOnline: false, lastSeen: new Date() },
-          { new: true } // Set { new: true } to return the updated user after the update
-        );
+            // Find the user by ID and update the isOnline and lastSeen properties
+            await User.findByIdAndUpdate(
+                  userId,
+                  { isOnline: connectionStatus, lastSeen: new Date() },
+                  { new: true } // Set { new: true } to return the updated user after the update
+            );
       } catch (error: any) {
-        throw error;
+            throw error;
       }
-    }
+}
 
 export async function searchUsers (keyword: string): Promise<User[]> {
       try {

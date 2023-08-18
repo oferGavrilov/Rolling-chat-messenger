@@ -52,7 +52,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
 
       if (!messages || !user) return <div></div>
       return (
-            <section className="py-4 mt-[71px] mb-5">
+            <section className="py-4">
                   {messages &&
                         messages.map((message, idx) => (
                               <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
@@ -72,7 +72,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                     <div
                                           className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] text-white rounded-t-xl rounded-tr-2xl relative
                                            ${message?.sender._id === user._id ?
-                                                      'bg-primary dark:bg-dark-outgoing-chat-bg shadow-lg dark:shadow-gray-700'
+                                                      'bg-primary dark:bg-dark-outgoing-chat-bg shadow-md dark:shadow-gray-700'
                                                       : 'bg-gray-400 dark:bg-dark-incoming-chat-bg shadow-lg'}
                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                       'ml-auto rounded-bl-xl' :

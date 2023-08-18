@@ -54,7 +54,7 @@
             @apply w-full rounded-xl text-gray-700 py-2 font-semibold transition-colors duration-200;
       }
       .login-input {
-            @apply border-2 border-gray-300 rounded-md p-2 focus:border-primary focus:outline-none  transition-colors duration-300;
+            @apply border-2 border-gray-300 rounded-md p-2 focus:border-primary focus:outline-none transition-colors duration-300;
       }
       .error-message{
             @apply text-red-500 text-sm;
@@ -95,7 +95,7 @@
       /* Navigation */
       .navigation-container {
             @apply
-            transition-all duration-300 
+            transition-[width] duration-300 
             max-w-[70px] h-full
             flex flex-col justify-between gap-y-4
             /* sticky z-10 */
@@ -146,10 +146,11 @@
             mt-2 p-2 
             transition-colors duration-200
             rounded-lg 
-            bg-blue-500 text-white hover:bg-blue-600
-            dark:bg-dark-primary-bg dark:hover:bg-primary;
+            bg-blue-500 text-white hover:bg-blue-600 /* LIGHT MODE */
+            dark:bg-dark-primary-bg dark:hover:bg-primary; /* DARK MODE */
       }
 
+      /* Upload Image */
       .upload-img{
             @apply
             w-28 h-28 md:w-40 md:h-40 
@@ -172,7 +173,7 @@
             relative 
             transition-transform duration-300 cursor-pointer
             hover:scale-105
-            dark:shadow-gray-800;
+            dark:shadow-gray-800; /* DARK MODE */
       }
       .theme-options {
             @apply 
@@ -192,7 +193,7 @@
       .scroll-arrow-btn {
             @apply 
             text-white bg-gray-500 
-             h-max p-2 
+            h-max p-2 
             rounded-full 
             opacity-90 
             sticky top-1/2 
@@ -211,14 +212,17 @@
 
       /* AudioRecorder */
       .record-icon {
-            @apply w-10 h-10 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 dark:hover:bg-dark-default-hover-bg;
+            @apply
+            w-10 h-10 
+            flex items-center justify-center 
+            rounded-full 
+            cursor-pointer transition-colors duration-200 
+            dark:hover:bg-dark-default-hover-bg;
       }
 }
 
 @layer utilities{
-      .custom-hover{
-            @apply transition-opacity duration-300 opacity-80 cursor-pointer hover:opacity-100;
-      }
+      /* General */
       .ellipsis-text{
             white-space: nowrap;
             overflow: hidden;
@@ -229,7 +233,10 @@
             -ms-overflow-style: none; 
             scrollbar-width: none; 
       }
-      .drop-shadow-gray {
+      /* End General */
+
+      /* Home Page */
+      .drop-shadow-gray { 
             filter: drop-shadow(0px 10px 6px gray);
       }
       .drop-shadow-primary {
@@ -240,32 +247,43 @@
             transform: scale(1.02);
             font-weight: bold;
       }
+      /* End Home Page */
+
+      /* Chat Page */
       .chat-header-shadow {
             box-shadow: -1px 1px 13px 0px #3939395e;
       }
-      .fixed-bg {
+      .messenger-grid{
+            display: grid; 
+            grid-template-rows:64px 1fr 64px;
+            height: 100%;
+            overflow-x: hidden;
+      }
+      .chat-bg-img {
             background-image: url('https://res.cloudinary.com/dqkstk6dw/image/upload/v1692202705/background_kcduqa.png');
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.2;
+            opacity: 0.4;
+            z-index: -1;
+      }
+      .chat-bg-color {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
       }
       .calc-height {
             max-height: calc(100vh - 150px);
       }
-      .messenger-grid{
-            display: flex;
-            flex-direction: column;
-            /* height: 100%; */
-            width: 100%;
-            /* display: grid;
-            grid-template-rows:auto 1fr auto; */
-      }
+      /* End Chat Page */
 }
 
+/* MUI */
 .MuiPopover-paper{
       @apply !top-[81px] !right-[40px] !left-auto;
 }

@@ -7,8 +7,9 @@ import ChatHeader from "./chat/ChatHeader"
 import Info from "./info/Index"
 import Chat from "./chat/Chat"
 import FileEditor from "./file/FileEditor"
+import TextPanel from "./chat/TextPanel"
 
-import { formatLastSeenDate } from "../../utils/functions"
+import { formatLastSeenDate} from "../../utils/functions"
 
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
@@ -19,7 +20,7 @@ import { IUser } from "../../model/user.model"
 export default function Messenger (): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
-      const [isTyping, setIsTyping] = useState<boolean>(false)
+      
       const [messages, setMessages] = useState<IMessage[]>([])
 
       const { selectedChat, addNotification, updateChat, chats, setChats } = useChat()
@@ -40,7 +41,6 @@ export default function Messenger (): JSX.Element {
             }
       }, [])
 
-
       useEffect(() => {
             socketService.on('message received', (newMessage: IMessage) => {
                   if (selectedChat?._id !== newMessage.chat._id) {
@@ -52,7 +52,6 @@ export default function Messenger (): JSX.Element {
                   setMessages((prevMessages) => [...prevMessages, newMessage])
 
                   updateChat(newMessage)
-
             })
 
             return () => {
@@ -101,7 +100,6 @@ export default function Messenger (): JSX.Element {
       }
 
       async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number): Promise<void> {
-            console.log('recordTimer', recordTimer)            
             if (!selectedChat || !message) return
 
             const optimisticMessage: IMessage = {
@@ -118,10 +116,9 @@ export default function Messenger (): JSX.Element {
             // Show the message immediately 
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
+            // TODO: Scroll to bottom
 
             try {
-                  socketService.emit('stop typing', selectedChat._id)
-
                   const messageToUpdate = await chatService.sendMessage({
                         content: message,
                         chatId: selectedChat._id,
@@ -162,23 +159,16 @@ export default function Messenger (): JSX.Element {
             <section className='flex-1 messenger-grid slide-left overflow-y-hidden max-h-screen'>
 
                   <ChatHeader
-                        isTyping={isTyping}
                         connectionStatus={connectionStatus}
                         conversationUser={conversationUser}
                         setChatMode={setChatMode}
-
                   />
 
                   {chatMode === 'chat' && (
                         <Chat
-                              setFile={setFile}
                               setChatMode={setChatMode}
-                              setIsTyping={setIsTyping}
                               messages={messages}
-                              setMessages={setMessages}
                               fetchMessages={fetchMessages}
-                              onSendMessage={onSendMessage}
-                              setChatOnTop={setChatOnTop}
                         />
                   )}
                   {chatMode === 'info' && (
@@ -195,6 +185,13 @@ export default function Messenger (): JSX.Element {
                               sendMessage={onSendMessage}
                         />
                   )}
+
+                  <TextPanel
+                        onSendMessage={onSendMessage}
+                        setFile={setFile}
+                        setChatMode={setChatMode}
+                  />
+
             </section>
       )
 }

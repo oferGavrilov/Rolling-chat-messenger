@@ -1,13 +1,16 @@
 import React, { useRef, useState } from 'react'
+
 import { Client } from 'filestack-js'
-import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { toast } from 'react-toastify'
+
 import { uploadImg } from '../../../utils/cloudinary'
 import { useClickOutside } from '../../../custom/useClickOutside'
 
+import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import PermMediaIcon from '@mui/icons-material/PermMedia'
 import LocalSeeIcon from '@mui/icons-material/LocalSee'
-import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+
 import Camera from './Camera'
 
 interface Props {

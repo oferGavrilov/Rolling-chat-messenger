@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Avatar } from "@mui/material"
 
@@ -10,21 +10,33 @@ import useChat from "../../../store/useChat"
 import { AuthState } from "../../../context/useAuth"
 
 import { IUser } from "../../../model/user.model"
+import socketService from '../../../services/socket.service'
 
 interface Props {
-      isTyping: boolean
       connectionStatus: string
       conversationUser: IUser | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
 }
 
-export default function ChatHeader ({ isTyping, connectionStatus, conversationUser, setChatMode }: Props): JSX.Element {
+export default function ChatHeader ({ connectionStatus, conversationUser, setChatMode }: Props): JSX.Element {
       const { selectedChat, setSelectedChat } = useChat()
       const { user: loggedInUser } = AuthState()
+      const [isTyping, setIsTyping] = useState<boolean>(false);
+
+      useEffect(() => {
+            socketService.on('typing', () => setIsTyping(true));
+            socketService.on('stop typing', () => setIsTyping(false));
+
+            return () => {
+                  socketService.on('stop typing', () => setIsTyping(false));
+                  setIsTyping(false)
+            }
+      }, [selectedChat]);
+
 
       if (!selectedChat) return <div></div>
       return (
-            <div className='flex items-center px-2 min-h-[64px] fixed w-full top-0 z-10 chat-header-shadow md:h-[4.4rem] bg-white dark:bg-dark-secondary-bg'>
+            <div className='flex items-center px-2 chat-header-shadow bg-white dark:bg-dark-secondary-bg'>
                   <IoIosArrowBack size={30} className='md:hidden text-primary dark:text-dark-primary-text ml-2 mr-4 cursor-pointer' onClick={() => setSelectedChat(null)} />
                   <Avatar className="hover:scale-110 transition-all duration-300 cursor-pointer" src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg} alt={conversationUser?.username} onClick={() => setChatMode('info')} />
                   <div className='flex items-center gap-4 ml-4 justify-between w-full'>

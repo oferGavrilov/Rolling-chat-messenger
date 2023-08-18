@@ -118,7 +118,7 @@ export function clearTypingTimeout (timeoutId: number): void {
   clearTimeout(timeoutId)
 }
 
-export function scrollToBottom (chatRef: React.RefObject<HTMLDivElement>): void {
+export function scrollToBottom (chatRef: React.RefObject<HTMLElement>): void {
   setTimeout(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight

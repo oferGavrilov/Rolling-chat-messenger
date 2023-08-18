@@ -56,17 +56,17 @@ export async function login (req: AuthenticatedRequest, res: Response) {
       }
 }
 
-export async function logoutUser(req: Request, res: Response) {
-      const userId = (req as AuthenticatedRequest).user?._id 
-    
+export async function logoutUser (req: Request, res: Response) {
+      const userId = (req as AuthenticatedRequest).user?._id
+
       try {
-        await updateUserStatus(userId)
-    
-        res.status(200).json({ message: 'User logged out successfully' })
+            await updateUserStatus(userId, false)
+
+            res.status(200).json({ message: 'User logged out successfully' })
       } catch (error: any) {
-        res.status(500).json({ error: 'Server error' })
+            res.status(500).json({ error: 'Server error' })
       }
-    }
+}
 
 export async function searchUsersByKeyword (req: Request, res: Response) {
       const { search } = req.query
@@ -85,7 +85,7 @@ export async function getUsers (req: AuthenticatedRequest, res: Response) {
       const { userId } = req.params
 
       try {
-            const users = await getUsersService(loggedInUserId , userId)
+            const users = await getUsersService(loggedInUserId, userId)
             res.send(users)
       } catch (error: any) {
             throw handleErrorService(error)
