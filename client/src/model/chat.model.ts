@@ -8,11 +8,11 @@ export interface IChat {
       users: IUser[]
       groupAdmin?: IUser
       groupImage?: string
-      latestMessage: IMessage 
-      createdAt: string
-      updatedAt: string
-      count: number
-      deletedBy: string[]
+      latestMessage?: IMessage 
+      createdAt?: string
+      updatedAt?: string
+      deletedBy?: string[]
+      count?: number
 }
 
 export type LatestMessage =  {

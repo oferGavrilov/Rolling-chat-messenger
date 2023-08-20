@@ -1,20 +1,24 @@
 import { Request } from 'express'
-import mongoose, { Document, Model, Schema, Types } from 'mongoose'
+import mongoose, { Document, Model, ObjectId, Schema, Types } from 'mongoose'
 import { User } from './user.model.js'
 
-export interface ChatDocument extends Document {
+export interface ChatDocument  {
+  _id?: ObjectId
   chatName: string
   isGroupChat: boolean
   users: Types.ObjectId[]
   latestMessage: Types.ObjectId
+  isOnline?: boolean
   groupAdmin?: Types.ObjectId
   groupImage?: string
   deletedBy: string[]
+  lastSeen?: Date
 }
 
 export interface RequestChat extends Request {
   body: {
     userId: string;
+    currentUserId: string;
     users: string[];
     chatName: string;
     groupImage: string;

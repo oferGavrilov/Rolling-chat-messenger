@@ -6,11 +6,10 @@ import { handleErrorService } from '../../middleware/errorMiddleware.js'
 import { RequestChat } from '../../models/chat.model.js'
 
 export async function createChat (req: RequestChat, res: Response) {
-      const { userId } = req.body
-      const currentUser = req.user as User
+      const { userId, currentUserId } = req.body
 
       try {
-            const chat = await createChatService(userId, currentUser)
+            const chat = await createChatService(userId, currentUserId)
             res.status(200).json(chat)
       } catch (error: any) {
             throw handleErrorService(error)
@@ -93,7 +92,7 @@ export async function updateUsersInGroupChat (req: RequestChat, res: Response) {
 
 export async function removeFromGroupChat (req: RequestChat, res: Response) {
       const { chatId, userId } = req.body
-      
+
       if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
       if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
 

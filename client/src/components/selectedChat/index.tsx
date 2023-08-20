@@ -16,6 +16,8 @@ import { chatService } from "../../services/chat.service"
 
 import { IMessage } from "../../model/message.model"
 import { IUser } from "../../model/user.model"
+import { userService } from "../../services/user.service"
+import { IChat } from "../../model/chat.model"
 
 export default function Messenger (): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
@@ -66,6 +68,7 @@ export default function Messenger (): JSX.Element {
 
       async function fetchMessages () {
             if (!selectedChat) return
+            if (selectedChat._id === 'temp-id') return setMessages([])
             const data = await chatService.getMessages(selectedChat._id)
             setMessages(data)
       }
@@ -118,9 +121,19 @@ export default function Messenger (): JSX.Element {
             setChatOnTop(optimisticMessage)
 
             try {
+                  let chatToUpdate: IChat | undefined
+                  // Chats that are not created yet have _id = 'temp-id'
+                  if (selectedChat._id === 'temp-id') {
+                        const targetUser: string = selectedChat.users.find((user) => user._id !== loggedInUser?._id)?._id as string
+                        chatToUpdate = await userService.createChat(targetUser)
+                        if (!chatToUpdate) throw new Error('Failed to create chat')
+                        chatToUpdate.latestMessage = optimisticMessage
+                        setChats([chatToUpdate, ...chats])
+                  }
+
                   const messageToUpdate = await chatService.sendMessage({
                         content: message,
-                        chatId: selectedChat._id,
+                        chatId: selectedChat._id !== 'temp-id' ? selectedChat._id : chatToUpdate?._id as string,
                         messageType: messageType,
                         messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
                   })

@@ -39,17 +39,21 @@ async function getUserChats (userId: string): Promise<IChat[]> {
       try {
             const { data }: AxiosResponse<IChat[]> = await axios.get(BASE_URL + `/api/chat/chat/${userId}`, getAuthConfig())
             const sortedData = data.sort((a: IChat, b: IChat) => {
-                  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-            })
+                  const aDate = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+                  const bDate = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
 
-            return sortedData
+                  return bDate - aDate;
+            });
+
+            return sortedData;
       } catch (error) {
             if (axios.isAxiosError(error)) {
-                  handleAxiosError(error)
+                  handleAxiosError(error);
             }
-            throw new Error('Failed to fetch user chats.')
+            throw new Error('Failed to fetch user chats.');
       }
 }
+
 
 async function createGroup (group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
       try {
@@ -123,7 +127,13 @@ async function getMessages (chatId: string): Promise<IMessage[]> {
       }
 }
 
-async function sendMessage (message: { content: string | File, chatId: string, messageType: string, messageSize?: number }): Promise<IMessage> {
+async function sendMessage (
+      message: {
+            content: string | File,
+            chatId: string,
+            messageType: string,
+            messageSize?: number,
+      }): Promise<IMessage> {
       try {
             const { data }: AxiosResponse<IMessage> = await axios.post(BASE_URL + '/api/message', message, getConfig())
             return data

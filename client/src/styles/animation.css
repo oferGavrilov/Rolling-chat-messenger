@@ -91,7 +91,7 @@
       height: 24px;
       border-radius: 50%;
       border: 2px solid #0099ff;
-      border-color: #0099ff transparent #0099ff transparent;
+      border-color: #ffffff transparent #ffffff transparent;
       animation: spinner 1.2s linear infinite;
 }
 

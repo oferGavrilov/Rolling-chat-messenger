@@ -30,6 +30,7 @@ export default function Chat ({
 
       useEffect(() => {
             if (!selectedChat) return
+
             socketService.emit('join chat', { chatId: selectedChat._id, userId: loggedInUser?._id })
 
             const fetchData = async () => {

@@ -93,7 +93,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                               <div className='flex justify-between items-center'>
                                     <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
                                     <span className='text-gray-400 dark:text-dark-primary-text text-sm'>
-                                          {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt)}
+                                          {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt as string)}
                                     </span>
                               </div>
                               <div className='flex justify-between'>

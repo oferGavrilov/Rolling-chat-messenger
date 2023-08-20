@@ -4,14 +4,15 @@ import { Types, type PopulateOptions } from "mongoose"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { Message } from "../../models/message.model.js"
 
-export async function createChatService (userId: string, currentUser: User): Promise<ChatDocument> {
-      console.log('createChatService', userId, currentUser)
-      if (!userId) {
+
+export async function createChatService (receiverId: string, senderId: string): Promise<ChatDocument> {
+      console.log('createChatService', receiverId, senderId)
+      if (!receiverId) {
             console.log('No user id sent to the server')
             throw new Error('No user id sent to the server')
       }
 
-      const user = await User.findById(userId)
+      const user = await User.findById(receiverId)
 
       if (!user) {
             console.log('User not found')
@@ -21,8 +22,8 @@ export async function createChatService (userId: string, currentUser: User): Pro
       const isChat: ChatDocument[] = await Chat.find({
             isGroupChat: false,
             $and: [
-                  { users: { $elemMatch: { $eq: currentUser._id } } },
-                  { users: { $elemMatch: { $eq: userId } } },
+                  { users: { $elemMatch: { $eq: senderId } } },
+                  { users: { $elemMatch: { $eq: receiverId } } },
             ],
       })
             .populate("users", "-password")
@@ -31,10 +32,12 @@ export async function createChatService (userId: string, currentUser: User): Pro
       if (isChat.length > 0) {
             return isChat[0] as ChatDocument
       } else {
-            const chatData = {
+            const chatData: ChatDocument = {
                   chatName: user.username,
                   isGroupChat: false,
-                  users: [currentUser._id, userId],
+                  users: [senderId, receiverId] as any,
+                  latestMessage: undefined,
+                  deletedBy: [],
                   isOnline: false,
                   lastSeen: new Date(),
             }
@@ -113,7 +116,7 @@ export async function renameGroupChatService (chatId: string, groupName: string)
       if (!chatId || !groupName) {
             throw new Error('Please fill all the fields')
       }
-      
+
       try {
             await Chat.findByIdAndUpdate(
                   chatId,

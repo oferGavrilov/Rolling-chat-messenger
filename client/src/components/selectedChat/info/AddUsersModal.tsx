@@ -105,7 +105,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, setIsOpen }: Props
                                                       className='w-12 h-12 rounded-full object-top object-cover'
                                                       alt="user-profile"
                                                 />
-                                                <div className=''>
+                                                <div>
                                                       <p>{user.username}</p>
                                                       <p>{user.email}</p>
                                                 </div>

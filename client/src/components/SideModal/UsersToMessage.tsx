@@ -2,18 +2,19 @@ import { useEffect, useMemo, useState } from "react"
 import { IUser } from "../../model/user.model"
 import useChat from "../../store/useChat"
 import { userService } from "../../services/user.service"
-import { IChat } from "../../model/chat.model"
 import CloseIcon from '@mui/icons-material/Close'
 import Loading from "../SkeltonLoading"
 import UsersInput from "../common/UsersInput"
 import UsersList from "./UsersList"
+import { AuthState } from "../../context/useAuth"
 
 export default function UsersToMessage ({ setIsOpen }): JSX.Element {
       const [filter, setFilter] = useState<string>('')
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<IUser[]>([])
 
-      const { setSelectedChat, chats, setChats } = useChat()
+      const { setSelectedChat, chats } = useChat()
+      const { user: loggedInUser } = AuthState()
 
       useEffect(() => {
             loadUsers()
@@ -36,13 +37,26 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
       }, [users, filter])
 
       async function onSelectChat (user: IUser): Promise<void> {
-            const data: IChat = await userService.createChat(user._id)
+            // Check if chat already exists and its not a group chat
+            const chat = chats.find((chat) => chat.users.length === 2 && chat.users.some((chatUser) => chatUser._id === user._id))
 
-            if (!chats.find(chat => chat._id === data._id)) {
-                  setChats([data, ...chats])
+            if (chat) {
+                  setSelectedChat(chat)
+                  setFilter('')
+                  setIsOpen(false)
+                  return
             }
 
-            setSelectedChat(data)
+            const newChat = {
+                  _id: 'temp-id',
+                  chatName: user.username,
+                  groupImage: user.profileImg,
+                  isGroupChat: false,
+                  users: [user, loggedInUser] as IUser[],
+
+            }
+
+            setSelectedChat(newChat)
             setFilter('')
             setIsOpen(false)
       }

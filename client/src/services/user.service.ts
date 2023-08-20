@@ -50,8 +50,10 @@ async function getUsers (userId?: string): Promise<IUser[] | IUser> {
 
 async function createChat (userId: string): Promise<IChat> {
       const config = getConfig()
+
+      const currentUserId = getLoggedinUser()?._id
       try {
-            const response: AxiosResponse<IChat> = await axios.post(BASE_URL + '/api/chat', { userId }, config)
+            const response: AxiosResponse<IChat> = await axios.post(BASE_URL + '/api/chat', { userId, currentUserId }, config)
             const { data } = response
             return data
       } catch (error) {
@@ -90,7 +92,7 @@ async function updateUserImage (image: string): Promise<string> {
             const { data } = response
             if (data) {
                   const user = getLoggedinUser()
-                  _saveToSessionStorage({ ...user, profileImg:image })
+                  _saveToSessionStorage({ ...user, profileImg: image })
             }
 
             return data
@@ -125,7 +127,7 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
       }
 }
 
-function getTheme (): "light" | "dark"  {
+function getTheme (): "light" | "dark" {
       try {
             const theme = localStorage.getItem('theme');
 
