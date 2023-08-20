@@ -46,10 +46,10 @@ export default function Messages ({ contentType }: MessagesProps) {
             }
             if (sort) {
                   if (sort === 'Newest') {
-                        return chats.sort((a: IChat, b: IChat) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+                        return chats.sort((a: IChat, b: IChat) => new Date(b.updatedAt as string).getTime() - new Date(a.updatedAt as string).getTime())
                   }
                   else if (sort === 'Oldest') {
-                        return chats.sort((a: IChat, b: IChat) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())
+                        return chats.sort((a: IChat, b: IChat) => new Date(a.updatedAt as string).getTime() - new Date(b.updatedAt as string).getTime())
                   }
             }
             return chats
@@ -62,7 +62,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                   if (!user) return
                   const chats = await chatService.getUserChats(user._id)
                   setChats(chats)
-                  setIsLoading(false)
+                  // setIsLoading(false)
             }
 
             loadChats()
@@ -90,7 +90,7 @@ export default function Messages ({ contentType }: MessagesProps) {
                                     className={`sort-list ${showSortModal ? 'w-auto max-h-[300px]' : 'max-h-0 py-0'}`}
                               >
                                     <li className={`sort-option  ${sort === 'Newest' && 'sort-option-active'}`} onClick={() => onSetSort('Newest')}>Newest</li>
-                                    <li className={`sort-option border-y border-white ${sort === 'Oldest' && 'sort-option-active'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
+                                    <li className={`sort-option border-y dark:border-white ${sort === 'Oldest' && 'sort-option-active'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
                                     <li className={`sort-option ${!sort && 'sort-option-active'}`} onClick={() => onSetSort(null)}>None</li>
                               </ul>
                         </div>

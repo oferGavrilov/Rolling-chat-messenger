@@ -97,7 +97,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, setIsOpen }: Props
                                           <li
                                                 key={user._id}
                                                 onClick={() => handleSelectUsers(user)}
-                                                className={`flex gap-x-2 p-2 w-[75%] border-b-2 transition-colors duration-200 border-white last:border-b-0 dark:hover:bg-dark-default-hover-bg cursor-pointer
+                                                className={`user-modal-card
                                           ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary' : ''}`}
                                           >
                                                 <img

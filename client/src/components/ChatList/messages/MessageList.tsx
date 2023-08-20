@@ -53,14 +53,15 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
       }, [selectedChat])
 
       function handleNewGroup (chat: IChat) {
-            console.log(chat)
             setChats([chat, ...chats])
       }
       return (
-            <ul className="overflow-y-auto px-1 ">
-                  {chats.map(chat => (
-                        <MessagePreview key={chat._id} chat={chat} notification={notification} />
-                  ))}
-            </ul>
+            <div className="overflow-y-auto h-[79vh]">
+                  <ul className="px-1">
+                        {chats.map(chat => (
+                              <MessagePreview key={chat._id} chat={chat} notification={notification} />
+                        ))}
+                  </ul>
+            </div>
       )
 }

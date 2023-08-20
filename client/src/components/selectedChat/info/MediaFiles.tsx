@@ -19,26 +19,30 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
       const messagesFilesRef = useRef<HTMLDivElement>(null)
 
       useEffect(() => {
-            if (!messagesFilesRef.current) return
-
-            const container = messagesFilesRef.current
-            setShowLeftButton(container.scrollLeft > 0)
+            if (!messagesFilesRef.current) return;
+        
+            const container = messagesFilesRef.current;
+            setShowLeftButton(container.scrollLeft > 0);
+        
+            // Compare scrollLeft + container.clientWidth to container.scrollWidth - a small buffer value
             setShowRightButton(
-                  container.scrollLeft + container.clientWidth < container.scrollWidth
-            )
-
+                container.scrollLeft + container.clientWidth < container.scrollWidth - 5
+            );
+        
             const handleScroll = () => {
-                  setShowLeftButton(container.scrollLeft > 0)
-                  setShowRightButton(
-                        container.scrollLeft + container.clientWidth < container.scrollWidth
-                  )
-            }
-
-            container.addEventListener('scroll', handleScroll)
+                setShowLeftButton(container.scrollLeft > 0);
+        
+                // Compare scrollLeft + container.clientWidth to container.scrollWidth - a small buffer value
+                setShowRightButton(
+                    container.scrollLeft + container.clientWidth < container.scrollWidth - 5
+                );
+            };
+        
+            container.addEventListener('scroll', handleScroll);
             return () => {
-                  container.removeEventListener('scroll', handleScroll)
-            }
-      }, [messagesFilesRef])
+                container.removeEventListener('scroll', handleScroll);
+            };
+        }, [messagesFilesRef]);
 
       const scrollMessagesFiles = (direction: 'left' | 'right') => {
             if (!messagesFilesRef.current) return
@@ -56,7 +60,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
       const messagesFiles = messages.filter(message => message.messageType === 'image')
 
       return (
-            <div className="px-6">
+            <div className="px-6 relative">
                   <div className={`flex justify-between items-center py-2 pt-2 text-gray-400 dark:text-gray-300 cursor-pointer dark:hover:text-primary hover:text-gray-700 ${messagesFiles.length <= 0 && 'pointer-events-none dark:text-gray-400'}`} onClick={() => setShowMessagesFiles(!showMessagesFiles)}>
                         <h2 className="text-lg">Media links and documents</h2>
                         <div className="flex items-center">
@@ -65,34 +69,34 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
                         </div>
                   </div>
 
-                  <div className={`flex gap-x-3 overflow-x-auto overflow-y-hidden relative scroll-smooth transition-[height] duration-300 ease-in-out ${showMessagesFiles ? 'h-[220px]' : 'h-[0px]'}`} ref={messagesFilesRef} >
+                  <div className={`flex gap-x-3 overflow-x-auto overflow-y-hidden relative scroll-smooth transition-[height] duration-300 ease-in-out hide-scrollbar ${showMessagesFiles ? 'h-[160px]' : 'h-[0px]'}`} ref={messagesFilesRef} >
                         {messagesFiles.map(message => (
                               <img
                                     key={message._id}
-                                    className="object-cover min-w-[180px] h-[200px] object-center py-1 cursor-pointer"
+                                    className="object-cover w-[120px] h-[140px] object-center py-1 cursor-pointer"
                                     src={message.content.toString()}
                                     alt="conversation-user"
                                     onClick={() => setSelectedFile(message)}
                               />
                         ))}
 
-                        {showMessagesFiles && showRightButton && (
-                              <div
-                                    className="scroll-arrow-btn right-0"
-                                    onClick={() => scrollMessagesFiles('right')}
-                              >
-                                    <KeyboardArrowRightIcon />
-                              </div>
-                        )}
-
-                        {showMessagesFiles && showLeftButton && (
-                              <div
-                                    className="scroll-arrow-btn left-0"
-                                    onClick={() => scrollMessagesFiles('left')}
-                              >
-                                    <KeyboardArrowLeftIcon />
-                              </div>)}
                   </div>
+                  {showMessagesFiles && showRightButton && (
+                        <div
+                              className="scroll-arrow-btn right-0"
+                              onClick={() => scrollMessagesFiles('right')}
+                        >
+                              <KeyboardArrowRightIcon fontSize='large' />
+                        </div>
+                  )}
+
+                  {showMessagesFiles && showLeftButton && (
+                        <div
+                              className="scroll-arrow-btn left-0"
+                              onClick={() => scrollMessagesFiles('left')}
+                        >
+                              <KeyboardArrowLeftIcon fontSize='large' />
+                        </div>)}
             </div>
       )
 }

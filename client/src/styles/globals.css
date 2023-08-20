@@ -75,21 +75,23 @@
       .sort-list {
             @apply
             absolute left-3 z-10 top-6
-            text-center text-white
+            text-center rounded-md shadow-lg 
             overflow-hidden
             transition-all duration-300
-            dark:bg-dark-dropdown-bg /* DARK MODE */
-            rounded-md;
+            bg-white text-black shadow-gray-400 /* LIGHT MODE */
+            dark:bg-dark-dropdown-bg dark:text-dark-primary-text dark:shadow-dark-primary-bg; /* DARK MODE */
       }
       .sort-option {
             @apply
             py-2 px-4
-            cursor-pointer
-            transition-colors duration-300
+            transition-colors duration-300 cursor-pointer
+            hover:bg-gray-200 /* LIGHT MODE */
             dark:hover:bg-dark-default-hover-bg /* DARK MODE */
       }
       .sort-option-active {
-            @apply bg-primary hover:!bg-[#0582ca];
+            @apply
+            text-white 
+            bg-primary hover:!bg-[#0582ca];
       }
 
       /* Navigation */
@@ -186,10 +188,10 @@
       .scroll-arrow-btn {
             @apply 
             text-white bg-gray-500 
-            h-max p-2 
+            h-max p-1 
             rounded-full 
             opacity-90 
-            sticky top-1/2 
+            absolute top-1/2 
             transition-all duration-300 cursor-pointer 
             hover:scale-110;
       }
@@ -218,18 +220,29 @@
             @apply
             h-5/6 w-full md:w-5/6 
             absolute top-4 z-50
-            rounded-xl px-6
+            rounded-xl px-6 shadow-xl
             transition-transform duration-200 ease-in-out 
-            dark:bg-[#24272b] dark:text-dark-primary-text;
+            bg-gray-100 shadow-gray-400 /* LIGHT MODE */
+            dark:bg-[#24272b] dark:text-dark-primary-text /* DARK MODE */;
+      }
 
+      .user-modal-card {
+            @apply
+            flex gap-x-2 
+            p-2 w-[75%] 
+            border-b-2 last:border-b-0 
+            transition-colors duration-200 cursor-pointer
+            hover:bg-gray-200 border-primary /* LIGHT MODE */
+            dark:hover:bg-dark-default-hover-bg dark:border-white; /* DARK MODE */
       }
 
       .users-modal-btn {
             @apply
             bg-primary 
-            px-4 py-2 
-            rounded-full
-            transition-all duration-200 cursor-pointer;
+            py-2 w-28 my-6 md:my-10
+            rounded-lg tracking-wider
+            transition-all duration-200 cursor-pointer
+            text-white hover:bg-[#0582ca] /* LIGHT MODE */;
       }
 }
 

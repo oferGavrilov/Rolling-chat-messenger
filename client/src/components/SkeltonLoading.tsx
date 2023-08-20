@@ -47,7 +47,7 @@ function LoadingMessages (): JSX.Element {
 
                                     <Skeleton height={45} width={45} animation='wave' className='mt-3' variant='circular' />
                                     <div className='flex flex-col mt-2'>
-                                          <Skeleton height={25} animation='wave' width={60} className='' />
+                                          <Skeleton height={25} animation='wave' width={60} className='text-black' />
                                           <Skeleton height={25} animation='wave' width={150} className='' />
                                     </div>
                               </div>
