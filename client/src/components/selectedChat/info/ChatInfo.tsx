@@ -41,7 +41,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props): JSX.El
                               <span className="text-gray-500 dark:text-gray-200">{conversationUser?.email}</span>
                         </div>
 
-                        <div className="[&>*]:border-y-[6px] flex flex-col h-full gap-y-6 w-full [&>*]:border-gray-200 dark:[&>*]:border-[#2f3e46]">
+                        <div className="[&>*]:border-t-[6px] last:border-t-0 flex flex-col h-full w-full [&>*]:border-gray-200 dark:[&>*]:border-[#2f3e46]">
                               <div className="mt-5 px-6">
                                     <div className="flex flex-col pt-2">
                                           <h2 className="text-lg font-semibold dark:text-dark-primary-text">About</h2>

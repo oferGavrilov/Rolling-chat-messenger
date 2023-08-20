@@ -36,11 +36,18 @@ export default function ChatPage (): JSX.Element {
             const theme = userService.getTheme()
             switch (theme) {
                   case 'dark':
+                        document.body.style.backgroundColor = '#222e35'
                         document.body.classList.add('dark')
                         break;
-                  case 'light':
+                        case 'light':
+                        document.body.style.backgroundColor = '#ffffff'
                         document.body.classList.remove('dark')
                         break;
+            }
+
+            return () => {
+                  document.body.style.backgroundColor = '#ffffff'
+                  document.body.classList.remove('dark')
             }
       }, [])
 

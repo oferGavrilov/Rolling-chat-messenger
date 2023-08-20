@@ -110,7 +110,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                         <div className="text-gray-400 py-3 dark:text-gray-200">Group - {selectedChat.users.length} Participants</div>
                   </div>
 
-                  <div className="[&>*]:border-t-[6px] [&>*]:border-gray-200 dark:[&>*]:border-[#2f3e46]">
+                  <div className="[&>*]:border-t-[6px]  [&>*]:border-gray-200 dark:[&>*]:border-[#2f3e46]">
                         <MediaFiles messages={messages} />
 
                         <div className="flex flex-col gap-y-4 pt-8 px-2 md:px-10 text-gray-500 dark:text-dark-primary-text pb-6">
