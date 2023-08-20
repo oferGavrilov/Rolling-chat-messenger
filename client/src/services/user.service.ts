@@ -6,7 +6,7 @@ import { handleAxiosError } from "../utils/handleErrors"
 
 const STORAGE_KEY = 'loggedin-user'
 const env = import.meta.env.VITE_NODE_ENV
-console.log('userService env', env)
+
 const BASE_URL = env === 'production' ? 'https://rolling-chat-messenger-server.vercel.app' : 'http://localhost:5000'
 
 export const userService = {

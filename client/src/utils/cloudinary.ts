@@ -1,7 +1,7 @@
 
 export async function uploadImg (file: File) {
       try {
-            const CLOUD_NAME = 'dqkstk6dw'
+            const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME
             const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload/`
             const UPLOAD_PRESET = 'chat-app'
 
@@ -23,7 +23,7 @@ export async function uploadImg (file: File) {
 
 export async function uploadAudio (audioBlob: Blob) {
       try {
-            const CLOUD_NAME = 'dqkstk6dw'
+            const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME
             const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload/`
             const UPLOAD_PRESET = 'chat-app'
 

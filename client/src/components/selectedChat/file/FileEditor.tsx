@@ -32,7 +32,7 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
                               <iframe
                                     src={file.url}
                                     title="picked-pdf"
-                                    className="w-full h-[400px] md:h-[700px] mt-12 shadow-xl shadow-gray-400"
+                                    className="w-full h-[400px] md:h-[700px] mt-12"
                               ></iframe>
                         )}
                   </div>

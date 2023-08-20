@@ -9,7 +9,7 @@ import Chat from "./chat/Chat"
 import FileEditor from "./file/FileEditor"
 import TextPanel from "./chat/TextPanel"
 
-import { formatLastSeenDate} from "../../utils/functions"
+import { formatLastSeenDate } from "../../utils/functions"
 
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
@@ -20,7 +20,7 @@ import { IUser } from "../../model/user.model"
 export default function Messenger (): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
-      
+
       const [messages, setMessages] = useState<IMessage[]>([])
 
       const { selectedChat, addNotification, updateChat, chats, setChats } = useChat()
@@ -186,11 +186,13 @@ export default function Messenger (): JSX.Element {
                         />
                   )}
 
-                  <TextPanel
-                        onSendMessage={onSendMessage}
-                        setFile={setFile}
-                        setChatMode={setChatMode}
-                  />
+                  {chatMode === 'chat' && (
+                        <TextPanel
+                              onSendMessage={onSendMessage}
+                              setFile={setFile}
+                              setChatMode={setChatMode}
+                        />
+                  )}
 
             </section>
       )

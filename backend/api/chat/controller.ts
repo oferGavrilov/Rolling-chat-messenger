@@ -56,6 +56,7 @@ export async function renameGroupChat (req: RequestChat, res: Response) {
 
       try {
             const updatedGroupName = await renameGroupChatService(chatId, groupName)
+            console.log('updatedGroupName', updatedGroupName)
             res.status(200).send(updatedGroupName)
       } catch (error: any) {
             throw handleErrorService(error)

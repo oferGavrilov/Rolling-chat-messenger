@@ -5,7 +5,7 @@ import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { Message } from "../../models/message.model.js"
 
 export async function createChatService (userId: string, currentUser: User): Promise<ChatDocument> {
-      console.log('createChatService' , userId, currentUser)
+      console.log('createChatService', userId, currentUser)
       if (!userId) {
             console.log('No user id sent to the server')
             throw new Error('No user id sent to the server')
@@ -113,9 +113,14 @@ export async function renameGroupChatService (chatId: string, groupName: string)
       if (!chatId || !groupName) {
             throw new Error('Please fill all the fields')
       }
-
+      
       try {
-            await Chat.findByIdAndUpdate(chatId, { groupName }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
+            await Chat.findByIdAndUpdate(
+                  chatId,
+                  { chatName: groupName },
+                  { new: true, useFindAndModify: false }
+            ).populate('users', '-password').populate('groupAdmin', '-password');
+
             return groupName
       } catch (error: any) {
             throw handleErrorService(error)

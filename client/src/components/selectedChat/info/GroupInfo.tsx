@@ -52,6 +52,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
             setSelectedChat(updatedChat)
             const updatedChats = chats.map(chat => chat._id === selectedChat._id ? updatedChat : chat)
             setChats(updatedChats)
+            setIsEditName(false)
       }
 
       function handleKeyPress (e: React.KeyboardEvent<HTMLInputElement>) {
@@ -79,7 +80,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
       if (!selectedChat) return <div></div>
       return (
             <section className="w-full">
-                  <div className="text-center my-4">
+                  <div className="text-center py-4">
                         {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
                         ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
                         {!isEditName ? (
@@ -92,7 +93,7 @@ export default function GroupInfo ({ messages }: Props): JSX.Element {
                               <div className="flex justify-center items-center">
                                     <input
                                           type="text"
-                                          className="bg-gray-100 border-b-2 text-xl border-primary py-1 pl-4 pr-8 mt-5 mb-2 rounded-t-lg"
+                                          className="bg-gray-100 dark:bg-dark-default-hover-bg max-w-[200px] md:max-w-full dark:text-white border-b-2 text-xl border-primary py-1 pl-4 pr-8 mt-5 mb-2 rounded-t-lg"
                                           value={groupName}
                                           onKeyUp={handleKeyPress}
                                           onChange={(e) => setGroupName(e.target.value)}
