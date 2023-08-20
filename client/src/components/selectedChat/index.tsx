@@ -61,8 +61,8 @@ export default function Messenger (): JSX.Element {
 
       useEffect(() => {
             fetchConversationUser()
-            // setChatMode('chat')
-      }, [selectedChat])
+            setChatMode('chat')
+      }, [selectedChat?._id])
 
       async function fetchMessages () {
             if (!selectedChat) return
@@ -116,7 +116,6 @@ export default function Messenger (): JSX.Element {
             // Show the message immediately 
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
-            // TODO: Scroll to bottom
 
             try {
                   const messageToUpdate = await chatService.sendMessage({

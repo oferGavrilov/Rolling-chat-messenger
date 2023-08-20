@@ -58,7 +58,7 @@ export default function Profile (): JSX.Element {
                                           <CheckIcon fontSize='small' className='text-primary cursor-pointer' onClick={handleEdit} />
                                           <input
                                                 type="text"
-                                                className='border-b-2 w-full px-2 border-primary'
+                                                className='border-b-2 w-full px-2 bg-inherit border-primary'
                                                 value={userValues.username}
                                                 onChange={(e) => setUserValues({ ...userValues, username: e.target.value })}
                                           />
@@ -83,7 +83,7 @@ export default function Profile (): JSX.Element {
                                                 <CheckIcon fontSize='small' className='text-primary cursor-pointer' onClick={handleEdit} />
                                                 <input
                                                       type="text"
-                                                      className='border-b-2 w-full px-2 border-primary'
+                                                      className='border-b-2 w-full px-2 bg-inherit border-primary'
                                                       value={userValues.about}
                                                       onChange={(e) => setUserValues({ ...userValues, about: e.target.value })}
                                                 />

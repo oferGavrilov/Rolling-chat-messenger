@@ -10,24 +10,21 @@ import UploadImage from '../UploadImage'
 import UsersInput from '../common/UsersInput'
 import { io } from 'socket.io-client'
 import { AuthState } from '../../context/useAuth'
-import { IChat } from '../../model/chat.model'
 import UsersList from './UsersList'
 
 interface Props {
       setIsOpen: CallableFunction
-      isAddNewGroup?: boolean
-      groupToEdit?: IChat
 }
 
-export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupToEdit }: Props) {
+export default function UsersToGroup ({ setIsOpen }: Props) {
       const [filter, setFilter] = useState<string>('')
       const [users, setUsers] = useState<IUser[]>([])
-      const [group, setGroup] = useState({ chatName: groupToEdit?.chatName || '', users: groupToEdit?.users || [] })
+      const [group, setGroup] = useState<{ chatName: string, users: IUser[] }>({ chatName: '', users: [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
-      const [image, setImage] = useState<string>(groupToEdit?.groupImage || '')
+      const [image, setImage] = useState<string>('')
       const { user } = AuthState()
 
-      const { chats, setChats, selectedChat, setSelectedChat } = useChat()
+      const { chats, setChats } = useChat()
 
       useEffect(() => {
             loadUsers()
@@ -71,23 +68,6 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
             }
       }
 
-      async function onAddUsers () {
-            if (group.users.length === 0) return toast.error('Please select at least one user')
-            if (!groupToEdit) return toast.error('An error occurred while updating group')
-
-            try {
-                  const data = await chatService.updateUsersGroup(groupToEdit._id, group.users)
-                  setChats(chats.map(chat => chat._id === groupToEdit._id ? { ...chat, users: data.users } : chat))
-                  if (selectedChat) {
-                        setSelectedChat({ ...selectedChat, users: data.users })
-                  }
-                  toast.success('Group updated successfully')
-                  setIsOpen(false)
-            } catch (error) {
-                  console.error("An error occurred while updating group:", error)
-            }
-      }
-
       function handleGroupUsers (user: IUser) {
             if (group.users.find(u => u._id === user._id)) {
                   return setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
@@ -96,57 +76,46 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
             setGroup({ ...group, users: [...group.users, user] })
       }
 
-      function removeFromGroup (userId: string): void {
-            setGroup({ ...group, users: group.users.filter(u => u._id !== userId) })
+      function clearSelectedUsers (): void {
+            setGroup({ ...group, users: [] })
       }
 
       return (
             <div className="py-6 w-screen max-w-[435px] text-secondary-text dark:text-dark-primary-text">
-                  <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>{isAddNewGroup ? 'Create Group Chat' : 'Edit Group Chat'}</h2>
+                  <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>Create Group Chat</h2>
 
                   <div className='flex flex-col gap-y-6 px-4 mx-auto'>
-                        {isAddNewGroup && <>
-                              <UploadImage image={image} setImage={setImage} />
-                              <input
-                                    type="text"
-                                    className='bg-gray-100 p-2 py-3 rounded-lg px-3 dark:text-black focus:outline-none focus:ring-2 focus:ring-primary'
-                                    value={group.chatName}
-                                    onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
-                                    placeholder="Group Name*"
-                              />
-                        </>
-                        }
+                        <UploadImage image={image} setImage={setImage} />
+                        <input
+                              type="text"
+                              className='bg-gray-100 p-2 py-3 rounded-lg px-3 dark:text-black focus:outline-none focus:ring-2 focus:ring-primary'
+                              value={group.chatName}
+                              onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
+                              placeholder="Group Name*"
+                        />
                         <div className='flex relative'>
                               <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
                         </div>
                         <button
-                              onClick={isAddNewGroup ? onCreateGroup : onAddUsers}
+                              onClick={onCreateGroup}
                               className='create-group-btn'>
-                              {isAddNewGroup ? 'Create Chat' : 'Edit Chat'}
+                              Create Chat
                         </button>
                   </div>
 
-                  {group.users.length > 0 && (
-                        <div className='p-4'>
-                              <h2>Selected Users:</h2>
-                              <div className="flex flex-wrap">
-                                    {group.users.map((user: IUser) => (
-                                          <div key={user._id} className='relative p-2 [&>*]:hover:!block'>
-                                                <img src={user.profileImg} alt="selected-user" className="h-11 w-11 rounded-full border-2 border-primary object-cover object-top" />
-                                                <CloseIcon onClick={() => removeFromGroup(user._id)} className='absolute cursor-pointer top-0 right-0 !hidden bg-red-500 !text-base rounded-xl text-white' />
-                                          </div>
-                                    ))}
-                              </div>
-                        </div>
-                  )}
-
                   {(!isLoading) ? (
-                        <UsersList users={filteredUsers} onSelectChat={handleGroupUsers} />
+                        <UsersList
+                              users={filteredUsers}
+                              onSelectChat={handleGroupUsers}
+                              selectedUsers={group.users}
+                              clearSelectedUsers={clearSelectedUsers}
+                              usersType="group"
+                        />
                   ) : (
                         <Loading type="users" />
                   )}
 
-                  <CloseIcon className='cursor-pointer dark:text-dark-primary-text absolute right-4 top-6' color='disabled' onClick={() => setIsOpen(false)} />
+                  <CloseIcon className='cursor-pointer dark:text-dark-primary-text absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
             </div>
       )
 }

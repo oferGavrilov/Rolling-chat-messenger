@@ -46,14 +46,14 @@ export default function ChatHeader ({ connectionStatus, conversationUser, setCha
                                     <span className='text-primary dark:text-dark-primary-text text-xs md:text-base'>
                                           {isTyping ? 'Typing...' : connectionStatus}
                                     </span> : (
-                                          <div className="flex gap-x-1 text-xs tracking-wide">
-                                                {selectedChat.users.map((user, index) =>
-                                                      <span key={user._id} className="text-slate-400 dark:text-slate-200">
-                                                            {user._id === loggedInUser?._id ? 'You' : user.username}
-                                                            {index !== selectedChat.users.length - 1 && ","}
-                                                      </span>
-                                                )}
-                                          </div>
+                                         <div className="text-xs tracking-wide max-w-[160px] md:max-w-[300px] overflow-hidden ellipsis-text">
+                                         {selectedChat.users.map((user, index) =>
+                                             <span key={user._id} className="text-slate-400 dark:text-slate-200">
+                                                 {user._id === loggedInUser?._id ? 'You' : user.username}
+                                                 {index !== selectedChat.users.length - 1 && ","}
+                                             </span>
+                                         )}
+                                     </div>
                                     )}
                         </div>
                         <div className='flex items-center gap-x-2'>

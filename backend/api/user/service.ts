@@ -26,6 +26,10 @@ export async function signUpUser (username: string, email: string, password: str
                   return { error: 'User already exists' }
             }
 
+            if (!profileImg || profileImg.trim() === '') {
+                  profileImg = "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+            }
+
             const newUser = await User.create({
                   username,
                   email,

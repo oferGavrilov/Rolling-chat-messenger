@@ -64,9 +64,8 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
                   <div className={`${users.length && 'border-t-2 dark:border-gray-500'}`}>
                         {isLoading && <Loading type="users" />}
                         {(filteredUsers.length > 0 && !isLoading) && (
-                              <UsersList users={filteredUsers} onSelectChat={onSelectChat} />)
+                              <UsersList users={filteredUsers} onSelectChat={onSelectChat} usersType="message" />)
                         }
-                        {(filteredUsers.length <= 0 && !isLoading) && <img className='mx-auto py-8 w-40 opacity-80' loading='eager' src="gifs/search.gif" alt="" />}
                   </div>
             </section>
       )

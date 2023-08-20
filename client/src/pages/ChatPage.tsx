@@ -76,7 +76,6 @@ export default function ChatPage (): JSX.Element {
 
                   <SearchUsers
                         contentType={contentType}
-                        isAddNewGroup={true}
                         isOpen={showSearch}
                         setIsOpen={setShowSearch}
                   />

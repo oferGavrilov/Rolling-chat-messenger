@@ -1,15 +1,12 @@
 import React, { useRef } from 'react'
 import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
-import { IChat } from '../../model/chat.model'
 import { useClickOutside } from '../../custom/useClickOutside'
 
 interface Props {
       isOpen: boolean
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
       contentType: string
-      groupToEdit?: IChat
-      isAddNewGroup?: boolean
 }
 
 export default function SearchUsers (props: Props): JSX.Element {
@@ -20,7 +17,7 @@ export default function SearchUsers (props: Props): JSX.Element {
       function switchContent () {
             switch (props.contentType) {
                   case 'messages': return <UsersToMessage {...props} />
-                  case 'groups': return <UsersToGroup {...props} isAddNewGroup={props.isAddNewGroup} groupToEdit={props.groupToEdit} />
+                  case 'groups': return <UsersToGroup {...props} />
                   case 'videos': return <div>Videos Coming soon...</div>
                   case 'story': return <div>Story Coming soon...</div>
                   default: return <UsersToMessage {...props} />

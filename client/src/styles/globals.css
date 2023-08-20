@@ -126,13 +126,6 @@
             bg-white /* LIGHT MODE */
             dark:bg-dark-secondary-bg; /* DARK MODE */
       }
-      .user-list {
-            @apply 
-            flex flex-col
-            py-6
-            calc-height 
-            overflow-auto;
-      }
       .user-card {
             @apply
             py-3 px-4
@@ -219,13 +212,32 @@
             cursor-pointer transition-colors duration-200 
             dark:hover:bg-dark-default-hover-bg;
       }
+
+      /* Add Users Modal */
+      .users-modal-container{
+            @apply
+            h-5/6 w-full md:w-5/6 
+            absolute top-4 z-50
+            rounded-xl px-6
+            transition-transform duration-200 ease-in-out 
+            dark:bg-[#24272b] dark:text-dark-primary-text;
+
+      }
+
+      .users-modal-btn {
+            @apply
+            bg-primary 
+            px-4 py-2 
+            rounded-full
+            transition-all duration-200 cursor-pointer;
+      }
 }
 
 @layer utilities{
       /* General */
       .ellipsis-text{
             white-space: nowrap;
-            overflow: hidden;
+            overflow: hidden !important;
             text-overflow: ellipsis;
       }
       .hide-scrollbar::-webkit-scrollbar {
@@ -276,9 +288,6 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-      }
-      .calc-height {
-            max-height: calc(100vh - 150px);
       }
       /* End Chat Page */
 }

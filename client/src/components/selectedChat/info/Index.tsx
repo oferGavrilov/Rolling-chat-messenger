@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useChat from "../../../store/useChat"
 import { IUser } from "../../../model/user.model"
 
@@ -16,11 +16,12 @@ interface Props {
 
 export default function Info ({ conversationUser, setChatMode, messages }: Props): JSX.Element {
       const { selectedChat } = useChat()
+      const [isAddUsers, setIsAddUsers] = useState<boolean>(false)
 
       return (
-            <div className="flex flex-col items-center py-8 relative slide-right overflow-y-auto hide-scrollbar h-full">
+            <div className={`flex flex-col items-center py-8 relative slide-right overflow-y-auto hide-scrollbar ${isAddUsers && ''}`}>
                   {selectedChat?.isGroupChat ?
-                        (<GroupInfo messages={messages} />) :
+                        (<GroupInfo messages={messages} isAddUsers={isAddUsers} setIsAddUsers={setIsAddUsers} />) :
                         (<ChatInfo conversationUser={conversationUser} messages={messages} />)}
                   <CloseIcon className="absolute top-5 right-5 dark:text-dark-primary-text cursor-pointer !text-2xl md:!text-3xl" onClick={() => setChatMode('chat')} />
             </div>

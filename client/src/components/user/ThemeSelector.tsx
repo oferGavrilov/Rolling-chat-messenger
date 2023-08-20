@@ -17,8 +17,13 @@ export default function ThemeSelector ({ settings }: Props): JSX.Element {
             userService.saveTheme(theme)
             setTheme(theme)
 
-            if (theme === 'light') document.body.classList.remove('dark')
-            else document.body.classList.add('dark')
+            if (theme === 'light') {
+                  document.body.classList.remove('dark')
+                  document.body.style.backgroundColor = '#ffffff'
+            } else{
+                  document.body.classList.add('dark')
+                  document.body.style.backgroundColor = '#222e35'
+            } 
       }
 
       return (

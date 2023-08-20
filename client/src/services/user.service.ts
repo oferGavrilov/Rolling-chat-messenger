@@ -85,13 +85,12 @@ async function loginSignUp (credentials: FormData, login: boolean): Promise<IUse
 
 async function updateUserImage (image: string): Promise<string> {
       const config = getAuthConfig()
-
       try {
             const response: AxiosResponse<string> = await axios.put(BASE_URL + '/api/auth/image', { image }, config)
             const { data } = response
             if (data) {
                   const user = getLoggedinUser()
-                  _saveToSessionStorage({ ...user, image })
+                  _saveToSessionStorage({ ...user, profileImg:image })
             }
 
             return data

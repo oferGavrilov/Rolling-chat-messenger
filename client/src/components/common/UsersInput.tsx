@@ -19,7 +19,7 @@ export default function UsersInput ({ filter, setFilter , placeholder}: Props): 
 
                   {filter &&
                         <CloseIcon
-                              className='cursor-pointer absolute right-4 top-9'
+                              className='cursor-pointer dark:text-primary absolute right-2 top-2'
                               color='disabled'
                               fontSize="medium"
                               onClick={() => setFilter('')}
