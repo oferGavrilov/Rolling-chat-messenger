@@ -20,7 +20,8 @@ export default function ChatColorsPalette ({ selectedSettings, setSelectedSettin
       }
 
       return (
-            <div className={`bg-gray-100 mb-1 dark:bg-dark-secondary-bg relative overflow-hidden transition-all duration-300 ease-in-out px-4 py-2 rounded-b-lg  ${selectedSettings === 'background' ? 'max-h-[500px]' : 'max-h-0 !px-0 !py-0 max-w-max'}`}>
+            <div className={`bg-gray-100 mb-1 dark:bg-dark-secondary-bg relative overflow-hidden transition-all duration-300 ease-in-out px-4 py-2 rounded-b-lg
+              ${selectedSettings === 'background' ? 'max-h-[500px]' : 'max-h-0 !py-0 max-w-max'}`}>
                   <h2 className='mb-4'>Choose Background: </h2>
                   <ul className='flex flex-wrap justify-center md:grid grid-cols-3 md:grid-cols-3 justify-items-center px-4 gap-4 pt-4 pb-8 max-h-[420px] overflow-y-scroll'>
                         {colors.map((color, i) => (

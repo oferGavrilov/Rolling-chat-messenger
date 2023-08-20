@@ -99,10 +99,10 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                         ref={modalRef}
                         className={`
                         fixed bottom-14 left-8 px-2 pb-3 text-white rounded-lg z-20 bg-gray-400 dark:bg-dark-primary-bg overflow-hidden
-                        transition-all duration-300 ease-in-out  !shadow-2xl 
-                        ${showClipModal ? 'max-h-[300px]  py-2' : 'max-h-0 !py-0 '}`}>
+                        transition-all duration-300 ease-in-out !shadow-2xl max-w-[40px]
+                        ${showClipModal ? 'max-h-[300px] py-2 max-w-[210px]' : 'max-h-0 !py-0'}`}>
 
-                        <label className='clip-modal-option py-1 flex '>
+                        <label className='clip-modal-option whitespace-nowrap py-1 flex '>
                               <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/gif, image/jpeg, image/png' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     uploadImage(e.target.files?.[0])
                               } />

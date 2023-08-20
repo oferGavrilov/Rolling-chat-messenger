@@ -146,7 +146,7 @@ export default function UsersToGroup ({ setIsOpen, isAddNewGroup = false, groupT
                         <Loading type="users" />
                   )}
 
-                  <CloseIcon className='cursor-pointer dark:text-dark-primary-text absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
+                  <CloseIcon className='cursor-pointer dark:text-dark-primary-text absolute right-4 top-6' color='disabled' onClick={() => setIsOpen(false)} />
             </div>
       )
 }

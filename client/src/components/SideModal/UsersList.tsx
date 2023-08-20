@@ -7,7 +7,7 @@ interface Props {
 
 export default function UsersList ({ users, onSelectChat }: Props): JSX.Element {
       return (
-            <ul className='user-list h-[600px] pt-0 pb-20 my-6'>
+            <ul className='user-list pt-0 pb-20 my-6'>
                   {users.map((user: IUser) => (
                         <li
                               key={user._id}

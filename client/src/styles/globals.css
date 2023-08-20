@@ -10,7 +10,7 @@
       }
 
       body {
-            @apply text-[#242424] font-sf-regular scroll-smooth overflow-hidden;
+            @apply text-[#242424] font-sf-regular scroll-smooth;
       }
       
       ::-webkit-scrollbar {
