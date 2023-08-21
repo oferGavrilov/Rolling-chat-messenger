@@ -214,7 +214,8 @@ export default function Messenger (): JSX.Element {
       }
 
       function isKicked (): boolean {
-            return selectedChat?.kickedUsers.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
+            if (!selectedChat) return false
+            return selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
       }
 
       if (!selectedChat) return <div></div>

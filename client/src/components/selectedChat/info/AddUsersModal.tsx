@@ -36,7 +36,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
                   const allUsers = await userService.getUsers() as IUser[]
 
                   // Filter out users that already exist in existsUsers array
-                  const newUsers = allUsers.filter(user => !existsUsers.some(existsUser => existsUser._id === user._id))
+                  const newUsers = allUsers.filter(user => !existsUsers?.some(existsUser => existsUser._id === user._id))
 
                   setUsers(newUsers)
             } catch (err) {
@@ -48,7 +48,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
 
       function handleSelectUsers (user: IUser) {
             setSelectedUsers(prevSelectedUsers => {
-                  if (prevSelectedUsers.some(selectedUser => selectedUser._id === user._id)) {
+                  if (prevSelectedUsers?.some(selectedUser => selectedUser._id === user._id)) {
                         return prevSelectedUsers.filter(selectedUserId => selectedUserId._id !== user._id)
                   } else {
                         return [...prevSelectedUsers, user]

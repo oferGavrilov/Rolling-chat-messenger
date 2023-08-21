@@ -53,7 +53,8 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
 
       function isKicked () {
             if (!selectedChat) return null
-            const isKicked = selectedChat?.kickedUsers.some(kickedUser => kickedUser.userId === user?._id)
+            console.log('selectedChat?.kickedUsers', selectedChat?.kickedUsers)
+            const isKicked = selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === user?._id)
 
             if (isKicked) {
                   return (
@@ -118,9 +119,9 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                             ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
                                                             `}
                                           >
-                                                {message.sender._id === user._id  && (
-                                                            <MessageArrow className='message-arrow-left' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} />
-                                                      )}
+                                                {message.sender._id === user._id && (
+                                                      <MessageArrow className='message-arrow-left' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} />
+                                                )}
                                                 <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto
                                                             ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}

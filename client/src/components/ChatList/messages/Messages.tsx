@@ -35,7 +35,8 @@ export default function Messages ({ contentType }: MessagesProps) {
                   const filterRegex = new RegExp(filter, 'i')
 
                   return chats.filter((chat: IChat) => {
-                        const includesUsername = chat.users.some((user: IUser) => user._id !== loggedinUser?._id && filterRegex.test(user.username))
+                        console.log('chat', chat)
+                        const includesUsername = chat.users?.some((user: IUser) => user._id !== loggedinUser?._id && filterRegex.test(user.username))
                         const includesGroupName = filterRegex.test(chat.chatName || '')
 
                         return includesUsername || includesGroupName
