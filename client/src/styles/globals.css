@@ -97,7 +97,7 @@
       /* Navigation */
       .navigation-container {
             @apply
-            transition-[width] duration-300 
+            transition-all duration-300 
             max-w-[70px] h-full
             flex flex-col justify-between gap-y-4
             /* sticky z-10 */

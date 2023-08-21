@@ -16,7 +16,7 @@ export default function Home (): JSX.Element {
                                     From real-time messaging to voice and video calls, our platform brings people together, fostering collaboration, and enabling rich communication experiences.</p>
 
                               <div className="flex justify-center py-20">
-                                    <Link to="/chat" className="bg-primary w-max py-2 px-6 text-xl text-white rounded-xl transition-all shadow duration-300 hover:custom-shadow">Get Started</Link>
+                                    <Link to="/chat" className="bg-primary w-max py-2 px-4 md:px-6 text-xl text-white rounded-lg transition-all shadow duration-300 hover:custom-shadow">Get Started Free</Link>
                               </div>
                               <div className="hidden lg:block">
                                     <img src="svg/home.svg" alt="" className="w-64 absolute -bottom-52 right-32" />

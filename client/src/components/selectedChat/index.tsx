@@ -70,6 +70,7 @@ export default function Messenger (): JSX.Element {
                               kickedUsers: [...selectedChat.kickedUsers, { userId, kickedBy: kickerId, kickedAt: new Date().toString() }],
                               users: selectedChat.users.filter(user => user._id !== userId)
                         }
+                        isKicked()
                         setSelectedChat(updatedChat)
                   }
             }
@@ -82,6 +83,7 @@ export default function Messenger (): JSX.Element {
                         kickedUsers: selectedChat.kickedUsers.filter(kickedUser => kickedUser.userId !== user._id),
                         users: [...selectedChat.users, user]
                   }
+                  isKicked()
                   setSelectedChat(updatedChat)
             }
 
@@ -211,6 +213,10 @@ export default function Messenger (): JSX.Element {
             }
       }
 
+      function isKicked (): boolean {
+            return selectedChat?.kickedUsers.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
+      }
+
       if (!selectedChat) return <div></div>
       return (
             <section className='flex-1 messenger-grid slide-left overflow-y-hidden max-h-screen'>
@@ -243,7 +249,7 @@ export default function Messenger (): JSX.Element {
                         />
                   )}
 
-                  {chatMode === 'chat' && (
+                  {(chatMode === 'chat'&& !isKicked()) && (
                         <TextPanel
                               onSendMessage={onSendMessage}
                               setFile={setFile}

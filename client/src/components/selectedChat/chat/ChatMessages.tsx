@@ -5,7 +5,7 @@ import useChat from "../../../store/useChat"
 
 import { IMessage } from "../../../model/message.model"
 
-import { formatDate, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
+import { formatDate, formatMessageSentDate, hasDayPassed, isLastMessage, isSameSender, isSameSenderMargin } from "../../../utils/functions"
 import AudioMessage from "../chat/message-type/AudioMessage"
 import FileMessage from "./message-type/FileMessage"
 import ImageMessage from "./message-type/ImageMessage"
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element {
-      const { setSelectedFile ,selectedChat} = useChat()
+      const { setSelectedFile, selectedChat } = useChat()
       const { user } = AuthState()
 
       const renderMessageContent = (message: IMessage, idx: number): ReactNode => {
@@ -50,10 +50,10 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
             return null
       }
 
-      function isKicked() {
+      function isKicked () {
             if (!selectedChat) return null
             const isKicked = selectedChat?.kickedUsers.some(kickedUser => kickedUser.userId === user?._id)
-            
+
             if (isKicked) {
                   return (
                         <div className="mx-auto text-center bg-gray-500 w-max py-2 px-4 my-4 rounded-full">
@@ -63,13 +63,23 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
             }
       }
 
+      function getDayPass (prevMessage: IMessage, currMessage: IMessage, idx: number) {
+            if (idx === 0) {
+                  return formatMessageSentDate(messages[0].createdAt)
+            }
+
+            if (hasDayPassed(prevMessage.createdAt, currMessage.createdAt)) return formatMessageSentDate(currMessage.createdAt)
+      }
+
       if (!messages || !user) return <div></div>
+
       return (
             <section className="py-4">
                   {messages &&
                         messages.map((message, idx) => (
                               <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
 
+                                    {/* Profile Image */}
                                     <div className="hidden md:flex">
                                           {(isSameSender(messages, message, idx, user._id) ||
                                                 isLastMessage(messages, idx, user._id)) ? (
@@ -82,27 +92,38 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                           ) : <span className="ml-8"></span>}
                                     </div>
 
-                                    <div
-                                          className={`pr-3 pl-4 py-1 flex items-center max-w-[75%] text-white rounded-t-xl rounded-tr-2xl relative
-                                           ${message?.sender._id === user._id ?
-                                                      'bg-primary dark:bg-dark-outgoing-chat-bg'
-                                                      : 'bg-gray-400 dark:bg-dark-incoming-chat-bg '}
-                                           ${isSameSenderMargin(messages, message, idx, user._id) ?
-                                                      'ml-auto rounded-bl-xl' :
-                                                      'ml-0 rounded-br-xl flex-row-reverse'}
-                                                ${message.messageType === 'image' && 'flex-col-reverse !px-2 pb-5'}
-                                                ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
-                                                `}
-                                    >
-                                          <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto
+                                    <div className="flex flex-col w-full">
+                                          
+                                          {/* Send Time of Message */}
+                                          <div className="w-max mx-auto">
+                                                <div className="bg-gray-400 text-white text-sm px-2 rounded-full" style={getDayPass(messages[idx - 1], message, idx) ? { margin: '12px 0' } : {}}>
+                                                      <span>{getDayPass(messages[idx - 1], message, idx)}</span>
+                                                </div>
+                                          </div>
+
+                                          {/* Message */}
+                                          <div
+                                                className={`pr-3 pl-4 py-1 w-max flex items-center max-w-[75%] text-white rounded-t-xl rounded-tr-2xl relative
+                                                ${message?.sender._id === user._id ?
+                                                            'bg-primary dark:bg-dark-outgoing-chat-bg'
+                                                            : 'bg-gray-400 dark:bg-dark-incoming-chat-bg '}
+                                                      ${isSameSenderMargin(messages, message, idx, user._id) ?
+                                                            'ml-auto rounded-bl-xl' :
+                                                            'ml-0 rounded-br-xl flex-row-reverse'}
+                                                            ${message.messageType === 'image' && 'flex-col-reverse !px-2 pb-5'}
+                                                            ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
+                                                            `}
+                                          >
+                                                <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto
                                                             ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}
                                                             ${message.messageType === 'file' && '!absolute bottom-1 left-3'}
-                                          ${isSameSenderMargin(messages, message, idx, user._id) ?
-                                                      '-left-1' : '-right-2'}`}>
-                                                {formatDate(message.createdAt)}
-                                          </span>
-                                          {renderMessageContent(message, idx)}
+                                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
+                                                            '-left-1' : '-right-2'}`}>
+                                                      {formatDate(message.createdAt)}
+                                                </span>
+                                                {renderMessageContent(message, idx)}
+                                          </div>
                                     </div>
                               </div >
                         ))
