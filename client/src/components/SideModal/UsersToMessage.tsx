@@ -38,7 +38,11 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
 
       async function onSelectChat (user: IUser): Promise<void> {
             // Check if chat already exists and its not a group chat
-            const chat = chats.find((chat) => !chat.isGroupChat && chat.users.some((chatUser) => chatUser._id === user._id))
+            let chat
+            if (chats) {
+                  console.log('chats', chats)
+                  chat = chats.find((chat) => !chat?.isGroupChat && chat?.users.some((chatUser) => chatUser._id === user._id))
+            }
 
             if (chat) {
                   setSelectedChat(chat)
