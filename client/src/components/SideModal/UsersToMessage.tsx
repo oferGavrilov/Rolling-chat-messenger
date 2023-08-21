@@ -47,6 +47,8 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
                   return
             }
 
+            setSelectedChat(null)
+
             const newChat = {
                   _id: 'temp-id',
                   chatName: user.username,

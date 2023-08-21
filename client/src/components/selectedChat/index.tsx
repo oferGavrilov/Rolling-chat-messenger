@@ -46,7 +46,6 @@ export default function Messenger (): JSX.Element {
       useEffect(() => {
             socketService.on('message received', (newMessage: IMessage) => {
                   if (selectedChat?._id !== newMessage.chat._id) {
-                        console.log(newMessage)
                         addNotification(newMessage)
                         return
                   }
@@ -100,6 +99,8 @@ export default function Messenger (): JSX.Element {
             socketService.on('user-kicked', ({ chatId, userId, kickerId }) => handleKickUser(chatId, userId, kickerId, selectedChat))
             socketService.on('user-joined', ({ chatId, user }) => handleAddUser(chatId, user, selectedChat))
             socketService.on('user-left', ({ chatId, userId }) => handleLeftUser(chatId, userId, selectedChat))
+            
+            fetchConversationUser()
 
             return () => {
                   socketService.off('user-kicked')
@@ -109,9 +110,8 @@ export default function Messenger (): JSX.Element {
       }, [selectedChat])
 
       useEffect(() => {
-            fetchConversationUser()
             setChatMode('chat')
-      }, [selectedChat?._id])
+      }, [selectedChat])
 
       async function fetchMessages () {
             if (!selectedChat) return
