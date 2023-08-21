@@ -2,7 +2,7 @@ import type { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
 // import { logger } from './logger.service.js'
 import type { User } from '../models/user.model.js'
-import type { ChatDocument } from '../models/chat.model.js'
+import { Chat, type ChatDocument } from '../models/chat.model.js'
 import { updateUserStatus } from '../api/user/service.js'
 
 let gIo: Server | null = null
@@ -92,6 +92,24 @@ export function setupSocketAPI (http: HttpServer) {
                   })
             })
 
+            socket.on('kick-from-group', async ({ chatId, userId, kickerId }) => {
+                  socket.in(userId).emit('user-kicked', { chatId, userId, kickerId });
+            });
+
+            socket.on('add-to-group', async ({ chatId, users, adderId }: { chatId: string, users: User[], adderId: string }) => {
+                  users.forEach((user: User) => {
+                        socket.in(user._id).emit('user-joined', { chatId, user, adderId });
+                  })
+            })
+
+            socket.on('leave-from-group', async ({ chatId, userId, chatUsers }) => {
+                  chatUsers.forEach((user: User) => {
+                        if (user._id !== userId) {
+                              socket.in(user._id).emit('user-left', { chatId, userId });
+                        }
+                  })
+            })
+
             socket.off('setup', () => {
                   socket.leave(socket.id)
             })
@@ -122,8 +140,8 @@ export function setupSocketAPI (http: HttpServer) {
             }
       }
 
-      // Run the checkInactiveUsers function every 5 minute
-      setInterval(checkInactiveUsers, 5 * 60 * 1000)
+      // Run the checkInactiveUsers function every 15 minute
+      setInterval(checkInactiveUsers, 15 * 60 * 1000)
 }
 
 function getUserBySocketId (socketId: string) {

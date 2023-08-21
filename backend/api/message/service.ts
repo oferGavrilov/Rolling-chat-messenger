@@ -29,12 +29,11 @@ export async function sendMessageService (senderId: string, content: string, cha
             console.log('sendMessageService chat:', chat)
             const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString())
 
-            if (otherUserId && chat.deletedBy.includes(otherUserId.toString())) {
+            if (otherUserId && chat.deletedBy.some((user) => user.toString() === otherUserId.toString())) {
                   // Remove the other user ID from the deletedBy array
                   chat.deletedBy = chat.deletedBy.filter((userId) => userId.toString() !== otherUserId.toString())
                   await chat.save()
             }
-
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message })
 
             return message

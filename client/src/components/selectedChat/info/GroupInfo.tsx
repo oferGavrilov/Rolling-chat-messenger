@@ -19,6 +19,7 @@ import { IChat } from "../../../model/chat.model"
 import MediaFiles from "./MediaFiles"
 import { IMessage } from "../../../model/message.model"
 import AddUsersModal from "./AddUsersModal"
+import socketService from "../../../services/socket.service"
 
 interface Props {
       messages: IMessage[]
@@ -26,7 +27,7 @@ interface Props {
       setIsAddUsers: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function GroupInfo ({ messages , isAddUsers , setIsAddUsers}: Props): JSX.Element {
+export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Props): JSX.Element {
       const { selectedChat, setSelectedChat, chats, setChats } = useChat()
       const { isAdmin, user: loggedInUser } = AuthState()
 
@@ -63,20 +64,25 @@ export default function GroupInfo ({ messages , isAddUsers , setIsAddUsers}: Pro
       }
 
       async function onLeaveFromGroup () {
-            if (!selectedChat) return
+            if (!selectedChat || !loggedInUser) return
 
-            const updatedChat = await chatService.removeFromGroup(selectedChat._id)
+            const leavedChatId = await chatService.leaveFromGroup(selectedChat._id, loggedInUser._id)
 
-            const chatsToUpdate = chats.filter(chat => chat._id !== updatedChat._id)
+            socketService.emit('leave-from-group', { chatId: selectedChat._id, userId: loggedInUser._id, chatUsers: selectedChat.users })
+
+            const chatsToUpdate = chats.filter(chat => chat._id !== leavedChatId)
             setSelectedChat(null)
             setChats(chatsToUpdate)
       }
 
-      async function onRemoveFromGroup (userId: string) {
-            if (!selectedChat) return
+      async function onKickFromGroup (userId: string) {
+            if (!selectedChat || !loggedInUser) return
 
-            const updatedChat = await chatService.removeFromGroup(selectedChat._id, userId)
-            setSelectedChat(updatedChat)
+            const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
+
+            socketService.emit('kick-from-group', { chatId: selectedChat._id, userId, kickerId: loggedInUser._id })
+
+            setSelectedChat({ ...selectedChat, users: updatedChat.users })
       }
 
       if (!selectedChat) return <div></div>
@@ -145,7 +151,7 @@ export default function GroupInfo ({ messages , isAddUsers , setIsAddUsers}: Pro
                                                                   </span>
                                                             )}
                                                             {(isAdmin(selectedChat, loggedInUser?._id) && user._id !== loggedInUser?._id) &&
-                                                                  <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={() => onRemoveFromGroup(user._id)}>
+                                                                  <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={() => onKickFromGroup(user._id)}>
                                                                         <DeleteIcon className="!text-2xl" />
                                                                   </div>
                                                             }
@@ -165,6 +171,7 @@ export default function GroupInfo ({ messages , isAddUsers , setIsAddUsers}: Pro
                   <AddUsersModal
                         existsUsers={selectedChat.users}
                         isOpen={isAddUsers}
+                        selectedChat={selectedChat}
                         setIsOpen={setIsAddUsers}
                   />
 

@@ -12,7 +12,14 @@ export interface IChat {
       createdAt?: string
       updatedAt?: string
       deletedBy?: string[]
+      kickedUsers: KickedUsers[]
       count?: number
+}
+
+type KickedUsers = {
+      userId: string
+      kickedBy: string
+      kickedAt: string
 }
 
 export type LatestMessage =  {

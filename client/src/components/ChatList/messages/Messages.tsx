@@ -10,6 +10,7 @@ import { IUser } from '../../../model/user.model'
 import { IChat } from '../../../model/chat.model'
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
 import { useClickOutside } from '../../../custom/useClickOutside'
+import socketService from '../../../services/socket.service'
 
 interface MessagesProps {
       contentType: string
@@ -22,7 +23,6 @@ export default function Messages ({ contentType }: MessagesProps) {
       const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
 
-
       const { chats, setChats } = useChat()
       const { user: loggedinUser } = AuthState()
 
@@ -32,7 +32,7 @@ export default function Messages ({ contentType }: MessagesProps) {
 
       const filteredChats = useMemo(() => {
             if (filter) {
-                  const filterRegex = new RegExp(filter, 'i') // 'i' flag makes the search case-insensitive
+                  const filterRegex = new RegExp(filter, 'i')
 
                   return chats.filter((chat: IChat) => {
                         const includesUsername = chat.users.some((user: IUser) => user._id !== loggedinUser?._id && filterRegex.test(user.username))
@@ -53,19 +53,30 @@ export default function Messages ({ contentType }: MessagesProps) {
                   }
             }
             return chats
-      }, [chats, filter, contentType, loggedinUser, sort])
+      }, [chats, filter, contentType, loggedinUser, sort, setChats])
 
       useEffect(() => {
+
+            socketService.on('user-kicked', loadChats)
+            socketService.on('user-joined', loadChats)
+            socketService.on('user-left', loadChats)
+
             async function loadChats (): Promise<void> {
                   setIsLoading(true)
                   const user = await userService.getLoggedinUser()
                   if (!user) return
                   const chats = await chatService.getUserChats(user._id)
                   setChats(chats)
-                  // setIsLoading(false)
+                  setIsLoading(false)
             }
 
             loadChats()
+
+            return () => {
+                  socketService.off('user-kicked')
+                  socketService.off('user-joined')
+                  socketService.off('user-left')
+            }
       }, [])
 
       function onSetSort (type: 'Newest' | 'Oldest' | null) {

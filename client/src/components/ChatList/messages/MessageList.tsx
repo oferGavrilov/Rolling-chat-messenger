@@ -10,6 +10,7 @@ import socketService from "../../../services/socket.service"
 export default function MessageList ({ chats }: { chats: IChat[] }) {
       const { notification, addNotification, selectedChat, setChats, updateChat } = useChat()
       const { user } = AuthState()
+      const isMountedRef = useRef<boolean>(false)
 
 
       useEffect(() => {
@@ -17,12 +18,11 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
 
             socketService.on('new group', handleNewGroup)
 
+
             return () => {
                   socketService.off('new group', handleNewGroup)
             }
       }, [user])
-
-      const isMountedRef = useRef<boolean>(false)
 
       useEffect(() => {
             isMountedRef.current = true

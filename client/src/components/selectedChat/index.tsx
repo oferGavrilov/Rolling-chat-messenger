@@ -25,7 +25,7 @@ export default function Messenger (): JSX.Element {
 
       const [messages, setMessages] = useState<IMessage[]>([])
 
-      const { selectedChat, addNotification, updateChat, chats, setChats } = useChat()
+      const { selectedChat, setSelectedChat, addNotification, updateChat, chats, setChats } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
@@ -60,6 +60,51 @@ export default function Messenger (): JSX.Element {
                   socketService.off('message received')
             }
       })
+
+      useEffect(() => {
+            const handleKickUser = (chatId: string, userId: string, kickerId: string, chat: IChat | null) => {
+                  if (chat?._id === chatId) {
+                        if (!selectedChat) return
+                        const updatedChat = {
+                              ...selectedChat,
+                              kickedUsers: [...selectedChat.kickedUsers, { userId, kickedBy: kickerId, kickedAt: new Date().toString() }],
+                              users: selectedChat.users.filter(user => user._id !== userId)
+                        }
+                        setSelectedChat(updatedChat)
+                  }
+            }
+
+            const handleAddUser = (chatId: string, user: IUser, chat: IChat | null) => {
+                  if (chat?._id !== chatId) return
+                  if (!selectedChat) return
+                  const updatedChat = {
+                        ...selectedChat,
+                        kickedUsers: selectedChat.kickedUsers.filter(kickedUser => kickedUser.userId !== user._id),
+                        users: [...selectedChat.users, user]
+                  }
+                  setSelectedChat(updatedChat)
+            }
+
+            const handleLeftUser = (chatId: string, userId: string, chat: IChat | null) => {
+                  if (chat?._id !== chatId) return
+                  if (!selectedChat) return
+                  const updatedChat = {
+                        ...selectedChat,
+                        users: selectedChat.users.filter(chatUser => chatUser._id !== userId)
+                  }
+                  setSelectedChat(updatedChat)
+            }
+
+            socketService.on('user-kicked', ({ chatId, userId, kickerId }) => handleKickUser(chatId, userId, kickerId, selectedChat))
+            socketService.on('user-joined', ({ chatId, user }) => handleAddUser(chatId, user, selectedChat))
+            socketService.on('user-left', ({ chatId, userId }) => handleLeftUser(chatId, userId, selectedChat))
+
+            return () => {
+                  socketService.off('user-kicked')
+                  socketService.off('user-joined')
+                  socketService.off('user-left')
+            }
+      }, [selectedChat])
 
       useEffect(() => {
             fetchConversationUser()

@@ -6,26 +6,29 @@ import { toast } from 'react-toastify'
 import { chatService } from '../../../services/chat.service'
 import useChat from '../../../store/useChat'
 import Loading from '../../SkeltonLoading'
+import { IChat } from '../../../model/chat.model'
+import socketService from '../../../services/socket.service'
 
 interface Props {
       existsUsers: IUser[]
       isOpen: boolean
+      selectedChat: IChat | null
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function AddUsersModal ({ existsUsers, isOpen, setIsOpen }: Props): JSX.Element {
+export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setIsOpen }: Props): JSX.Element {
       const usersModal = useRef<HTMLDivElement>(null)
       const [users, setUsers] = useState<IUser[]>([])
       const [selectedUsers, setSelectedUsers] = useState<IUser[]>([])
       const [isLoading, setIsLoading] = useState<boolean>(false)
 
-      const { setChats, chats, selectedChat, setSelectedChat } = useChat()
+      const { setChats, chats, setSelectedChat } = useChat()
 
       useClickOutside(usersModal, () => setIsOpen(false), isOpen)
 
       useEffect(() => {
             loadUsers()
-      }, [])
+      }, [existsUsers])
 
       async function loadUsers () {
             try {
@@ -44,23 +47,25 @@ export default function AddUsersModal ({ existsUsers, isOpen, setIsOpen }: Props
       }
 
       function handleSelectUsers (user: IUser) {
-            if (selectedUsers.some(selectedUser => selectedUser._id === user._id)) {
-                  setSelectedUsers(selectedUsers.filter(selectedUser => selectedUser._id !== user._id))
-            } else {
-                  setSelectedUsers([...selectedUsers, user])
-            }
+            setSelectedUsers(prevSelectedUsers => {
+                  if (prevSelectedUsers.some(selectedUser => selectedUser._id === user._id)) {
+                        return prevSelectedUsers.filter(selectedUserId => selectedUserId._id !== user._id)
+                  } else {
+                        return [...prevSelectedUsers, user]
+                  }
+            })
       }
 
       async function onAddUsers () {
             if (!selectedChat) return
             if (selectedUsers.length === 0) return toast.error('Please select at least one user')
 
-            const usersToAdd = [...existsUsers, ...selectedUsers]
-
             try {
-                  const updatedUsers = await chatService.updateUsersGroup(selectedChat._id, usersToAdd)
+                  const updatedUsers = await chatService.updateUsersGroup(selectedChat._id, selectedUsers)
 
                   setChats(chats.map(chat => chat._id === selectedChat?._id ? { ...chat, users: updatedUsers.users } : chat))
+
+                  socketService.emit('add-to-group', { chatId: selectedChat._id, users: selectedUsers })
 
                   if (selectedChat) {
                         setSelectedChat({ ...selectedChat, users: updatedUsers.users })
@@ -73,6 +78,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, setIsOpen }: Props
                   toast.error('An error occurred while adding users to group')
             } finally {
                   setIsOpen(false)
+                  setSelectedUsers([])
             }
       }
 

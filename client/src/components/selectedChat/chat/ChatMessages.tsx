@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Element {
-      const { setSelectedFile } = useChat()
+      const { setSelectedFile ,selectedChat} = useChat()
       const { user } = AuthState()
 
       const renderMessageContent = (message: IMessage, idx: number): ReactNode => {
@@ -48,6 +48,19 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
             }
 
             return null
+      }
+
+      function isKicked() {
+            if (!selectedChat) return null
+            const isKicked = selectedChat?.kickedUsers.some(kickedUser => kickedUser.userId === user?._id)
+            
+            if (isKicked) {
+                  return (
+                        <div className="mx-auto text-center bg-gray-500 w-max py-2 px-4 my-4 rounded-full">
+                              <span className="text-white text-sm">You were kicked from this chat</span>
+                        </div>
+                  )
+            }
       }
 
       if (!messages || !user) return <div></div>
@@ -94,6 +107,8 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                               </div >
                         ))
                   }
+
+                  {selectedChat?.isGroupChat && isKicked()}
             </section >
       )
 }

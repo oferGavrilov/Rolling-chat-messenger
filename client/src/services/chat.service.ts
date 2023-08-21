@@ -15,11 +15,12 @@ export const chatService = {
       createGroup,
       updateGroupImage,
       updateGroupName,
-      removeFromGroup,
+      kickFromGroup,
       getMessages,
       sendMessage,
       updateUsersGroup,
-      removeChat
+      removeChat,
+      leaveFromGroup
 }
 
 
@@ -102,10 +103,23 @@ async function updateUsersGroup (chatId: string, users: IUser[]) {
       }
 }
 
-async function removeFromGroup (chatId: string, userId?: string): Promise<IChat> {
+async function leaveFromGroup (chatId: string, userId: string): Promise<string> {
+      try {
+            const { data }: AxiosResponse<string> = await axios.put(BASE_URL + '/api/chat/leave', { chatId, userId }, getAuthConfig())
+            return data
+
+      } catch (error) {
+            if (axios.isAxiosError(error)) {
+                  handleAxiosError(error)
+            }
+            throw new Error('Failed leave group.')
+      }
+}
+
+async function kickFromGroup (chatId: string, userId: string, kickedByUserId: string): Promise<IChat> {
       userId = userId || userService.getLoggedinUser()?._id
       try {
-            const { data }: AxiosResponse<IChat> = await axios.put(BASE_URL + '/api/chat/groupremove', { chatId, userId }, getAuthConfig())
+            const { data }: AxiosResponse<IChat> = await axios.put(BASE_URL + '/api/chat/kick', { chatId, userId, kickedByUserId }, getAuthConfig())
             return data
       } catch (error) {
             if (axios.isAxiosError(error)) {

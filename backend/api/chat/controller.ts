@@ -1,7 +1,7 @@
 
 import type { Response } from 'express'
 import type { User } from '../../models/user.model.js'
-import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service.js'
+import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, renameGroupChatService, updateGroupImageService, removeChatService, kickFromGroupChatService, leaveGroupService } from './service.js'
 import { handleErrorService } from '../../middleware/errorMiddleware.js'
 import { RequestChat } from '../../models/chat.model.js'
 
@@ -25,7 +25,7 @@ export async function getUserChats (req: RequestChat, res: Response) {
       }
 
       try {
-            const result = await getUserChatsService(req.user as User, userId)
+            const result = await getUserChatsService(userId)
             res.status(200).send(result)
       } catch (error: any) {
             throw handleErrorService(error)
@@ -90,22 +90,31 @@ export async function updateUsersInGroupChat (req: RequestChat, res: Response) {
       }
 }
 
-export async function removeFromGroupChat (req: RequestChat, res: Response) {
-      const { chatId, userId } = req.body
+export async function kickFromGroupChat (req: RequestChat, res: Response) {
+      const { chatId, userId, kickedByUserId } = req.body
 
       if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
       if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
 
       try {
-            const removedChat = await removeFromGroupChatService(chatId, userId)
+            const removedChat = await kickFromGroupChatService(chatId, userId, kickedByUserId)
             res.status(200).send(removedChat)
       } catch (error: any) {
             throw handleErrorService(error)
       }
 }
 
-// this function add the userId to the chat in the deletedBy key array
-// if the deletedBy array length is equal to the number of users in the chat then the chat is deleted with all its messages
+export async function leaveGroup (req: RequestChat, res: Response) {
+      const { chatId, userId } = req.body
+
+      try {
+            const removedChat = await leaveGroupService(chatId, userId)
+            res.status(200).send(removedChat)
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
 export async function removeChat (req: RequestChat, res: Response) {
       const { chatId, userId } = req.body
 

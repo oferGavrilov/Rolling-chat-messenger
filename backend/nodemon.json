@@ -1,6 +1,6 @@
 {
       "verbose": true,
-      "watch":["src/**/*.ts"],
+      "watch":["src/**/*.ts", "services/**/*.ts"],
       "ext": "ts,json",
       "exec": "ts-node src/index.ts",
       "execMap": {

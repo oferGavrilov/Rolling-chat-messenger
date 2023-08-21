@@ -33,7 +33,7 @@ export default function UsersList ({ users, onSelectChat, usersType, selectedUse
 
                         {(selectedUsers && selectedUsers?.length > 0) && (
                               <div
-                                    className='absolute bottom-5 right-5 dark:bg-dark-dropdown-bg rounded-full p-4'
+                                    className='absolute bottom-5 right-5 bg-gray-200 shadow-xl shadow-gray-400 dark:bg-dark-dropdown-bg rounded-full p-4 cursor-pointer'
                                     onClick={clearSelectedUsers}
                               >
                                     <DeleteForeverIcon className='text-red-500' />

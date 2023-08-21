@@ -1,6 +1,6 @@
 import { User } from "../../models/user.model.js"
 import { Chat, type ChatDocument } from "../../models/chat.model.js"
-import { Types, type PopulateOptions } from "mongoose"
+import mongoose, { Types, type PopulateOptions, ObjectId } from "mongoose"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { Message } from "../../models/message.model.js"
 
@@ -55,8 +55,10 @@ export async function createChatService (receiverId: string, senderId: string): 
       }
 }
 
-export async function getUserChatsService (user: User, userId: string): Promise<ChatDocument[]> {
-      if (!userId || !user) return Promise.reject(new Error('Please fill all the fields'))
+export async function getUserChatsService (userId: string): Promise<ChatDocument[]> {
+      if (!userId) return Promise.reject(new Error('No user id sent to the server'))
+
+      console.log('getUserChatsService', userId)
 
       const populateOptions: PopulateOptions[] = [
             { path: "users", select: "-password" },
@@ -68,12 +70,18 @@ export async function getUserChatsService (user: User, userId: string): Promise<
       ]
 
       try {
+            const userIdObject = new mongoose.Types.ObjectId(userId)
+
+            // Get chats where the user is in the users array or the user is in the kickedUsers array
             const result = await Chat.find({
                   $and: [
-                        { users: { $elemMatch: { $eq: user._id } } },
-                        { users: { $elemMatch: { $eq: userId } } },
-                        // Filter out chats where the user's ID exists in the deletedBy array
-                        { deletedBy: { $nin: [user._id] } },
+                        {
+                              $or: [
+                                    { users: { $elemMatch: { $eq: userIdObject } } },
+                                    { "kickedUsers.userId": userIdObject },
+                              ],
+                        },
+                        { deletedBy: { $nin: [userIdObject] } },
                   ],
             }).populate(populateOptions)
 
@@ -83,18 +91,24 @@ export async function getUserChatsService (user: User, userId: string): Promise<
       }
 }
 
-export async function createGroupChatService (users: string[], chatName: string, groupImage: string | undefined, currentUser: User): Promise<ChatDocument> {
+
+export async function createGroupChatService (users: User[], chatName: string, groupImage: string | undefined, currentUser: User): Promise<ChatDocument> {
       if (!users || !chatName) {
             throw new Error('Please fill all the fields')
       }
 
-      users.push(currentUser._id)
+      const usersIds = users.map((user) => user._id)
+
+      const chatUsers = [...usersIds, currentUser._id]
 
       try {
-            const groupChatData = {
+            const groupChatData: ChatDocument = {
                   chatName,
                   isGroupChat: true,
-                  users,
+                  users: chatUsers,
+                  latestMessage: undefined,
+                  deletedBy: [],
+                  kickedUsers: [],
                   groupAdmin: currentUser._id,
                   groupImage: groupImage || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
             }
@@ -122,7 +136,7 @@ export async function renameGroupChatService (chatId: string, groupName: string)
                   chatId,
                   { chatName: groupName },
                   { new: true, useFindAndModify: false }
-            ).populate('users', '-password').populate('groupAdmin', '-password');
+            ).populate('users', '-password').populate('groupAdmin', '-password')
 
             return groupName
       } catch (error: any) {
@@ -143,14 +157,25 @@ export async function updateGroupImageService (chatId: string, groupImage: strin
       }
 }
 
-export async function updateUsersInGroupChatService (chatId: string, users: string[]): Promise<ChatDocument> {
+export async function updateUsersInGroupChatService (chatId: string, users: User[]): Promise<ChatDocument> {
+      console.log('users to update', users)
       try {
-            const updated = await Chat.findByIdAndUpdate(chatId, { users }, { new: true })
-                  .populate('users', "-password")
-                  .populate('groupAdmin', "-password")
+            const usersIds = users.map((user) => user._id)
+            await Chat.updateOne(
+                  { _id: chatId },
+                  {
+                        $push: { users: { $each: usersIds } },
+                        $pull: {
+                              kickedUsers: { userId: { $in: usersIds } },
+                              deletedBy: { userId: { $in: usersIds } },
+                        },
+                  }
+            );
+
+            const updated = await Chat.findById(chatId).populate('users', '-password').populate('groupAdmin', '-password')
 
             if (!updated) {
-                  throw new Error('Could not update users')
+                  throw new Error('Failed to retrieve updated chat')
             }
 
             return updated
@@ -159,21 +184,65 @@ export async function updateUsersInGroupChatService (chatId: string, users: stri
       }
 }
 
-export async function removeFromGroupChatService (chatId: string, userId: string): Promise<ChatDocument> {
-      if (!chatId || !userId) {
+export async function kickFromGroupChatService (chatId: string, userId: string, kickedByUserId: string): Promise<ChatDocument> {
+      if (!chatId || !userId || !kickedByUserId) {
             throw new Error('Please fill all the fields')
       }
 
       try {
-            const removed = await Chat.findByIdAndUpdate(chatId, { $pull: { users: userId } }, { new: true })
-                  .populate('users', "-password")
-                  .populate('groupAdmin', "-password")
+            const kicked = await Chat.findByIdAndUpdate(
+                  chatId,
+                  {
+                        $addToSet: {
+                              kickedUsers: {
+                                    $each: [{ userId, kickedBy: kickedByUserId, kickedAt: new Date() }]
+                              }
+                        },
+                        $pull: {
+                              users: userId
+                        }
+                  },
+                  { new: true }
+            ).populate('users', "-password").populate('groupAdmin', "-password")
 
-            if (!removed) {
-                  throw new Error('Could not remove user')
+            if (!kicked) {
+                  throw new Error('Could not kick user')
             }
 
-            return removed
+            return kicked
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
+export async function leaveGroupService (chatId: string, userId: string): Promise<string> {
+      if (!chatId || !userId) {
+            throw new Error('Please fill all the fields')
+      }
+
+
+      try {
+            const updatedChat = await Chat.findByIdAndUpdate(
+                  chatId,
+                  {
+                        $pull: {
+                              users: userId,
+                        },
+                        $push: {
+                              deletedBy: {
+                                    userId: userId,
+                                    deletedAt: new Date(),
+                              },
+                        },
+                  },
+                  { new: true }
+            );
+
+            if (!updatedChat) {
+                  throw new Error('Could not leave group');
+            }
+
+            return chatId
       } catch (error: any) {
             throw handleErrorService(error)
       }
@@ -191,13 +260,16 @@ export async function removeChatService (chatId: string, userId: string): Promis
                   throw new Error('Chat not found')
             }
 
-            if (chat.deletedBy.includes(userId)) {
+            // check if the user is already in the deletedBy array
+            if (chat.deletedBy.some((user) => user.toString() === userId)) {
                   throw new Error('Chat already deleted')
             }
 
-            chat.deletedBy.push(userId)
 
-            const allUsersDeleted = chat.users.every((user) => chat.deletedBy.includes(user.toString()))
+            chat.deletedBy.push({ userId: new Types.ObjectId(userId), deletedAt: new Date() })
+
+            const allUsersDeleted = chat.users.every((user) => chat.deletedBy.some((deletedUser) => deletedUser.userId.toString() === user.toString()))
+            // const allUsersDeleted = chat.users.every((user) => chat.deletedBy.includes(user.toString()))
 
             if (allUsersDeleted) {
                   await Message.deleteMany({ chat: new Types.ObjectId(chatId) })

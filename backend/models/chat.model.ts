@@ -2,7 +2,7 @@ import { Request } from 'express'
 import mongoose, { Document, Model, ObjectId, Schema, Types } from 'mongoose'
 import { User } from './user.model.js'
 
-export interface ChatDocument  {
+export interface ChatDocument {
   _id?: ObjectId
   chatName: string
   isGroupChat: boolean
@@ -11,18 +11,32 @@ export interface ChatDocument  {
   isOnline?: boolean
   groupAdmin?: Types.ObjectId
   groupImage?: string
-  deletedBy: string[]
+  deletedBy: DeletedBy[]
+  kickedUsers?: KickedUsers[]
   lastSeen?: Date
+}
+
+type DeletedBy = {
+  userId: Types.ObjectId
+  deletedAt: Date
+}
+
+type KickedUsers = {
+  userId: Types.ObjectId
+  kickedBy: Types.ObjectId
+  kickedAt: Date
 }
 
 export interface RequestChat extends Request {
   body: {
     userId: string;
     currentUserId: string;
-    users: string[];
+    users: User[];
+    usersId: string[]
     chatName: string;
     groupImage: string;
     chatId: string;
+    kickedByUserId: string;
     groupName: string;
     senderId: string;
   };
@@ -43,7 +57,15 @@ const chatSchema: Schema<ChatDocument> = new Schema(
       type: String,
       default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
     },
-    deletedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    deletedBy: [{
+      userId: { type: Schema.Types.ObjectId, ref: 'User' },
+      deletedAt: { type: Date, required: true },
+    }],
+    kickedUsers: [{
+      userId: { type: Schema.Types.ObjectId, ref: 'User' },
+      kickedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+      kickedAt: { type: Date, required: true },
+    }],
   },
   { timestamps: true }
 )

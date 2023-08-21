@@ -38,7 +38,7 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
 
       async function onSelectChat (user: IUser): Promise<void> {
             // Check if chat already exists and its not a group chat
-            const chat = chats.find((chat) => chat.users.length === 2 && chat.users.some((chatUser) => chatUser._id === user._id))
+            const chat = chats.find((chat) => !chat.isGroupChat && chat.users.some((chatUser) => chatUser._id === user._id))
 
             if (chat) {
                   setSelectedChat(chat)
@@ -53,7 +53,8 @@ export default function UsersToMessage ({ setIsOpen }): JSX.Element {
                   groupImage: user.profileImg,
                   isGroupChat: false,
                   users: [user, loggedInUser] as IUser[],
-
+                  messages: [],
+                  kickedUsers: []
             }
 
             setSelectedChat(newChat)
