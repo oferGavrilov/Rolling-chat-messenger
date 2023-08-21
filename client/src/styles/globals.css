@@ -303,6 +303,41 @@
             z-index: -1;
       }
       /* End Chat Page */
+
+      .input-arrow {
+            position: absolute;
+            bottom: -0.1875rem;
+            right: -0.551rem;
+            width: 0.5625rem;
+            height: 1.25rem;
+            transition: opacity 200ms;
+            font-size: 1rem !important;
+      }
+      
+      .message-arrow {
+            position: absolute;
+            bottom: -0.1875rem;
+            right: -0.551rem;
+            width: 0.5625rem;
+            height: 1.25rem;
+            transition: opacity 200ms;
+            font-size: 1rem !important;
+            -moz-transform: scale(-1, 1);
+            -webkit-transform: scale(-1, 1);
+            -o-transform: scale(-1, 1);
+            -ms-transform: scale(-1, 1);
+            transform: scale(-1, 1);
+      }
+      
+      .message-arrow-left {
+            position: absolute;
+            bottom: -0.1875rem;
+            right: -0.551rem;
+            width: 0.5625rem;
+            height: 1.25rem;
+            transition: opacity 200ms;
+            font-size: 1rem !important;
+      }
 }
 
 /* MUI */

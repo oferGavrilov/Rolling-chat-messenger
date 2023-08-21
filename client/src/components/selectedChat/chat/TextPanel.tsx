@@ -8,6 +8,7 @@ import useChat from '../../../store/useChat'
 
 import socketService from '../../../services/socket.service'
 import { uploadAudio } from '../../../utils/cloudinary'
+import MessageArrow from '../../../assets/icons/MessageArrow'
 
 type Timer = NodeJS.Timeout | number
 
@@ -79,17 +80,21 @@ export default function TextPanel ({
 
                   <form onSubmit={handleSubmit} className='w-full flex items-center'>
                         {!isRecording && (
-                              <textarea
-                                    className='bg-gray-100 dark:text-white dark:bg-[#2a3942] w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl py-2 focus-visible:outline-none  focus:overflow-y-auto '
-                                    placeholder='Type a message...'
-                                    value={newMessage}
-                                    onChange={typingHandler}
-                                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                                          if (e.key === 'Enter' && !e.shiftKey) {
-                                                handleSubmit(e)
-                                          }
-                                    }}
-                              />
+
+                              <div className='relative w-full'>
+                                    <textarea
+                                          className='bg-gray-200 flex dark:text-white dark:bg-[#2a3942] w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl rounded-br-none py-2 focus-visible:outline-none  focus:overflow-y-auto '
+                                          placeholder='Type a message...'
+                                          value={newMessage}
+                                          onChange={typingHandler}
+                                          onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                      handleSubmit(e)
+                                                }
+                                          }}
+                                    />
+                                    <MessageArrow className="input-arrow" fill='#e5e7eb'/>
+                              </div>
                         )}
 
                         {isMessageEmpty ? (

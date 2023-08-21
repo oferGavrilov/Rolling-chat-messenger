@@ -9,6 +9,7 @@ import { formatDate, formatMessageSentDate, hasDayPassed, isLastMessage, isSameS
 import AudioMessage from "../chat/message-type/AudioMessage"
 import FileMessage from "./message-type/FileMessage"
 import ImageMessage from "./message-type/ImageMessage"
+import MessageArrow from "../../../assets/icons/MessageArrow"
 
 interface Props {
       messages: IMessage[]
@@ -80,20 +81,23 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                               <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
 
                                     {/* Profile Image */}
-                                    <div className="hidden md:flex">
+                                    <div className="hidden md:flex relative">
                                           {(isSameSender(messages, message, idx, user._id) ||
                                                 isLastMessage(messages, idx, user._id)) ? (
-                                                <img
-                                                      className="h-8 w-8 rounded-full object-cover object-top cursor-pointer hover:scale-110 transition-all duration-300"
-                                                      src={message.sender.profileImg}
-                                                      alt="conversation-user"
-                                                      onClick={() => setChatMode('info')}
-                                                />
+                                                <div className="">
+                                                      <img
+                                                            className="h-8 w-8 rounded-full object-cover object-top cursor-pointer hover:scale-110 transition-all duration-300"
+                                                            src={message.sender.profileImg}
+                                                            alt="conversation-user"
+                                                            onClick={() => setChatMode('info')}
+                                                      />
+                                                      <MessageArrow className='message-arrow' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} />
+                                                </div>
                                           ) : <span className="ml-8"></span>}
                                     </div>
 
                                     <div className="flex flex-col w-full">
-                                          
+
                                           {/* Send Time of Message */}
                                           <div className="w-max mx-auto">
                                                 <div className="bg-gray-400 text-white text-sm px-2 rounded-full" style={getDayPass(messages[idx - 1], message, idx) ? { margin: '12px 0' } : {}}>
@@ -114,6 +118,9 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                             ${message.messageType === 'file' && 'flex-col-reverse pb-6'}
                                                             `}
                                           >
+                                                {message.sender._id === user._id  && (
+                                                            <MessageArrow className='message-arrow-left' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} />
+                                                      )}
                                                 <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto
                                                             ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}
