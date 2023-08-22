@@ -338,6 +338,8 @@
             height: 1.25rem;
             transition: opacity 200ms;
             font-size: 1rem !important;
+
+            @apply fill-[#0099ff] dark:fill-[#005c4b]
       }
 }
 
