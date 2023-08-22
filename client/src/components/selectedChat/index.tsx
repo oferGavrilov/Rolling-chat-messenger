@@ -113,6 +113,16 @@ export default function Messenger (): JSX.Element {
             setChatMode('chat')
       }, [selectedChat])
 
+      useEffect(() => {
+            async function getConversationUserConnection () {
+                  if (!conversationUser) return
+                  const status = conversationUser.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
+                  setConnectionStatus(status)
+            }
+
+            getConversationUserConnection()
+      }, [conversationUser])
+
       async function fetchMessages () {
             if (!selectedChat) return
             if (selectedChat._id === 'temp-id') return setMessages([])
@@ -128,23 +138,13 @@ export default function Messenger (): JSX.Element {
             }
       }
 
-      useEffect(() => {
-            async function getConversationUserConnection () {
-                  if (!conversationUser) return
-                  const status = conversationUser.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
-                  setConnectionStatus(status)
-            }
-
-            getConversationUserConnection()
-      }, [conversationUser])
-
-
       function handleConnection (userId: string, status: boolean): void {
             if (userId !== conversationUserRef.current?._id) return
 
             if (conversationUserRef.current) {
+                  const date = new Date()
                   setConnectionStatus(
-                        status ? 'Online' : `Last seen ${formatLastSeenDate(conversationUserRef.current?.lastSeen as string)}`
+                        status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`
                   )
             }
       }

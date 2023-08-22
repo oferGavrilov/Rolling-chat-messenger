@@ -41,6 +41,8 @@ export function setupSocketAPI (http: HttpServer) {
                   if (userId) {
                         console.log('User disconnected:', userId)
                         activeUsers.delete(userId)
+                        socket.disconnect(true)
+                        updateUserStatus(userId, false)
                         socket.broadcast.emit('logout', userId)
                         // logger.info(`Users connected: ${activeUsers.size}`)
                   }

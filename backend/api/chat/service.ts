@@ -261,7 +261,7 @@ export async function removeChatService (chatId: string, userId: string): Promis
             }
 
             // check if the user is already in the deletedBy array
-            if (chat.deletedBy.some((user) => user.toString() === userId)) {
+            if (chat.deletedBy.some((user) => user?.userId.toString() === userId)) {
                   throw new Error('Chat already deleted')
             }
 

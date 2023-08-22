@@ -27,6 +27,7 @@ export default {
         'dark-outgoing-chat-bg':'#005c4b',
         'dark-incoming-chat-bg':'#202c33',
         'dark-primary-text': '#ffffff',
+        'dark-secondary-text': '#242424',
         'navigation-bg': '#FAFAFA',
         'primary': '#0099ff',
         'secondary-text': '#242424',

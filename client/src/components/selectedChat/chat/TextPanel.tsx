@@ -47,6 +47,12 @@ export default function TextPanel ({
             const { value } = e.target
             setNewMessage(value)
 
+            if (value.length > 200) {
+                  e.target.style.border = '1px solid red'
+            } else {
+                  e.target.style.border = 'none'
+            }
+
             if (!typing) {
                   setTyping(true)
                   socketService.emit('typing', { chatId: selectedChat?._id, userId: loggedInUser?._id })
@@ -83,9 +89,10 @@ export default function TextPanel ({
 
                               <div className='relative w-full'>
                                     <textarea
-                                          className='bg-gray-200 flex dark:text-white dark:bg-[#2a3942] w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl rounded-br-none py-2 focus-visible:outline-none  focus:overflow-y-auto '
+                                          className='bg-gray-200 hide-scrollbar flex dark:text-white dark:bg-[#2a3942] w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl rounded-br-none py-2 focus-visible:outline-none  focus:overflow-y-auto '
                                           placeholder='Type a message...'
                                           value={newMessage}
+                                          maxLength={201}
                                           onChange={typingHandler}
                                           onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                                                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -93,7 +100,7 @@ export default function TextPanel ({
                                                 }
                                           }}
                                     />
-                                    <MessageArrow className="input-arrow"/>
+                                    <MessageArrow className="input-arrow" />
                               </div>
                         )}
 

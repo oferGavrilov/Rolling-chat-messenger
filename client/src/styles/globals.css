@@ -212,7 +212,8 @@
             flex items-center justify-center 
             rounded-full 
             cursor-pointer transition-colors duration-200 
-            dark:hover:bg-dark-default-hover-bg;
+            bg-primary hover:bg-[#57c0f8]
+            text-white;
       }
 
       /* Add Users Modal */
@@ -223,7 +224,7 @@
             rounded-xl px-6 shadow-xl
             transition-transform duration-200 ease-in-out 
             bg-gray-100 shadow-gray-400 /* LIGHT MODE */
-            dark:bg-[#24272b] dark:text-dark-primary-text /* DARK MODE */;
+            dark:bg-[#24272b] dark:text-dark-primary-text dark:shadow-black /* DARK MODE */;
       }
 
       .user-modal-card {
@@ -328,6 +329,7 @@
             -o-transform: scale(-1, 1);
             -ms-transform: scale(-1, 1);
             transform: scale(-1, 1);
+            @apply fill-[#9ca3af] dark:fill-[#202c33];
       }
       
       .message-arrow-left {
@@ -339,7 +341,7 @@
             transition: opacity 200ms;
             font-size: 1rem !important;
 
-            @apply fill-[#0099ff] dark:fill-[#005c4b]
+            @apply fill-[#0099ff] dark:fill-[#005c4b];
       }
 }
 

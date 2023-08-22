@@ -103,7 +103,7 @@ export default function MessagePreview ({ chat, notification }: Props) {
                                     >
                                           {getLatestMessage()}
                                     </div>
-                                    {isNotification() && <span className='bg-blue-400 text-white text-sm flex items-center h-[90%] w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
+                                    {isNotification() && <span className='bg-primary text-white text-sm flex items-center h-5 w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>
                         </div>
                   </div>

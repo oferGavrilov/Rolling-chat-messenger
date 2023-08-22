@@ -3,7 +3,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 interface Props {
       users: IUser[]
-      onSelectChat: CallableFunction
+      onSelectChat: (user: IUser) => void
       usersType: "group" | "message"
       selectedUsers?: IUser[]
       clearSelectedUsers?: () => void
@@ -16,7 +16,7 @@ export default function UsersList ({ users, onSelectChat, usersType, selectedUse
                         {users.map((user: IUser) => (
                               <li
                                     key={user._id}
-                                    className={`user-card ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary' : ''}`}
+                                    className={`user-card ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary text-white' : ''}`}
                                     onClick={() => onSelectChat(user)}
                               >
                                     <div className='flex gap-x-4 items-center'>

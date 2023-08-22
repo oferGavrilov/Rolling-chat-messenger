@@ -34,6 +34,7 @@ export default function MessageList ({ chats }: { chats: IChat[] }) {
 
       useEffect(() => {
             socketService.on("message received", (newMessage: IMessage) => {
+                  console.log('new message received', newMessage)
                   if (isMountedRef.current) {
                         if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
                               const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id)

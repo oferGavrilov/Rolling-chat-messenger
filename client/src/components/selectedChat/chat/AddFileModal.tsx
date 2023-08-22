@@ -70,7 +70,6 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                         maxFiles: 1,
                         fromSources: ['local_file_system', 'googledrive', 'dropbox', 'onedrive'],
                         onUploadDone: (result) => {
-                              console.log(result)
                               if (result.filesUploaded && result.filesUploaded.length > 0) {
                                     const fileUrl = result.filesUploaded[0]
                                     setFile(fileUrl)
