@@ -52,7 +52,6 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                   if (!response || !response.url) {
                         return toast.error('Invalid response from Cloudinary')
                   }
-                  console.log(response)
 
                   setFile(response.url)
                   setChatMode('send-file')
@@ -86,7 +85,6 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                   console.error(error)
             }
       }
-
 
       return (
             <div className='relative'>

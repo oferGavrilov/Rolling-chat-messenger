@@ -53,7 +53,6 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
 
       function isKicked () {
             if (!selectedChat) return null
-            console.log('selectedChat?.kickedUsers', selectedChat?.kickedUsers)
             const isKicked = selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === user?._id)
 
             if (isKicked) {
@@ -92,7 +91,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                             alt="conversation-user"
                                                             onClick={() => setChatMode('info')}
                                                       />
-                                                      <MessageArrow className='message-arrow' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} />
+                                                      <MessageArrow className='message-arrow' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} fillDark={message?.sender._id === user._id ? '#005c4b' : '#202c33'}/>
                                                 </div>
                                           ) : <span className="ml-8"></span>}
                                     </div>
@@ -120,7 +119,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                             `}
                                           >
                                                 {message.sender._id === user._id && (
-                                                      <MessageArrow className='message-arrow-left' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} />
+                                                      <MessageArrow className='message-arrow-left' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} fillDark={message?.sender._id === user._id ? '#005c4b' : '#202c33'}/>
                                                 )}
                                                 <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto
                                                             ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}

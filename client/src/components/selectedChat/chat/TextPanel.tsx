@@ -93,7 +93,7 @@ export default function TextPanel ({
                                                 }
                                           }}
                                     />
-                                    <MessageArrow className="input-arrow" fill='#e5e7eb'/>
+                                    <MessageArrow className="input-arrow"/>
                               </div>
                         )}
 

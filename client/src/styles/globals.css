@@ -121,7 +121,7 @@
       /* Side Modal */
       .side-modal-container {
             @apply
-            w-full md:w-[435px] h-screen
+            w-full md:w-[435px] h-screen max-w-[100vw]
             fixed top-0 left-0 z-50
             shadow-xl
             transition-all duration-300
@@ -312,6 +312,7 @@
             height: 1.25rem;
             transition: opacity 200ms;
             font-size: 1rem !important;
+            @apply fill-[#e5e7eb] dark:fill-[#2a3942];
       }
       
       .message-arrow {
