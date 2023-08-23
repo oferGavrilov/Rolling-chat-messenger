@@ -1,8 +1,5 @@
 import { Suspense, lazy } from "react"
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
-// import Home from "./pages/Home"
-// import ChatPage from "./pages/ChatPage"
-// import Login from "./pages/Auth"
 
 const Home = lazy(() => import('./pages/Home'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
@@ -14,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import AuthProvider from "./context/useAuth"
 import Loading from "./components/Loading"
+import NotFound from "./pages/NotFound"
+import Notification from "./components/Notification"
 
 function App () {
 
@@ -25,9 +24,11 @@ function App () {
             <Route path="/" element={<Home />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
         <ToastContainer />
+        <Notification />
       </AuthProvider>
     </Router>
   )

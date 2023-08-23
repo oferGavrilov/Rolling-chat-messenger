@@ -344,6 +344,29 @@
 
             @apply fill-[#0099ff] dark:fill-[#005c4b];
       }
+
+      .notification-msg {
+            color:white;
+            padding:  28px;
+            position: fixed;
+            white-space: nowrap;
+            top: 10px;
+            border-radius: 5px;
+            background-color: grey;
+            /* center */
+            left: 50%;
+            transform: translate(-50%, 50%);
+        }
+        .notification-msg.success {
+            background-color: #DFF2BF;
+        }
+        .notification-msg.warning {
+            background-color: #9F6000;
+        }
+        .notification-msg.error {
+            background-color: #FF3333;
+        }
+        
 }
 
 /* MUI */

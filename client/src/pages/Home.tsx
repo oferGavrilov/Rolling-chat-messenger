@@ -24,7 +24,7 @@ export default function Home (): JSX.Element {
                               </div>
 
                         </div>
-                        <WavesBlue />
+                        <WavesBlue className="slide-up"/>
                   </div>
                   <div className="min-h-[100svh] bg-primary relative -z-10">
                         <WavesWhite />

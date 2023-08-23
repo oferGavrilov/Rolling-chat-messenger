@@ -1,8 +1,7 @@
-import { IChat } from "../model/chat.model"
 import { FormData, IUser } from "../model/user.model"
 import axios, { AxiosResponse } from 'axios'
 import { getAuthConfig, getConfig } from '../utils/authConfig'
-import { handleAxiosError } from "../utils/handleErrors"
+import { httpService } from "./http.service"
 
 const STORAGE_KEY = 'loggedin-user'
 const env = import.meta.env.VITE_NODE_ENV
@@ -14,7 +13,6 @@ export const userService = {
       getLoggedinUser,
       logout,
       getUsers,
-      createChat,
       editUserDetails,
       updateUserImage,
       saveUserBackgroundImage,
@@ -31,35 +29,14 @@ export function getLoggedinUser () {
       return null
 }
 
-async function getUsers (userId?: string): Promise<IUser[] | IUser> {
-      const authConfig = getAuthConfig()
 
+async function getUsers (userId?: string): Promise<IUser[] | IUser> {
       try {
             const apiUrl = userId ? `/api/auth/all/${userId}` : '/api/auth/all'
 
-            const response: AxiosResponse<IUser[]> = await axios.get(BASE_URL + apiUrl, authConfig)
-            const { data } = response
-            return data
+            return httpService.get(apiUrl)
       } catch (error) {
-            if (axios.isAxiosError(error)) {
-                  handleAxiosError(error)
-            }
-            throw error
-      }
-}
-
-async function createChat (userId: string): Promise<IChat> {
-      const config = getConfig()
-
-      const currentUserId = getLoggedinUser()?._id
-      try {
-            const response: AxiosResponse<IChat> = await axios.post(BASE_URL + '/api/chat', { userId, currentUserId }, config)
-            const { data } = response
-            return data
-      } catch (error) {
-            if (axios.isAxiosError(error)) {
-                  handleAxiosError(error)
-            }
+            console.error(error)
             throw error
       }
 }
@@ -77,79 +54,92 @@ async function loginSignUp (credentials: FormData, login: boolean): Promise<IUse
 
             return data
       } catch (error) {
-            if (axios.isAxiosError(error)) {
-                  handleAxiosError(error)
+            console.error(error)
+            throw error
+      }
+}
+
+async function logout (): Promise<void> {
+      try {
+            const user = getLoggedinUser()
+            if (!user) {
+                  throw new Error('User is not logged in.')
             }
+
+            const authConfig = getAuthConfig()
+            sessionStorage.removeItem(STORAGE_KEY)
+            await axios.put(BASE_URL + '/api/auth/logout', {}, authConfig)
+
+      } catch (error) {
+            console.error(error)
             throw error
       }
 }
 
 async function updateUserImage (image: string): Promise<string> {
-      const config = getAuthConfig()
       try {
-            const response: AxiosResponse<string> = await axios.put(BASE_URL + '/api/auth/image', { image }, config)
-            const { data } = response
-            if (data) {
-                  const user = getLoggedinUser()
-                  _saveToSessionStorage({ ...user, profileImg: image })
+            const user = getLoggedinUser()
+            if (!user) {
+                  throw new Error('User is not logged in.')
             }
 
-            return data
-      } catch (error) {
-            if (axios.isAxiosError(error)) {
-                  handleAxiosError(error)
+            const updatedImage = await httpService.put('/api/auth/image', { image })
+            if (updatedImage) {
+                  _saveToSessionStorage({ ...user, profileImg: updatedImage })
             }
+
+            return updatedImage
+      } catch (error) {
+            console.error(error)
             throw error
       }
 }
 
 async function editUserDetails (newName: string, key: string): Promise<IUser> {
-      const config = getAuthConfig()
-
       try {
-            const response: AxiosResponse<IUser> = await axios.put(BASE_URL + '/api/auth/details', { newName }, config)
-            const { data } = response
+            const user = getLoggedinUser()
+            if (!user) {
+                  throw new Error('User is not logged in.')
+            }
 
+            const response = await httpService.put('/api/auth/details', { newName })
 
-            if (data) {
+            if (response) {
                   const user = getLoggedinUser()
                   const userWithNewName = { ...user, [key]: newName }
                   _saveToSessionStorage(userWithNewName)
             }
 
-            return data
+            return response
       } catch (error) {
-            if (axios.isAxiosError(error)) {
-                  handleAxiosError(error)
-            }
+            console.error(error)
             throw error
       }
 }
 
 function getTheme (): "light" | "dark" {
       try {
-            const theme = localStorage.getItem('theme');
+            const theme = localStorage.getItem('theme')
 
             if (theme === "light" || theme === "dark") {
-                  return theme;
+                  return theme
             } else {
-                  return "light";
+                  return "light"
             }
       } catch (error) {
-            console.log(error);
-            return "light";
+            console.error(error)
+            return "light"
       }
 }
 
 function saveTheme (theme: "light" | "dark" | "black"): void {
       try {
-            localStorage.setItem('theme', theme);
+            localStorage.setItem('theme', theme)
       } catch (error) {
-            console.log(error);
+            console.error(error)
       }
 }
 
-// function to save user background image to local storage
 function saveUserBackgroundImage (image: string): void {
       try {
             localStorage.setItem('backgroundImage', image)
@@ -165,12 +155,6 @@ function getBackgroundImage (): string | null {
             console.log(error)
             return null
       }
-}
-
-async function logout (): Promise<void> {
-      const authConfig = getAuthConfig()
-      sessionStorage.removeItem(STORAGE_KEY)
-      await axios.put(BASE_URL + '/api/auth/logout', {}, authConfig)
 }
 
 function _saveToSessionStorage (user: FormData): FormData {

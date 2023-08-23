@@ -16,8 +16,8 @@ import { chatService } from "../../services/chat.service"
 
 import { IMessage } from "../../model/message.model"
 import { IUser } from "../../model/user.model"
-import { userService } from "../../services/user.service"
 import { IChat } from "../../model/chat.model"
+import { messageService } from "../../services/message.service"
 
 export default function Messenger (): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
@@ -99,7 +99,7 @@ export default function Messenger (): JSX.Element {
             socketService.on('user-kicked', ({ chatId, userId, kickerId }) => handleKickUser(chatId, userId, kickerId, selectedChat))
             socketService.on('user-joined', ({ chatId, user }) => handleAddUser(chatId, user, selectedChat))
             socketService.on('user-left', ({ chatId, userId }) => handleLeftUser(chatId, userId, selectedChat))
-            
+
             fetchConversationUser()
 
             return () => {
@@ -126,8 +126,12 @@ export default function Messenger (): JSX.Element {
       async function fetchMessages () {
             if (!selectedChat) return
             if (selectedChat._id === 'temp-id') return setMessages([])
-            const data = await chatService.getMessages(selectedChat._id)
-            setMessages(data)
+            try {
+                  const data = await messageService.getMessages(selectedChat._id)
+                  setMessages(data)
+            } catch (error) {
+                  console.error('Failed to fetch messages:', error)
+            }
       }
 
       function fetchConversationUser (): void {
@@ -172,13 +176,13 @@ export default function Messenger (): JSX.Element {
                   // Chats that are not created yet have _id = 'temp-id'
                   if (selectedChat._id === 'temp-id') {
                         const targetUser: string = selectedChat.users.find((user) => user._id !== loggedInUser?._id)?._id as string
-                        chatToUpdate = await userService.createChat(targetUser)
+                        chatToUpdate = await chatService.createChat(targetUser)
                         if (!chatToUpdate) throw new Error('Failed to create chat')
                         chatToUpdate.latestMessage = optimisticMessage
                         setChats([chatToUpdate, ...chats])
                   }
 
-                  const messageToUpdate = await chatService.sendMessage({
+                  const messageToUpdate = await messageService.sendMessage({
                         content: message,
                         chatId: selectedChat._id !== 'temp-id' ? selectedChat._id : chatToUpdate?._id as string,
                         messageType: messageType,
@@ -250,7 +254,7 @@ export default function Messenger (): JSX.Element {
                         />
                   )}
 
-                  {(chatMode === 'chat'&& !isKicked()) && (
+                  {(chatMode === 'chat' && !isKicked()) && (
                         <TextPanel
                               onSendMessage={onSendMessage}
                               setFile={setFile}

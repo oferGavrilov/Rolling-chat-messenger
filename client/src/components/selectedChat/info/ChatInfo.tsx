@@ -6,6 +6,7 @@ import { chatService } from "../../../services/chat.service"
 import { IMessage } from "../../../model/message.model"
 
 import MediaFiles from "./MediaFiles"
+import { toast } from "react-toastify"
 
 interface Props {
       conversationUser: IUser | null
@@ -19,13 +20,17 @@ export default function ChatInfo ({ conversationUser, messages }: Props): JSX.El
       async function onRemoveChat () {
             const chat = chats.find(chat => chat._id === selectedChat?._id)
 
-            if (!chat || !user) return
+            if (!chat || !user) return toast.error('Something went wrong')
 
-            await chatService.removeChat(chat._id, user._id)
-
-            const newChats = chats.filter(chat => chat._id !== selectedChat?._id)
-            setChats(newChats)
-            setSelectedChat(null)
+            try {
+                  await chatService.removeChat(chat._id, user._id)
+                  
+                  const newChats = chats.filter(chat => chat._id !== selectedChat?._id)
+                  setChats(newChats)
+                  setSelectedChat(null)
+            } catch (error) {
+                  console.log(error)
+            }
       }
 
       return (

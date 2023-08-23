@@ -14,4 +14,11 @@ module.exports = {
   rules: {
     'react-refresh/only-export-components': 'warn',
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
 }
