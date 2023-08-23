@@ -24,18 +24,28 @@ export default function Profile (): JSX.Element {
             username: user?.username ?? '',
             about: user?.about ?? '',
       })
-      async function handleEdit () {
-            if (!editType || !user) return
-            if (userValues[editType as keyof UserValues] === user?.[editType] || userValues[editType as keyof UserValues] === '') {
-                  return toast.error(`Please enter a valid ${editType}`)
-            }
-            const valueToEdit = userValues[editType as keyof UserValues] as string
-            const newUser = await userService.editUserDetails(valueToEdit, editType)
-            setUser(newUser)
-            setEditType('')
-            toast.success(`${editType} changed successfully`)
-      }
 
+      async function handleEdit () {
+            if (!editType || !user) return;
+
+            const newValue = userValues[editType as keyof UserValues] as string;
+
+            // Check for special symbols in the input value
+            const specialSymbolsRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+            if (specialSymbolsRegex.test(newValue)) {
+                  return toast.error(`Please enter a valid ${editType} without special symbols`);
+            }
+
+            if (newValue === user?.[editType] || newValue === '') {
+                  return toast.error(`Please enter a valid ${editType}`);
+            }
+
+            const newUser = await userService.editUserDetails(newValue, editType);
+            setUser(newUser);
+            setEditType('');
+            toast.success(`${editType} changed successfully`);
+      }
+      
       async function handleImageChange (newImage: string): Promise<void> {
             setImage(newImage)
             const savedImage = await userService.updateUserImage(newImage)

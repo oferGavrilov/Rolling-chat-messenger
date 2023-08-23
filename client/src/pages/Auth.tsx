@@ -47,7 +47,7 @@ export default function Auth () {
                               </Tooltip>
                         </div>
                   </section >
-                  <WavesBlue />
+                  <WavesBlue className='slide-up'/>
             </>
       )
 }
