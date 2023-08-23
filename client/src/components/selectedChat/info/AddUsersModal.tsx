@@ -9,6 +9,8 @@ import Loading from '../../SkeltonLoading'
 import { IChat } from '../../../model/chat.model'
 import socketService from '../../../services/socket.service'
 
+import CloseIcon from '@mui/icons-material/Close'
+
 interface Props {
       existsUsers: IUser[]
       isOpen: boolean
@@ -104,7 +106,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
                                                 key={user._id}
                                                 onClick={() => handleSelectUsers(user)}
                                                 className={`user-modal-card
-                                          ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary' : ''}`}
+                                          ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary text-white' : ''}`}
                                           >
                                                 <img
                                                       src={user.profileImg}
@@ -121,10 +123,12 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
                         )}
                   </div>
 
-                  <div className='flex justify-between p-8'>
+                  <div className='absolute bottom-0 flex justify-between w-[90%] px-6 items-center mx-auto'>
                         <button className='users-modal-btn opacity-80 hover:opacity-100' onClick={onCloseModal}>Cancel</button>
                         <button className='users-modal-btn hover:shadow-xl shadow-primary' onClick={onAddUsers}>Add Users</button>
                   </div>
+
+                  <CloseIcon className='absolute top-5 right-3' onClick={() => setIsOpen(false)} />
             </div>
       );
 }

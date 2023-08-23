@@ -81,19 +81,19 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                               <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
 
                                     {/* Profile Image */}
-                                    <div className="hidden md:flex relative">
+                                    <div className="flex relative">
                                           {(isSameSender(messages, message, idx, user._id) ||
                                                 isLastMessage(messages, idx, user._id)) ? (
-                                                <div className="">
+                                                <div>
                                                       <img
-                                                            className="h-8 w-8 rounded-full object-cover object-top cursor-pointer hover:scale-110 transition-all duration-300"
+                                                            className="h-8 w-8 hidden md:block rounded-full object-cover object-top cursor-pointer hover:scale-110 transition-all duration-300"
                                                             src={message.sender.profileImg}
                                                             alt="conversation-user"
                                                             onClick={() => setChatMode('info')}
                                                       />
                                                       <MessageArrow className='message-arrow' fill={message?.sender._id === user._id ? '#0099ff' : '#9ca3af'} fillDark={message?.sender._id === user._id ? '#005c4b' : '#202c33'}/>
                                                 </div>
-                                          ) : <span className="ml-8"></span>}
+                                          ) : <span className="md:ml-8"></span>}
                                     </div>
 
                                     <div className="flex flex-col w-full">
@@ -110,7 +110,7 @@ export default function ChatMessages ({ messages, setChatMode }: Props): JSX.Ele
                                                 className={`pr-3 pl-4 py-1 w-max flex items-center max-w-[75%] text-white rounded-t-xl rounded-tr-2xl relative
                                                 ${message?.sender._id === user._id ?
                                                             'bg-primary dark:bg-dark-outgoing-chat-bg'
-                                                            : 'bg-gray-400 dark:bg-dark-incoming-chat-bg '}
+                                                            : 'bg-gray-400 dark:bg-dark-incoming-chat-bg'}
                                                       ${isSameSenderMargin(messages, message, idx, user._id) ?
                                                             'ml-auto rounded-bl-xl' :
                                                             'ml-0 rounded-br-xl flex-row-reverse'}

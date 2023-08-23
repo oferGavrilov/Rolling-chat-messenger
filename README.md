@@ -1,3 +1,5 @@
-# (In Progress) - Rolling
+### Rolling - A Real-Time Chat Messages Application
 
-Rolling is a chat messenger web application, with many surprises, To be continued...        :)
+Rolling is an End-to-end project that was uploaded to Vercel, [Here is my project link](https://rolling-chat-messenger.vercel.app)
+
+[Hero image](imgs/readme/mockup-large.png "Hero-image")

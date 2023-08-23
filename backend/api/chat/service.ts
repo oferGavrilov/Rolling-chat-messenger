@@ -170,7 +170,7 @@ export async function updateUsersInGroupChatService (chatId: string, users: User
                               deletedBy: { userId: { $in: usersIds } },
                         },
                   }
-            );
+            )
 
             const updated = await Chat.findById(chatId).populate('users', '-password').populate('groupAdmin', '-password')
 
@@ -222,24 +222,54 @@ export async function leaveGroupService (chatId: string, userId: string): Promis
 
 
       try {
-            const updatedChat = await Chat.findByIdAndUpdate(
-                  chatId,
-                  {
-                        $pull: {
-                              users: userId,
-                        },
-                        $push: {
-                              deletedBy: {
-                                    userId: userId,
-                                    deletedAt: new Date(),
+            const chat: ChatDocument | null = await Chat.findById(chatId)
+
+            if (!chat) {
+                  throw new Error('Chat not found')
+            }
+
+            const isAdmin = chat.groupAdmin?.toString() === userId
+
+            let updatedChat: ChatDocument | null
+
+            if (isAdmin && chat.users.length > 1) {
+                  // If the leaving user is an admin and there are other users in the chat
+                  const randomUserIndex = Math.floor(Math.random() * chat.users.length)
+                  const newAdminId = chat.users[randomUserIndex]
+
+                  updatedChat = await Chat.findByIdAndUpdate(
+                        chatId,
+                        {
+                              $pull: { users: userId },
+                              $set: { groupAdmin: newAdminId },
+                              $push: {
+                                    deletedBy: {
+                                          userId: userId,
+                                          deletedAt: new Date(),
+                                    },
                               },
                         },
-                  },
-                  { new: true }
-            );
+                        { new: true }
+                  )
+            } else {
+                  // If the leaving user is not an admin or there's only one user left in the chat
+                  updatedChat = await Chat.findByIdAndUpdate(
+                        chatId,
+                        {
+                              $pull: { users: userId },
+                              $push: {
+                                    deletedBy: {
+                                          userId: userId,
+                                          deletedAt: new Date(),
+                                    },
+                              },
+                        },
+                        { new: true }
+                  )
+            }
 
             if (!updatedChat) {
-                  throw new Error('Could not leave group');
+                  throw new Error('Could not leave group')
             }
 
             return chatId

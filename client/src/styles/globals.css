@@ -231,6 +231,7 @@
             @apply
             flex gap-x-2 
             p-2 w-[75%] 
+            overflow-hidden
             border-b-2 last:border-b-0 
             transition-colors duration-200 cursor-pointer
             hover:bg-gray-200 border-primary /* LIGHT MODE */
@@ -239,8 +240,8 @@
 
       .users-modal-btn {
             @apply
-            bg-primary 
-            py-2 w-28 my-6 md:my-10
+            bg-primary text-sm md:text-base 
+            py-2 w-24 md:w-28 my-6
             rounded-lg tracking-wider
             transition-all duration-200 cursor-pointer
             text-white hover:bg-[#0582ca] /* LIGHT MODE */;
