@@ -89,7 +89,7 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
       return (
             <>
                   <section className="w-full">
-                        <div className="text-center py-4">
+                        <div className="text-center py-12">
                               {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
                               ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
                               {!isEditName ? (

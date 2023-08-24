@@ -224,7 +224,7 @@ export default function Messenger (): JSX.Element {
 
       if (!selectedChat) return <div></div>
       return (
-            <section className='flex-1 messenger-grid slide-left overflow-y-hidden max-h-screen'>
+            <section className='flex-1 grid h-full overflow-hidden slide-left max-h-screen' style={{gridTemplateRows: chatMode === 'chat' ? '64px 1fr 64px' : '64px 1fr'}}>
 
                   <ChatHeader
                         connectionStatus={connectionStatus}

@@ -19,7 +19,7 @@ export default function Info ({ conversationUser, setChatMode, messages }: Props
       const [isAddUsers, setIsAddUsers] = useState<boolean>(false)
 
       return (
-            <div className={`flex flex-col items-center py-8 relative slide-right overflow-y-auto hide-scrollbar ${isAddUsers && ''}`}>
+            <div className={`flex flex-col items-center relative slide-right overflow-y-auto hide-scrollbar ${isAddUsers && ''}`}>
                   {selectedChat?.isGroupChat ?
                         (<GroupInfo messages={messages} isAddUsers={isAddUsers} setIsAddUsers={setIsAddUsers} />) :
                         (<ChatInfo conversationUser={conversationUser} messages={messages} />)}

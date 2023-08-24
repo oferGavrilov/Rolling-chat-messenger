@@ -91,14 +91,14 @@ export default function MessagePreview ({ chat, notification }: Props) {
                         <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='profile-image' />
                         <div className="ml-3 w-full">
                               <div className='flex justify-between items-center'>
-                                    <h3 className="text-lg  font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
+                                    <h3 className="text-lg font-bold">{chat.isGroupChat ? chat.chatName : getSender(chat.users)?.username}</h3>
                                     <span className='text-gray-400 dark:text-dark-primary-text text-sm'>
                                           {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt as string)}
                                     </span>
                               </div>
                               <div className='flex justify-between'>
                                     <div
-                                          className={`text-base h-6 max-h-[24px] max-w-[250px] inline-block ellipsis-text
+                                          className={`text-base h-6 max-h-[24px] max-w-[250px] ellipsis-text flex items-center
                                            ${isNotification() ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}
                                     >
                                           {getLatestMessage()}

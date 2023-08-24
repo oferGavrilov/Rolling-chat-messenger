@@ -226,11 +226,10 @@
             bg-gray-100 shadow-gray-400 /* LIGHT MODE */
             dark:bg-[#24272b] dark:text-dark-primary-text dark:shadow-black /* DARK MODE */;
       }
-
       .user-modal-card {
             @apply
             flex gap-x-2 
-            p-2 w-[75%] 
+            p-2 w-[85%] 
             overflow-hidden
             border-b-2 last:border-b-0 
             transition-colors duration-200 cursor-pointer
@@ -279,12 +278,6 @@
       /* Chat Page */
       .chat-header-shadow {
             box-shadow: -1px 1px 13px 0px #3939395e;
-      }
-      .messenger-grid{
-            display: grid; 
-            grid-template-rows:64px 1fr 64px;
-            height: 100%;
-            overflow-x: hidden;
       }
       .chat-bg-img {
             background-image: url('https://res.cloudinary.com/dqkstk6dw/image/upload/v1692202705/background_kcduqa.png');
