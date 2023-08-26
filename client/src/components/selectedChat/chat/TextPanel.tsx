@@ -8,14 +8,22 @@ import useChat from '../../../store/useChat'
 
 import socketService from '../../../services/socket.service'
 import { uploadAudio } from '../../../utils/cloudinary'
+
 import MessageArrow from '../../../assets/icons/MessageArrow'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
+
+import EmojiPicker, { Theme } from 'emoji-picker-react'
+
+import { useClickOutside } from '../../../custom/useClickOutside'
+import { IReplyMessage } from '../../../model/message.model'
 
 type Timer = NodeJS.Timeout | number
 
 interface Props {
       setFile: React.Dispatch<React.SetStateAction<File | null>>
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
-      onSendMessage: (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number) => Promise<void>
+      onSendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessageId: IReplyMessage | null, recordingTimer?: number) => void
 }
 
 export default function TextPanel ({
@@ -26,17 +34,21 @@ export default function TextPanel ({
 
       const [newMessage, setNewMessage] = useState<string>('')
       const [typing, setTyping] = useState<boolean>(false)
-      const [isRecording, setIsRecording] = useState(false)
-      const typingTimeoutRef = useRef<Timer | null>(null)
+      const [isRecording, setIsRecording] = useState<boolean>(false)
+      const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false)
 
-      const { selectedChat } = useChat()
+      const typingTimeoutRef = useRef<Timer | null>(null)
+      const emojiRef = useRef<HTMLDivElement>(null)
+
+      useClickOutside(emojiRef, () => setShowEmojiPicker(false), showEmojiPicker)
+
+      const { selectedChat, replyMessage, setReplyMessage } = useChat()
       const { user: loggedInUser } = AuthState()
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {
             e.preventDefault()
             if (!newMessage || !selectedChat) return
-
-            onSendMessage(newMessage, 'text')
+            onSendMessage(newMessage, 'text', replyMessage?._id ? replyMessage : null, undefined)
             setNewMessage('')
             setTyping(false)
 
@@ -72,49 +84,83 @@ export default function TextPanel ({
       const handleSendAudio = async (audioBlob: Blob, recordingTimer: number): Promise<void> => {
             try {
                   const url = await uploadAudio(audioBlob)
-                  onSendMessage(url, 'audio', recordingTimer)
+                  onSendMessage(url, 'audio', replyMessage ? replyMessage : null, recordingTimer)
             } catch (error) {
                   console.error('Error uploading audio:', error)
             }
       }
 
+      const handleEmojiClick = ({ emoji }) => {
+            setNewMessage(prevMessage => prevMessage + emoji)
+      }
+
       const isMessageEmpty = !newMessage || newMessage.trim() === ''
 
       return (
-            <div className='flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-white dark:bg-dark-secondary-bg'>
-                  {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
+            <>
+                  <div className='flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-gray-300 dark:bg-dark-secondary-bg relative'>
+                        {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
-                  <form onSubmit={handleSubmit} className='w-full flex items-center'>
-                        {!isRecording && (
+                        <form onSubmit={handleSubmit} className='w-full flex items-center'>
+                              {!isRecording && (
 
-                              <div className='relative w-full'>
-                                    <textarea
-                                          className='bg-gray-200 hide-scrollbar flex dark:text-white dark:bg-[#2a3942] w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-xl rounded-br-none py-2 focus-visible:outline-none  focus:overflow-y-auto '
-                                          placeholder='Type a message...'
-                                          value={newMessage}
-                                          maxLength={201}
-                                          onChange={typingHandler}
-                                          onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                      handleSubmit(e)
-                                                }
-                                          }}
-                                    />
-                                    <MessageArrow className="input-arrow" />
+                                    <div className='relative w-full flex'>
+                                          <div className={`bg-light-input-bg dark:bg-dark-input-bg rounded-l-xl flex justify-center items-center pl-3 ${showEmojiPicker && 'pointer-events-none'}`}>
+                                                <InsertEmoticonIcon className='text-primary cursor-pointer' onClick={() => setShowEmojiPicker(!showEmojiPicker)} />
+                                          </div>
+                                          {showEmojiPicker && <div ref={emojiRef} className='fixed bottom-20 transition-transform duration-200 left-4 md:left-auto'>
+                                                <EmojiPicker
+                                                      onEmojiClick={handleEmojiClick}
+                                                      theme={Theme.AUTO}
+                                                      lazyLoadEmojis={true}
+                                                      searchDisabled={true}
+                                                />
+                                          </div>}
+                                          <textarea
+                                                className='bg-light-input-bg hide-scrollbar flex dark:text-white dark:bg-dark-input-bg w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-tr-xl py-2 focus-visible:outline-none  focus:overflow-y-auto '
+                                                placeholder='Type a message...'
+                                                value={newMessage}
+                                                maxLength={201}
+                                                onChange={typingHandler}
+                                                onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                                                      if (e.key === 'Enter' && !e.shiftKey) {
+                                                            handleSubmit(e)
+                                                      }
+                                                }}
+                                          />
+                                          <MessageArrow className="input-arrow" />
+                                    </div>
+                              )}
+
+                              {isMessageEmpty ? (
+                                    <AudioRecorder onSendAudio={handleSendAudio} isRecording={isRecording} setIsRecording={setIsRecording} />
+                              ) : (
+                                    <button disabled={isMessageEmpty} type='submit'
+                                          className={`text-primary dark:text-dark-primary-text ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary dark:hover:bg-dark-primary-bg hover:text-white p-2 rounded-lg
+                                    ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed  ' : ''}`
+                                          }>
+                                          Send
+                                    </button>
+                              )}
+                        </form>
+
+                        <div className={`fixed w-full left-0 ease-out text-white rounded-t-xl transition-all duration-300 ${replyMessage ? 'bottom-[64px] max-h-20' : 'max-h-0 [&>*]:p-0 [&>*]:hidden'}`}>
+                              <div className="flex items-center h-full bg-gray-300 dark:bg-dark-secondary-bg pt-3 pr-12">
+                                    <div className="flex items-center justify-center w-20 ">
+                                          <CloseRoundedIcon className='text-[#727e86] !text-3xl cursor-pointer' onClick={() => setReplyMessage(null)} />
+                                    </div>
+
+                                    <div className='flex bg-[#828995] dark:bg-dark-primary-bg px-4 rounded-lg w-full h-full p-2 border-r-4 border-[#ffb703] dark:border-primary'>
+                                          <div className='flex flex-col gap-y-1'>
+                                                <span className='text-sm text-[#ffb703] font-bold'>{replyMessage?.sender._id === loggedInUser?._id ? 'You' : replyMessage?.sender.username}</span>
+                                                <span className='overflow-hidden max-w-[300px] text-ellipsis max-h-6 text-gray-50 dark:text-[#8696a0]'>
+                                                      {replyMessage?.content.toString()}
+                                                </span>
+                                          </div>
+                                    </div>
                               </div>
-                        )}
-
-                        {isMessageEmpty ? (
-                              <AudioRecorder onSendAudio={handleSendAudio} isRecording={isRecording} setIsRecording={setIsRecording} />
-                        ) : (
-                              <button disabled={isMessageEmpty} type='submit'
-                                    className={`text-primary dark:text-dark-primary-text ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary dark:hover:bg-dark-primary-bg hover:text-white p-2 rounded-lg
-                  ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed  ' : ''}`
-                                    }>
-                                    Send
-                              </button>
-                        )}
-                  </form>
-            </div>
+                        </div>
+                  </div>
+            </>
       )
 }

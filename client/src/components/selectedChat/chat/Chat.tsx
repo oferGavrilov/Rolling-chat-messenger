@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import useChat from '../../../store/useChat'
 import { AuthState } from '../../../context/useAuth'
 
-import ChatMessages from './ChatMessages'
+import ChatMessages from './messages/Messages'
 import socketService from '../../../services/socket.service'
 
 import { IMessage } from '../../../model/message.model'
@@ -23,7 +23,7 @@ export default function Chat ({
 }: Props): JSX.Element {
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
 
-      const { selectedChat } = useChat()
+      const { selectedChat, replyMessage, setReplyMessage } = useChat()
       const { user: loggedInUser, chatBackgroundColor } = AuthState()
 
       const chatRef = useRef<HTMLDivElement>(null)
@@ -32,6 +32,8 @@ export default function Chat ({
             if (!selectedChat) return
 
             socketService.emit('join chat', { chatId: selectedChat._id, userId: loggedInUser?._id })
+
+            setReplyMessage(null)
 
             const fetchData = async () => {
                   setLoadingMessages(true)
@@ -49,7 +51,7 @@ export default function Chat ({
 
       useEffect(() => {
             scrollToBottom(chatRef)
-      }, [messages])
+      }, [messages, replyMessage])
 
       return (
             <>

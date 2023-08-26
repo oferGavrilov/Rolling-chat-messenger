@@ -45,7 +45,7 @@ export default function Profile (): JSX.Element {
             setEditType('');
             toast.success(`${editType} changed successfully`);
       }
-      
+
       async function handleImageChange (newImage: string): Promise<void> {
             setImage(newImage)
             const savedImage = await userService.updateUserImage(newImage)

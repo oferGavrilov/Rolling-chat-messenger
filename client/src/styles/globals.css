@@ -4,11 +4,6 @@
 
 @layer base {
 
-      :root {
-            --color-text-base: #242424;
-            --color-text-muted: #c7d2fe;
-      }
-
       body {
             @apply text-[#242424] font-sf-regular scroll-smooth;
       }
@@ -117,7 +112,6 @@
       .active-navigation-icon {
             @apply bg-primary text-white hover:!bg-[#2286c9] shadow-lg;
       }
-
       /* Side Modal */
       .side-modal-container {
             @apply
@@ -182,6 +176,55 @@
       /* Chat */
       .clip-modal-option {
             @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500 dark:hover:bg-dark-default-hover-bg;
+      }
+       /* Chat Messages */
+      .message-container:hover .message-menu-icon {
+            opacity: 100;
+            z-index: 1;
+            background-color: inherit;
+      }
+      .message-menu-container {
+            @apply 
+            absolute z-30 top-2
+            rounded-lg
+            dark:bg-dark-dropdown-bg;
+            &.incoming-message {
+                  @apply -right-40;
+                  & li {
+                       @apply 
+                       bg-gray-500 hover:bg-gray-600
+                       dark:bg-dark-incoming-chat-bg dark:hover:bg-dark-incoming-chat-reply-bg;
+                  }
+            }
+            &.outgoing-message {
+                  @apply -left-40;
+                  & li {
+                        @apply
+                        bg-[#23adfd] hover:bg-primary
+                        dark:bg-dark-outgoing-chat-bg dark:hover:bg-dark-outgoing-chat-reply-bg;
+                  }
+            }
+      }
+      .message-menu-list {
+            @apply  
+            transition-all duration-200 overflow-hidden
+            text-center w-36 uppercase text-xs  
+            shadow-lg rounded-b-lg
+            shadow-gray-400
+            dark:shadow-dark-dropdown-bg;
+      }
+      .message-menu-option {
+            @apply
+            p-4
+            border-b-2 border-white last:border-b-0
+            transition-colors duration-200 cursor-pointer;
+      }
+      .message-menu-icon {
+            @apply
+            opacity-0
+            absolute top-1 -z-10 
+            bg-inherit
+            transition-opacity duration-300 cursor-pointer;     
       }
 
       /* Chat Info */
@@ -297,6 +340,12 @@
             height: 100%;
             z-index: -1;
       }
+      .out-going-message {
+            @apply bg-primary dark:bg-dark-outgoing-chat-bg;
+      }
+      .incoming-message {
+            @apply bg-gray-400 dark:bg-dark-incoming-chat-bg;
+      }
       /* End Chat Page */
 
       .input-arrow {
@@ -312,6 +361,7 @@
       
       .message-arrow {
             position: absolute;
+            display: block;
             bottom: -0.1875rem;
             right: -0.551rem;
             width: 0.5625rem;
@@ -328,6 +378,7 @@
       
       .message-arrow-left {
             position: absolute;
+            display: block;
             bottom: -0.1875rem;
             right: -0.551rem;
             width: 0.5625rem;
@@ -338,28 +389,7 @@
             @apply fill-[#0099ff] dark:fill-[#005c4b];
       }
 
-      .notification-msg {
-            color:white;
-            padding:  28px;
-            position: fixed;
-            white-space: nowrap;
-            top: 10px;
-            border-radius: 5px;
-            background-color: grey;
-            /* center */
-            left: 50%;
-            transform: translate(-50%, 50%);
-        }
-        .notification-msg.success {
-            background-color: #DFF2BF;
-        }
-        .notification-msg.warning {
-            background-color: #9F6000;
-        }
-        .notification-msg.error {
-            background-color: #FF3333;
-        }
-        
+     
 }
 
 /* MUI */

@@ -1,4 +1,4 @@
-import { IMessage } from "../model/message.model"
+import { IMessage, IReplyMessage } from "../model/message.model"
 import { httpService } from "./http.service"
 
 export const messageService = {
@@ -20,9 +20,11 @@ async function sendMessage (
             content: string | File,
             chatId: string,
             messageType: string,
+            replyMessage: IReplyMessage | null,
             messageSize?: number,
       }): Promise<IMessage> {
       try {
+            console.log(message.replyMessage)
             return httpService.post('/api/message', message)
       } catch (error) {
             console.log(error)

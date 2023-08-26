@@ -1,22 +1,22 @@
 import { useCallback } from 'react'
 
-import { useChat } from '../../../store/useChat'
+import { useChat } from '../../store/useChat'
 import { Image, Audiotrack, Description } from '@mui/icons-material'
 
-import { IChat } from '../../../model/chat.model'
-import { IUser } from '../../../model/user.model'
-import { IMessage } from '../../../model/message.model'
+import { IChat } from '../../model/chat.model'
+import { IUser } from '../../model/user.model'
+import { IMessage } from '../../model/message.model'
 
 import { Avatar } from '@mui/material'
-import { AuthState } from '../../../context/useAuth'
-import { formatTime } from '../../../utils/functions'
+import { AuthState } from '../../context/useAuth'
+import { formatTime } from '../../utils/functions'
 
 interface Props {
       chat: IChat
       notification: IMessage[]
 }
 
-export default function MessagePreview ({ chat, notification }: Props) {
+export default function ChatPreview ({ chat, notification }: Props) {
       const { setSelectedChat, selectedChat, removeNotification } = useChat()
       const { user: loggedinUser } = AuthState()
 

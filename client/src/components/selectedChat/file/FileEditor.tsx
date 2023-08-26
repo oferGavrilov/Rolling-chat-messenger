@@ -1,23 +1,28 @@
 import React from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import SendIcon from '@mui/icons-material/Send'
+import useChat from '../../../store/useChat'
+import { IReplyMessage } from '../../../model/message.model'
 
 interface Props {
       file: any | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
-      sendMessage: (file: File, type: "text" | "image" | "audio" | "file") => void
+      sendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessage: IReplyMessage | null, recordingTimer?: number) => void
+
 }
 
 export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
 
+      const { replyMessage } = useChat()
       if (!file) return <div></div>
-      
+
       const isImage = typeof file === 'string'
 
       function onSendMessage () {
             const type = isImage ? 'image' : 'file'
             const message = isImage ? file : file.url
-            sendMessage(message, type)
+            sendMessage(message, type, replyMessage ? replyMessage : null, undefined)
+            // sendMessage(message, replyMessage ? replyMessage._id : null, type)
       }
       return (
             <div className='bg-white h-full dark:bg-dark-secondary-bg relative'>

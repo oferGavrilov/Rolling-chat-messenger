@@ -41,8 +41,14 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message, messages, idx, use
       }
 
       return (
-            <div className="relative w-[200px] h-[60px] flex items-center">
+            <div className="relative w-[240px] h-[60px] flex items-center px-2">
                   {/* Play/Pause button */}
+                  <img
+                        src={message.sender.profileImg}
+                        alt="profile-image"
+                        className={`${isSameSenderMargin(messages, message, idx, userId) ? '-left-11' : '-right-10'} w-11 h-11 rounded-full object-cover object-top`}
+                  />
+
                   <button
                         className=" mr-2"
                         onClick={togglePlay}
@@ -80,11 +86,6 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message, messages, idx, use
                   </div>
 
                   {/* Other message elements */}
-                  <img
-                        src={message.sender.profileImg}
-                        alt="profile-image"
-                        className={`${isSameSenderMargin(messages, message, idx, userId) ? '-left-11' : '-right-10'} w-8 h-8 rounded-full object-cover object-top absolute top-1`}
-                  />
             </div>
       )
 }

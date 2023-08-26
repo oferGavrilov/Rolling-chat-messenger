@@ -5,13 +5,13 @@ import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { RequestMessage } from "../../models/message.model.js"
 
 export async function sendMessage (req: RequestMessage, res: Response) {
-      const { content, chatId, messageType, messageSize } = req.body
+      const { content, chatId, messageType, replyMessage, messageSize } = req.body
       const senderId = req.user?._id
 
       if (!senderId) throw new Error('User not found')
 
       try {
-            const message = await sendMessageService(senderId, content, chatId, messageType, messageSize)
+            const message = await sendMessageService(senderId, content, chatId, messageType, replyMessage, messageSize)
             res.status(201).json(message)
       } catch (error: any) {
             throw handleErrorService(error)

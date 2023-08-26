@@ -14,7 +14,7 @@ import { formatLastSeenDate } from "../../utils/functions"
 import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
 
-import { IMessage } from "../../model/message.model"
+import { IMessage, IReplyMessage } from "../../model/message.model"
 import { IUser } from "../../model/user.model"
 import { IChat } from "../../model/chat.model"
 import { messageService } from "../../services/message.service"
@@ -25,7 +25,7 @@ export default function Messenger (): JSX.Element {
 
       const [messages, setMessages] = useState<IMessage[]>([])
 
-      const { selectedChat, setSelectedChat, addNotification, updateChat, chats, setChats } = useChat()
+      const { selectedChat, setSelectedChat, addNotification, updateChat, chats, setChats, setReplyMessage } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
@@ -153,9 +153,15 @@ export default function Messenger (): JSX.Element {
             }
       }
 
-      async function onSendMessage (message: string | File, messageType: "text" | "image" | "audio" | "file", recordTimer?: number): Promise<void> {
+      async function onSendMessage (
+            message: string | File,
+            messageType: "text" | "image" | "audio" | "file",
+            replyMessage: IReplyMessage | null,
+            recordTimer?: number | undefined
+      ): Promise<void> {
             if (!selectedChat || !message) return
 
+            console.log('sending message', replyMessage)
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
                   sender: loggedInUser!,
@@ -164,10 +170,12 @@ export default function Messenger (): JSX.Element {
                   chat: selectedChat,
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
+                  replyMessage,
                   messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
             }
 
-            // Show the message immediately 
+            // Show the message immediately
+            setReplyMessage(null)
             setMessages([...messages, optimisticMessage])
             setChatOnTop(optimisticMessage)
 
@@ -186,6 +194,7 @@ export default function Messenger (): JSX.Element {
                         content: message,
                         chatId: selectedChat._id !== 'temp-id' ? selectedChat._id : chatToUpdate?._id as string,
                         messageType: messageType,
+                        replyMessage,
                         messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
                   })
 
@@ -224,7 +233,7 @@ export default function Messenger (): JSX.Element {
 
       if (!selectedChat) return <div></div>
       return (
-            <section className='flex-1 grid h-full overflow-hidden slide-left max-h-screen' style={{gridTemplateRows: chatMode === 'chat' ? '64px 1fr 64px' : '64px 1fr'}}>
+            <section className='flex-1 grid h-full overflow-hidden slide-left max-h-screen' style={{ gridTemplateRows: chatMode === 'chat' ? '64px 1fr 64px' : '64px 1fr' }}>
 
                   <ChatHeader
                         connectionStatus={connectionStatus}

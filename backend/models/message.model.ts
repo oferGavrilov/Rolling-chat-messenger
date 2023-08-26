@@ -5,7 +5,8 @@ const messageModel = new mongoose.Schema({
       sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       content: { type: String, trim: true },
       chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
-      messageType: { type: String, default: 'text'},
+      messageType: { type: String, default: 'text' },
+      replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
       messageSize: { type: Number, default: 0 }
 },
       { timestamps: true }
@@ -19,8 +20,20 @@ export interface RequestMessage extends Request {
             chatId: string
             receiverId: string
             messageType: string
+            replyMessage: ReplyMessage | null
             messageSize?: number
       }
+}
+
+export type ReplyMessage = {
+      _id: string
+      sender: {
+            _id: string
+            username: string
+            profileImg: string
+      }
+      content: string
+      messageType: "text" | "image" | "audio" | "file"
 }
 
 export interface IMessage extends Document {

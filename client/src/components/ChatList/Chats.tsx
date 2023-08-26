@@ -1,22 +1,22 @@
-import MessageList from './MessageList'
+import MessageList from './ChatList'
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { chatService } from '../../../services/chat.service'
-import useChat from '../../../store/useChat'
-import ChatLoading from '../../SkeltonLoading'
-import MessagesInput from '../../common/MessagesInput'
-import { userService } from '../../../services/user.service'
-import { AuthState } from '../../../context/useAuth'
-import { IUser } from '../../../model/user.model'
-import { IChat } from '../../../model/chat.model'
+import { chatService } from '../../services/chat.service'
+import useChat from '../../store/useChat'
+import ChatLoading from '../SkeltonLoading'
+import MessagesInput from '../common/MessagesInput'
+import { userService } from '../../services/user.service'
+import { AuthState } from '../../context/useAuth'
+import { IUser } from '../../model/user.model'
+import { IChat } from '../../model/chat.model'
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
-import { useClickOutside } from '../../../custom/useClickOutside'
-import socketService from '../../../services/socket.service'
+import { useClickOutside } from '../../custom/useClickOutside'
+import socketService from '../../services/socket.service'
 
 interface MessagesProps {
       contentType: string
 }
 
-export default function Messages ({ contentType }: MessagesProps) {
+export default function Chats ({ contentType }: MessagesProps) {
 
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [filter, setFilter] = useState<string>('')

@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react"
-import { IChat } from "../../../model/chat.model"
-import useChat from "../../../store/useChat"
+import { IChat } from "../../model/chat.model"
+import useChat from "../../store/useChat"
 
-import MessagePreview from "./MessagePreview"
-import { IMessage } from '../../../model/message.model'
-import { AuthState } from "../../../context/useAuth"
-import socketService from "../../../services/socket.service"
+import MessagePreview from "./ChatPreview"
+import { IMessage } from '../../model/message.model'
+import { AuthState } from "../../context/useAuth"
+import socketService from "../../services/socket.service"
 
-export default function MessageList ({ chats }: { chats: IChat[] }) {
+export default function ChatList ({ chats }: { chats: IChat[] }) {
       const { notification, addNotification, selectedChat, setChats, updateChat } = useChat()
       const { user } = AuthState()
       const isMountedRef = useRef<boolean>(false)

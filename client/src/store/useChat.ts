@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 import { IChat } from '../model/chat.model'
-import { IMessage } from '../model/message.model'
+import { IMessage, IReplyMessage } from '../model/message.model'
 
 interface ChatState {
       chats: IChat[]
       selectedChat: IChat | null
       notification: IMessage[]
       selectedFile: IMessage | null
+      replyMessage: IReplyMessage | null
 }
 
 interface ChatActions {
@@ -19,6 +20,7 @@ interface ChatActions {
       removeNotification: (notification: IMessage | undefined) => void
       updateChat: (latestMessage: IMessage) => void
       setSelectedFile: (file: IMessage | null) => void
+      setReplyMessage: (message: IReplyMessage | null) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -31,6 +33,7 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             selectedChat: null,
             notification: initialNotification,
             selectedFile: null,
+            replyMessage: null,
 
             // Chat Actions
             setChats: (chats) => set({ chats }),
@@ -39,6 +42,7 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             clearChats: () => set({ chats: [] }),
             setSelectedChat: (chat) => set({ selectedChat: chat }),
             setSelectedFile: (file) => set({ selectedFile: file }),
+            setReplyMessage: (message) => set({ replyMessage: message }),
             updateChat: (latestMessage: IMessage) => {
                   set((state) => {
                         const chatIndex = state.chats.findIndex((chat) => chat._id === latestMessage.chat._id)

@@ -13,7 +13,19 @@ export interface IMessage {
       }
       updatedAt: string,
       messageType: "text" | "image" | "audio" | "file"
+      replyMessage: IReplyMessage | null
       messageSize?: number
+}
+
+export type IReplyMessage = {
+      _id: string
+      sender: {
+            _id: string
+            username: string
+            profileImg: string
+      }
+      content: string
+      messageType: "text" | "image" | "audio" | "file"
 }
 
 export interface UploadedFile {

@@ -1,9 +1,9 @@
-import { IMessage, Message } from "../../models/message.model.js"
+import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { PopulatedDoc } from "mongoose"
 
-export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string, messageSize?: number) {
+export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
 
       if (!content) throw new Error('No content passed into request')
       if (!chatId) throw new Error('No chatId passed into request')
@@ -15,15 +15,16 @@ export async function sendMessageService (senderId: string, content: string, cha
                   sender: senderId,
                   content,
                   chat: chatId,
-                  messageType: messageType,
-                  messageSize: messageSize !== undefined ? messageSize : undefined
+                  messageType,
+                  replyMessage: replyMessage ? replyMessage : null,
+                  messageSize: messageSize ? messageSize : undefined
             }
-            
+
             let message = await Message.create(newMessage)
-            
+
             message = (await message.populate('sender', 'username profileImg')) as PopulatedDoc<IMessage>
             message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })) as PopulatedDoc<IMessage>;
-            
+
             // Check if the other user ID is in the deletedBy array
             const chat = await Chat.findById(chatId)
             console.log('sendMessageService chat:', chat)
@@ -51,6 +52,14 @@ export async function getAllMessagesByChatId (chatId: string | undefined) {
             const messages = await Message.find({ chat: chatId })
                   .populate('sender', 'username profileImg')
                   .populate('chat')
+                  .populate({
+                        path: 'replyMessage',
+                        select: '_id content sender',
+                        populate: {
+                              path: 'sender',
+                              select: '_id username profileImg'
+                        }
+                  });
 
             return messages
       } catch (error: any) {

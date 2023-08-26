@@ -1,6 +1,4 @@
-import Messages from "./messages/Messages"
-import Videos from "./videos/Videos"
-import Story from "./stories/Stories"
+import Messages from "./Chats"
 import useChat from "../../store/useChat"
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
@@ -8,6 +6,25 @@ import VideoCallIcon from '@mui/icons-material/VideoCall'
 import Settings from "../user/Settings"
 import MenuIcon from '@mui/icons-material/Menu'
 import Profile from "../user/Profile"
+
+function Story (): JSX.Element {
+      return (
+            <section className='pt-7 px-4 relative'>
+
+                  Coming soon...
+            </section>
+      )
+}
+
+function Videos (): JSX.Element {
+      return (
+        <section className='pt-7 px-4 relative'>
+         
+          Coming soon...
+        </section>
+      )
+    }
+    
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
@@ -52,7 +69,7 @@ export default function DynamicList (props: Props) {
                   case 'profile':
                         return <div className="pointer-events-none"></div>
                   case 'groups':
-                        return <GroupAddOutlinedIcon className="dark:text-dark-primary-text"/>
+                        return <GroupAddOutlinedIcon className="dark:text-dark-primary-text" />
                   default:
                         return <PersonAddIcon />
             }
@@ -62,7 +79,7 @@ export default function DynamicList (props: Props) {
             <section className={`${selectedChat ? 'hidden md:block' : 'block'} 
             bg-white dark:bg-dark-primary-bg dark:text-dark-primary-text overflow-hidden
                   w-full md:w-[364px] border-r-2 border-[#EEEEEE] dark:border-none slide-right`}>
-                  
+
                   <div className='flex justify-between items-center md:pb-4 pt-3 md:pt-7 mx-4'>
                         <div className={`md:!hidden p-2 rounded-full cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation && 'pointer-events-none'}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>
                               <MenuIcon />
