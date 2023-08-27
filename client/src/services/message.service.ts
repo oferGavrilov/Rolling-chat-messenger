@@ -4,6 +4,7 @@ import { httpService } from "./http.service"
 export const messageService = {
       getMessages,
       sendMessage,
+      removeMessage
 }
 
 async function getMessages (chatId: string): Promise<IMessage[]> {
@@ -28,5 +29,14 @@ async function sendMessage (
       } catch (error) {
             console.log(error)
             throw new Error('Failed to send message.')
+      }
+}
+
+async function removeMessage (messageId: string, chatId: string): Promise<void> {
+      try {
+            return httpService.delete(`/api/message/remove/${chatId}/${messageId}`, {})
+      } catch (error) {
+            console.log(error)
+            throw new Error('Failed to delete message.')
       }
 }

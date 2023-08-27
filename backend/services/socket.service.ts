@@ -18,22 +18,18 @@ export function setupSocketAPI (http: HttpServer) {
 
       gIo.on('connection', (socket: Socket) => {
             console.log('connected to socket.io')
-            // logger.info('Users connected:', activeUsers.size)
             console.log('Users connected:', activeUsers.size)
 
             socket.on('setup', (userId: string) => {
                   activeUsers.set(userId, socket)
                   socket.join(userId)
                   socket.broadcast.emit('connected', userId)
-                  // logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
             })
 
             socket.on('login', (userId: string) => {
                   activeUsers.set(userId, socket)
                   socket.join(userId)
                   socket.broadcast.emit('login', userId)
-                  // logger.info(`Socket [id: ${socket.id}] added to userId: ${userId}`)
-                  // logger.info(`Users connected: ${activeUsers.size}`)
                   console.log(`Users connected: ${activeUsers.size}`)
             })
 
@@ -44,7 +40,6 @@ export function setupSocketAPI (http: HttpServer) {
                         socket.disconnect(true)
                         updateUserStatus(userId, false)
                         socket.broadcast.emit('logout', userId)
-                        // logger.info(`Users connected: ${activeUsers.size}`)
                   }
             })
 
@@ -109,6 +104,12 @@ export function setupSocketAPI (http: HttpServer) {
                         if (user._id !== userId) {
                               socket.in(user._id).emit('user-left', { chatId, userId });
                         }
+                  })
+            })
+
+            socket.on('message-removed', async ({ messageId, chatId, chatUsers }) => {
+                  chatUsers.forEach((user: User) => {
+                        socket.in(user._id).emit('message removed', { messageId, chatId });
                   })
             })
 

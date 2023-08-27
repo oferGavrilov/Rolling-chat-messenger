@@ -7,14 +7,18 @@ import { formatMessageSentDate, hasDayPassed, isLastMessage, isSameSender } from
 
 import MessageArrow from "../../../../assets/icons/MessageArrow"
 import MessagePreview from "./MessagePreview"
+
 interface Props {
       messages: IMessage[]
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      onRemoveMessage: (message: IMessage) => void
 }
 
-export default function Messages ({ messages, setChatMode }: Props): JSX.Element {
+export default function Messages ({ messages, setChatMode, onRemoveMessage }: Props): JSX.Element {
       const { selectedChat, replyMessage, setReplyMessage } = useChat()
       const { user } = AuthState()
+
+
 
       function getDayPass (prevMessage: IMessage, currMessage: IMessage, idx: number) {
             if (idx === 0) {
@@ -88,6 +92,7 @@ export default function Messages ({ messages, setChatMode }: Props): JSX.Element
                                           message={message}
                                           idx={idx}
                                           onReplyMessage={onReplyMessage}
+                                          onRemoveMessage={onRemoveMessage}
                                     />
                               </div>
                         </div >

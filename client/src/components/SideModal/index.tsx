@@ -2,11 +2,12 @@ import React, { useRef } from 'react'
 import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
 import { useClickOutside } from '../../custom/useClickOutside'
+import { ContentType } from '../../pages/ChatPage'
 
 interface Props {
       isOpen: boolean
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-      contentType: string
+      contentType: ContentType
 }
 
 export default function SearchUsers (props: Props): JSX.Element {
@@ -16,7 +17,7 @@ export default function SearchUsers (props: Props): JSX.Element {
 
       function switchContent () {
             switch (props.contentType) {
-                  case 'messages': return <UsersToMessage {...props} />
+                  case 'chats': return <UsersToMessage {...props} />
                   case 'groups': return <UsersToGroup {...props} />
                   case 'videos': return <div>Videos Coming soon...</div>
                   case 'story': return <div>Story Coming soon...</div>

@@ -61,6 +61,19 @@ export default function Messenger (): JSX.Element {
       })
 
       useEffect(() => {
+            socketService.on('message removed', ({ messageId, userId }: { messageId: string, userId: string }) => {
+                  console.log('message removed', messageId, userId)
+                  setSelectedChat({ ...selectedChat } as IChat)
+                  // const isLastMessage = messages.length > 0 && messages[messages.length - 1]._id === messageId;
+
+            })
+
+            return () => {
+                  socketService.off('message removed')
+            }
+      }, [messages])
+
+      useEffect(() => {
             const handleKickUser = (chatId: string, userId: string, kickerId: string, chat: IChat | null) => {
                   if (chat?._id === chatId) {
                         if (!selectedChat) return
@@ -171,6 +184,7 @@ export default function Messenger (): JSX.Element {
                   updatedAt: new Date().toISOString(),
                   replyMessage,
                   messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
+                  deletedBy: []
             }
 
             // Show the message immediately
@@ -226,6 +240,19 @@ export default function Messenger (): JSX.Element {
             }
       }
 
+      async function onRemoveMessage (message: IMessage) {
+            try {
+                  await messageService.removeMessage(message._id, selectedChat?._id as string)
+                  setMessages(messages.filter((msg) => msg._id !== message._id))
+
+                  socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, chatUsers: selectedChat?.users })
+                  console.log('Message removed')
+
+            } catch (error) {
+                  console.log(error)
+            }
+      }
+
       function isKicked (): boolean {
             if (!selectedChat) return false
             return selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
@@ -245,6 +272,7 @@ export default function Messenger (): JSX.Element {
                         <Chat
                               setChatMode={setChatMode}
                               messages={messages}
+                              onRemoveMessage={onRemoveMessage}
                               fetchMessages={fetchMessages}
                         />
                   )}

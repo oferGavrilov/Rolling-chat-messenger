@@ -25,7 +25,7 @@ export const AuthState = () => {
 
 export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState<IUser | null>(null)
-      const [chatBackgroundColor, setChatBackgroundColor] = useState<string>(userService.getBackgroundImage() || '#ccdbdc')
+      const [chatBackgroundColor, setChatBackgroundColor] = useState<string>(userService.getBackgroundColor() || '#ccdbdc')
       const navigate = useNavigate()
       const location = useLocation().pathname
 

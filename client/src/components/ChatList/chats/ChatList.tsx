@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react"
-import { IChat } from "../../model/chat.model"
-import useChat from "../../store/useChat"
+import { IChat } from "../../../model/chat.model"
+import useChat from "../../../store/useChat"
 
 import MessagePreview from "./ChatPreview"
-import { IMessage } from '../../model/message.model'
-import { AuthState } from "../../context/useAuth"
-import socketService from "../../services/socket.service"
+import { IMessage } from '../../../model/message.model'
+import { AuthState } from "../../../context/useAuth"
+import socketService from "../../../services/socket.service"
 
 export default function ChatList ({ chats }: { chats: IChat[] }) {
       const { notification, addNotification, selectedChat, setChats, updateChat } = useChat()
@@ -34,7 +34,6 @@ export default function ChatList ({ chats }: { chats: IChat[] }) {
 
       useEffect(() => {
             socketService.on("message received", (newMessage: IMessage) => {
-                  console.log('new message received', newMessage)
                   if (isMountedRef.current) {
                         if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
                               const isChatExists = chats.find((chat) => chat._id === newMessage.chat._id)

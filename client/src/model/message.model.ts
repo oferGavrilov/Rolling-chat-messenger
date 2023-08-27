@@ -15,6 +15,7 @@ export interface IMessage {
       messageType: "text" | "image" | "audio" | "file"
       replyMessage: IReplyMessage | null
       messageSize?: number
+      deletedBy: string[]    
 }
 
 export type IReplyMessage = {

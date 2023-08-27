@@ -39,7 +39,7 @@ async function getUserChats (userId: string): Promise<IChat[]> {
 async function createChat (userId: string): Promise<IChat> {
       try {
             const currentUserId = getLoggedinUser()?._id
-            return httpService.post('/api/chat', { userId, currentUserId })
+            return httpService.post('/api/chat/createchat', { userId, currentUserId })
       } catch (error) {
             console.error(error)
             throw error
@@ -59,7 +59,7 @@ async function removeChat (chatId: string, userId: string) {
 
 async function createGroup (group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
       try {
-            return httpService.post('/api/chat/group', group)
+            return httpService.post('/api/chat/creategroup', group)
       } catch (error) {
             console.error(error)
             throw new Error('Failed to create group.')

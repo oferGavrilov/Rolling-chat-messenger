@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AuthState } from '../../context/useAuth'
+import { AuthState } from '../../../context/useAuth'
 
 
 import ChatColorsPalette from './ChatColorsPalette'
@@ -8,9 +8,10 @@ import ThemeSelector from './ThemeSelector'
 import FormatColorFillOutlinedIcon from '@mui/icons-material/FormatColorFillOutlined'
 import WallpaperOutlinedIcon from '@mui/icons-material/WallpaperOutlined'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import { ContentType } from '../../../pages/ChatPage'
 
 interface SettingsProps {
-      setContentType: React.Dispatch<React.SetStateAction<string>>
+      setContentType: React.Dispatch<React.SetStateAction<ContentType>>
 }
 
 export default function Settings ({ setContentType }: SettingsProps): JSX.Element {
@@ -46,7 +47,7 @@ export default function Settings ({ setContentType }: SettingsProps): JSX.Elemen
 
                         <ChatColorsPalette selectedSettings={selectedSettings} setSelectedSettings={setSelectedSettings} />
 
-                        <li className='p-4 flex hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer items-center' onClick={() => setContentType('messages')}>
+                        <li className='p-4 flex hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer items-center' onClick={() => setContentType('chats')}>
                               <KeyboardArrowLeftIcon fontSize='small' className='mr-1 text-inherit' />
                               Back
                         </li>

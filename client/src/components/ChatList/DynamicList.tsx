@@ -1,11 +1,12 @@
-import Messages from "./Chats"
+import Chats from "./chats/Chats"
 import useChat from "../../store/useChat"
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
-import Settings from "../user/Settings"
+import Settings from "./user/Settings"
 import MenuIcon from '@mui/icons-material/Menu'
-import Profile from "../user/Profile"
+import Profile from "./user/Profile"
+import { ContentType } from "../../pages/ChatPage"
 
 function Story (): JSX.Element {
       return (
@@ -18,29 +19,29 @@ function Story (): JSX.Element {
 
 function Videos (): JSX.Element {
       return (
-        <section className='pt-7 px-4 relative'>
-         
-          Coming soon...
-        </section>
+            <section className='pt-7 px-4 relative'>
+
+                  Coming soon...
+            </section>
       )
-    }
-    
+}
+
 
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
-      contentType: string
-      setContentType: React.Dispatch<React.SetStateAction<string>>
+      contentType: ContentType
+      setContentType: React.Dispatch<React.SetStateAction<ContentType>>
       showNavigation: boolean
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function DynamicList (props: Props) {
-      const { selectedChat } = useChat()
+      const { selectedChat, setSelectedChat } = useChat()
 
       function getContent (): JSX.Element {
             switch (props.contentType) {
-                  case 'messages':
-                        return <Messages contentType={props.contentType} />
+                  case 'chats':
+                        return <Chats contentType={props.contentType} />
                   case 'videos':
                         return <Videos />
                   case 'story':
@@ -50,15 +51,15 @@ export default function DynamicList (props: Props) {
                   case 'profile':
                         return <Profile />
                   case 'groups':
-                        return <Messages contentType={props.contentType} />
+                        return <Chats contentType={props.contentType} />
                   default:
-                        return <Messages contentType={props.contentType} />
+                        return <Chats contentType={props.contentType} />
             }
       }
 
       function getIcon (): JSX.Element {
             switch (props.contentType) {
-                  case 'messages':
+                  case 'chats':
                         return <PersonAddIcon className="dark:text-dark-primary-text" />
                   case 'videos':
                         return <VideoCallIcon />
@@ -75,6 +76,11 @@ export default function DynamicList (props: Props) {
             }
       }
 
+      function onShowSearch () {
+            props.setShowSearch(true)
+            setSelectedChat(null)
+      }
+
       return (
             <section className={`${selectedChat ? 'hidden md:block' : 'block'} 
             bg-white dark:bg-dark-primary-bg dark:text-dark-primary-text overflow-hidden
@@ -85,7 +91,7 @@ export default function DynamicList (props: Props) {
                               <MenuIcon />
                         </div>
                         <h2 className="text-2xl md:text-3xl font-sf-regular font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>
-                        <div onClick={() => props.setShowSearch(true)} className='message-filter-icon'>
+                        <div onClick={onShowSearch} className='message-filter-icon'>
                               {getIcon()}
                         </div>
                   </div>

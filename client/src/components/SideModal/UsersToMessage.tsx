@@ -8,7 +8,11 @@ import UsersInput from "../common/UsersInput"
 import UsersList from "./UsersList"
 import { AuthState } from "../../context/useAuth"
 
-export default function UsersToMessage ({ setIsOpen }): JSX.Element {
+interface Props {
+      setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export default function UsersToMessage ({ setIsOpen }: Props): JSX.Element {
       const [filter, setFilter] = useState<string>('')
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<IUser[]>([])

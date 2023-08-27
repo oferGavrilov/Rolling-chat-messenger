@@ -1,8 +1,8 @@
-import { AuthState } from '../../context/useAuth'
-import { userService } from '../../services/user.service'
+import { AuthState } from '../../../context/useAuth'
+import { userService } from '../../../services/user.service'
 import CloseIcon from '@mui/icons-material/Close'
 
-import colors from '../../constants/chat-colors.json'
+import colors from '../../../constants/chat-colors.json'
 
 
 interface Props {
@@ -15,7 +15,7 @@ export default function ChatColorsPalette ({ selectedSettings, setSelectedSettin
 
 
       function onSetBackgroundColor (color: string) {
-            userService.saveUserBackgroundImage(color)
+            userService.saveBackgroundColor(color)
             setChatBackgroundColor(color)
       }
 

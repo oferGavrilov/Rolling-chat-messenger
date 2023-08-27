@@ -1,15 +1,15 @@
 import { useCallback } from 'react'
 
-import { useChat } from '../../store/useChat'
+import { useChat } from '../../../store/useChat'
 import { Image, Audiotrack, Description } from '@mui/icons-material'
 
-import { IChat } from '../../model/chat.model'
-import { IUser } from '../../model/user.model'
-import { IMessage } from '../../model/message.model'
+import { IChat } from '../../../model/chat.model'
+import { IUser } from '../../../model/user.model'
+import { IMessage } from '../../../model/message.model'
 
 import { Avatar } from '@mui/material'
-import { AuthState } from '../../context/useAuth'
-import { formatTime } from '../../utils/functions'
+import { AuthState } from '../../../context/useAuth'
+import { formatTime } from '../../../utils/functions'
 
 interface Props {
       chat: IChat
@@ -35,6 +35,14 @@ export default function ChatPreview ({ chat, notification }: Props) {
                   sender = 'you: '
             } else if (chat.isGroupChat && chat.latestMessage) {
                   sender = chat.latestMessage?.sender?.username + ': ' || ''
+            }
+
+            if (chat.latestMessage?.deletedBy?.length && chat.latestMessage.deletedBy.includes(chat.latestMessage.sender._id)) {
+                  content = (
+                        <div className="text-gray-400 p-2">
+                              <span className="text-xs">This message was deleted</span>
+                        </div>
+                  )
             }
 
             if (chat.latestMessage?.messageType === 'text') {

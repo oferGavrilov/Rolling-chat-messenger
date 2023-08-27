@@ -48,7 +48,7 @@ export default function ChatHeader ({ connectionStatus, conversationUser, setCha
                                     </span> : (
                                          <div className="text-xs tracking-wide max-w-[160px] md:max-w-[300px] overflow-hidden ellipsis-text">
                                          {selectedChat.users.map((user, index) =>
-                                             <span key={user._id} className="text-slate-400 dark:text-slate-200">
+                                             <span key={user._id} className="text-slate-400 dark:text-slate-200 mr-1">
                                                  {user._id === loggedInUser?._id ? 'You' : user.username}
                                                  {index !== selectedChat.users.length - 1 && ","}
                                              </span>

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import useChat from '../../../store/useChat'
 import { AuthState } from '../../../context/useAuth'
 
-import ChatMessages from './messages/Messages'
+import Messages from './messages/Messages'
 import socketService from '../../../services/socket.service'
 
 import { IMessage } from '../../../model/message.model'
@@ -14,12 +14,14 @@ interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       messages: IMessage[]
       fetchMessages: () => Promise<void>
+      onRemoveMessage: (message: IMessage) => void
 }
 
 export default function Chat ({
       setChatMode,
       messages,
       fetchMessages,
+      onRemoveMessage
 }: Props): JSX.Element {
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
 
@@ -63,7 +65,13 @@ export default function Chat ({
                                     ${loadingMessages && 'blur-[2px]'}`}
                         ref={chatRef}
                   >
-                        {messages && <ChatMessages messages={messages} setChatMode={setChatMode} />}
+                        {messages &&
+                              <Messages
+                                    messages={messages}
+                                    setChatMode={setChatMode}
+                                    onRemoveMessage={onRemoveMessage}
+                              />
+                        }
                   </div>
             </>
       )

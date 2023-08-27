@@ -13,9 +13,10 @@ import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import { useClickOutside } from "../custom/useClickOutside"
+import { ContentType } from "../pages/ChatPage"
 interface Props {
-      contentType: string
-      setContentType: React.Dispatch<React.SetStateAction<string>>
+      contentType: ContentType
+      setContentType: React.Dispatch<React.SetStateAction<ContentType>>
       showNavigation: boolean
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -48,7 +49,7 @@ export default function Navigation ({
             return () => window.removeEventListener('resize', handleResize)
       }, [setShowNavigation])
 
-      function onSelectContentType(contentType: string) {
+      function onSelectContentType(contentType: ContentType) {
             if (window.innerWidth < 768) {
                   setShowNavigation(false)
             }
@@ -76,7 +77,7 @@ export default function Navigation ({
                   <div className="flex flex-col justify-between h-full">
                         <div className="flex flex-col gap-y-4">
                               <Tooltip title="Messages" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'messages' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('messages')}>
+                                    <div className={`navigation-icon ${contentType === 'chats' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('chats')}>
                                           <BsChatText size={20} />
                                     </div>
                               </Tooltip>

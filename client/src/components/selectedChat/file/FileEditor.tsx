@@ -8,7 +8,6 @@ interface Props {
       file: any | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       sendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessage: IReplyMessage | null, recordingTimer?: number) => void
-
 }
 
 export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
@@ -22,8 +21,8 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
             const type = isImage ? 'image' : 'file'
             const message = isImage ? file : file.url
             sendMessage(message, type, replyMessage ? replyMessage : null, undefined)
-            // sendMessage(message, replyMessage ? replyMessage._id : null, type)
       }
+      
       return (
             <div className='bg-white h-full dark:bg-dark-secondary-bg relative'>
                   <div className={`flex justify-center w-full h-full ${isImage && 'items-center'}`}>

@@ -35,7 +35,6 @@ export async function sendMessageService (senderId: string, content: string, cha
 
             // Check if the other user ID is in the deletedBy array
             const chat = await Chat.findById(chatId)
-            console.log('sendMessageService chat:', chat)
             const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString())
 
             if (otherUserId && chat.deletedBy.some((user) => user.toString() === otherUserId.toString())) {
@@ -51,13 +50,13 @@ export async function sendMessageService (senderId: string, content: string, cha
       }
 }
 
-export async function getAllMessagesByChatId (chatId: string | undefined) {
+export async function getAllMessagesByChatId (chatId: string, userId: string) {
       if (!chatId) {
             throw new Error('Invalid message data passed into request')
       }
 
       try {
-            const messages = await Message.find({ chat: chatId })
+            const messages = await Message.find({ chat: chatId, deletedBy: { $ne: userId } })
                   .populate('sender', 'username profileImg')
                   .populate('chat')
                   .populate({
@@ -73,4 +72,28 @@ export async function getAllMessagesByChatId (chatId: string | undefined) {
       } catch (error: any) {
             throw handleErrorService(error)
       }
+}
+
+export async function removeMessageService (messageId: string, chatId: string, userId: string): Promise<void> {
+      try {
+            const chat = await Chat.findById(chatId)
+            if (!chat) throw new Error('Chat not found')
+
+            const message = await Message.findById(messageId)
+            if (!message) throw new Error('Message not found')
+
+            if (message.deletedBy.includes(userId)) throw new Error('Message already deleted')
+
+            message.deletedBy.push(userId)
+
+            if (message.deletedBy.length === chat.users.length) {
+                  await Message.findByIdAndDelete(messageId)
+            } else {
+                  await message.save()
+            }
+
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+
 }

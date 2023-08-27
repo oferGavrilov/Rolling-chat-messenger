@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 
-import UploadImage from '../UploadImage'
-import { AuthState } from '../../context/useAuth'
-import { userService } from '../../services/user.service'
-import { IUser } from '../../model/user.model'
+import UploadImage from '../../UploadImage'
+import { AuthState } from '../../../context/useAuth'
+import { userService } from '../../../services/user.service'
+import { IUser } from '../../../model/user.model'
 
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline'
 import { Tooltip } from '@mui/material'

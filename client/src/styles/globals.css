@@ -288,6 +288,17 @@
             transition-all duration-200 cursor-pointer
             text-white hover:bg-[#0582ca] /* LIGHT MODE */;
       }
+
+      .notification-msg {
+            @apply
+            fixed top-0 left-1/2
+            transform -translate-x-1/2
+            p-2 rounded-lg
+            w-[90%] md:w-[50%] lg:w-[30%] xl:w-[20%] ;
+            &.success {
+                  @apply bg-primary text-white;
+            }
+      }
 }
 
 @layer utilities{

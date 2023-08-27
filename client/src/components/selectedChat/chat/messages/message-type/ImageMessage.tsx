@@ -1,4 +1,4 @@
-import { IMessage } from '../../../../model/message.model'
+import { IMessage } from '../../../../../model/message.model'
 
 interface Props {
       message: IMessage

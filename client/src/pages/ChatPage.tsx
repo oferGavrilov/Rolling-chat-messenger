@@ -12,9 +12,11 @@ import { AuthState } from '../context/useAuth'
 import socketService from '../services/socket.service'
 import { userService } from '../services/user.service'
 
+export type ContentType = 'chats' | 'videos' | 'story' | 'groups' | 'settings' | 'profile'
+
 export default function ChatPage (): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
-      const [contentType, setContentType] = useState<string>('messages')
+      const [contentType, setContentType] = useState<ContentType>('chats')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
       const { selectedChat, selectedFile } = useChat()
       const { user } = AuthState()
@@ -39,7 +41,7 @@ export default function ChatPage (): JSX.Element {
                         document.body.style.backgroundColor = '#222e35'
                         document.body.classList.add('dark')
                         break;
-                        case 'light':
+                  case 'light':
                         document.body.style.backgroundColor = '#ffffff'
                         document.body.classList.remove('dark')
                         break;

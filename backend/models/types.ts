@@ -18,6 +18,7 @@ export interface AuthenticatedRequest extends Request {
   };
   params:{
     userId: string;
+    messageId: string;
   }
 }
 

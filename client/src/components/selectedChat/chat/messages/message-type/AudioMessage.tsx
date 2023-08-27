@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
-import { formatRecordTimer, isSameSenderMargin } from '../../../../utils/functions'
-import { IMessage } from '../../../../model/message.model'
+import { formatRecordTimer, isSameSenderMargin } from '../../../../../utils/functions'
+import { IMessage } from '../../../../../model/message.model'
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'

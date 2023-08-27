@@ -1,19 +1,20 @@
 import MessageList from './ChatList'
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { chatService } from '../../services/chat.service'
-import useChat from '../../store/useChat'
-import ChatLoading from '../SkeltonLoading'
-import MessagesInput from '../common/MessagesInput'
-import { userService } from '../../services/user.service'
-import { AuthState } from '../../context/useAuth'
-import { IUser } from '../../model/user.model'
-import { IChat } from '../../model/chat.model'
+import { chatService } from '../../../services/chat.service'
+import useChat from '../../../store/useChat'
+import ChatLoading from '../../SkeltonLoading'
+import MessagesInput from '../../common/MessagesInput'
+import { userService } from '../../../services/user.service'
+import { AuthState } from '../../../context/useAuth'
+import { IUser } from '../../../model/user.model'
+import { IChat } from '../../../model/chat.model'
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
-import { useClickOutside } from '../../custom/useClickOutside'
-import socketService from '../../services/socket.service'
+import { useClickOutside } from '../../../custom/useClickOutside'
+import socketService from '../../../services/socket.service'
+import { ContentType } from '../../../pages/ChatPage'
 
 interface MessagesProps {
-      contentType: string
+      contentType: ContentType
 }
 
 export default function Chats ({ contentType }: MessagesProps) {
@@ -35,7 +36,6 @@ export default function Chats ({ contentType }: MessagesProps) {
                   const filterRegex = new RegExp(filter, 'i')
 
                   return chats.filter((chat: IChat) => {
-                        console.log('chat', chat)
                         const includesUsername = chat.users?.some((user: IUser) => user._id !== loggedinUser?._id && filterRegex.test(user.username))
                         const includesGroupName = filterRegex.test(chat.chatName || '')
 

@@ -65,24 +65,45 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
 
       async function onLeaveFromGroup () {
             if (!selectedChat || !loggedInUser) return
+            try {
+                  const leavedChatId = await chatService.leaveFromGroup(selectedChat._id, loggedInUser._id)
 
-            const leavedChatId = await chatService.leaveFromGroup(selectedChat._id, loggedInUser._id)
+                  socketService.emit('leave-from-group', { chatId: selectedChat._id, userId: loggedInUser._id, chatUsers: selectedChat.users })
 
-            socketService.emit('leave-from-group', { chatId: selectedChat._id, userId: loggedInUser._id, chatUsers: selectedChat.users })
+                  const chatsToUpdate = chats.filter(chat => chat._id !== leavedChatId)
+                  setSelectedChat(null)
+                  setChats(chatsToUpdate)
+            } catch (err) {
+                  console.log(err)
+            }
+      }
 
-            const chatsToUpdate = chats.filter(chat => chat._id !== leavedChatId)
-            setSelectedChat(null)
-            setChats(chatsToUpdate)
+      async function onRemoveGroup () {
+            if (!selectedChat || !loggedInUser) return
+            try {
+                  await chatService.removeChat(selectedChat._id, loggedInUser._id)
+                  setSelectedChat(null)
+                  setChats(chats.filter(chat => chat._id !== selectedChat._id))
+            } catch (err) {
+                  console.log(err)
+            }
       }
 
       async function onKickFromGroup (userId: string) {
             if (!selectedChat || !loggedInUser) return
+            try {
+                  const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
 
-            const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
+                  socketService.emit('kick-from-group', { chatId: selectedChat._id, userId, kickerId: loggedInUser._id })
 
-            socketService.emit('kick-from-group', { chatId: selectedChat._id, userId, kickerId: loggedInUser._id })
+                  setSelectedChat({ ...selectedChat, users: updatedChat.users })
+            } catch (err) {
+                  console.log(err)
+            }
+      }
 
-            setSelectedChat({ ...selectedChat, users: updatedChat.users })
+      function isKicked (): boolean {
+            return selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
       }
 
       if (!selectedChat) return <div></div>
@@ -160,9 +181,11 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
                                           ))}
                                     </div>
                               </div>
-                              <div className="text-red-600 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer" onClick={() => onLeaveFromGroup()}>
+                              <div className="text-red-600 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer"
+                                    onClick={isKicked() ? onRemoveGroup : onLeaveFromGroup}
+                              >
                                     <LogoutOutlinedIcon />
-                                    Leave The Group
+                                    {isKicked() ? 'Delete Group' : 'Leave The Group'}
                               </div>
                         </div>
 

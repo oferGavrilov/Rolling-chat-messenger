@@ -7,7 +7,8 @@ const messageModel = new mongoose.Schema({
       chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
       messageType: { type: String, default: 'text' },
       replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
-      messageSize: { type: Number, default: 0 }
+      messageSize: { type: Number, default: 0 },
+      deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
 },
       { timestamps: true }
 )
@@ -15,14 +16,12 @@ export interface RequestMessage extends Request {
       user?: {
             _id: string
       }
-      body: {
-            content: string
-            chatId: string
-            receiverId: string
-            messageType: string
-            replyMessage: ReplyMessage | null
-            messageSize?: number
-      }
+      chatId?: string;
+      messageId?: string;
+      content?: string;
+      messageType?: string;
+      replyMessage?: string;
+      messageSize?: number;
 }
 
 export type ReplyMessage = {
@@ -44,6 +43,7 @@ export interface IMessage extends Document {
       messageSize?: number
       createdAt: Date
       updatedAt: Date
+      deletedBy: string[]
 }
 
 export const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageModel)

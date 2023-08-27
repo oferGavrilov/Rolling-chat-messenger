@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { userService } from '../../services/user.service'
+import { userService } from '../../../services/user.service'
 
 import LightModeIcon from '@mui/icons-material/LightMode'
 import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined'

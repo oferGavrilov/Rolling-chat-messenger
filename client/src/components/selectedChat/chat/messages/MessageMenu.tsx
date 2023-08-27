@@ -1,15 +1,17 @@
 import { useRef, useState } from 'react'
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import { useClickOutside } from '../../../../custom/useClickOutside';
-import { IMessage, IReplyMessage } from '../../../../model/message.model';
-import useChat from '../../../../store/useChat';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
+import { useClickOutside } from '../../../../custom/useClickOutside'
+import { IMessage, IReplyMessage } from '../../../../model/message.model'
+import useChat from '../../../../store/useChat'
+import { showSuccessMsg } from '../../../../services/event-bus.service'
 
 interface Props {
       message: IMessage
       incomingMessage: boolean
+      onRemoveMessage: (message: IMessage) => void
 }
 
-export default function MessageMenu ({ message, incomingMessage }: Props) {
+export default function MessageMenu ({ message, incomingMessage, onRemoveMessage }: Props): JSX.Element {
       const [isOpen, setIsOpen] = useState<boolean>(false)
       const menuRef = useRef<HTMLDivElement>(null)
 
@@ -17,17 +19,21 @@ export default function MessageMenu ({ message, incomingMessage }: Props) {
 
       useClickOutside(menuRef, () => setIsOpen(false), isOpen)
 
-      function handleOperation (operation: 'reply' | 'forward' | 'copy' | 'delete') {
-            if (operation === 'reply') {
-                  const replyMessage: IReplyMessage = {
-                        _id: message._id,
-                        sender: message.sender!,
-                        content: message.content as string,
-                        messageType: message.messageType
-                  }
-                  setReplyMessage(replyMessage)
+      function onReplyMessage (): void {
+            const replyMessage: IReplyMessage = {
+                  _id: message._id,
+                  sender: message.sender!,
+                  content: message.content as string,
+                  messageType: message.messageType
             }
+            setReplyMessage(replyMessage)
             setIsOpen(false)
+      }
+
+      function onCopyToClipboard (): void {
+            navigator.clipboard.writeText(message.content as string)
+            setIsOpen(false)
+            showSuccessMsg
       }
 
       return (
@@ -39,10 +45,10 @@ export default function MessageMenu ({ message, incomingMessage }: Props) {
 
                   <div ref={menuRef} className={`message-menu-container ${incomingMessage ? 'incoming-message' : 'outgoing-message'}`}>
                         <ul className={`message-menu-list ${isOpen ? 'max-h-56' : 'max-h-0  p-0'}`}>
-                              <li className='message-menu-option rounded-t-lg' onClick={() => handleOperation('reply')}>Reply</li>
+                              <li className='message-menu-option rounded-t-lg' onClick={onReplyMessage}>Reply</li>
                               <li className='message-menu-option'>Forward</li>
-                              <li className='message-menu-option'>Copy</li>
-                              <li className='message-menu-option'>Delete</li>
+                              <li className='message-menu-option' onClick={onCopyToClipboard}>Copy</li>
+                              <li className='message-menu-option' onClick={() => onRemoveMessage(message)}>Delete</li>
                         </ul>
                   </div>
             </>

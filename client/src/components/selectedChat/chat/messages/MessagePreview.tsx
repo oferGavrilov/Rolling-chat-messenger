@@ -6,26 +6,36 @@ import { IUser } from '../../../../model/user.model'
 import { formatDate, isSameSenderMargin } from '../../../../utils/functions'
 import MessageMenu from './MessageMenu'
 import MessageArrow from '../../../../assets/icons/MessageArrow'
-import AudioMessage from '../message-type/AudioMessage'
-import FileMessage from '../message-type/FileMessage'
-import ImageMessage from '../message-type/ImageMessage'
+import AudioMessage from './message-type/AudioMessage'
+import FileMessage from './message-type/FileMessage'
+import ImageMessage from './message-type/ImageMessage'
 import useChat from '../../../../store/useChat'
+import TextMessage from './message-type/TextMessage'
 
 interface Props {
       messages: IMessage[]
       message: IMessage
       idx: number
       onReplyMessage: (message: IMessage) => void
-
+      onRemoveMessage: (message: IMessage) => void
 }
 
-export default function MessagePreview ({ messages, message, idx, onReplyMessage }: Props): JSX.Element {
+export default function MessagePreview ({ messages, message, idx, onReplyMessage, onRemoveMessage }: Props): JSX.Element {
       const { user } = AuthState() as { user: IUser }
       const { setSelectedFile } = useChat()
 
       const renderMessageContent = (message: IMessage, idx: number): ReactNode => {
+            // If the message is deleted by the sender, show a message that the message was deleted
+            if (message.deletedBy?.length && message.sender._id !== user?._id) {
+                  return (
+                        <div className="text-gray-400 p-2">
+                              <span className="text-xs">This message was deleted</span>
+                        </div>
+                  )
+            }
+
             if (message.messageType === 'text') {
-                  return <span className={`overflow-hidden break-all pr-3 pl-4 ${message.replyMessage ? 'mb-1' : 'py-2 '}`}>{message.content.toString()}</span>
+                  return <TextMessage message={message} />
             }
             else if (message.messageType === 'image' && typeof message.content === 'string') {
                   return <ImageMessage
@@ -81,6 +91,7 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                         <MessageMenu
                               message={message}
                               incomingMessage={incomingMessage}
+                              onRemoveMessage={onRemoveMessage}
                         />
 
                         {message.sender._id === user._id && (
@@ -89,7 +100,7 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                         <div className={`flex w-full ${message.replyMessage ? 'flex-col' : 'flex-row-reverse'}  ${incomingMessage && '!flex-row justify-between'}`}>
                               {renderMessageContent(message, idx)}
 
-                              <span className={`text-[11px] md:text-xs mr-2 text-gray-100 relative mt-auto mb-1
+                              <span className={`text-[11px] md:text-xs mr-2 text-gray-300 relative mt-auto mb-1
                                                             ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
                                                             ${message.messageType === 'audio' && 'mt-auto bottom-0'}
                                                             ${message.messageType === 'file' && '!absolute bottom-1 left-3'}

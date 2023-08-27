@@ -10,13 +10,13 @@ const BASE_URL = env === 'production' ? 'https://rolling-chat-messenger-server.v
 
 export const userService = {
       loginSignUp,
-      getLoggedinUser,
-      logout,
       getUsers,
       editUserDetails,
       updateUserImage,
-      saveUserBackgroundImage,
-      getBackgroundImage,
+      getLoggedinUser,
+      logout,
+      saveBackgroundColor,
+      getBackgroundColor,
       getTheme,
       saveTheme
 }
@@ -28,7 +28,6 @@ export function getLoggedinUser () {
       }
       return null
 }
-
 
 async function getUsers (userId?: string): Promise<IUser[] | IUser> {
       try {
@@ -132,7 +131,7 @@ function getTheme (): "light" | "dark" {
       }
 }
 
-function saveTheme (theme: "light" | "dark" | "black"): void {
+function saveTheme (theme: "light" | "dark"): void {
       try {
             localStorage.setItem('theme', theme)
       } catch (error) {
@@ -140,17 +139,17 @@ function saveTheme (theme: "light" | "dark" | "black"): void {
       }
 }
 
-function saveUserBackgroundImage (image: string): void {
+function saveBackgroundColor (color: string): void {
       try {
-            localStorage.setItem('backgroundImage', image)
+            localStorage.setItem('backgroundColor', color)
       } catch (error) {
             console.log(error)
       }
 }
 
-function getBackgroundImage (): string | null {
+function getBackgroundColor (): string | null {
       try {
-            return localStorage.getItem('backgroundImage')
+            return localStorage.getItem('backgroundColor')
       } catch (error) {
             console.log(error)
             return null

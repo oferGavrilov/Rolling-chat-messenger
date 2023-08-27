@@ -56,11 +56,11 @@ export async function createChatService (receiverId: string, senderId: string): 
 }
 
 export async function getUserChatsService (userId: string): Promise<ChatDocument[]> {
-      if (!userId) return Promise.reject(new Error('No user id sent to the server'))
+      if (!userId) {
+            throw new Error('No user id sent to the server')
+      }
 
-      console.log('getUserChatsService', userId)
-
-      const populateOptions: PopulateOptions[] = [
+      const populateOptions = [
             { path: "users", select: "-password" },
             { path: "groupAdmin", select: "-password" },
             {
@@ -72,24 +72,24 @@ export async function getUserChatsService (userId: string): Promise<ChatDocument
       try {
             const userIdObject = new mongoose.Types.ObjectId(userId)
 
-            // Get chats where the user is in the users array or the user is in the kickedUsers array
             const result = await Chat.find({
-                  $and: [
-                        {
-                              $or: [
-                                    { users: { $elemMatch: { $eq: userIdObject } } },
-                                    { "kickedUsers.userId": userIdObject },
-                              ],
-                        },
-                        { deletedBy: { $nin: [userIdObject] } },
-                  ],
+                  $or: [
+                        { users: userIdObject },
+                        { "kickedUsers.userId": userIdObject },
+                  ]
             }).populate(populateOptions)
 
-            return result
-      } catch (error: any) {
+            // Filter out chats where the user's ID exists in the deletedBy array
+            const filteredResult = result.filter(chat =>
+                  !chat.deletedBy.some(deleted => deleted.userId.equals(userIdObject))
+            )
+
+            return filteredResult
+      } catch (error) {
             throw handleErrorService(error)
       }
 }
+
 
 
 export async function createGroupChatService (users: User[], chatName: string, groupImage: string | undefined, currentUser: User): Promise<ChatDocument> {
@@ -158,7 +158,6 @@ export async function updateGroupImageService (chatId: string, groupImage: strin
 }
 
 export async function updateUsersInGroupChatService (chatId: string, users: User[]): Promise<ChatDocument> {
-      console.log('users to update', users)
       try {
             const usersIds = users.map((user) => user._id)
             await Chat.updateOne(
