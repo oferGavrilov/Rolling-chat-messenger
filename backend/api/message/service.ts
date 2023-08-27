@@ -61,7 +61,7 @@ export async function getAllMessagesByChatId (chatId: string, userId: string) {
                   .populate('chat')
                   .populate({
                         path: 'replyMessage',
-                        select: '_id content sender',
+                        select: '_id content sender messageType',
                         populate: {
                               path: 'sender',
                               select: '_id username profileImg'

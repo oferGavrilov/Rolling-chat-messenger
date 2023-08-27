@@ -34,6 +34,7 @@ export default {
         'light-input-bg':'#e5e7eb',
         'navigation-bg': '#FAFAFA',
         'primary': '#0099ff',
+        'default-hover-bg':'#57c0f8',
         'secondary-text': '#242424',
       }
     },

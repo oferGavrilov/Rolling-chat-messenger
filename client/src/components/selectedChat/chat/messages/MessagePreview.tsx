@@ -77,7 +77,7 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                                     'ml-auto rounded-bl-xl ' :
                                     'ml-0 rounded-br-xl flex-row-reverse'}
                                                             ${message.messageType === 'image' && 'flex-col-reverse !px-2 pb-5'}
-                                                            ${message.messageType === 'file' && 'flex-col-reverse pb-6'}`}
+                                                            ${message.messageType === 'file' && 'flex-col-reverse pb-6 p-2'}`}
                   >
                         {/* Reply Message */}
                         {message.replyMessage?._id && (
@@ -97,13 +97,12 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                         {message.sender._id === user._id && (
                               <MessageArrow className='message-arrow-left' />
                         )}
-                        <div className={`flex w-full ${message.replyMessage ? 'flex-col' : 'flex-row-reverse'}  ${incomingMessage && '!flex-row justify-between'}`}>
+                        <div className={`flex w-full ${message.replyMessage ? 'flex-col' : 'flex-row'}  ${!incomingMessage && 'flex-row-reverse'}`}>
                               {renderMessageContent(message, idx)}
 
-                              <span className={`text-[11px] md:text-xs mr-2 text-gray-300 relative mt-auto mb-1
-                                                            ${message.messageType === 'image' && 'left-2 bottom-1 !absolute z-10'}
-                                                            ${message.messageType === 'audio' && 'mt-auto bottom-0'}
-                                                            ${message.messageType === 'file' && '!absolute bottom-1 left-3'}
+                              <span className={`text-[11px] md:text-xs mr-2 text-gray-300 relative mt-auto mb-1 bottom-0
+                                                            ${message.messageType === 'image' && 'left-2  !absolute z-10'}
+                                                            ${message.messageType === 'file' && 'left-3 !absolute'}
                                                             ${isSameSenderMargin(messages, message, idx, user._id) ?
                                           'left-2' : 'text-end'}`}>
                                     {formatDate(message.createdAt)}

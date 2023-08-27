@@ -255,7 +255,7 @@
             flex items-center justify-center 
             rounded-full 
             cursor-pointer transition-colors duration-200 
-            bg-primary hover:bg-[#57c0f8]
+            bg-primary hover:bg-default-hover-bg
             text-white;
       }
 

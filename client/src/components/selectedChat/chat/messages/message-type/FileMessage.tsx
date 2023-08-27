@@ -12,7 +12,7 @@ export default function FileMessage ({ message, setSelectedFile }: Props): JSX.E
                   <iframe
                         src={message.content.toString()}
                         title={message.content.toString()}
-                        className="h-[300px] w-[200px] pointer-events-none overflow-hidden"
+                        className="h-[300px] w-[200px] pointer-events-none overflow-hidden rounded-lg"
                   ></iframe>
                   <div
                         className="h-[300px] w-[200px] absolute top-0 left-0 cursor-pointer"

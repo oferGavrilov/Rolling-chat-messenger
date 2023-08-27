@@ -12,6 +12,7 @@ import { uploadAudio } from '../../../utils/cloudinary'
 import MessageArrow from '../../../assets/icons/MessageArrow'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
+import SendIcon from '@mui/icons-material/Send'
 
 import EmojiPicker, { Theme } from 'emoji-picker-react'
 
@@ -136,10 +137,10 @@ export default function TextPanel ({
                                     <AudioRecorder onSendAudio={handleSendAudio} isRecording={isRecording} setIsRecording={setIsRecording} />
                               ) : (
                                     <button disabled={isMessageEmpty} type='submit'
-                                          className={`text-primary dark:text-dark-primary-text ml-2 transition-all duration-200 ease-in whitespace-nowrap hover:bg-primary dark:hover:bg-dark-primary-bg hover:text-white p-2 rounded-lg
-                                    ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed  ' : ''}`
+                                          className={`mx-2 text-white transition-all duration-200 ease-in whitespace-nowrap bg-primary hover:bg-default-hover-bg p-2 rounded-full
+                                    ${isMessageEmpty && 'disabled:!text-gray-400 disabled:cursor-not-allowed '}`
                                           }>
-                                          Send
+                                          <SendIcon />
                                     </button>
                               )}
                         </form>
