@@ -48,7 +48,7 @@ export default function TextPanel ({
       async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {
             e.preventDefault()
             if (!newMessage || !selectedChat) return
-            onSendMessage(newMessage, 'text', replyMessage?._id ? replyMessage : null, undefined)
+            onSendMessage(newMessage, 'text', replyMessage ? replyMessage : null, undefined)
             setNewMessage('')
             setTyping(false)
 
@@ -152,9 +152,9 @@ export default function TextPanel ({
 
                                     <div className='flex bg-[#828995] dark:bg-dark-primary-bg px-4 rounded-lg w-full h-full p-2 border-r-4 border-[#ffb703] dark:border-primary'>
                                           <div className='flex flex-col gap-y-1'>
-                                                <span className='text-sm text-[#ffb703] font-bold'>{replyMessage?.sender._id === loggedInUser?._id ? 'You' : replyMessage?.sender.username}</span>
+                                                <span className='text-sm text-[#ffb703] dark:text-primary font-bold'>{replyMessage?.sender._id === loggedInUser?._id ? 'You' : replyMessage?.sender.username}</span>
                                                 <span className='overflow-hidden max-w-[300px] text-ellipsis max-h-6 text-gray-50 dark:text-[#8696a0]'>
-                                                      {replyMessage?.content.toString()}
+                                                      {replyMessage?.messageType === 'text' ? replyMessage?.content.toString() : replyMessage?.messageType}
                                                 </span>
                                           </div>
                                     </div>

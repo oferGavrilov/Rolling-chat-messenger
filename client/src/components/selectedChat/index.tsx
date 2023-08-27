@@ -161,7 +161,6 @@ export default function Messenger (): JSX.Element {
       ): Promise<void> {
             if (!selectedChat || !message) return
 
-            console.log('sending message', replyMessage)
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
                   sender: loggedInUser!,
@@ -201,6 +200,7 @@ export default function Messenger (): JSX.Element {
                   setMessages((prevMessages) =>
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
                   )
+
                   socketService.emit('new message', messageToUpdate)
 
             } catch (error) {

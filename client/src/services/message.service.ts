@@ -24,7 +24,6 @@ async function sendMessage (
             messageSize?: number,
       }): Promise<IMessage> {
       try {
-            console.log(message.replyMessage)
             return httpService.post('/api/message', message)
       } catch (error) {
             console.log(error)
