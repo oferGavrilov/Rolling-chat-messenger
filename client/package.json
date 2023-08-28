@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint --max-warnings=0 src",
     "preview": "vite preview",
     "serve": "vite preview",
     "test": "vitest"
@@ -45,7 +44,7 @@
     "@typescript-eslint/parser": "^6.4.1",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.14",
-    "eslint": "^8.2.0",
+    "eslint": "^8.48.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-refresh": "^0.3.4",
     "jsdom": "^22.1.0",

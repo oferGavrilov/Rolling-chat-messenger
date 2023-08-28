@@ -31,6 +31,10 @@ export default defineConfig(({ mode }) => {
       globals: true,
       environment: 'jsdom',
       setupFiles: ['./src/setupTests.ts']
+    },
+    eslint: {
+      // Use your own configuration file here
+      configFile: '.eslintrc.cjs',
     }
   }
 })

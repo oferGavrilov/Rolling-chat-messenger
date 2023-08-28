@@ -15,9 +15,9 @@
     /* Bundler mode */
     "moduleResolution": "Node",
     "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "resolveJsonModule": true,
     "jsx": "react-jsx",
     /* Linting */
     "strict": true,
@@ -30,9 +30,8 @@
     ]
   },
   "include": [
-    "vite.config.ts",
     "src",
-    ".eslintrc.js",
+    "vite.config.ts"
   ],
   "references": [
     {

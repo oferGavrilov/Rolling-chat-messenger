@@ -1,3 +1,4 @@
+import React from 'react'
 import { ErrorMessage, Field, FormikProps } from 'formik'
 import UploadImage from '../UploadImage'
 
@@ -17,7 +18,6 @@ interface SignupData {
 export default function SignUp ({ formik, image, setImage }: SignUpProps) {
       return (
             <>
-
                   <label htmlFor="email">Email Address</label>
                   <Field type="email" name="email" onChange={formik.handleChange} id="email" value={formik.values.email} className={`login-input ${formik.errors.email && formik.touched.email ? 'input-error' : ''}`} />
                   <ErrorMessage name="email" component="div" className="error-message" />
