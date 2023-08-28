@@ -18,18 +18,18 @@ export const httpService = {
       async get (endpoint: string, params = {}) {
             return ajax(endpoint, 'GET', null, params)
       },
-      async post (endpoint: string, data: any) {
+      async post (endpoint: string, data: unknown) {
             return ajax(endpoint, 'POST', data)
       },
-      async put (endpoint: string, data: any) {
+      async put (endpoint: string, data: unknown) {
             return ajax(endpoint, 'PUT', data)
       },
-      async delete (endpoint: string, data: any) {
+      async delete (endpoint: string, data: unknown) {
             return ajax(endpoint, 'DELETE', data)
       },
 }
 
-async function ajax (endpoint: string, method: string = 'GET', data: any = null, params: any = {}): Promise<any> {
+async function ajax (endpoint: string, method: string = 'GET', data: unknown = null, params: unknown = {}): Promise<unknown> {
       try {
             const config = getAuthConfig()
 

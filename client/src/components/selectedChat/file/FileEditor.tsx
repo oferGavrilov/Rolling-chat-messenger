@@ -3,9 +3,10 @@ import CloseIcon from '@mui/icons-material/Close'
 import SendIcon from '@mui/icons-material/Send'
 import useChat from '../../../store/useChat'
 import { IReplyMessage } from '../../../model/message.model'
+import { IFile } from '../../../model/chat.model'
 
 interface Props {
-      file: any | null
+      file: IFile | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       sendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessage: IReplyMessage | null, recordingTimer?: number) => void
 }
@@ -19,10 +20,10 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
 
       function onSendMessage () {
             const type = isImage ? 'image' : 'file'
-            const message = isImage ? file : file.url
-            sendMessage(message, type, replyMessage ? replyMessage : null, undefined)
+            const message = isImage ? file : file?.url
+            sendMessage(message as string, type, replyMessage ? replyMessage : null, undefined)
       }
-      
+
       return (
             <div className='bg-white h-full dark:bg-dark-secondary-bg relative'>
                   <div className={`flex justify-center w-full h-full ${isImage && 'items-center'}`}>

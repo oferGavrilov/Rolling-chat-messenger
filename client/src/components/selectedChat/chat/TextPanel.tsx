@@ -18,11 +18,12 @@ import EmojiPicker, { Theme } from 'emoji-picker-react'
 
 import { useClickOutside } from '../../../custom/useClickOutside'
 import { IReplyMessage } from '../../../model/message.model'
+import { IFile } from '../../../model/chat.model'
 
 type Timer = NodeJS.Timeout | number
 
 interface Props {
-      setFile: React.Dispatch<React.SetStateAction<File | null>>
+      setFile: React.Dispatch<React.SetStateAction<IFile | null>>
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       onSendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessageId: IReplyMessage | null, recordingTimer?: number) => void
 }

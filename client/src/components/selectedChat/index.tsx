@@ -16,7 +16,7 @@ import { chatService } from "../../services/chat.service"
 
 import { IMessage, IReplyMessage } from "../../model/message.model"
 import { IUser } from "../../model/user.model"
-import { IChat } from "../../model/chat.model"
+import { IChat, IFile } from "../../model/chat.model"
 import { messageService } from "../../services/message.service"
 
 export default function Messenger (): JSX.Element {
@@ -29,7 +29,7 @@ export default function Messenger (): JSX.Element {
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
-      const [file, setFile] = useState<File | null>(null)
+      const [file, setFile] = useState<IFile | null>(null)
 
       const conversationUserRef = useRef<IUser | undefined>(undefined)
 

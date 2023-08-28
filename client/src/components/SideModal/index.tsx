@@ -1,6 +1,8 @@
 import React, { useRef } from 'react'
+
 import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
+
 import { useClickOutside } from '../../custom/useClickOutside'
 import { ContentType } from '../../pages/ChatPage'
 
@@ -33,5 +35,4 @@ export default function SearchUsers (props: Props): JSX.Element {
                   {switchContent()}
             </div>
       )
-
 }

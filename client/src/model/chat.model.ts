@@ -8,7 +8,7 @@ export interface IChat {
       users: IUser[]
       groupAdmin?: IUser
       groupImage?: string
-      latestMessage?: IMessage 
+      latestMessage?: IMessage
       createdAt?: string
       updatedAt?: string
       deletedBy?: string[]
@@ -22,7 +22,7 @@ type KickedUsers = {
       kickedAt: string
 }
 
-export type LatestMessage =  {
+export type LatestMessage = {
       _id: string
       sender: {
             _id: string
@@ -33,4 +33,8 @@ export type LatestMessage =  {
       chat: string
       createdAt: string
       updatedAt: string
+}
+
+export interface IFile extends File {
+      url: string
 }

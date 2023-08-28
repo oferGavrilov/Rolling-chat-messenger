@@ -7,6 +7,7 @@ import Loading from "../SkeltonLoading"
 import UsersInput from "../common/UsersInput"
 import UsersList from "./UsersList"
 import { AuthState } from "../../context/useAuth"
+import { IChat } from "../../model/chat.model"
 
 interface Props {
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -42,7 +43,8 @@ export default function UsersToMessage ({ setIsOpen }: Props): JSX.Element {
 
       async function onSelectChat (user: IUser): Promise<void> {
             // Check if chat already exists and its not a group chat
-            let chat
+            let chat: IChat | undefined
+            
             if (chats) {
                   console.log('chats', chats)
                   chat = chats.find((chat) => !chat?.isGroupChat && chat?.users.some((chatUser) => chatUser._id === user._id))

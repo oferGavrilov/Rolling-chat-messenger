@@ -1,15 +1,14 @@
-
 export function Bubble () {
       return (
             <svg id="sw-js-blob-svg" style={{ width: '35%', position: 'absolute', top: '0', left: '-120px', display: 'block' }}
                   viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" version="1.1">
                   <defs>
                         <linearGradient id="sw-gradient" x1="0" x2="1" y1="1" y2="0">
-                              <stop id="stop1" stop-color="rgba(41.847, 88.566, 194.736, 1)" offset="0%"></stop>
-                              <stop id="stop2" stop-color="rgba(108.903, 193.266, 247.102, 0.74)" offset="100%"></stop>
+                              <stop id="stop1" stopColor="rgba(41.847, 88.566, 194.736, 1)" offset="0%"></stop>
+                              <stop id="stop2" stopColor="rgba(108.903, 193.266, 247.102, 0.74)" offset="100%"></stop>
                         </linearGradient>
                   </defs>
-                  <path fill="url(#sw-gradient)" d="M22.1,-35.8C24.9,-28.4,20.9,-16.9,18.4,-9.5C15.9,-2.1,15,1.2,15.2,6.3C15.4,11.4,16.8,18.2,14.4,20.6C12.1,23,6,21.1,1.9,18.5C-2.3,15.9,-4.6,12.7,-11.4,11.8C-18.2,10.8,-29.6,12,-35.2,8.2C-40.8,4.4,-40.8,-4.4,-37.9,-12C-35,-19.6,-29.3,-26,-22.5,-32.1C-15.7,-38.1,-7.9,-43.8,0.9,-45.1C9.7,-46.3,19.3,-43.1,22.1,-35.8Z" width="100%" height="100%" transform="translate(50 50)" stroke-width="0" stroke="url(#sw-gradient)"></path>
+                  <path fill="url(#sw-gradient)" d="M22.1,-35.8C24.9,-28.4,20.9,-16.9,18.4,-9.5C15.9,-2.1,15,1.2,15.2,6.3C15.4,11.4,16.8,18.2,14.4,20.6C12.1,23,6,21.1,1.9,18.5C-2.3,15.9,-4.6,12.7,-11.4,11.8C-18.2,10.8,-29.6,12,-35.2,8.2C-40.8,4.4,-40.8,-4.4,-37.9,-12C-35,-19.6,-29.3,-26,-22.5,-32.1C-15.7,-38.1,-7.9,-43.8,0.9,-45.1C9.7,-46.3,19.3,-43.1,22.1,-35.8Z" width="100%" height="100%" transform="translate(50 50)" strokeWidth="0" stroke="url(#sw-gradient)"></path>
             </svg>
       )
 }

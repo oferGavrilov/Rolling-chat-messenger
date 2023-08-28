@@ -17,13 +17,12 @@ interface FormData {
       profileImg?: string
 }
 
-export default function Form ({ }) {
+export default function Form (): JSX.Element {
       const [isLogin, setIsLogin] = useState<boolean>(true)
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
       const { setUser } = AuthState()
       const navigate = useNavigate()
-
 
       const validationSchema = isLogin
             ? Yup.object().shape({

@@ -1,7 +1,7 @@
 export const SHOW_MSG = 'show-msg'
 
 interface ListenerFunction {
-      (data: any): void
+      (data: unknown): void
 }
 
 interface ListenersMap {
@@ -26,7 +26,7 @@ function createEventEmitter () {
                         )
                   }
             },
-            emit (evName: string, data: any) {
+            emit (evName: string, data: unknown) {
                   if (!listenersMap[evName]) return
                   listenersMap[evName].forEach(listener => listener(data))
             }

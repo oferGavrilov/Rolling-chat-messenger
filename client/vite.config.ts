@@ -1,8 +1,11 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
-  const API_URL = mode === 'production' ? 'https://rolling-chat-messenger-server.vercel.app/' : 'http://localhost:5000';
+  const API_URL = mode === 'production' ? 'https://rolling-chat-messenger-server.vercel.app/' : 'http://localhost:5000'
 
   return {
     plugins: [react()],
@@ -24,5 +27,10 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-  };
-});
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./src/setupTests.ts']
+    }
+  }
+})

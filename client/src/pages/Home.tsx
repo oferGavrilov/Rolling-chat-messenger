@@ -1,8 +1,7 @@
-
 import { Link } from "react-router-dom"
 import { WavesWhite, WavesBlue } from "../assets/icons/Bubble"
-export default function Home (): JSX.Element {
 
+export default function Home (): JSX.Element {
       return (
             <section>
                   <div className="min-h-[100svh] relative">
@@ -24,7 +23,7 @@ export default function Home (): JSX.Element {
                               </div>
 
                         </div>
-                        <WavesBlue className="slide-up"/>
+                        <WavesBlue className="slide-up" />
                   </div>
                   <div className="min-h-[100svh] bg-primary relative -z-10">
                         <WavesWhite />

@@ -1,19 +1,25 @@
-import CloseIcon from '@mui/icons-material/Close'
+import React, { useEffect, useMemo, useState } from "react"
+
 import { userService } from "../../services/user.service"
-import { useEffect, useMemo, useState } from "react"
-import { IUser } from "../../model/user.model"
-import Loading from "../SkeltonLoading"
-import { toast } from 'react-toastify'
 import { chatService } from '../../services/chat.service'
+
+import { AuthState } from '../../context/useAuth'
 import useChat from '../../store/useChat'
+
+import Loading from "../SkeltonLoading"
+import CloseIcon from '@mui/icons-material/Close'
+
+import { IUser } from "../../model/user.model"
+
+import { toast } from 'react-toastify'
+import { io } from 'socket.io-client'
+
 import UploadImage from '../UploadImage'
 import UsersInput from '../common/UsersInput'
-import { io } from 'socket.io-client'
-import { AuthState } from '../../context/useAuth'
 import UsersList from './UsersList'
 
 interface Props {
-      setIsOpen: CallableFunction
+      setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function UsersToGroup ({ setIsOpen }: Props) {
@@ -61,7 +67,7 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                   toast.success('Group created successfully')
                   setIsOpen(false)
                   setGroup({ chatName: '', users: [] })
-                  
+
                   const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000', { transports: ['websocket'] })
                   socket.emit('create group', group.users, user?._id, newChat)
             } catch (error) {

@@ -31,7 +31,7 @@ export default function Profile (): JSX.Element {
             const newValue = userValues[editType as keyof UserValues] as string;
 
             // Check for special symbols in the input value
-            const specialSymbolsRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+            const specialSymbolsRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
             if (specialSymbolsRegex.test(newValue)) {
                   return toast.error(`Please enter a valid ${editType} without special symbols`);
             }

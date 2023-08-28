@@ -12,9 +12,10 @@ import PermMediaIcon from '@mui/icons-material/PermMedia'
 import LocalSeeIcon from '@mui/icons-material/LocalSee'
 
 import Camera from './Camera'
+import { IFile } from '../../../model/chat.model'
 
 interface Props {
-      setFile: React.Dispatch<React.SetStateAction<File | null>>
+      setFile: React.Dispatch<React.SetStateAction<IFile | null>>
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
 }
 
