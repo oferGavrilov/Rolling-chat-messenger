@@ -1,16 +1,22 @@
 import { ReactNode } from 'react'
+
 import { AuthState } from '../../../../context/useAuth'
-import ReplyMessage from './ReplyMessage'
+import useChat from '../../../../store/useChat'
+
 import { IMessage } from '../../../../model/message.model'
 import { IUser } from '../../../../model/user.model'
+
 import { formatDate, isSameSenderMargin } from '../../../../utils/functions'
+
+import ReplyMessage from './ReplyMessage'
 import MessageMenu from './MessageMenu'
 import MessageArrow from '../../../../assets/icons/MessageArrow'
 import AudioMessage from './message-type/AudioMessage'
 import FileMessage from './message-type/FileMessage'
 import ImageMessage from './message-type/ImageMessage'
-import useChat from '../../../../store/useChat'
 import TextMessage from './message-type/TextMessage'
+
+import NotInterestedIcon from '@mui/icons-material/NotInterested'
 
 interface Props {
       messages: IMessage[]
@@ -28,8 +34,9 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
             // If the message is deleted by the sender, show a message that the message was deleted
             if (message.deletedBy?.length && message.sender._id !== user?._id) {
                   return (
-                        <div className="text-gray-400 p-2">
+                        <div className="text-gray-100 dark:text-gray-400 p-2 flex items-center gap-x-2">
                               <span className="text-xs">This message was deleted</span>
+                              <NotInterestedIcon className="!text-sm !text-gray-200 mb-[2px]"/>
                         </div>
                   )
             }

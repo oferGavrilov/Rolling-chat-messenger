@@ -10,8 +10,7 @@ export const chatService = {
       getUserChats,
       createChat,
       createGroup,
-      updateGroupImage,
-      updateGroupName,
+      updateGroupInfo,
       kickFromGroup,
       updateUsersGroup,
       removeChat,
@@ -66,21 +65,23 @@ async function createGroup (group: { chatName: string, users: IUser[], groupImag
       }
 }
 
-async function updateGroupImage (chatId: string, groupImage: string): Promise<string> {
+async function updateGroupInfo (chatId: string, updateType: 'image' | 'name', updateData: string): Promise<string> {
       try {
-            return httpService.put(BASE_URL + '/api/chat/groupimage', { chatId, groupImage })
-      } catch (error) {
-            console.error(error)
-            throw new Error('Failed to update group image.')
-      }
-}
+            let url: string, dataKey: string
+            if (updateType === 'image') {
+                  url = '/api/chat/groupimage'
+                  dataKey = 'groupImage'
+            } else if (updateType === 'name') {
+                  url = '/api/chat/rename'
+                  dataKey = 'groupName'
+            } else {
+                  throw new Error('Invalid update type.')
+            }
 
-async function updateGroupName (chatId: string, groupName: string): Promise<string> {
-      try {
-            return httpService.put('/api/chat/rename', { chatId, groupName })
+            return httpService.put(url, { chatId, [dataKey]: updateData })
       } catch (error) {
             console.error(error)
-            throw new Error('Failed to update group name.')
+            throw new Error('Failed to update group info.')
       }
 }
 

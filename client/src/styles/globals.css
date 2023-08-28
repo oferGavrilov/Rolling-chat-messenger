@@ -299,6 +299,10 @@
                   @apply bg-primary text-white;
             }
       }
+
+      .reply-message-color {
+            @apply text-gray-300 dark:text-gray-400;
+      }
 }
 
 @layer utilities{

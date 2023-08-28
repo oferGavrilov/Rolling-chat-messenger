@@ -16,19 +16,19 @@ export default function ReplyMessage ({ message, loggedInUserId, incomingMessage
                         return message.replyMessage?.content.toString()
                   case 'image':
                         return (
-                              <div className='text-gray-400'>
+                              <div className='reply-message-color'>
                                     Image <Image className='!text-lg ml-1' />
                               </div>
                         )
                   case 'audio':
                         return (
-                              <div className='text-gray-400'>
+                              <div className='reply-message-color'>
                                     Audio <Audiotrack className='!text-lg ml-1' />
                               </div>
                         )
                   case 'file':
                         return (
-                              <div className='text-gray-400'>
+                              <div className='reply-message-color'>
                                     File <Description className='!text-lg ml-1' />
                               </div>
                         )

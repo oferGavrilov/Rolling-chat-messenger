@@ -6,7 +6,9 @@ import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded'
 interface Props {
       image: string
       setImage: CallableFunction
-      editImage?: CallableFunction
+      editImage: (updateType: 'image' | 'name', updateData: string) => Promise<void>
+
+
 }
 
 export default function UploadImage ({ image, setImage, editImage }: Props) {
@@ -18,7 +20,7 @@ export default function UploadImage ({ image, setImage, editImage }: Props) {
                   setImageLoading(true)
                   const data = await uploadImg(file)
                   setImage(data?.url || image)
-                  if (editImage) editImage(data.url)
+                  if (editImage) editImage('image', data.url)
             } catch (err) {
                   console.log(err)
             } finally {

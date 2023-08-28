@@ -94,7 +94,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
                   ref={usersModal}
                   className={`users-modal-container ${isOpen ? 'translate-y-2' : '-translate-y-[100vh]'}`}
             >
-                  <h2 className='text-2xl text-center py-4 md:py-10'>Users to add:</h2>
+                  <h2 className='text-xl md:text-2xl text-center py-4 md:py-10'>Users to add:</h2>
                   <div className='h-[calc(100%-152px)] md:h-[calc(100%-200px)] overflow-y-auto'>
 
                         {isLoading && <Loading type="users" />}

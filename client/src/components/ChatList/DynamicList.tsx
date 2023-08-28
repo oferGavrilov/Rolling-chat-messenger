@@ -90,7 +90,7 @@ export default function DynamicList (props: Props) {
                         <div className={`md:!hidden p-2 rounded-full cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation && 'pointer-events-none'}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>
                               <MenuIcon />
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-sf-regular font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>
+                        <h2 className="text-xl md:text-3xl font-sf-regular font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>
                         <div onClick={onShowSearch} className='message-filter-icon'>
                               {getIcon()}
                         </div>

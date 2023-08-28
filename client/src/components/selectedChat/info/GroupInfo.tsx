@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { toast } from "react-toastify"
 
 import useChat from "../../../store/useChat"
 import { AuthState } from "../../../context/useAuth"
@@ -9,17 +8,16 @@ import { chatService } from "../../../services/chat.service"
 
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
-import CloseIcon from '@mui/icons-material/Close'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 
-import { IChat } from "../../../model/chat.model"
 import MediaFiles from "./MediaFiles"
 import { IMessage } from "../../../model/message.model"
 import AddUsersModal from "./AddUsersModal"
 import socketService from "../../../services/socket.service"
+
+// Common
+import GroupActionButton from "../../common/group/GroupActionButton"
+import GroupUsersList from "../../common/group/GroupUsersList"
+import GroupName from "../../common/group/GroupName"
 
 interface Props {
       messages: IMessage[]
@@ -32,34 +30,26 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
       const { isAdmin, user: loggedInUser } = AuthState()
 
       const [image, setImage] = useState<string>(selectedChat?.groupImage || '')
-      const [isEditName, setIsEditName] = useState<boolean>(false)
-      const [groupName, setGroupName] = useState<string>(selectedChat?.chatName || '')
 
-      async function editImage (image: string) {
-            if (!selectedChat) return
-            const newImage = await chatService.updateGroupImage(selectedChat._id, image)
-            const updatedChat = { ...selectedChat, groupImage: newImage } as IChat
-            setSelectedChat(updatedChat)
-            const updatedChats = chats.map(chat => chat._id === selectedChat._id ? updatedChat : chat)
-            setChats(updatedChats)
-      }
+      async function updateGroupInfoAndSetChat (updateType: 'image' | 'name', updateData: string) {
+            if (!selectedChat) return;
 
-      async function handleChangeName () {
-            if (!selectedChat) return
+            try {
+                  const newUpdate = await chatService.updateGroupInfo(selectedChat._id, updateType, updateData);
+                  let updatedChat = { ...selectedChat };
 
-            setGroupName(groupName.trim())
-            if (groupName === selectedChat.chatName || !groupName) return toast.warn('Please enter a valid name')
-            const newGroupName = await chatService.updateGroupName(selectedChat._id, groupName)
-            const updatedChat = { ...selectedChat, chatName: newGroupName }
-            setSelectedChat(updatedChat)
-            const updatedChats = chats.map(chat => chat._id === selectedChat._id ? updatedChat : chat)
-            setChats(updatedChats)
-            setIsEditName(false)
-      }
+                  if (updateType === 'image') {
+                        updatedChat = { ...updatedChat, groupImage: newUpdate };
+                  } else if (updateType === 'name') {
+                        updatedChat = { ...updatedChat, chatName: newUpdate };
+                  }
 
-      function handleKeyPress (e: React.KeyboardEvent<HTMLInputElement>) {
-            if (e.key === 'Enter') {
-                  handleChangeName()
+                  setSelectedChat(updatedChat);
+
+                  const updatedChats = chats.map(chat => (chat._id === selectedChat._id ? updatedChat : chat));
+                  setChats(updatedChats);
+            } catch (error) {
+                  console.error(error);
             }
       }
 
@@ -89,19 +79,6 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
             }
       }
 
-      async function onKickFromGroup (userId: string) {
-            if (!selectedChat || !loggedInUser) return
-            try {
-                  const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
-
-                  socketService.emit('kick-from-group', { chatId: selectedChat._id, userId, kickerId: loggedInUser._id })
-
-                  setSelectedChat({ ...selectedChat, users: updatedChat.users })
-            } catch (err) {
-                  console.log(err)
-            }
-      }
-
       function isKicked (): boolean {
             return selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
       }
@@ -109,33 +86,18 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
       if (!selectedChat) return <div></div>
       return (
             <>
-                  <section className="w-full">
+                  <section className={`w-full ${isAddUsers && 'overflow-hidden'}`}>
                         <div className="text-center py-12">
-                              {isAdmin(selectedChat) ? (<UploadImage image={image} setImage={setImage} editImage={editImage} />
-                              ) : (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)}
-                              {!isEditName ? (
-                                    <div className="flex items-center text-2xl md:text-2xl justify-center gap-x-2 pt-4">
-                                          <span className="font-semibold dark:text-dark-primary-text">{selectedChat.chatName}</span>
-                                          {isAdmin(selectedChat) &&
-                                                <EditIcon className="cursor-pointer text-primary dark:text-gray-300" onClick={() => setIsEditName(true)} />}
-                                    </div>
-                              ) : (
-                                    <div className="flex justify-center items-center">
-                                          <input
-                                                type="text"
-                                                className="bg-gray-100 dark:bg-dark-default-hover-bg max-w-[200px] md:max-w-full dark:text-white border-b-2 text-xl border-primary py-1 pl-4 pr-8 mt-5 mb-2 rounded-t-lg"
-                                                value={groupName}
-                                                onKeyUp={handleKeyPress}
-                                                onChange={(e) => setGroupName(e.target.value)}
-                                          />
-                                          <div className="flex ml-4">
-                                                <div>
-                                                      <CheckOutlinedIcon className="text-primary !text-2xl cursor-pointer mr-4" onClick={handleChangeName} />
-                                                      <CloseIcon color="error" className="cursor-pointer !text-2xl" onClick={() => setIsEditName(false)} />
-                                                </div>
-                                          </div>
-                                    </div>
-                              )}
+                              {isAdmin(selectedChat) ?
+                                    (<UploadImage image={image} setImage={setImage} editImage={updateGroupInfoAndSetChat} />) :
+                                    (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)
+                              }
+
+                              <GroupName
+                                    selectedChat={selectedChat}
+                                    onChangeName={updateGroupInfoAndSetChat}
+                                    isAdmin={isAdmin}
+                              />
 
                               <div className="text-gray-400 py-3 dark:text-gray-200">Group - {selectedChat.users.length} Participants</div>
                         </div>
@@ -158,35 +120,18 @@ export default function GroupInfo ({ messages, isAddUsers, setIsAddUsers }: Prop
                                                 <span>Adding participants</span>
                                           </div>
                                     )}
-                                    <div className="flex flex-col gap-y-2 border-2 dark:border-dark-primary-bg rounded-lg">
-                                          {selectedChat.users.map(user => (
-                                                <div key={user._id} className="flex justify-between">
-                                                      <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg w-full p-2  cursor-pointer rounded-lg">
-                                                            <div className="flex items-center gap-x-3">
-                                                                  <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
-                                                                  <span className="text-lg">{user.username}</span>
-                                                            </div>
-                                                            {isAdmin(selectedChat, user._id) && (
-                                                                  <span className="bg-slate-300 dark:bg-dark-primary-bg text-white px-2 py-[1px] rounded-md text-sm">
-                                                                        Admin
-                                                                  </span>
-                                                            )}
-                                                            {(isAdmin(selectedChat, loggedInUser?._id) && user._id !== loggedInUser?._id) &&
-                                                                  <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={() => onKickFromGroup(user._id)}>
-                                                                        <DeleteIcon className="!text-2xl" />
-                                                                  </div>
-                                                            }
-                                                      </div>
-                                                </div>
-                                          ))}
-                                    </div>
+                                    <GroupUsersList
+                                          selectedChat={selectedChat}
+                                          setSelectedChat={setSelectedChat}
+                                          loggedInUser={loggedInUser}
+                                          isAdmin={isAdmin}
+                                    />
                               </div>
-                              <div className="text-red-600 p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer"
-                                    onClick={isKicked() ? onRemoveGroup : onLeaveFromGroup}
-                              >
-                                    <LogoutOutlinedIcon />
-                                    {isKicked() ? 'Delete Group' : 'Leave The Group'}
-                              </div>
+                              <GroupActionButton
+                                    isKicked={isKicked()}
+                                    onRemoveGroup={onRemoveGroup}
+                                    onLeaveFromGroup={onLeaveFromGroup}
+                              />
                         </div>
 
                   </section>
