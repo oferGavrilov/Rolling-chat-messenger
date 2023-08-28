@@ -100,7 +100,7 @@ export default function TextPanel ({
 
       return (
             <>
-                  <div className='flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-gray-300 dark:bg-dark-secondary-bg relative'>
+                  <div className='flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-gray-50 dark:bg-dark-secondary-bg relative'>
                         {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
                         <form onSubmit={handleSubmit} className='w-full flex items-center'>
@@ -147,12 +147,12 @@ export default function TextPanel ({
                         </form>
 
                         <div className={`fixed w-full left-0 ease-out text-white rounded-t-xl transition-all duration-300 ${replyMessage ? 'bottom-[64px] max-h-20' : 'max-h-0 [&>*]:p-0 [&>*]:hidden'}`}>
-                              <div className="flex items-center h-full bg-gray-300 dark:bg-dark-secondary-bg pt-3 pr-12">
+                              <div className="flex items-center h-full bg-gray-50 dark:bg-dark-secondary-bg pt-3 pr-12">
                                     <div className="flex items-center justify-center w-20 ">
                                           <CloseRoundedIcon className='text-[#727e86] !text-3xl cursor-pointer' onClick={() => setReplyMessage(null)} />
                                     </div>
 
-                                    <div className='flex bg-[#828995] dark:bg-dark-primary-bg px-4 rounded-lg w-full h-full p-2 border-r-4 border-[#ffb703] dark:border-primary'>
+                                    <div className='flex bg-[#d2d7de] dark:bg-dark-primary-bg px-4 rounded-lg w-full h-full p-2 border-r-4 border-[#ffb703] dark:border-primary'>
                                           <div className='flex flex-col gap-y-1'>
                                                 <span className='text-sm text-[#ffb703] dark:text-primary font-bold'>{replyMessage?.sender._id === loggedInUser?._id ? 'You' : replyMessage?.sender.username}</span>
                                                 <span className='overflow-hidden max-w-[300px] text-ellipsis max-h-6 text-gray-50 dark:text-[#8696a0]'>

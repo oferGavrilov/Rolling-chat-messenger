@@ -34,7 +34,7 @@ export default function Auth () {
 
       return (
             <>
-                  <div className={`flex justify-center logo-fade-down ${isVisible ? 'hidden' : 'visible'}`}>
+                  <div className={`flex justify-center logo-fade-down ${isVisible ? 'hidden' : 'visible'}`} data-testid="login-page">
                         <Logo width='120' height='120' />
                   </div>
                   <section className={`max-w-lg py-24 mx-auto relative z-20 fade-down ${isVisible ? 'visible' : 'hidden'}`}>

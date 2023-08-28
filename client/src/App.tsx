@@ -14,22 +14,28 @@ import Loading from "./components/Loading"
 import NotFound from "./pages/NotFound"
 import Notification from "./components/Notification"
 
-function App () {
+// For testing purposes
+export const AppRoutes = () => {
+  return (
+    <AuthProvider>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+      <ToastContainer />
+      <Notification />
+    </AuthProvider>
+  )
+}
 
+const App: React.FC = () => {
   return (
     <Router>
-      <AuthProvider>
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        <ToastContainer />
-        <Notification />
-      </AuthProvider>
+      <AppRoutes />
     </Router>
   )
 }
