@@ -37,7 +37,7 @@ async function getUserChats (userId: string): Promise<IChat[]> {
 
 async function createChat (userId: string): Promise<IChat> {
       try {
-            const currentUserId = getLoggedinUser()?._id
+            const currentUserId = getLoggedinUser()?._id 
             return httpService.post('/api/chat/createchat', { userId, currentUserId })
       } catch (error) {
             console.error(error)

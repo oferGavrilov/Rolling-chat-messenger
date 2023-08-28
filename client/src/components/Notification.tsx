@@ -9,7 +9,7 @@ export default function Notification (): JSX.Element {
 
       useEffect(() => {
             const unsubscribe = eventBus.on('show-msg', (msg) => {
-                  setMsg(msg)
+                  setMsg(msg as IMsg)
                   if (timeoutIfRef.current) clearTimeout(timeoutIfRef.current)
                   timeoutIfRef.current = setTimeout(closeMsg, 3000000)
             })
@@ -26,7 +26,7 @@ export default function Notification (): JSX.Element {
       if (!msg) return (<></>)
       return (
             <div className={`notification-msg ${msg.type} slide-down text-xs md:text-lg`}>
-                  <CloseIcon onClick={closeMsg} className='absolute right-1 top-1'/>
+                  <CloseIcon onClick={closeMsg} className='absolute right-1 top-1' />
                   {msg.txt}
             </div>
       )

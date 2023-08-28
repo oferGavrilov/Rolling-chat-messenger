@@ -82,7 +82,7 @@ async function updateUserImage (image: string): Promise<string> {
                   throw new Error('User is not logged in.')
             }
 
-            const updatedImage = await httpService.put('/api/auth/image', { image })
+            const updatedImage = await httpService.put('/api/auth/image', { image }) as string
             if (updatedImage) {
                   _saveToSessionStorage({ ...user, profileImg: updatedImage })
             }
@@ -101,7 +101,7 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
                   throw new Error('User is not logged in.')
             }
 
-            const response = await httpService.put('/api/auth/details', { newName })
+            const response = await httpService.put('/api/auth/details', { newName }) as IUser
 
             if (response) {
                   const user = getLoggedinUser()

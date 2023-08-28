@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { getAuthConfig } from '../utils/authConfig'
 import { toast } from 'react-toastify'
 
@@ -15,25 +15,25 @@ const axiosInstance = axios.create({
 })
 
 export const httpService = {
-      async get (endpoint: string, params = {}) {
+      async get<T> (endpoint: string, params = {}): Promise<T> {
             return ajax(endpoint, 'GET', null, params)
       },
-      async post (endpoint: string, data: unknown) {
-            return ajax(endpoint, 'POST', data)
+      async post<T> (endpoint: string, data: unknown): Promise<T> {
+            return <T>ajax(endpoint, 'POST', data)
       },
-      async put (endpoint: string, data: unknown) {
+      async put<T> (endpoint: string, data: unknown): Promise<T> {
             return ajax(endpoint, 'PUT', data)
       },
-      async delete (endpoint: string, data: unknown) {
+      async delete<T> (endpoint: string, data: unknown): Promise<T> {
             return ajax(endpoint, 'DELETE', data)
       },
 }
 
-async function ajax (endpoint: string, method: string = 'GET', data: unknown = null, params: unknown = {}): Promise<unknown> {
+async function ajax<T> (endpoint: string, method: string = 'GET', data: unknown = null, params: unknown = {}): Promise<T> {
       try {
             const config = getAuthConfig()
 
-            const res = await axiosInstance({
+            const res: AxiosResponse<T> = await axiosInstance({
                   url: endpoint,
                   method,
                   data,
