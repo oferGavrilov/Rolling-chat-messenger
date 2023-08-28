@@ -10,6 +10,9 @@ export async function signUpUser(username, email, password, profileImg) {
         if (userExists) {
             return { error: 'User already exists' };
         }
+        if (!profileImg || profileImg.trim() === '') {
+            profileImg = "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg";
+        }
         const newUser = await User.create({
             username,
             email,
@@ -57,10 +60,10 @@ export async function loginUser(email, password) {
         throw handleErrorService(error);
     }
 }
-export async function updateUserStatus(userId) {
+export async function updateUserStatus(userId, connectionStatus) {
     try {
         // Find the user by ID and update the isOnline and lastSeen properties
-        await User.findByIdAndUpdate(userId, { isOnline: false, lastSeen: new Date() }, { new: true } // Set { new: true } to return the updated user after the update
+        await User.findByIdAndUpdate(userId, { isOnline: connectionStatus, lastSeen: new Date() }, { new: true } // Set { new: true } to return the updated user after the update
         );
     }
     catch (error) {

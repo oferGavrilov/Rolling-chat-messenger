@@ -1,10 +1,9 @@
-import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, removeFromGroupChatService, renameGroupChatService, updateGroupImageService, removeChatService } from './service.js';
+import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, renameGroupChatService, updateGroupImageService, removeChatService, kickFromGroupChatService, leaveGroupService } from './service.js';
 import { handleErrorService } from '../../middleware/errorMiddleware.js';
 export async function createChat(req, res) {
-    const { userId } = req.body;
-    const currentUser = req.user;
+    const { userId, currentUserId } = req.body;
     try {
-        const chat = await createChatService(userId, currentUser);
+        const chat = await createChatService(userId, currentUserId);
         res.status(200).json(chat);
     }
     catch (error) {
@@ -18,7 +17,7 @@ export async function getUserChats(req, res) {
         return res.status(400).json({ message: 'No user id sent to the server' });
     }
     try {
-        const result = await getUserChatsService(req.user, userId);
+        const result = await getUserChatsService(userId);
         res.status(200).send(result);
     }
     catch (error) {
@@ -48,6 +47,7 @@ export async function renameGroupChat(req, res) {
         return res.status(400).json({ message: 'No group name sent to the server' });
     try {
         const updatedGroupName = await renameGroupChatService(chatId, groupName);
+        console.log('updatedGroupName', updatedGroupName);
         res.status(200).send(updatedGroupName);
     }
     catch (error) {
@@ -82,22 +82,30 @@ export async function updateUsersInGroupChat(req, res) {
         throw handleErrorService(error);
     }
 }
-export async function removeFromGroupChat(req, res) {
-    const { chatId, userId } = req.body;
+export async function kickFromGroupChat(req, res) {
+    const { chatId, userId, kickedByUserId } = req.body;
     if (!userId)
         return res.status(400).json({ message: 'No user id sent to the server' });
     if (!chatId)
         return res.status(400).json({ message: 'No chat id sent to the server' });
     try {
-        const removedChat = await removeFromGroupChatService(chatId, userId);
+        const removedChat = await kickFromGroupChatService(chatId, userId, kickedByUserId);
         res.status(200).send(removedChat);
     }
     catch (error) {
         throw handleErrorService(error);
     }
 }
-// this function add the userId to the chat in the deletedBy key array
-// if the deletedBy array length is equal to the number of users in the chat then the chat is deleted with all its messages
+export async function leaveGroup(req, res) {
+    const { chatId, userId } = req.body;
+    try {
+        const removedChat = await leaveGroupService(chatId, userId);
+        res.status(200).send(removedChat);
+    }
+    catch (error) {
+        throw handleErrorService(error);
+    }
+}
 export async function removeChat(req, res) {
     const { chatId, userId } = req.body;
     try {

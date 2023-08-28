@@ -9,7 +9,7 @@ export default function Home (): JSX.Element {
                         <div className="slide-up relative">
                               <h1
                                     className="text-4xl md:text-8xl font-alfa font-bold pt-10 md:pt-16 pb-14 text-primary text-center 
-                              bg-gradient-to-r from-sky-100 via-sky-400 to-primary bg-clip-text text-transparent drop-shadow-lg">
+                               drop-shadow-lg">
                                     Rolling
                               </h1>
                               <p className="text-center mx-[10%] drop-shadow-gray text-lg md:text-2xl tracking-wide leading-8 md:leading-9 md:[word-spacing:8px]">Discover a new way to connect with our innovative chat website.<br />

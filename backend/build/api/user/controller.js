@@ -48,7 +48,7 @@ export async function login(req, res) {
 export async function logoutUser(req, res) {
     const userId = req.user?._id;
     try {
-        await updateUserStatus(userId);
+        await updateUserStatus(userId, false);
         res.status(200).json({ message: 'User logged out successfully' });
     }
     catch (error) {

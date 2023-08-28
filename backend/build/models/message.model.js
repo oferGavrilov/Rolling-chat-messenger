@@ -4,7 +4,9 @@ const messageModel = new mongoose.Schema({
     content: { type: String, trim: true },
     chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
     messageType: { type: String, default: 'text' },
-    messageSize: { type: Number, default: 0 }
+    replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
+    messageSize: { type: Number, default: 0 },
+    deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
 }, { timestamps: true });
 export const Message = mongoose.model('Message', messageModel);
 //# sourceMappingURL=message.model.js.map

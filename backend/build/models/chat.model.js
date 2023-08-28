@@ -9,7 +9,15 @@ const chatSchema = new Schema({
         type: String,
         default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
     },
-    deletedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    deletedBy: [{
+            userId: { type: Schema.Types.ObjectId, ref: 'User' },
+            deletedAt: { type: Date, required: true },
+        }],
+    kickedUsers: [{
+            userId: { type: Schema.Types.ObjectId, ref: 'User' },
+            kickedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+            kickedAt: { type: Date, required: true },
+        }],
 }, { timestamps: true });
 export const Chat = mongoose.model('Chat', chatSchema);
 //# sourceMappingURL=chat.model.js.map
