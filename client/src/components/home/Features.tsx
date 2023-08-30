@@ -19,7 +19,7 @@ export default function Features () {
       );
 
       return (
-            <div className="min-h-[85svh] md:min-h-[120svh] bg-primary relative -z-10">
+            <div className="min-h-[90svh] md:min-h-[120svh] bg-primary relative -z-10">
                   <div className="text-white w-[85%] md:w-2/3 max-w-3xl mx-auto opacity-0 translate-y-20 transition-all duration-500" ref={showOnScrollRef}>
                         <h2 className="text-3xl md:text-4xl tracking-wide font-bold py-8 text-center">Explore New World of Chatting</h2>
                         <img
@@ -28,20 +28,20 @@ export default function Features () {
                               loading="lazy"
                               className="opacity-95 rounded-xl shadow-2xl"
                         />
-                        <div className="flex justify-between text-center h-36 text-lg tracking-wide text-neutral-100 font-bold uppercase my-12 px-2">
+                        <div className="flex justify-between text-center h-28 md:h-36 text-sm md:text-lg tracking-wide text-neutral-100 font-bold uppercase mt-8 md:mt-12 px-2">
                               <div className="flex flex-col items-center justify-between flex-1">
-                                    <span className="max-w-[75%]">Share images and files</span>
-                                    <PermMediaIcon className="!text-5xl text-neutral-200" />
+                                    <span className="max-w-[85%] md:max-w-[75%]">Share images and files</span>
+                                    <PermMediaIcon className="!text-3xl md:!text-5xl text-neutral-100" />
                               </div>
 
                               <div className="flex flex-col items-center justify-between flex-1">
-                                    <span className="max-w-[75%]">Send Voice messages</span>
-                                    <KeyboardVoiceIcon className="!text-5xl text-neutral-200 " />
+                                    <span className="max-w-[85%] md:max-w-[75%]">Send Voice messages</span>
+                                    <KeyboardVoiceIcon className="!text-3xl md:!text-5xl text-neutral-100" />
                               </div>
 
                               <div className="flex flex-col items-center justify-between flex-1">
-                                    <span className="max-w-[65%]">Live Video calls</span>
-                                    <BsFillCameraVideoFill className="!text-5xl text-neutral-200" />
+                                    <span className="max-w-[50%] md:max-w-[65%]">Live Video calls</span>
+                                    <BsFillCameraVideoFill className="!text-3xl md:!text-5xl text-neutral-100" />
                               </div>
                         </div>
                   </div>

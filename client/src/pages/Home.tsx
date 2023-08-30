@@ -10,7 +10,7 @@ export default function Home (): JSX.Element {
 
 
       return (
-            <section>
+            <section className="relative">
                   <div className="min-h-[100svh] relative">
                         <div className="slide-up relative">
                               <img src="imgs/logoname.png" className="w-2/5 mx-auto max-w-md my-12" alt="" />
@@ -29,6 +29,11 @@ export default function Home (): JSX.Element {
                   <Features />
 
                   <Views />
+                  {/* <div className="absolute bottom-0 left-0 w-full bg-primary">
+                        <p className="text-neutral-200 text-center p-2">
+                              © 2021 Rolling All rights reserved
+                        </p>
+                  </div> */}
             </section>
       )
 }
