@@ -30,13 +30,13 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
       const { user } = AuthState() as { user: IUser }
       const { setSelectedFile } = useChat()
 
-      const renderMessageContent = (message: IMessage, idx: number): ReactNode => {
+      const renderMessageContent = (message: IMessage): ReactNode => {
             // If the message is deleted by the sender, show a message that the message was deleted
             if (message.deletedBy?.length && message.sender._id !== user?._id) {
                   return (
-                        <div className="text-gray-100 dark:text-gray-400 p-2 flex items-center gap-x-2">
+                        <div className="text-gray-100 dark:text-gray-400 py-2 px-4 flex items-center gap-x-1">
+                              <NotInterestedIcon className="!text-sm !text-gray-200" />
                               <span className="text-xs">This message was deleted</span>
-                              <NotInterestedIcon className="!text-sm !text-gray-200 mb-[2px]" />
                         </div>
                   )
             }
@@ -61,9 +61,6 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                   return (
                         <AudioMessage
                               message={message}
-                              messages={messages}
-                              idx={idx}
-                              userId={user._id}
                         />
                   )
             }
@@ -71,20 +68,21 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
             return null
       }
 
+      function handleDoubleClick (message: IMessage) {
+            if (message.deletedBy?.length) return
+            onReplyMessage(message)
+      }
+
       const incomingMessage = message.sender._id !== user?._id
 
       return (
-            <div className="select-none message-container" onDoubleClick={() => onReplyMessage(message)}>
+            <div className="select-none message-container" onDoubleClick={() => handleDoubleClick(message)}>
                   <div
                         className={`select-text relative w-max flex items-center max-w-[75%] text-white rounded-t-2xl  ${message.replyMessage?._id && ' flex-col'}
-                                                      ${message?.sender._id === user._id ?
-                                    'out-going-message'
-                                    : 'incoming-message'}
+                                                      ${message?.sender._id === user._id ? 'out-going-message' : 'incoming-message'}
                                                       ${isSameSenderMargin(messages, message, idx, user._id) ?
-                                    'ml-auto rounded-bl-xl ' :
-                                    'ml-0 rounded-br-xl flex-row-reverse'}
-                                                            ${message.messageType === 'image' && 'flex-col-reverse !px-2 pb-5'}
-                                                            ${message.messageType === 'file' && 'flex-col-reverse pb-6 p-2'}`}
+                                                            'ml-auto rounded-bl-xl' :
+                                                            'ml-0 rounded-br-xl flex-row-reverse'}`}
                   >
                         {/* Reply Message */}
                         {message.replyMessage?._id && (
@@ -104,17 +102,15 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                         {message.sender._id === user._id && (
                               <MessageArrow className='message-arrow-left' />
                         )}
-                        <div className={`flex w-full items-center ${message.replyMessage ? 'flex-col' : 'flex-row'}  ${!incomingMessage ? 'flex-row-reverse ml-2' : 'mr-2'}`}>
-                              {renderMessageContent(message, idx)}
+                        <div className={`flex w-full ${message.replyMessage || message.messageType === 'image' || message.messageType === 'file' ? 'flex-col' : '!flex-row'}  ${!incomingMessage && 'flex-row-reverse'}`}>
+                              {renderMessageContent(message)}
 
-                              <span className={`text-[11px] md:text-xs mr-1 text-gray-200 relative mt-auto mb-1 bottom-0
-                                                            ${message.messageType === 'image' && 'left-2  !absolute z-10'}
-                                                            ${message.messageType === 'file' && 'left-3 !absolute'}
-                                                            ${isSameSenderMargin(messages, message, idx, user._id) ?
-                                          'left-2' : 'text-end !text-gray-200'}`}>
-                                    {formatDate(message.createdAt)}
-                              </span>
-                              <DoneAllIcon className='!text-sm text-gray-200 mt-auto mb-1' />
+                              <div className={`flex my-1 ${incomingMessage ? 'mr-2 flex-row-reverse' : 'ml-2'}`}>
+                                    <DoneAllIcon className='!text-sm text-gray-200 mt-auto' />
+                                    <span className='text-[11px] md:text-xs text-gray-200 relative mt-auto mx-2'>
+                                          {formatDate(message.createdAt)}
+                                    </span>
+                              </div>
                         </div>
                   </div>
             </div>

@@ -8,7 +8,7 @@ interface Props {
 export default function FileMessage ({ message, setSelectedFile }: Props): JSX.Element {
       
       return (
-            <div className="relative">
+            <div className="relative px-2 pt-2">
                   <iframe
                         src={message.content.toString()}
                         title={message.content.toString()}

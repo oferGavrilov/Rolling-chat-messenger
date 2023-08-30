@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { formatRecordTimer, isSameSenderMargin } from '../../../../../utils/functions'
+import { formatRecordTimer } from '../../../../../utils/functions'
 import { IMessage } from '../../../../../model/message.model'
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
@@ -7,12 +7,9 @@ import PauseIcon from '@mui/icons-material/Pause'
 
 interface AudioMessageProps {
       message: IMessage
-      messages: IMessage[]
-      idx: number
-      userId: string
 }
 
-const AudioMessage: React.FC<AudioMessageProps> = ({ message, messages, idx, userId }) => {
+const AudioMessage: React.FC<AudioMessageProps> = ({ message }) => {
       const [isPlaying, setIsPlaying] = useState(false)
       const audioRef = useRef<HTMLAudioElement | null>(null)
       const progressBarRef = useRef<HTMLDivElement | null>(null)
@@ -41,55 +38,56 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message, messages, idx, use
       }
 
       return (
-            <div className="relative w-[240px] max-h-[65px] flex items-center px-2 py-4">
+            <div className="relative max-h-[65px] flex items-center justify-between w-full px-2 py-4">
                   {/* Play/Pause button */}
                   <img
                         src={message.sender.profileImg}
                         alt="profile-image"
-                        className={`${isSameSenderMargin(messages, message, idx, userId) ? '-left-11' : '-right-10'} w-11 h-11 rounded-full object-cover object-top`}
+                        className='w-11 h-11 rounded-full object-cover object-top mx-2'
                   />
 
-                  <button
-                        className=" mr-2"
-                        onClick={togglePlay}
-                  >
-                        {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-                  </button>
+                  <div className='flex items-center'>
+                        <button
+                              className="mr-2"
+                              onClick={togglePlay}
+                        >
+                              {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+                        </button>
 
 
-                  {/* Audio player */}
-                  <audio
-                        ref={audioRef}
-                        onPlay={() => setIsPlaying(true)}
-                        onPause={() => setIsPlaying(false)}
-                        onTimeUpdate={updateProgressBar}
-                        onEnded={() => {
-                              setIsPlaying(false)
-                              progressBarRef.current!.style.width = '0px'
-                        }}
-                  >
-                        <source src={message.content.toString()} type="audio/webm" />
-                        <source src={message.content.toString()} type="audio/mpeg" />
-                        <source src={message.content.toString()} type="audio/wav" />
-                  </audio>
+                        {/* Audio player */}
+                        <audio
+                              ref={audioRef}
+                              onPlay={() => setIsPlaying(true)}
+                              onPause={() => setIsPlaying(false)}
+                              onTimeUpdate={updateProgressBar}
+                              onEnded={() => {
+                                    setIsPlaying(false)
+                                    progressBarRef.current!.style.width = '0px'
+                              }}
+                        >
+                              <source src={message.content.toString()} type="audio/webm" />
+                              <source src={message.content.toString()} type="audio/mpeg" />
+                              <source src={message.content.toString()} type="audio/wav" />
+                        </audio>
 
-                  {/* Progress bar */}
-                  <div className='flex flex-col h-full justify-center'>
-                        <div className="bg-gray-200 w-36 h-2 rounded-lg">
-                              <div
-                                    ref={progressBarRef}
-                                    className="bg-gray-500 h-full transition-all duration-300 ease-linear rounded-lg"
-                                    style={{ width: '0px' }}
-                              />
+                        {/* Progress bar */}
+                        <div className='flex flex-col h-full justify-center'>
+                              <div className="bg-gray-200 w-36 h-2 rounded-lg">
+                                    <div
+                                          ref={progressBarRef}
+                                          className="bg-gray-500 h-full transition-all duration-300 ease-linear rounded-lg"
+                                          style={{ width: '0px' }}
+                                    />
+                              </div>
+                              {message?.messageSize !== 0 && (
+                                    <span className="text-xs text-gray-200 absolute bottom-1 right-4">
+                                          {formatRecordTimer(message.messageSize as number)}
+                                    </span>
+                              )}
                         </div>
-                        {message?.messageSize !== 0 && (
-                              <span className="text-xs text-gray-200 absolute bottom-1 right-4">
-                                    {formatRecordTimer(message.messageSize as number)}
-                              </span>
-                        )}
                   </div>
 
-                  {/* Other message elements */}
             </div>
       )
 }
