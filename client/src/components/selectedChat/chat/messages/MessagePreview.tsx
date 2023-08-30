@@ -17,7 +17,7 @@ import ImageMessage from './message-type/ImageMessage'
 import TextMessage from './message-type/TextMessage'
 
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
-
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 interface Props {
       messages: IMessage[]
       message: IMessage
@@ -36,7 +36,7 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                   return (
                         <div className="text-gray-100 dark:text-gray-400 p-2 flex items-center gap-x-2">
                               <span className="text-xs">This message was deleted</span>
-                              <NotInterestedIcon className="!text-sm !text-gray-200 mb-[2px]"/>
+                              <NotInterestedIcon className="!text-sm !text-gray-200 mb-[2px]" />
                         </div>
                   )
             }
@@ -104,16 +104,17 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                         {message.sender._id === user._id && (
                               <MessageArrow className='message-arrow-left' />
                         )}
-                        <div className={`flex w-full ${message.replyMessage ? 'flex-col' : 'flex-row'}  ${!incomingMessage && 'flex-row-reverse'}`}>
+                        <div className={`flex w-full items-center ${message.replyMessage ? 'flex-col' : 'flex-row'}  ${!incomingMessage ? 'flex-row-reverse ml-2' : 'mr-2'}`}>
                               {renderMessageContent(message, idx)}
 
-                              <span className={`text-[11px] md:text-xs mr-2 text-gray-300 relative mt-auto mb-1 bottom-0
+                              <span className={`text-[11px] md:text-xs mr-1 text-gray-200 relative mt-auto mb-1 bottom-0
                                                             ${message.messageType === 'image' && 'left-2  !absolute z-10'}
                                                             ${message.messageType === 'file' && 'left-3 !absolute'}
                                                             ${isSameSenderMargin(messages, message, idx, user._id) ?
-                                          'left-2' : 'text-end'}`}>
+                                          'left-2' : 'text-end !text-gray-200'}`}>
                                     {formatDate(message.createdAt)}
                               </span>
+                              <DoneAllIcon className='!text-sm text-gray-200 mt-auto mb-1' />
                         </div>
                   </div>
             </div>

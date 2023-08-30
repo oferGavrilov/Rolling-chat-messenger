@@ -12,12 +12,26 @@ type LoginData = {
 export default function Login ({ formik }: LoginProps) {
       return (
             <>
-                  <label htmlFor="email">Email Address</label>
-                  <Field type="email" name="email" onChange={formik.handleChange} value={formik.values.email} id="email" className={`login-input ${formik.errors.email && formik.touched.email ? 'input-error' : ''}`} />
+                  <Field
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                        className={`auth-input ${formik.errors.email && formik.touched.email ? 'input-error' : ''}`}
+                  />
                   <ErrorMessage name="email" component="div" className="error-message" />
 
-                  <label htmlFor="password">Password</label>
-                  <Field type="password" name="password" id="password" onChange={formik.handleChange} value={formik.values.password} className={`login-input ${formik.errors.password && formik.touched.password ? 'input-error' : ''}`} />
+                  <Field
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        className={`auth-input ${formik.errors.password && formik.touched.password ? 'input-error' : ''}`}
+                  />
                   <ErrorMessage name="password" component="div" className="error-message" />
             </>
       )

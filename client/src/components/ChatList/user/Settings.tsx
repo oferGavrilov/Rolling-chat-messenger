@@ -33,21 +33,21 @@ export default function Settings ({ setContentType }: SettingsProps): JSX.Elemen
                         </div>
                   </div>
                   <ul>
-                        <li className='p-4 flex hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer items-center' onClick={() => onSelectSettings('theme')}>
+                        <li className={`settings-option ${selectedSettings === 'theme' && 'bg-gray-100 dark:bg-dark-secondary-bg'}`} onClick={() => onSelectSettings('theme')}>
                               <FormatColorFillOutlinedIcon className='mr-4 text-inherit' />
                               Theme
                         </li>
 
                         <ThemeSelector settings={selectedSettings} />
 
-                        <li className='p-4 mt-1 flex hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer items-center' onClick={() => onSelectSettings('background')}>
+                        <li className={`settings-option mt-1 ${selectedSettings === 'background' && 'bg-gray-100 dark:bg-dark-secondary-bg'}`} onClick={() => onSelectSettings('background')}>
                               <WallpaperOutlinedIcon className='mr-4 text-inherit' />
                               Chat background
                         </li>
 
                         <ChatColorsPalette selectedSettings={selectedSettings} setSelectedSettings={setSelectedSettings} />
 
-                        <li className='p-4 flex hover:bg-gray-100 dark:hover:bg-dark-secondary-bg cursor-pointer items-center' onClick={() => setContentType('chats')}>
+                        <li className='settings-option' onClick={() => setContentType('chats')}>
                               <KeyboardArrowLeftIcon fontSize='small' className='mr-1 text-inherit' />
                               Back
                         </li>

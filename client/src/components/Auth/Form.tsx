@@ -86,11 +86,11 @@ export default function Form (): JSX.Element {
       return (
             <FormikProvider value={formik}>
                   <div className="flex justify-between gap-x-2">
-                        <button className={`login-btn ${isLogin ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`} onClick={() => toggleForm(true)}>Login</button>
-                        <button className={`login-btn ${!isLogin ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`} onClick={() => toggleForm(false)}>Sign Up</button>
+                        <button className={`auth-btn ${isLogin ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`} onClick={() => toggleForm(true)}>Login</button>
+                        <button className={`auth-btn ${!isLogin ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`} onClick={() => toggleForm(false)}>Sign Up</button>
                   </div>
 
-                  <form className="flex flex-col gap-y-4 my-4" onSubmit={formik.handleSubmit}>
+                  <form className="flex flex-col gap-y-4 mt-6 mb-4 text-sm md:text-base" onSubmit={formik.handleSubmit}>
                         {isLogin ? (
                               <Login formik={formik} />) : (
                               <SignUp formik={formik} image={image} setImage={setImage} />

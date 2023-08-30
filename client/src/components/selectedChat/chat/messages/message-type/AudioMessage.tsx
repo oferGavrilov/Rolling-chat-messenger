@@ -41,7 +41,7 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message, messages, idx, use
       }
 
       return (
-            <div className="relative w-[240px] h-[60px] flex items-center px-2">
+            <div className="relative w-[240px] max-h-[65px] flex items-center px-2 py-4">
                   {/* Play/Pause button */}
                   <img
                         src={message.sender.profileImg}
@@ -82,7 +82,11 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message, messages, idx, use
                                     style={{ width: '0px' }}
                               />
                         </div>
-                        {message?.messageSize !== 0 && <span className="text-xs absolute bottom-0">{formatRecordTimer(message.messageSize as number)}</span>}
+                        {message?.messageSize !== 0 && (
+                              <span className="text-xs text-gray-200 absolute bottom-1 right-4">
+                                    {formatRecordTimer(message.messageSize as number)}
+                              </span>
+                        )}
                   </div>
 
                   {/* Other message elements */}
