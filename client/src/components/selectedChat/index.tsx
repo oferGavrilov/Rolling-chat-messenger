@@ -174,7 +174,6 @@ export default function Messenger (): JSX.Element {
       ): Promise<void> {
             if (!selectedChat || !message) return
 
-            console.log('sending message', replyMessage)
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
                   sender: loggedInUser!,
