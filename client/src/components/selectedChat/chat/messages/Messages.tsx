@@ -7,6 +7,7 @@ import { formatMessageSentDate, hasDayPassed, isLastMessage, isSameSender } from
 
 import MessageArrow from "../../../../assets/icons/MessageArrow"
 import MessagePreview from "./MessagePreview"
+import ProfileImage from "../../../common/ProfileImage"
 
 interface Props {
       messages: IMessage[]
@@ -66,15 +67,15 @@ export default function Messages ({ messages, setChatMode, onRemoveMessage }: Pr
                                     {(isSameSender(messages, message, idx, user._id) ||
                                           isLastMessage(messages, idx, user._id)) ? (
                                           <div>
-                                                <img
-                                                      className="h-8 w-8 hidden md:block rounded-full object-cover object-top cursor-pointer hover:scale-110 transition-all duration-300"
+                                                <ProfileImage
+                                                      className="default-profile-img h-8 w-8 hidden md:block hover:scale-110"
                                                       src={message.sender.profileImg}
                                                       alt="conversation-user"
                                                       onClick={() => setChatMode('info')}
                                                 />
                                                 <MessageArrow className='message-arrow' />
                                           </div>
-                                    ) : <span className="md:ml-8"></span>}
+                                    ) : <span className="md:pl-8"></span>}
                               </div>
 
                               <div className="flex flex-col w-full relative">
@@ -88,9 +89,7 @@ export default function Messages ({ messages, setChatMode, onRemoveMessage }: Pr
 
                                     {/* Message */}
                                     <MessagePreview
-                                          messages={messages}
                                           message={message}
-                                          idx={idx}
                                           onReplyMessage={onReplyMessage}
                                           onRemoveMessage={onRemoveMessage}
                                     />

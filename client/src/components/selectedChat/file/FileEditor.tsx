@@ -4,9 +4,10 @@ import SendIcon from '@mui/icons-material/Send'
 import useChat from '../../../store/useChat'
 import { IReplyMessage } from '../../../model/message.model'
 import { IFile } from '../../../model/chat.model'
+import Loading from '../../Loading'
 
 interface Props {
-      file: IFile | null
+      file: IFile | string | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       sendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessage: IReplyMessage | null, recordingTimer?: number) => void
 }
@@ -14,7 +15,6 @@ interface Props {
 export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
 
       const { replyMessage } = useChat()
-      if (!file) return <div></div>
 
       const isImage = typeof file === 'string'
 
@@ -26,19 +26,26 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
 
       return (
             <div className='bg-white h-full dark:bg-dark-secondary-bg relative'>
+
                   <div className={`flex justify-center w-full h-full ${isImage && 'items-center'}`}>
-                        {isImage ? (
-                              <img
-                                    src={file}
-                                    alt="picked-file"
-                                    className="object-contain max-w-[240px] md:max-w-sm drop-shadow-2xl -mt-24 md:-mt-16"
-                              />
+                        {file ? (
+                              <>
+                                    {isImage ? (
+                                          <img
+                                                src={file}
+                                                alt="picked-file"
+                                                className="object-contain max-w-[240px] md:max-w-md drop-shadow-2xl -mt-24 md:-mt-28"
+                                          />
+                                    ) : (
+                                          <iframe
+                                                src={file.url}
+                                                title="picked-pdf"
+                                                className="w-full h-[400px] md:h-[700px] mt-12"
+                                          ></iframe>
+                                    )}
+                              </>
                         ) : (
-                              <iframe
-                                    src={file.url}
-                                    title="picked-pdf"
-                                    className="w-full h-[400px] md:h-[700px] mt-12"
-                              ></iframe>
+                              <Loading />
                         )}
                   </div>
                   <CloseIcon
@@ -53,6 +60,6 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
                               <SendIcon className='rotate-180' />
                         </div>
                   </div>
-            </div>
+            </div >
       )
 }

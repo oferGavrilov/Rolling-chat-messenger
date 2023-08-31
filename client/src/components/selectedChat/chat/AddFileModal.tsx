@@ -15,7 +15,7 @@ import Camera from './Camera'
 import { IFile } from '../../../model/chat.model'
 
 interface Props {
-      setFile: React.Dispatch<React.SetStateAction<IFile | null>>
+      setFile: React.Dispatch<React.SetStateAction<IFile | string | null>>
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
 }
 
@@ -29,6 +29,11 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
 
       const handleCapture = async (image: string) => {
             try {
+                  // Show the file editor immediately and then show the file
+                  setFile(null)
+                  setChatMode('send-file')
+                  setShowCamera(false)
+
                   const blob = await fetch(image).then((r) => r.blob())
                   const file = new File([blob], 'captured-image.jpeg', { type: 'image/jpeg' })
 
@@ -38,8 +43,6 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                   }
 
                   setFile(cloudinaryResponse.url)
-                  setChatMode('send-file')
-                  setShowCamera(false)
             } catch (err) {
                   console.log(err)
                   toast.error('Upload error')
@@ -49,13 +52,16 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
       async function uploadImage (file: File | undefined) {
             if (!file) return toast.error('Upload image went wrong')
             try {
+                  // Show the file editor immediately and then show the file
+                  setFile(null)
+                  setChatMode('send-file')
+
                   const response = await uploadImg(file)
                   if (!response || !response.url) {
                         return toast.error('Invalid response from Cloudinary')
                   }
 
                   setFile(response.url)
-                  setChatMode('send-file')
             } catch (err) {
                   console.log(err)
             }

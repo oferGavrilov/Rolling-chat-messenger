@@ -4,6 +4,7 @@ import { IMessage } from '../../../../../model/message.model'
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
+import ProfileImage from '../../../../common/ProfileImage'
 
 interface AudioMessageProps {
       message: IMessage
@@ -31,7 +32,7 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message }) => {
             if (audioElement && progressBarRef.current) {
                   const currentTime = audioElement.currentTime
                   const duration = audioElement.duration
-                  const progressBarWidth = (currentTime / duration) * 150 // Width in pixels
+                  const progressBarWidth = (currentTime / duration) * 150
 
                   progressBarRef.current.style.width = `${progressBarWidth}px`
             }
@@ -40,10 +41,10 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message }) => {
       return (
             <div className="relative max-h-[65px] flex items-center justify-between w-full px-2 py-4">
                   {/* Play/Pause button */}
-                  <img
+                  <ProfileImage
+                        className='default-profile-img w-11 h-11 mx-1'
                         src={message.sender.profileImg}
                         alt="profile-image"
-                        className='w-11 h-11 rounded-full object-cover object-top mx-2'
                   />
 
                   <div className='flex items-center'>

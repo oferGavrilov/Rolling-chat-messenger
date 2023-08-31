@@ -7,13 +7,14 @@ import Logo from "../assets/icons/Logo"
 import Story from "../assets/icons/Story"
 import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
 
-import { Avatar, Tooltip } from "@mui/material"
+import { Tooltip } from "@mui/material"
 import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import { useClickOutside } from "../custom/useClickOutside"
 import { ContentType } from "../pages/ChatPage"
+import ProfileImage from "./common/ProfileImage"
 interface Props {
       contentType: ContentType
       setContentType: React.Dispatch<React.SetStateAction<ContentType>>
@@ -49,7 +50,7 @@ export default function Navigation ({
             return () => window.removeEventListener('resize', handleResize)
       }, [setShowNavigation])
 
-      function onSelectContentType(contentType: ContentType) {
+      function onSelectContentType (contentType: ContentType) {
             if (window.innerWidth < 768) {
                   setShowNavigation(false)
             }
@@ -62,6 +63,7 @@ export default function Navigation ({
             logout()
       }, [user, logout, setSelectedChat])
 
+      if (!user) return <div></div>
       return (
             <section ref={navigationRef} className={`navigation-container ${showNavigation ? 'w-[70px] opacity-100' : 'opacity-0 w-0 -translate-x-20 pointer-events-none'}`}>
                   <div className='flex flex-col items-center gap-y-5 border-b border-gray-300 py-5 mx-3'>
@@ -70,9 +72,12 @@ export default function Navigation ({
                                     <Logo />
                               </Link>
                         </Tooltip>
-                        <Tooltip title="Profile" arrow placement='right'>
-                              <Avatar src={user?.profileImg} sx={{ width: 45, height: 45 }} className="hover:scale-110 transition-all duration-300 cursor-pointer" onClick={() => setContentType('profile')} />
-                        </Tooltip>
+                        <ProfileImage
+                              className="w-11 h-11 default-profile-img hover:scale-105 hover:shadow-lg shadow-gray-30 dark:shadow-gray-900"
+                              src={user.profileImg}
+                              alt={user.username}
+                              onClick={() => setContentType('profile')}
+                        />
                   </div>
                   <div className="flex flex-col justify-between h-full">
                         <div className="flex flex-col gap-y-4">

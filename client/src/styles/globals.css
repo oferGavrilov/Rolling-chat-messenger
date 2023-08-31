@@ -325,6 +325,10 @@
       .reply-message-color {
             @apply text-gray-300 dark:text-gray-400;
       }
+
+      .default-profile-img {
+            @apply object-cover object-top rounded-full cursor-pointer transition-all duration-300;
+      }
 }
 
 @layer utilities{
@@ -378,10 +382,10 @@
             z-index: -1;
       }
       .out-going-message {
-            @apply bg-primary dark:bg-dark-outgoing-chat-bg;
+            @apply bg-primary dark:bg-dark-outgoing-chat-bg ml-auto rounded-bl-xl;
       }
       .incoming-message {
-            @apply bg-gray-400 dark:bg-dark-incoming-chat-bg;
+            @apply bg-gray-400 dark:bg-dark-incoming-chat-bg ml-0 rounded-br-xl;
       }
       /* End Chat Page */
 

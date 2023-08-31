@@ -6,7 +6,7 @@ import useChat from '../../../../store/useChat'
 import { IMessage } from '../../../../model/message.model'
 import { IUser } from '../../../../model/user.model'
 
-import { formatDate, isSameSenderMargin } from '../../../../utils/functions'
+import { formatDate } from '../../../../utils/functions'
 
 import ReplyMessage from './ReplyMessage'
 import MessageMenu from './MessageMenu'
@@ -19,14 +19,12 @@ import TextMessage from './message-type/TextMessage'
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 interface Props {
-      messages: IMessage[]
       message: IMessage
-      idx: number
       onReplyMessage: (message: IMessage) => void
       onRemoveMessage: (message: IMessage) => void
 }
 
-export default function MessagePreview ({ messages, message, idx, onReplyMessage, onRemoveMessage }: Props): JSX.Element {
+export default function MessagePreview ({ message, onReplyMessage, onRemoveMessage }: Props): JSX.Element {
       const { user } = AuthState() as { user: IUser }
       const { setSelectedFile } = useChat()
 
@@ -73,18 +71,24 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
             onReplyMessage(message)
       }
 
+      function messageStyles ({ replyMessage, messageType }: IMessage) {
+            if (replyMessage || messageType === 'image' || messageType === 'file' ||
+                  (messageType === 'text' && message.content.length >= 40)) {
+                  return 'flex-col'
+            }
+            if (!incomingMessage) return 'flex-row-reverse'
+
+      }
+
       const incomingMessage = message.sender._id !== user?._id
 
       return (
             <div className="select-none message-container" onDoubleClick={() => handleDoubleClick(message)}>
                   <div
-                        className={`select-text relative w-max flex items-center max-w-[75%] text-white rounded-t-2xl  ${message.replyMessage?._id && ' flex-col'}
-                                                      ${message?.sender._id === user._id ? 'out-going-message' : 'incoming-message'}
-                                                      ${isSameSenderMargin(messages, message, idx, user._id) ?
-                                                            'ml-auto rounded-bl-xl' :
-                                                            'ml-0 rounded-br-xl flex-row-reverse'}`}
+                        className={`select-text relative w-max flex items-center max-w-[75%] text-white rounded-t-2xl 
+                                    ${message.replyMessage?._id && 'flex-col'}
+                                    ${message?.sender._id === user._id ? 'out-going-message' : 'incoming-message'}`}
                   >
-                        {/* Reply Message */}
                         {message.replyMessage?._id && (
                               <ReplyMessage
                                     message={message}
@@ -102,7 +106,7 @@ export default function MessagePreview ({ messages, message, idx, onReplyMessage
                         {message.sender._id === user._id && (
                               <MessageArrow className='message-arrow-left' />
                         )}
-                        <div className={`flex w-full ${message.replyMessage || message.messageType === 'image' || message.messageType === 'file' ? 'flex-col' : '!flex-row'}  ${!incomingMessage && 'flex-row-reverse'}`}>
+                        <div className={`flex w-full ${messageStyles(message)}`}>
                               {renderMessageContent(message)}
 
                               <div className={`flex my-1 ${incomingMessage ? 'mr-2 flex-row-reverse' : 'ml-2'}`}>

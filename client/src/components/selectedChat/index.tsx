@@ -29,7 +29,7 @@ export default function Messenger (): JSX.Element {
       const { user: loggedInUser } = AuthState()
 
       const [connectionStatus, setConnectionStatus] = useState<string>('')
-      const [file, setFile] = useState<IFile | null>(null)
+      const [file, setFile] = useState<IFile | string | null>(null)
 
       const conversationUserRef = useRef<IUser | undefined>(undefined)
 
@@ -265,6 +265,7 @@ export default function Messenger (): JSX.Element {
                   <ChatHeader
                         connectionStatus={connectionStatus}
                         conversationUser={conversationUser}
+                        chatMode={chatMode}
                         setChatMode={setChatMode}
                   />
 

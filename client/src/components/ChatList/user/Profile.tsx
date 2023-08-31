@@ -26,24 +26,24 @@ export default function Profile (): JSX.Element {
       })
 
       async function handleEdit () {
-            if (!editType || !user) return;
+            if (!editType || !user) return
 
-            const newValue = userValues[editType as keyof UserValues] as string;
+            const newValue = userValues[editType as keyof UserValues] as string
 
             // Check for special symbols in the input value
-            const specialSymbolsRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
+            const specialSymbolsRegex = /[!@#$%^&*()_+\-=[\]{}':"\\|,.<>/?]+/
             if (specialSymbolsRegex.test(newValue)) {
-                  return toast.error(`Please enter a valid ${editType} without special symbols`);
+                  return toast.error(`Please enter a valid ${editType} without special symbols`)
             }
 
             if (newValue === user?.[editType] || newValue === '') {
-                  return toast.error(`Please enter a valid ${editType}`);
+                  return toast.error(`Please enter a valid ${editType}`)
             }
 
-            const newUser = await userService.editUserDetails(newValue, editType);
-            setUser(newUser);
-            setEditType('');
-            toast.success(`${editType} changed successfully`);
+            const newUser = await userService.editUserDetails(newValue, editType)
+            setUser(newUser)
+            setEditType('')
+            toast.success(`${editType} changed successfully`)
       }
 
       async function handleImageChange (newImage: string): Promise<void> {
