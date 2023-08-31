@@ -24,7 +24,7 @@ export default function Home (): JSX.Element {
 
                               {/* <Carousel /> */}
                         </div>
-                        <WavesBlue className="slide-up" />
+                        <WavesBlue className="slide-up bottom-0 md:-bottom-10 lg:-bottom-20" />
                   </div>
                   <Features />
 

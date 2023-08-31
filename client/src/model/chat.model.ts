@@ -31,6 +31,7 @@ export type LatestMessage = {
       }
       content: string | File
       chat: string
+      deletedBy: string[]
       createdAt: string
       updatedAt: string
 }

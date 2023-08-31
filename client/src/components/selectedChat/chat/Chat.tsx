@@ -14,7 +14,7 @@ interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       messages: IMessage[]
       fetchMessages: () => Promise<void>
-      onRemoveMessage: (message: IMessage) => void
+      onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
 export default function Chat ({

@@ -11,6 +11,9 @@ import { Avatar } from '@mui/material'
 import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
 
+import NotInterestedIcon from '@mui/icons-material/NotInterested'
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+
 interface Props {
       chat: IChat
       notification: IMessage[]
@@ -38,11 +41,10 @@ export default function ChatPreview ({ chat, notification }: Props) {
             }
 
             if (chat.latestMessage?.deletedBy?.length && chat.latestMessage.deletedBy.includes(chat.latestMessage.sender._id)) {
-                  content = (
-                        <div className="text-gray-400 p-2">
-                              <span className="text-xs">This message was deleted</span>
-                        </div>
-                  )
+                  return <div className="text-base flex items-center gap-x-1 text-gray-400 font-thin">
+                        <NotInterestedIcon className='!text-base' />
+                        This message was deleted
+                  </div>
             }
 
             if (chat.latestMessage?.messageType === 'text') {
@@ -93,7 +95,7 @@ export default function ChatPreview ({ chat, notification }: Props) {
       }
       return (
             <li onClick={() => onSelectChat()}
-                  className={`flex items-center rounded-lg justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200
+                  className={`flex items-center rounded-lg justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200 overflow-hidden
                    ${selectedChat?._id === chat._id && 'bg-gray-100 dark:bg-dark-secondary-bg'}`}>
                   <div className="flex items-center w-full">
                         <Avatar src={chat.isGroupChat ? chat.groupImage : getSender(chat.users)?.profileImg} alt='profile-image' />
@@ -106,10 +108,14 @@ export default function ChatPreview ({ chat, notification }: Props) {
                               </div>
                               <div className='flex justify-between'>
                                     <div
-                                          className={`text-base h-6 max-h-[24px] max-w-[250px] ellipsis-text flex items-center
+                                          className={`text-base h-6 max-h-[24px] flex items-center w-full justify-between
                                            ${isNotification() ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}
                                     >
-                                          {getLatestMessage()}
+                                          <span className='max-w-[260px] ellipsis-text pr-2'>{getLatestMessage()}</span>
+
+                                          {chat.latestMessage?.sender._id === loggedinUser?._id && (
+                                                <DoneAllIcon className='!text-base' />
+                                          )}
                                     </div>
                                     {isNotification() && <span className='bg-primary text-white text-sm flex items-center h-5 w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>

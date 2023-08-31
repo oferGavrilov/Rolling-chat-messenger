@@ -8,9 +8,10 @@ import ProfileImage from '../../../../common/ProfileImage'
 
 interface AudioMessageProps {
       message: IMessage
+      userId: string
 }
 
-const AudioMessage: React.FC<AudioMessageProps> = ({ message }) => {
+const AudioMessage: React.FC<AudioMessageProps> = ({ message, userId }) => {
       const [isPlaying, setIsPlaying] = useState(false)
       const audioRef = useRef<HTMLAudioElement | null>(null)
       const progressBarRef = useRef<HTMLDivElement | null>(null)
@@ -39,10 +40,10 @@ const AudioMessage: React.FC<AudioMessageProps> = ({ message }) => {
       }
 
       return (
-            <div className="relative max-h-[65px] flex items-center justify-between w-full px-2 py-4">
+            <div className={`relative max-h-[65px] flex items-center justify-between w-full pr-3 py-4 ${userId === message.sender._id ? 'pr-3' : 'pl-3'}`}>
                   {/* Play/Pause button */}
                   <ProfileImage
-                        className='default-profile-img w-11 h-11 mx-1'
+                        className='default-profile-img w-11 h-11'
                         src={message.sender.profileImg}
                         alt="profile-image"
                   />

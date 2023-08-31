@@ -17,11 +17,12 @@ import ImageMessage from './message-type/ImageMessage'
 import TextMessage from './message-type/TextMessage'
 
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
-import DoneAllIcon from '@mui/icons-material/DoneAll';
+import DoneAllIcon from '@mui/icons-material/DoneAll'
+
 interface Props {
       message: IMessage
       onReplyMessage: (message: IMessage) => void
-      onRemoveMessage: (message: IMessage) => void
+      onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
 export default function MessagePreview ({ message, onReplyMessage, onRemoveMessage }: Props): JSX.Element {
@@ -30,7 +31,7 @@ export default function MessagePreview ({ message, onReplyMessage, onRemoveMessa
 
       const renderMessageContent = (message: IMessage): ReactNode => {
             // If the message is deleted by the sender, show a message that the message was deleted
-            if (message.deletedBy?.length && message.sender._id !== user?._id) {
+            if (message.deletedBy?.length ) {
                   return (
                         <div className="text-gray-100 dark:text-gray-400 py-2 px-4 flex items-center gap-x-1">
                               <NotInterestedIcon className="!text-sm !text-gray-200" />
@@ -59,6 +60,7 @@ export default function MessagePreview ({ message, onReplyMessage, onRemoveMessa
                   return (
                         <AudioMessage
                               message={message}
+                              userId={user._id}
                         />
                   )
             }

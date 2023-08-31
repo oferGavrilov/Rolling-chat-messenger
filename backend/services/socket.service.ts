@@ -107,9 +107,9 @@ export function setupSocketAPI (http: HttpServer) {
                   })
             })
 
-            socket.on('message-removed', async ({ messageId, chatId, chatUsers }) => {
+            socket.on('message-removed', async ({ messageId, chatId, removerId, chatUsers, isLastMessage }) => {
                   chatUsers.forEach((user: User) => {
-                        socket.in(user._id).emit('message removed', { messageId, chatId });
+                        socket.in(user._id).emit('message removed', { messageId, chatId, removerId, isLastMessage });
                   })
             })
 

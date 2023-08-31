@@ -4,11 +4,12 @@ import { useClickOutside } from '../../../../custom/useClickOutside'
 import { IMessage, IReplyMessage } from '../../../../model/message.model'
 import useChat from '../../../../store/useChat'
 import { showSuccessMsg } from '../../../../services/event-bus.service'
+import { AuthState } from '../../../../context/useAuth'
 
 interface Props {
       message: IMessage
       incomingMessage: boolean
-      onRemoveMessage: (message: IMessage) => void
+      onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
 export default function MessageMenu ({ message, incomingMessage, onRemoveMessage }: Props): JSX.Element {
@@ -16,6 +17,7 @@ export default function MessageMenu ({ message, incomingMessage, onRemoveMessage
       const menuRef = useRef<HTMLDivElement>(null)
 
       const { setReplyMessage } = useChat()
+      const { user } = AuthState()
 
       useClickOutside(menuRef, () => setIsOpen(false), isOpen)
 
@@ -36,6 +38,11 @@ export default function MessageMenu ({ message, incomingMessage, onRemoveMessage
             showSuccessMsg
       }
 
+      function removeMessage (): void {
+            onRemoveMessage(message, user?._id as string)
+            setIsOpen(false)
+      }
+
       return (
             <>
                   <div className={`message-menu-icon ${incomingMessage ? 'right-1 rounded-bl-2xl' : 'left-1 rounded-br-2xl'} ${isOpen && 'pointer-events-none'}`} onClick={() => setIsOpen(true)}>
@@ -48,7 +55,7 @@ export default function MessageMenu ({ message, incomingMessage, onRemoveMessage
                               <li className='message-menu-option rounded-t-lg' onClick={onReplyMessage}>Reply</li>
                               <li className='message-menu-option'>Forward</li>
                               <li className='message-menu-option' onClick={onCopyToClipboard}>Copy</li>
-                              <li className='message-menu-option' onClick={() => onRemoveMessage(message)}>Delete</li>
+                              <li className='message-menu-option' onClick={removeMessage}>Delete</li>
                         </ul>
                   </div>
             </>

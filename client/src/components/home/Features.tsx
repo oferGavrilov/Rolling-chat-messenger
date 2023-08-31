@@ -45,7 +45,7 @@ export default function Features () {
                               </div>
                         </div>
                   </div>
-                  <WavesWhite />
+                  <WavesWhite className="bottom-0 md:-bottom-10 lg:-bottom-20"/>
             </div>
       )
 }

@@ -61,19 +61,6 @@ export default function Messenger (): JSX.Element {
       })
 
       useEffect(() => {
-            socketService.on('message removed', ({ messageId, userId }: { messageId: string, userId: string }) => {
-                  console.log('message removed', messageId, userId)
-                  setSelectedChat({ ...selectedChat } as IChat)
-                  // const isLastMessage = messages.length > 0 && messages[messages.length - 1]._id === messageId;
-
-            })
-
-            return () => {
-                  socketService.off('message removed')
-            }
-      }, [messages])
-
-      useEffect(() => {
             const handleKickUser = (chatId: string, userId: string, kickerId: string, chat: IChat | null) => {
                   if (chat?._id === chatId) {
                         if (!selectedChat) return
@@ -184,7 +171,8 @@ export default function Messenger (): JSX.Element {
                   updatedAt: new Date().toISOString(),
                   replyMessage,
                   messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
-                  deletedBy: []
+                  deletedBy: [],
+                  isRead: false,
             }
 
             // Show the message immediately
@@ -240,13 +228,15 @@ export default function Messenger (): JSX.Element {
             }
       }
 
-      async function onRemoveMessage (message: IMessage) {
+      async function onRemoveMessage (message: IMessage, removerId: string) {
             try {
                   await messageService.removeMessage(message._id, selectedChat?._id as string)
-                  setMessages(messages.filter((msg) => msg._id !== message._id))
+                  setMessages(messages.map((msg) => msg._id === message._id ? { ...msg, deletedBy: [...msg.deletedBy, removerId] } : msg))
+                  // setMessages(messages.filter((msg) => msg._id !== message._id))
 
-                  socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, chatUsers: selectedChat?.users })
-                  console.log('Message removed')
+                  const isLastMessage = messages.length > 0 && messages[messages.length - 1]._id === message._id;
+
+                  socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, removerId, chatUsers: selectedChat?.users, isLastMessage })
 
             } catch (error) {
                   console.log(error)

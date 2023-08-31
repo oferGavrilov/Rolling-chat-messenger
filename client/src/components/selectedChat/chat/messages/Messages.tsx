@@ -12,7 +12,7 @@ import ProfileImage from "../../../common/ProfileImage"
 interface Props {
       messages: IMessage[]
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
-      onRemoveMessage: (message: IMessage) => void
+      onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
 export default function Messages ({ messages, setChatMode, onRemoveMessage }: Props): JSX.Element {

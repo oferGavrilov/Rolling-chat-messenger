@@ -14,13 +14,13 @@ interface ChatActions {
       setChats: (chats: IChat[]) => void
       addChat: (chat: IChat) => void
       removeChat: (chat: IChat) => void
-      clearChats: () => void
+      updateChat: (latestMessage: IMessage) => void
       setSelectedChat: (chat: IChat | null) => void
       addNotification: (notification: IMessage) => void
       removeNotification: (notification: IMessage | undefined) => void
-      updateChat: (latestMessage: IMessage) => void
       setSelectedFile: (file: IMessage | null) => void
       setReplyMessage: (message: IReplyMessage | null) => void
+      // removeMessage: (message: IMessage, removerId: string) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -39,7 +39,6 @@ export const useChat = create<ChatState & ChatActions>((set) => {
             setChats: (chats) => set({ chats }),
             addChat: (chat) => set((state) => ({ chats: [...state.chats, chat] })),
             removeChat: (chat) => set((state) => ({ chats: state.chats.filter((c) => c._id !== chat._id) })),
-            clearChats: () => set({ chats: [] }),
             setSelectedChat: (chat) => set({ selectedChat: chat }),
             setSelectedFile: (file) => set({ selectedFile: file }),
             setReplyMessage: (message) => set({ replyMessage: message }),
