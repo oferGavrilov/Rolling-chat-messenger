@@ -8,6 +8,9 @@ import { RequestChat } from '../../models/chat.model.js'
 export async function createChat (req: RequestChat, res: Response) {
       const { userId, currentUserId } = req.body
 
+      if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
+      if (!currentUserId) return res.status(400).json({ message: 'No current user id sent to the server' })
+
       try {
             const chat = await createChatService(userId, currentUserId)
             res.status(200).json(chat)
@@ -107,6 +110,9 @@ export async function kickFromGroupChat (req: RequestChat, res: Response) {
 export async function leaveGroup (req: RequestChat, res: Response) {
       const { chatId, userId } = req.body
 
+      if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
+      if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
+
       try {
             const removedChat = await leaveGroupService(chatId, userId)
             res.status(200).send(removedChat)
@@ -117,6 +123,9 @@ export async function leaveGroup (req: RequestChat, res: Response) {
 
 export async function removeChat (req: RequestChat, res: Response) {
       const { chatId, userId } = req.body
+
+      if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
+      if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
 
       try {
             const removedChat = await removeChatService(chatId, userId)

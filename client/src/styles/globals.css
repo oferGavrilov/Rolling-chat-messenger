@@ -207,11 +207,11 @@
       }
       .message-menu-container {
             @apply 
-            absolute z-30 top-2
+            absolute z-30 top-7
             rounded-lg
             dark:bg-dark-dropdown-bg;
             &.incoming-message {
-                  @apply -right-40;
+                  @apply -right-20 md:-right-40;
                   & li {
                        @apply 
                        bg-gray-500 hover:bg-gray-600

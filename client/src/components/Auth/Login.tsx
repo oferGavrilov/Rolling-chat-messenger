@@ -17,6 +17,7 @@ export default function Login ({ formik }: LoginProps) {
                         name="email"
                         id="email"
                         placeholder="Enter your email"
+                        maximum-scale={1}
                         value={formik.values.email}
                         onChange={formik.handleChange}
                         className={`auth-input ${formik.errors.email && formik.touched.email ? 'input-error' : ''}`}

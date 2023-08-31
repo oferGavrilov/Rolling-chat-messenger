@@ -52,32 +52,32 @@ export function setupSocketAPI (http: HttpServer) {
             })
 
             socket.on('join chat', ({ chatId: room, userId }) => {
-                  socket.handshake.auth.lastActivity = Date.now();
-                  socket.join(room);
-                  console.log(`Socket [id: ${socket.id}] joined room: ${room}`);
-                  updateUserActivity(userId);
-            });
+                  socket.handshake.auth.lastActivity = Date.now()
+                  socket.join(room)
+                  console.log(`Socket [id: ${socket.id}] joined room: ${room}`)
+                  updateUserActivity(userId)
+            })
 
             socket.on('leave chat', ({ chatId: room, userId }) => {
-                  socket.handshake.auth.lastActivity = Date.now();
-                  socket.leave(room);
-                  console.log(`Socket [id: ${socket.id}] left room: ${room}`);
-                  updateUserActivity(userId);
-            });
+                  socket.handshake.auth.lastActivity = Date.now()
+                  socket.leave(room)
+                  console.log(`Socket [id: ${socket.id}] left room: ${room}`)
+                  updateUserActivity(userId)
+            })
 
             socket.on('typing', ({ chatId: room, userId }) => {
-                  socket.in(room).emit('typing', room, userId);
-                  updateUserActivity(userId);
-            });
+                  socket.in(room).emit('typing', room, userId)
+                  updateUserActivity(userId)
+            })
 
             socket.on('stop typing', ({ chatId: room, userId }) => {
-                  socket.in(room).emit('stop typing');
-                  updateUserActivity(userId);
-            });
+                  socket.in(room).emit('stop typing')
+                  updateUserActivity(userId)
+            })
 
             socket.on('new message', (newMessageReceived) => {
                   console.log('new message received', newMessageReceived)
-                  socket.handshake.auth.lastActivity = Date.now();
+                  socket.handshake.auth.lastActivity = Date.now()
                   let chat = newMessageReceived.chat
                   if (!chat) return console.log(`Socket [id: ${socket.id}] tried to send a message without a chat`)
                   if (!chat?.users) return console.log(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
@@ -90,26 +90,34 @@ export function setupSocketAPI (http: HttpServer) {
             })
 
             socket.on('kick-from-group', async ({ chatId, userId, kickerId }) => {
-                  socket.in(userId).emit('user-kicked', { chatId, userId, kickerId });
-            });
+                  console.log(`user: ${kickerId} kicked user: ${userId} from chat: ${chatId}`)
+
+                  socket.in(userId).emit('user-kicked', { chatId, userId, kickerId })
+            })
 
             socket.on('add-to-group', async ({ chatId, users, adderId }: { chatId: string, users: User[], adderId: string }) => {
+                  console.log(`user: ${adderId} added users: ${users.map(user => user._id)} to chat: ${chatId}`)
+
                   users.forEach((user: User) => {
-                        socket.in(user._id).emit('user-joined', { chatId, user, adderId });
+                        socket.in(user._id).emit('user-joined', { chatId, user, adderId })
                   })
             })
 
             socket.on('leave-from-group', async ({ chatId, userId, chatUsers }) => {
+                  console.log(`user: ${userId} left chat: ${chatId}`)
+
                   chatUsers.forEach((user: User) => {
                         if (user._id !== userId) {
-                              socket.in(user._id).emit('user-left', { chatId, userId });
+                              socket.in(user._id).emit('user-left', { chatId, userId })
                         }
                   })
             })
 
             socket.on('message-removed', async ({ messageId, chatId, removerId, chatUsers, isLastMessage }) => {
+                  console.log(`user: ${removerId} removed message: ${messageId} from chat: ${chatId}`)
+
                   chatUsers.forEach((user: User) => {
-                        socket.in(user._id).emit('message removed', { messageId, chatId, removerId, isLastMessage });
+                        socket.in(user._id).emit('message removed', { messageId, chatId, removerId, isLastMessage })
                   })
             })
 
@@ -134,9 +142,9 @@ export function setupSocketAPI (http: HttpServer) {
 
       // Define a function to update lastActivity for a user
       function updateUserActivity (userId: string) {
-            const userSocket = activeUsers.get(userId);
+            const userSocket = activeUsers.get(userId)
             if (userSocket) {
-                  userSocket.handshake.auth.lastActivity = Date.now();
+                  userSocket.handshake.auth.lastActivity = Date.now()
                   userSocket.emit('login', userId)
                   console.log('User logged in due to activity:', userId)
                   updateUserStatus(userId, true)

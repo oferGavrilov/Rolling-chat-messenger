@@ -119,7 +119,7 @@ export default function TextPanel ({
                                                 />
                                           </div>}
                                           <textarea
-                                                className='bg-light-input-bg hide-scrollbar flex dark:text-white dark:bg-dark-input-bg w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-tr-xl py-2 focus-visible:outline-none  focus:overflow-y-auto '
+                                                className='bg-light-input-bg hide-scrollbar flex dark:text-white dark:bg-dark-input-bg w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-tr-xl py-2 focus-visible:outline-none focus:overflow-y-auto'
                                                 placeholder='Type a message...'
                                                 value={newMessage}
                                                 maxLength={201}

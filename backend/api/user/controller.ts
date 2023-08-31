@@ -56,8 +56,8 @@ export async function login (req: AuthenticatedRequest, res: Response) {
       }
 }
 
-export async function logoutUser (req: Request, res: Response) {
-      const userId = (req as AuthenticatedRequest).user?._id
+export async function logoutUser (req: AuthenticatedRequest, res: Response) {
+      const userId = req.user?._id
 
       try {
             await updateUserStatus(userId, false)
@@ -83,6 +83,8 @@ export async function searchUsersByKeyword (req: Request, res: Response) {
 export async function getUsers (req: AuthenticatedRequest, res: Response) {
       const loggedInUserId = req.user?._id
       const { userId } = req.params
+
+      if(!userId) return res.status(400).json({ message: 'No user id sent to the server' })
 
       try {
             const users = await getUsersService(loggedInUserId, userId)

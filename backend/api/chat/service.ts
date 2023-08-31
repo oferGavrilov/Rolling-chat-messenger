@@ -1,12 +1,10 @@
 import { User } from "../../models/user.model.js"
 import { Chat, type ChatDocument } from "../../models/chat.model.js"
-import mongoose, { Types, type PopulateOptions } from "mongoose"
+import mongoose, { Types } from "mongoose"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { Message } from "../../models/message.model.js"
 
-
 export async function createChatService (receiverId: string, senderId: string): Promise<ChatDocument> {
-      console.log('createChatService', receiverId, senderId)
       if (!receiverId) {
             console.log('No user id sent to the server')
             throw new Error('No user id sent to the server')
@@ -281,7 +279,6 @@ export async function removeChatService (chatId: string, userId: string): Promis
       if (!chatId || !userId) {
             throw new Error('Please fill all the fields')
       }
-      console.log('removeChatService', chatId, userId)
 
       try {
             const chat = await Chat.findById(chatId)
