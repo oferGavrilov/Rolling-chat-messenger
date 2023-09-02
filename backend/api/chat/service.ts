@@ -61,27 +61,24 @@ export async function getUserChatsService (userId: string): Promise<ChatDocument
       ]
 
       try {
-            const userIdObject = new mongoose.Types.ObjectId(userId)
 
-            const result = await Chat.find({
+            const chats = await Chat.find({
                   $or: [
-                        { users: userIdObject },
-                        { "kickedUsers.userId": userIdObject },
+                        { users: userId },
+                        { "kickedUsers.userId": userId },
                   ]
             }).populate(populateOptions)
 
             // Filter out chats where the user's ID exists in the deletedBy array
-            const filteredResult = result.filter(chat =>
-                  !chat.deletedBy.some(deleted => deleted.userId.equals(userIdObject))
+            const filteredChats = chats.filter(chat =>
+                  !chat.deletedBy.some(deleted => deleted.userId.equals(userId))
             )
 
-            return filteredResult
+            return filteredChats
       } catch (error) {
             throw handleErrorService(error)
       }
 }
-
-
 
 export async function createGroupChatService (users: User[], chatName: string, groupImage: string | undefined, currentUser: User): Promise<ChatDocument> {
 

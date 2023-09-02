@@ -10,19 +10,24 @@
       
       ::-webkit-scrollbar {
             width: 5px;
-          }
+      }
           
-          ::-webkit-scrollbar-thumb {
+      ::-webkit-scrollbar-thumb {
             background-color: #909090;
             border-radius: 3rem;
-          }
+      }
           
-          ::-webkit-scrollbar-track {
+      ::-webkit-scrollbar-track {
             background-color: #CBD5E0;
-          }
+      }
 
       :focus-visible {
             outline: none;
+      }
+
+      textarea{
+            resize: none;
+            border-radius: none;
       }
 
       @font-face {
@@ -387,8 +392,6 @@
       .incoming-message {
             @apply bg-gray-400 dark:bg-dark-incoming-chat-bg ml-0 rounded-br-xl;
       }
-      /* End Chat Page */
-
       .input-arrow {
             position: absolute;
             bottom: -0.1875rem;
@@ -399,7 +402,6 @@
             font-size: 1rem !important;
             @apply fill-[#e5e7eb] dark:fill-[#2a3942];
       }
-      
       .message-arrow {
             position: absolute;
             display: block;
@@ -416,7 +418,6 @@
             transform: scale(-1, 1);
             @apply fill-[#9ca3af] dark:fill-[#202c33];
       }
-      
       .message-arrow-left {
             position: absolute;
             display: block;
@@ -429,8 +430,7 @@
 
             @apply fill-[#0099ff] dark:fill-[#005c4b];
       }
-
-     
+      /* End Chat Page */
 }
 
 /* MUI */

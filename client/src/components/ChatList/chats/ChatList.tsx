@@ -12,7 +12,6 @@ export default function ChatList ({ chats }: { chats: IChat[] }) {
       const { user } = AuthState()
       const isMountedRef = useRef<boolean>(false)
 
-
       useEffect(() => {
             if (!user) return
 
@@ -39,7 +38,6 @@ export default function ChatList ({ chats }: { chats: IChat[] }) {
 
                   // if the message that was removed while the user was in the chat
                   if (selectedChat?._id === chatId) {
-                        console.log('selectedChat')
                         setSelectedChat({ ...selectedChat })
                   }
 
@@ -57,35 +55,10 @@ export default function ChatList ({ chats }: { chats: IChat[] }) {
                               if (!deletedByArray.includes(removerId)) {
                                     deletedByArray.push(removerId);
                                     chatToUpdate.latestMessage.deletedBy = deletedByArray;
-                                    // Now you can set the state to the updated chats array
-                                    console.log('updatedChats', updatedChats[chatIndex])
                                     setChats(updatedChats);
                               }
                         }
                   }
-
-
-
-                  // setSelectedChat({ ...selectedChat } as IChat)
-
-
-                  // const chatIndex = chats.findIndex((chat) => chat._id === selectedChat?._id);
-                  // if (chatIndex !== -1) {
-                  //       const updatedChats = [...chats];
-                  //       const chatToUpdate = updatedChats[chatIndex];
-
-                  //       if (chatToUpdate.latestMessage) {
-                  //             const deletedByArray = chatToUpdate.latestMessage.deletedBy || [];
-                  //             if (!deletedByArray.includes(userId)) {
-                  //                   deletedByArray.push(userId);
-                  //                   chatToUpdate.latestMessage.deletedBy = deletedByArray;
-                  //                   // Now you can set the state to the updated chats array
-                  //                   console.log('updatedChats', updatedChats[chatIndex])
-                  //                   setChats(updatedChats);
-                  //             }
-                  //       }
-                  // }
-
             })
 
             return () => {
@@ -103,7 +76,6 @@ export default function ChatList ({ chats }: { chats: IChat[] }) {
                               }
                               addNotification(newMessage)
                               updateChat(newMessage)
-                              document.title = `${notification.length > 0 ? `(${notification.length})` : ""} Rolling`
                         }
                   }
             })

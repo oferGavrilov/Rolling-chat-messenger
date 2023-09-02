@@ -20,12 +20,7 @@ export async function createChat (req: RequestChat, res: Response) {
 }
 
 export async function getUserChats (req: RequestChat, res: Response) {
-      const { userId } = req.params
-
-      if (!userId) {
-            console.log('No user id sent to the server')
-            return res.status(400).json({ message: 'No user id sent to the server' })
-      }
+      const userId = req.user?._id
 
       try {
             const result = await getUserChatsService(userId)

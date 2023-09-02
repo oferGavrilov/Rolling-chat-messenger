@@ -102,54 +102,54 @@ export function formatLastSeenDate (timestamp: string): string {
 }
 
 export function formatMessageSentDate (timestamp: string): string {
-  if (!timestamp) return '';
+  if (!timestamp) return ''
 
-  const sentDate = new Date(timestamp);
-  const currentDate = new Date();
+  const sentDate = new Date(timestamp)
+  const currentDate = new Date()
 
   if (
     sentDate.getDate() === currentDate.getDate() &&
     sentDate.getMonth() === currentDate.getMonth() &&
     sentDate.getFullYear() === currentDate.getFullYear()
   ) {
-    return 'Today';
+    return 'Today'
   } else if (
     sentDate.getDate() === currentDate.getDate() - 1 &&
     sentDate.getMonth() === currentDate.getMonth() &&
     sentDate.getFullYear() === currentDate.getFullYear()
   ) {
-    return 'Yesterday';
+    return 'Yesterday'
   } else {
-    const day = sentDate.getDate().toString().padStart(2, '0');
-    const month = (sentDate.getMonth() + 1).toString().padStart(2, '0');
-    const year = sentDate.getFullYear();
-    return `${day}/${month}/${year}`;
+    const day = sentDate.getDate().toString().padStart(2, '0')
+    const month = (sentDate.getMonth() + 1).toString().padStart(2, '0')
+    const year = sentDate.getFullYear()
+    return `${day}/${month}/${year}`
   }
 }
 
 
 export function hasDayPassed (timestamp1: string, timestamp2: string): boolean {
   if (!timestamp1 || !timestamp2) {
-    return false; // If any of the timestamps is missing, consider day not passed
+    return false // If any of the timestamps is missing, consider day not passed
   }
 
-  const date1 = new Date(timestamp1);
-  const date2 = new Date(timestamp2);
+  const date1 = new Date(timestamp1)
+  const date2 = new Date(timestamp2)
 
   return (
     date1.getDate() !== date2.getDate() ||
     date1.getMonth() !== date2.getMonth() ||
     date1.getFullYear() !== date2.getFullYear()
-  );
+  )
 }
 
 export function formatRecordTimer (timeInMilliseconds: number): string {
   if (timeInMilliseconds === 0) return '00:00'
 
-  const totalSeconds = Math.floor(timeInMilliseconds / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const totalSeconds = Math.floor(timeInMilliseconds / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
 export function startTypingTimeout (callback: () => void, delay: number): NodeJS.Timeout {

@@ -14,6 +14,7 @@ export interface ChatDocument {
   deletedBy: DeletedBy[]
   kickedUsers?: KickedUsers[]
   lastSeen?: Date
+  unreadMessages?: number
 }
 
 type DeletedBy = {
