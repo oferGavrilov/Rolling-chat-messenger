@@ -82,12 +82,9 @@ export async function searchUsersByKeyword (req: Request, res: Response) {
 
 export async function getUsers (req: AuthenticatedRequest, res: Response) {
       const loggedInUserId = req.user?._id
-      const { userId } = req.params
-
-      if(!userId) return res.status(400).json({ message: 'No user id sent to the server' })
 
       try {
-            const users = await getUsersService(loggedInUserId, userId)
+            const users = await getUsersService(loggedInUserId)
             res.send(users)
       } catch (error: any) {
             throw handleErrorService(error)

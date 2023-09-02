@@ -187,6 +187,7 @@ export default function Messenger (): JSX.Element {
                         const targetUser: string = selectedChat.users.find((user) => user._id !== loggedInUser?._id)?._id as string
                         chatToUpdate = await chatService.createChat(targetUser)
                         if (!chatToUpdate) throw new Error('Failed to create chat')
+                        setSelectedChat(chatToUpdate)
                         chatToUpdate.latestMessage = optimisticMessage
                         setChats([chatToUpdate, ...chats])
                   }

@@ -19,13 +19,15 @@ export default function ChatInfo ({ conversationUser, messages }: Props): JSX.El
       const { chats, setChats, selectedChat, setSelectedChat } = useChat()
       const { user } = AuthState()
 
+      console.log('ChatInfo rendered', selectedChat)
       async function onRemoveChat () {
-            const chat = chats.find(chat => chat._id === selectedChat?._id)
+            // const chat = chats.find(chat => chat._id === selectedChat?._id)
 
-            if (!chat || !user) return toast.error('Something went wrong')
+            // if (!chat || !user) return toast.error('Something went wrong')
 
+            if (!selectedChat || !user) return toast.error('Something went wrong')
             try {
-                  await chatService.removeChat(chat._id, user._id)
+                  await chatService.removeChat(selectedChat._id, user._id)
 
                   const newChats = chats.filter(chat => chat._id !== selectedChat?._id)
                   setChats(newChats)
@@ -41,7 +43,7 @@ export default function ChatInfo ({ conversationUser, messages }: Props): JSX.El
                         <UserInfo user={conversationUser} />
 
                         <div className="[&>*]:border-t-[6px] last:border-t-0 flex flex-col h-full w-full [&>*]:border-gray-200 dark:[&>*]:border-[#2f3e46]">
-                              <AboutUser user={conversationUser}/>
+                              <AboutUser user={conversationUser} />
 
                               <MediaFiles messages={messages} />
 

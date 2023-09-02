@@ -117,7 +117,7 @@ export default function ChatPreview ({ chat, notification }: Props) {
                                                 <DoneAllIcon className='!text-base' />
                                           )}
                                     </div>
-                                    {isNotification() && <span className='bg-primary text-white text-sm flex items-center h-5 w-5 justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
+                                    {isNotification() && <span className='bg-primary text-white text-sm flex items-center px-2 pr-[9px] justify-center rounded-full'>{getCurrentNotificationChat()?.count}</span>}
                               </div>
                         </div>
                   </div>

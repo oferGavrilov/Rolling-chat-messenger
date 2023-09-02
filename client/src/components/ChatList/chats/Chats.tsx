@@ -63,12 +63,18 @@ export default function Chats ({ contentType }: MessagesProps) {
             socketService.on('user-left', loadChats)
 
             async function loadChats (): Promise<void> {
-                  setIsLoading(true)
-                  const user = await userService.getLoggedinUser()
-                  if (!user) return
-                  const chats = await chatService.getUserChats(user._id)
-                  setChats(chats)
-                  setIsLoading(false)
+                  try {
+                        setIsLoading(true)
+                        const user = userService.getLoggedinUser()
+                        if (!user) return
+                        const chats = await chatService.getUserChats(user._id)
+                        setChats(chats)
+
+                  } catch (err) {
+                        console.log(err)
+                  } finally {
+                        setIsLoading(false)
+                  }
             }
 
             loadChats()

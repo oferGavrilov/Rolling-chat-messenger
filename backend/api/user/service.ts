@@ -85,10 +85,10 @@ export async function updateUserStatus (userId: string, connectionStatus: boolea
             await User.findByIdAndUpdate(
                   userId,
                   { isOnline: connectionStatus, lastSeen: new Date() },
-                  { new: true } // Set { new: true } to return the updated user after the update
-            );
+                  { new: true } 
+            )
       } catch (error: any) {
-            throw error;
+            throw handleErrorService(error)
       }
 }
 
@@ -110,18 +110,10 @@ export async function searchUsers (keyword: string): Promise<User[]> {
       }
 }
 
-export async function getUsersService (loggedInUserId: string, userId?: string): Promise<User[]> {
+export async function getUsersService (loggedInUserId: string): Promise<User[]> {
       try {
-            if (userId) {
-                  const user = await User.findOne({ _id: userId });
-                  if (!user) {
-                        throw new Error('User not found')
-                  }
-                  return [user]
-            } else {
-                  const users = await User.find({ _id: { $ne: loggedInUserId } })
-                  return users
-            }
+            const users = await User.find({ _id: { $ne: loggedInUserId } })
+            return users
       } catch (error: any) {
             throw handleErrorService(error)
       }

@@ -8,7 +8,8 @@ const messageModel = new mongoose.Schema({
       messageType: { type: String, default: 'text' },
       replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
       messageSize: { type: Number, default: 0 },
-      deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
+      deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
+      isRead: { type: Boolean, default: false }
 },
       { timestamps: true }
 )
@@ -40,10 +41,11 @@ export interface IMessage extends Document {
       content: string
       chat: string
       messageType: string
+      deletedBy: string[]
+      isRead: boolean
       messageSize?: number
       createdAt: Date
       updatedAt: Date
-      deletedBy: string[]
 }
 
 export const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageModel)

@@ -5,10 +5,6 @@ import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { Message } from "../../models/message.model.js"
 
 export async function createChatService (receiverId: string, senderId: string): Promise<ChatDocument> {
-      if (!receiverId) {
-            console.log('No user id sent to the server')
-            throw new Error('No user id sent to the server')
-      }
 
       const user = await User.findById(receiverId)
 
@@ -54,9 +50,6 @@ export async function createChatService (receiverId: string, senderId: string): 
 }
 
 export async function getUserChatsService (userId: string): Promise<ChatDocument[]> {
-      if (!userId) {
-            throw new Error('No user id sent to the server')
-      }
 
       const populateOptions = [
             { path: "users", select: "-password" },
@@ -91,9 +84,6 @@ export async function getUserChatsService (userId: string): Promise<ChatDocument
 
 
 export async function createGroupChatService (users: User[], chatName: string, groupImage: string | undefined, currentUser: User): Promise<ChatDocument> {
-      if (!users || !chatName) {
-            throw new Error('Please fill all the fields')
-      }
 
       const usersIds = users.map((user) => user._id)
 
@@ -125,9 +115,6 @@ export async function createGroupChatService (users: User[], chatName: string, g
 }
 
 export async function renameGroupChatService (chatId: string, groupName: string): Promise<string> {
-      if (!chatId || !groupName) {
-            throw new Error('Please fill all the fields')
-      }
 
       try {
             await Chat.findByIdAndUpdate(
@@ -143,9 +130,6 @@ export async function renameGroupChatService (chatId: string, groupName: string)
 }
 
 export async function updateGroupImageService (chatId: string, groupImage: string): Promise<string> {
-      if (!chatId || !groupImage) {
-            return Promise.reject(new Error('Please fill all the fields'))
-      }
 
       try {
             await Chat.findByIdAndUpdate(chatId, { groupImage }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
@@ -182,9 +166,6 @@ export async function updateUsersInGroupChatService (chatId: string, users: User
 }
 
 export async function kickFromGroupChatService (chatId: string, userId: string, kickedByUserId: string): Promise<ChatDocument> {
-      if (!chatId || !userId || !kickedByUserId) {
-            throw new Error('Please fill all the fields')
-      }
 
       try {
             const kicked = await Chat.findByIdAndUpdate(
@@ -213,10 +194,6 @@ export async function kickFromGroupChatService (chatId: string, userId: string, 
 }
 
 export async function leaveGroupService (chatId: string, userId: string): Promise<string> {
-      if (!chatId || !userId) {
-            throw new Error('Please fill all the fields')
-      }
-
 
       try {
             const chat: ChatDocument | null = await Chat.findById(chatId)
@@ -276,10 +253,6 @@ export async function leaveGroupService (chatId: string, userId: string): Promis
 }
 
 export async function removeChatService (chatId: string, userId: string): Promise<string> {
-      if (!chatId || !userId) {
-            throw new Error('Please fill all the fields')
-      }
-
       try {
             const chat = await Chat.findById(chatId)
 

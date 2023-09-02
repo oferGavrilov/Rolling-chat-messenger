@@ -5,11 +5,6 @@ import { PopulatedDoc } from "mongoose"
 
 export async function sendMessageService (senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
 
-      if (!content) throw new Error('No content passed into request')
-      if (!chatId) throw new Error('No chatId passed into request')
-      if (!messageType) throw new Error('No messageType passed into request')
-      if (!senderId) throw new Error('No senderId passed into request')
-
       try {
             const newMessage = {
                   sender: senderId,
@@ -51,9 +46,6 @@ export async function sendMessageService (senderId: string, content: string, cha
 }
 
 export async function getAllMessagesByChatId (chatId: string, userId: string) {
-      if (!chatId) {
-            throw new Error('Invalid message data passed into request')
-      }
 
       try {
             const messages = await Message.find({ chat: chatId, deletedBy: { $ne: userId } })
@@ -69,6 +61,14 @@ export async function getAllMessagesByChatId (chatId: string, userId: string) {
                   });
 
             return messages
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
+export async function readMessagesService (chatId: string, userId: string): Promise<void> {
+      try {
+            await Message.updateMany({ chat: chatId, sender: { $ne: userId } }, { isRead: true })
       } catch (error: any) {
             throw handleErrorService(error)
       }

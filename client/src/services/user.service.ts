@@ -29,11 +29,9 @@ export function getLoggedinUser () {
       return null
 }
 
-async function getUsers (userId?: string): Promise<IUser[] | IUser> {
+async function getUsers (): Promise<IUser[] | IUser> {
       try {
-            const apiUrl = userId ? `/api/auth/all/${userId}` : '/api/auth/all'
-
-            return httpService.get(apiUrl)
+            return await httpService.get('/api/auth/all')
       } catch (error) {
             console.error(error)
             throw error

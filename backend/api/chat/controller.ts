@@ -3,7 +3,7 @@ import type { Response } from 'express'
 import type { User } from '../../models/user.model.js'
 import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, renameGroupChatService, updateGroupImageService, removeChatService, kickFromGroupChatService, leaveGroupService } from './service.js'
 import { handleErrorService } from '../../middleware/errorMiddleware.js'
-import { RequestChat } from '../../models/chat.model.js'
+import { ChatDocument, RequestChat } from '../../models/chat.model.js'
 
 export async function createChat (req: RequestChat, res: Response) {
       const { userId, currentUserId } = req.body
@@ -110,8 +110,8 @@ export async function kickFromGroupChat (req: RequestChat, res: Response) {
 export async function leaveGroup (req: RequestChat, res: Response) {
       const { chatId, userId } = req.body
 
-      if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
-      if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
+      if (!userId) res.status(400).json({ message: 'No user id sent to the server' })
+      if (!chatId) res.status(400).json({ message: 'No chat id sent to the server' })
 
       try {
             const removedChat = await leaveGroupService(chatId, userId)
@@ -122,14 +122,14 @@ export async function leaveGroup (req: RequestChat, res: Response) {
 }
 
 export async function removeChat (req: RequestChat, res: Response) {
-      const { chatId, userId } = req.body
+      const { chatId } = req.body
+      const userId = req.user?._id
 
-      if (!userId) return res.status(400).json({ message: 'No user id sent to the server' })
-      if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
+      if (!chatId) res.status(400).json({ message: 'No chat id sent to the server' })
 
       try {
-            const removedChat = await removeChatService(chatId, userId)
-            res.status(200).send(removedChat)
+            await removeChatService(chatId, userId)
+            res.status(200).send({ message: 'Chat removed' })
       } catch (error: any) {
             throw handleErrorService(error)
       }

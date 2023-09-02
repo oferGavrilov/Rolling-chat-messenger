@@ -19,7 +19,7 @@ export const chatService = {
 
 async function getUserChats (userId: string): Promise<IChat[]> {
       try {
-            const chats = await httpService.get(BASE_URL + `/api/chat/chat/${userId}`, {}) as IChat[]
+            const chats = await httpService.get(BASE_URL + `/api/chat/${userId}`, {}) as IChat[]
 
             const sortedData = chats.sort((a: IChat, b: IChat) => {
                   const aDate = a.updatedAt ? new Date(a.updatedAt).getTime() : 0
