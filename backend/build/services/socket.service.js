@@ -75,23 +75,27 @@ export function setupSocketAPI(http) {
             });
         });
         socket.on('kick-from-group', async ({ chatId, userId, kickerId }) => {
+            console.log(`user: ${kickerId} kicked user: ${userId} from chat: ${chatId}`);
             socket.in(userId).emit('user-kicked', { chatId, userId, kickerId });
         });
         socket.on('add-to-group', async ({ chatId, users, adderId }) => {
+            console.log(`user: ${adderId} added users: ${users.map(user => user._id)} to chat: ${chatId}`);
             users.forEach((user) => {
                 socket.in(user._id).emit('user-joined', { chatId, user, adderId });
             });
         });
         socket.on('leave-from-group', async ({ chatId, userId, chatUsers }) => {
+            console.log(`user: ${userId} left chat: ${chatId}`);
             chatUsers.forEach((user) => {
                 if (user._id !== userId) {
                     socket.in(user._id).emit('user-left', { chatId, userId });
                 }
             });
         });
-        socket.on('message-removed', async ({ messageId, chatId, chatUsers }) => {
+        socket.on('message-removed', async ({ messageId, chatId, removerId, chatUsers, isLastMessage }) => {
+            console.log(`user: ${removerId} removed message: ${messageId} from chat: ${chatId}`);
             chatUsers.forEach((user) => {
-                socket.in(user._id).emit('message removed', { messageId, chatId });
+                socket.in(user._id).emit('message removed', { messageId, chatId, removerId, isLastMessage });
             });
         });
         socket.off('setup', () => {

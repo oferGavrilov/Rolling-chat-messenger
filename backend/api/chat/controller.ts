@@ -24,7 +24,7 @@ export async function getUserChats (req: RequestChat, res: Response) {
 
       try {
             const result = await getUserChatsService(userId)
-            res.status(200).send(result)
+            res.status(200).send(result || [])
       } catch (error: any) {
             throw handleErrorService(error)
       }

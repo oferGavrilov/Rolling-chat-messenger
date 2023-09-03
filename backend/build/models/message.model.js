@@ -6,7 +6,8 @@ const messageModel = new mongoose.Schema({
     messageType: { type: String, default: 'text' },
     replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
     messageSize: { type: Number, default: 0 },
-    deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
+    deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
+    isRead: { type: Boolean, default: false }
 }, { timestamps: true });
 export const Message = mongoose.model('Message', messageModel);
 //# sourceMappingURL=message.model.js.map

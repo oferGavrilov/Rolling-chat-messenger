@@ -74,7 +74,7 @@ export async function searchUsersByKeyword (req: Request, res: Response) {
 
       try {
             const users = await searchUsers(keyword)
-            res.send(users)
+            res.send(users || [])
       } catch (error: any) {
             throw handleErrorService(error)
       }
@@ -85,7 +85,7 @@ export async function getUsers (req: AuthenticatedRequest, res: Response) {
 
       try {
             const users = await getUsersService(loggedInUserId)
-            res.send(users)
+            res.send(users || [])
       } catch (error: any) {
             throw handleErrorService(error)
       }

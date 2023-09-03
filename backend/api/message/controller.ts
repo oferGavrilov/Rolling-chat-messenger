@@ -12,7 +12,7 @@ export async function getAllMessages (req: RequestMessage, res: Response) {
 
       try {
             const messages = await getAllMessagesByChatId(chatId, userId)
-            res.status(200).json(messages)
+            res.status(200).json(messages || [])
       } catch (error: any) {
             throw handleErrorService(error)
       }

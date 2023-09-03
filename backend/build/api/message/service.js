@@ -2,14 +2,6 @@ import { Message } from "../../models/message.model.js";
 import { Chat } from "../../models/chat.model.js";
 import { handleErrorService } from "../../middleware/errorMiddleware.js";
 export async function sendMessageService(senderId, content, chatId, messageType, replyMessage, messageSize) {
-    if (!content)
-        throw new Error('No content passed into request');
-    if (!chatId)
-        throw new Error('No chatId passed into request');
-    if (!messageType)
-        throw new Error('No messageType passed into request');
-    if (!senderId)
-        throw new Error('No senderId passed into request');
     try {
         const newMessage = {
             sender: senderId,
@@ -46,9 +38,6 @@ export async function sendMessageService(senderId, content, chatId, messageType,
     }
 }
 export async function getAllMessagesByChatId(chatId, userId) {
-    if (!chatId) {
-        throw new Error('Invalid message data passed into request');
-    }
     try {
         const messages = await Message.find({ chat: chatId, deletedBy: { $ne: userId } })
             .populate('sender', 'username profileImg')
@@ -62,6 +51,14 @@ export async function getAllMessagesByChatId(chatId, userId) {
             }
         });
         return messages;
+    }
+    catch (error) {
+        throw handleErrorService(error);
+    }
+}
+export async function readMessagesService(chatId, userId) {
+    try {
+        await Message.updateMany({ chat: chatId, sender: { $ne: userId } }, { isRead: true });
     }
     catch (error) {
         throw handleErrorService(error);

@@ -60,7 +60,7 @@ export async function searchUsersByKeyword(req, res) {
     const keyword = search?.toString() || '';
     try {
         const users = await searchUsers(keyword);
-        res.send(users);
+        res.send(users || []);
     }
     catch (error) {
         throw handleErrorService(error);
@@ -68,10 +68,9 @@ export async function searchUsersByKeyword(req, res) {
 }
 export async function getUsers(req, res) {
     const loggedInUserId = req.user?._id;
-    const { userId } = req.params;
     try {
-        const users = await getUsersService(loggedInUserId, userId);
-        res.send(users);
+        const users = await getUsersService(loggedInUserId);
+        res.send(users || []);
     }
     catch (error) {
         throw handleErrorService(error);
