@@ -1,6 +1,6 @@
 import { FormData, IUser } from "../model/user.model"
-import axios, { AxiosResponse } from 'axios'
-import { getAuthConfig, getConfig } from '../utils/authConfig'
+import axios from 'axios'
+import { getConfig } from '../utils/authConfig'
 import { httpService } from "./http.service"
 
 const STORAGE_KEY = 'loggedin-user'
@@ -10,6 +10,8 @@ const BASE_URL = env === 'production' ? 'https://rolling-chat-messenger-server.v
 
 export const userService = {
       loginSignUp,
+      sendResetPasswordMail,
+      resetPasswordConfirm,
       getUsers,
       editUserDetails,
       updateUserImage,
@@ -21,14 +23,6 @@ export const userService = {
       saveTheme
 }
 
-export function getLoggedinUser () {
-      const storedItem = sessionStorage.getItem(STORAGE_KEY)
-      if (storedItem) {
-            return JSON.parse(storedItem)
-      }
-      return null
-}
-
 async function getUsers (): Promise<IUser[] | IUser> {
       try {
             return await httpService.get('/api/auth/all')
@@ -38,18 +32,40 @@ async function getUsers (): Promise<IUser[] | IUser> {
       }
 }
 
-async function loginSignUp (credentials: FormData, login: boolean): Promise<IUser> {
-      const path = login ? '/api/auth/login' : '/api/auth/signup'
-      const config = getConfig()
+async function loginSignUp (credentials: FormData, formMode: string): Promise<IUser> {
+      const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
+      const config = {
+            ...getConfig(),
+            withCredentials: true
+      }
 
       try {
-            const response: AxiosResponse<IUser> = await axios.post(BASE_URL + path, credentials, config)
+            const response = await axios.post(BASE_URL + path, credentials, config)
             const { data } = response
+
             if (data) {
-                  _saveToSessionStorage(data)
+                  _saveToLocalStorage(data)
             }
 
             return data
+      } catch (error) {
+            console.error(error)
+            throw error
+      }
+}
+
+async function sendResetPasswordMail (email: string): Promise<void> {
+      try {
+            await httpService.post('/api/auth/send-reset-password-mail', { email })
+      } catch (error) {
+            console.error(error)
+            throw error
+      }
+}
+
+async function resetPasswordConfirm(token: string, password: string): Promise<void> {
+      try {
+            await httpService.post('/api/auth/reset-password', { token, password })
       } catch (error) {
             console.error(error)
             throw error
@@ -63,12 +79,13 @@ async function logout (): Promise<void> {
                   throw new Error('User is not logged in.')
             }
 
-            const authConfig = getAuthConfig()
-            sessionStorage.removeItem(STORAGE_KEY)
-            await axios.put(BASE_URL + '/api/auth/logout', {}, authConfig)
+            await httpService.put('/api/auth/logout', {})
 
+            localStorage.removeItem(STORAGE_KEY)
+            
       } catch (error) {
             console.error(error)
+            // window.location.reload()
             throw error
       }
 }
@@ -82,7 +99,7 @@ async function updateUserImage (image: string): Promise<string> {
 
             const updatedImage = await httpService.put('/api/auth/image', { image }) as string
             if (updatedImage) {
-                  _saveToSessionStorage({ ...user, profileImg: updatedImage })
+                  _saveToLocalStorage({ ...user, profileImg: updatedImage })
             }
 
             return updatedImage
@@ -104,7 +121,7 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
             if (response) {
                   const user = getLoggedinUser()
                   const userWithNewName = { ...user, [key]: newName }
-                  _saveToSessionStorage(userWithNewName)
+                  _saveToLocalStorage(userWithNewName)
             }
 
             return response
@@ -154,7 +171,14 @@ function getBackgroundColor (): string | null {
       }
 }
 
-function _saveToSessionStorage (user: FormData): FormData {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(user))
+export function getLoggedinUser () {
+      const storedItem = localStorage.getItem(STORAGE_KEY)
+      if (storedItem) {
+            return JSON.parse(storedItem)
+      }
+}
+
+function _saveToLocalStorage (user: FormData): FormData {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
       return user
 }

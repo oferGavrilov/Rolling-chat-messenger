@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { AuthState } from '../context/useAuth'
-import useChat from '../store/useChat'
+import useChat from '../context/useChat'
 
 import { formatTime, onDownloadFile } from '../utils/functions'
 

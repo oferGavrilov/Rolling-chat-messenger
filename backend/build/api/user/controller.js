@@ -1,6 +1,8 @@
 import { generateToken } from "../../config/generateToken.js";
-import { editUserDetailsService, editUserImageService, getUsersService, loginUser, searchUsers, signUpUser, updateUserStatus } from "./service.js";
+import { editUserDetailsService, editUserImageService, getUsersService, loginUser, resetPasswordConfirm, searchUsers, signUpUser } from "./service.js";
 import { handleErrorService } from "../../middleware/errorMiddleware.js";
+import { EmailService } from "../../services/email.service";
+import logger from "../../services/logger.service.js";
 export async function signUp(req, res) {
     const { username, email, password, profileImg } = req.body;
     try {
@@ -10,7 +12,21 @@ export async function signUp(req, res) {
         }
         const { user } = result;
         if (user) {
-            return res.status(201).json({ ...result.user, isOnline: true });
+            const token = generateToken(user._id);
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 24 * 60 * 60 * 1000,
+            });
+            return res.status(201).json({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                profileImg: user.profileImg,
+                about: user.about,
+                isOnline: true
+            });
         }
     }
     catch (error) {
@@ -19,21 +35,31 @@ export async function signUp(req, res) {
     }
 }
 export async function login(req, res) {
-    const { email, password } = req.body;
     try {
+        const { email, password } = req.body;
+        logger.info('Login request received with the following data:', { email, password });
+        if (!email || !password) {
+            return res.status(400).json({ msg: 'Please enter all fields' });
+        }
         const result = await loginUser(email, password);
         if (result.error) {
             return res.status(401).json({ msg: result.error });
         }
         const { user } = result;
         if (user) {
+            const token = generateToken(user._id);
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 24 * 60 * 60 * 1000,
+            });
             res.json({
                 _id: user._id,
                 username: user.username,
                 email: user.email,
                 profileImg: user.profileImg,
                 about: user.about,
-                token: generateToken(user._id),
                 isOnline: true,
             });
         }
@@ -42,14 +68,38 @@ export async function login(req, res) {
         }
     }
     catch (error) {
+        logger.error('Error during login:', error);
         throw handleErrorService(error);
     }
 }
-export async function logoutUser(req, res) {
-    const userId = req.user?._id;
+export async function logoutUser(_, res) {
     try {
-        await updateUserStatus(userId, false);
+        res.cookie('token', '', {});
         res.status(200).json({ message: 'User logged out successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+export async function sendResetPasswordMail(req, res) {
+    const { email } = req.body;
+    try {
+        const emailService = new EmailService();
+        await emailService.sendResetPasswordMail(email);
+        res.status(200).json({ message: 'Reset password email sent successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+export async function resetPassword(req, res) {
+    const { token, password } = req.body;
+    if (!token || !password) {
+        return res.status(400).json({ msg: 'Please enter all fields' });
+    }
+    try {
+        await resetPasswordConfirm(token, password);
+        res.status(200).json({ message: 'Password reset successfully' });
     }
     catch (error) {
         res.status(500).json({ error: 'Server error' });

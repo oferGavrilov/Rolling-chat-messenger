@@ -8,41 +8,54 @@ import axios from 'axios'
 import { AuthState } from '../../context/useAuth'
 import { userService } from '../../services/user.service'
 import { useNavigate } from 'react-router-dom'
+import Button from '../common/Button'
+import ForgotPassword from './ForgotPassword'
 
 interface FormData {
       username?: string
       email: string
-      password: string
+      password?: string
       confirmPassword?: string
       profileImg?: string
 }
 
-export default function Form (): JSX.Element {
-      const [isLogin, setIsLogin] = useState<boolean>(true)
+export default function Form(): JSX.Element {
+      const [formMode, setFormMode] = useState<'login' | 'sign-up' | 'reset'>('login')
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
-      const { setUser } = AuthState()
+      const { setUser, setJustLoggedIn } = AuthState()
       const navigate = useNavigate()
 
-      const validationSchema = isLogin
-            ? Yup.object().shape({
-                  email: Yup.string().required('Email is required').email('Email is invalid'),
-                  password: Yup.string()
-                        .required('Password is required')
-                        .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password must contain at least one letter, one number, and be at least 8 characters long')
-                        .min(6, 'Password must be at least 6 characters')
-                        .max(20, 'Password must not exceed 20 characters'),
-            })
-            : Yup.object().shape({
-                  username: Yup.string().required('Name is required').min(3, 'Name must be at least 3 characters').max(20, 'Name must not exceed 20 characters'),
-                  email: Yup.string().required('Email is required').email('Email is invalid'),
-                  password: Yup.string()
-                        .required('Password is required')
-                        .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password must contain at least one letter, one number, and be at least 8 characters long')
-                        .min(6, 'Password must be at least 6 characters')
-                        .max(20, 'Password must not exceed 20 characters'),
-                  confirmPassword: Yup.string().required('Confirm Password is required').oneOf([Yup.ref('password'), ''], 'Confirm Password does not match'),
-            })
+      const validationSchema = (() => {
+            switch (formMode) {
+                  case 'login':
+                        return Yup.object().shape({
+                              email: Yup.string().required('Email is required').email('Email is invalid'),
+                              password: Yup.string()
+                                    .required('Password is required')
+                                    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password must contain at least one letter, one number, and be at least 8 characters long')
+                                    .min(6, 'Password must be at least 6 characters')
+                                    .max(20, 'Password must not exceed 20 characters'),
+                        })
+                  case 'sign-up':
+                        return Yup.object().shape({
+                              username: Yup.string().required('Name is required').min(3, 'Name must be at least 3 characters').max(20, 'Name must not exceed 20 characters'),
+                              email: Yup.string().required('Email is required').email('Email is invalid'),
+                              password: Yup.string()
+                                    .required('Password is required')
+                                    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password must contain at least one letter, one number, and be at least 8 characters long')
+                                    .min(6, 'Password must be at least 6 characters')
+                                    .max(20, 'Password must not exceed 20 characters'),
+                              confirmPassword: Yup.string().required('Confirm Password is required').oneOf([Yup.ref('password'), ''], 'Confirm Password does not match'),
+                        })
+                  case 'reset':
+                        return Yup.object().shape({
+                              email: Yup.string().required('Email is required').email('Email is invalid'),
+                        })
+                  default:
+                        return undefined
+            }
+      })()
 
       const formik = useFormik({
             initialValues: {
@@ -55,28 +68,45 @@ export default function Form (): JSX.Element {
             onSubmit: handleSubmit,
       })
 
-      function toggleForm (isLogin: boolean) {
-            formik.resetForm({ values: formik.initialValues })
-            setIsLogin(isLogin)
-      }
-
-      function setGuestUser () {
-            setIsLogin(true)
+      function setGuestUser() {
             formik.setValues({ email: 'example@example.com', password: 'demo1234' })
       }
 
-      async function handleSubmit (values: FormData) {
-            values = isLogin ?
-                  { email: values.email, password: values.password } :
-                  { username: values.username, email: values.email, password: values.password, profileImg: image }
-
-            setIsLoading(true)
+      async function handleResetPassword(values: FormData) {
             try {
-                  const user = await userService.loginSignUp(values, isLogin)
+                  await userService.sendResetPasswordMail(values.email)
+                  toast.success('Password reset link sent to your email')
+            } catch (error) {
+                  if (axios.isAxiosError(error)) toast.warn(error?.response?.data.msg || "An error occurred")
+                  console.log(error)
+            }
+      }
+
+      async function handleSubmit(values: FormData) {
+            let modifiedValues
+            setIsLoading(true)
+
+            if (formMode === 'login') {
+                  modifiedValues = { email: values.email, password: values.password }
+
+            } else if (formMode === 'sign-up') {
+                  modifiedValues = { username: values.username, email: values.email, password: values.password, profileImg: image }
+
+            } else if (formMode === 'reset') {
+                  modifiedValues = { email: values.email }
+                  await handleResetPassword(modifiedValues);
+                  setIsLoading(false);
+                  return;
+            }
+
+
+            try {
+                  const user = await userService.loginSignUp(modifiedValues, formMode)
                   setUser(user)
+                  setJustLoggedIn(true); 
                   navigate('/chat')
             } catch (error) {
-                  if (axios.isAxiosError(error)) toast.error(error?.response?.data.msg)
+                  if (axios.isAxiosError(error)) toast.warn(error?.response?.data.msg || "An error occurred")
                   console.log(error)
             } finally {
                   setIsLoading(false)
@@ -85,21 +115,48 @@ export default function Form (): JSX.Element {
 
       return (
             <FormikProvider value={formik}>
-                  <div className="flex justify-between gap-x-2">
-                        <button className={`auth-btn ${isLogin ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`} onClick={() => toggleForm(true)}>Login</button>
-                        <button className={`auth-btn ${!isLogin ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`} onClick={() => toggleForm(false)}>Sign Up</button>
-                  </div>
+                  <section className='text-sm lg:text-base'>
 
-                  <form className="flex flex-col gap-y-4 mt-6 mb-4 text-sm md:text-base" onSubmit={formik.handleSubmit}>
-                        {isLogin ? (
-                              <Login formik={formik} />) : (
-                              <SignUp formik={formik} image={image} setImage={setImage} />
-                        )}
-                        <button disabled={!formik.dirty || isLoading} className="bg-primary transition-colors text-white duration-300 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-[#23a7ff]" type="submit">
-                              {isLoading ? <div className='spinner ' /> : 'Submit'}
-                        </button>
-                        <button className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff]" type="button" onClick={setGuestUser}>Get Guest User Credentials</button>
-                  </form>
+                        <div className="flex justify-between gap-x-2">
+                              <Button
+                                    className={`auth-btn ${formMode === 'login' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
+                                    onClick={() => setFormMode('login')}
+                                    type='button'>
+                                    Login
+                              </Button>
+                              <Button
+                                    className={`auth-btn ${formMode === 'sign-up' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
+                                    onClick={() => setFormMode('sign-up')}
+                                    type='button'>
+                                    Sign Up
+                              </Button>
+                        </div>
+
+                        <form className="flex flex-col gap-y-4 mt-6" onSubmit={formik.handleSubmit}>
+                              {formMode === 'login' && <Login formik={formik} />}
+                              {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} />}
+                              {formMode === 'reset' && <ForgotPassword formik={formik} />}
+
+                              {formMode === 'login' && <button type="button" className='underline underline-offset-2 text-sm transition-all duration-100 hover:tracking-wide' onClick={() => setFormMode('reset')}>Forget you'r password ?</button>}
+                              <div className='flex flex-col gap-[2px] mt-4'>
+                                    <Button
+                                          className="bg-primary transition-colors text-white duration-300 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-[#23a7ff]"
+                                          type="submit"
+                                          disabled={!formik.dirty || isLoading}
+                                          isLoading={isLoading}>
+                                          Submit
+                                    </Button>
+                                    {formMode === 'login' && (
+                                          <Button
+                                                className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff]"
+                                                type="button"
+                                                onClick={setGuestUser}>
+                                                Get Guest User Credentials
+                                          </Button>
+                                    )}
+                              </div>
+                        </form>
+                  </section>
             </FormikProvider>
       )
 }

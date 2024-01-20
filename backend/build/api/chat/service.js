@@ -6,7 +6,6 @@ import { Message } from "../../models/message.model.js";
 export async function createChatService(receiverId, senderId) {
     const user = await User.findById(receiverId);
     if (!user) {
-        console.log('User not found');
         throw new Error('User not found');
     }
     const isChat = await Chat.find({
@@ -60,9 +59,18 @@ export async function getUserChatsService(userId) {
                 { "kickedUsers.userId": userId },
             ]
         }).populate(populateOptions);
-        // Filter out chats where the user's ID exists in the deletedBy array
         const filteredChats = chats.filter(chat => !chat.deletedBy.some(deleted => deleted.userId.equals(userId)));
-        return filteredChats;
+        // Add unread messages count for each chat
+        const chatsWithUnreadCounts = await Promise.all(filteredChats.map(async (chat) => {
+            const unreadMessagesCount = await Message.count({
+                chat: chat._id,
+                isReadBy: { $not: { $elemMatch: { userId: userId } } },
+                sender: { $ne: userId },
+                deletedBy: { $ne: userId }
+            });
+            return { ...chat.toObject(), unreadMessagesCount };
+        }));
+        return chatsWithUnreadCounts;
     }
     catch (error) {
         throw handleErrorService(error);

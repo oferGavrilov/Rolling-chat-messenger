@@ -1,6 +1,6 @@
 import { IMessage } from "../model/message.model"
 
-export function isSameSenderMargin (messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
+export function isSameSenderMargin(messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
   if (
     i < messages.length - 1 &&
     messages[i + 1].sender._id === m.sender._id &&
@@ -17,7 +17,7 @@ export function isSameSenderMargin (messages: IMessage[], m: IMessage, i: number
   else return true
 }
 
-export function debounce<T extends (...args: unknown[]) => void> (
+export function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   timeout = 700
 ) {
@@ -31,16 +31,19 @@ export function debounce<T extends (...args: unknown[]) => void> (
   }
 }
 
-export function isSameSender (messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
+export function isSameSender(messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
+  if (!messages.length || !m || !m.sender || i >= messages.length - 1) return false;
+
+  const nextMessage = messages[i + 1];
+  if (!nextMessage || !nextMessage.sender) return false;
+
   return (
-    i < messages.length - 1 &&
-    (messages[i + 1].sender._id !== m.sender._id ||
-      messages[i + 1].sender._id === undefined) &&
-    messages[i].sender._id !== userId
-  )
+    nextMessage.sender._id !== m.sender._id &&
+    m.sender._id !== userId
+  );
 }
 
-export function isLastMessage (messages: IMessage[], i: number, userId: string) {
+export function isLastMessage(messages: IMessage[], i: number, userId: string) {
   if (!messages.length || !messages[messages.length - 1]?.sender?._id) return false
   return (
     i === messages.length - 1 &&
@@ -49,7 +52,7 @@ export function isLastMessage (messages: IMessage[], i: number, userId: string) 
   )
 }
 
-export function formatTime (timestamp: string): string {
+export function formatTime(timestamp: string): string {
   if (!timestamp) return ''
 
   const date = new Date(timestamp)
@@ -74,7 +77,7 @@ export function formatTime (timestamp: string): string {
   return formattedDate
 }
 
-export function formatDate (timestamp: string): string {
+export function formatDate(timestamp: string): string {
   if (!timestamp) return ''
 
   const date = new Date(timestamp)
@@ -83,7 +86,7 @@ export function formatDate (timestamp: string): string {
   return `${hours}:${minutes}`
 }
 
-export function formatLastSeenDate (timestamp: string): string {
+export function formatLastSeenDate(timestamp: string): string {
   if (!timestamp) return ''
 
   const date = new Date(timestamp)
@@ -101,7 +104,7 @@ export function formatLastSeenDate (timestamp: string): string {
   }
 }
 
-export function formatMessageSentDate (timestamp: string): string {
+export function formatMessageSentDate(timestamp: string): string {
   if (!timestamp) return ''
 
   const sentDate = new Date(timestamp)
@@ -128,7 +131,7 @@ export function formatMessageSentDate (timestamp: string): string {
 }
 
 
-export function hasDayPassed (timestamp1: string, timestamp2: string): boolean {
+export function hasDayPassed(timestamp1: string, timestamp2: string): boolean {
   if (!timestamp1 || !timestamp2) {
     return false // If any of the timestamps is missing, consider day not passed
   }
@@ -143,7 +146,7 @@ export function hasDayPassed (timestamp1: string, timestamp2: string): boolean {
   )
 }
 
-export function formatRecordTimer (timeInMilliseconds: number): string {
+export function formatRecordTimer(timeInMilliseconds: number): string {
   if (timeInMilliseconds === 0) return '00:00'
 
   const totalSeconds = Math.floor(timeInMilliseconds / 1000)
@@ -152,15 +155,15 @@ export function formatRecordTimer (timeInMilliseconds: number): string {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
-export function startTypingTimeout (callback: () => void, delay: number): NodeJS.Timeout {
+export function startTypingTimeout(callback: () => void, delay: number): NodeJS.Timeout {
   return setTimeout(callback, delay)
 }
 
-export function clearTypingTimeout (timeoutId: number): void {
+export function clearTypingTimeout(timeoutId: number): void {
   clearTimeout(timeoutId)
 }
 
-export function scrollToBottom (chatRef: React.RefObject<HTMLElement>): void {
+export function scrollToBottom(chatRef: React.RefObject<HTMLElement>): void {
   setTimeout(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight
@@ -168,7 +171,7 @@ export function scrollToBottom (chatRef: React.RefObject<HTMLElement>): void {
   }, 0)
 }
 
-export function onDownloadFile (selectedFile: IMessage) {
+export function onDownloadFile(selectedFile: IMessage) {
   try {
     const imageUrl = selectedFile?.content?.toString()
 

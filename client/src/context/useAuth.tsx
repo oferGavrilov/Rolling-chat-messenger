@@ -1,13 +1,13 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
+import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react"
 import { userService } from "../services/user.service"
-import { useNavigate, useLocation } from "react-router-dom"
 import { IUser } from "../model/user.model"
 import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
       user: IUser | null
       setUser: React.Dispatch<React.SetStateAction<IUser | null>>
-      logout: () => void,
+      justLoggedIn: boolean;
+      setJustLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
       isAdmin: (chat: IChat, userId?: string) => boolean
       chatBackgroundColor: string
       setChatBackgroundColor: React.Dispatch<React.SetStateAction<string>>
@@ -23,43 +23,29 @@ export const AuthState = () => {
       return context
 }
 
-export default function AuthProvider ({ children }: { children: ReactNode }): JSX.Element {
+export default function AuthProvider({ children }: { children: ReactNode }): JSX.Element {
       const [user, setUser] = useState<IUser | null>(null)
+      const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
       const [chatBackgroundColor, setChatBackgroundColor] = useState<string>(userService.getBackgroundColor() || '#ccdbdc')
-      const navigate = useNavigate()
-      const location = useLocation().pathname
-
-      useEffect(() => {
-            if (location === '/chat') {
-                  const user = userService.getLoggedinUser()
-                  if (user) setUser(user)
-                  else navigate('/login')
-            }
-      }, [navigate])
 
       const isAdmin = useCallback((chat: IChat, userId?: string): boolean => {
             const currentUserId = userId || (user! as IUser | undefined)?._id
-
             return !!chat.groupAdmin && chat.groupAdmin._id === currentUserId
       }, [user])
-
-      const logout = useCallback((): void => {
-            userService.logout()
-            setUser(null)
-            navigate('/login')
-      }, [navigate])
 
       const memoedValue = useMemo(
             () => ({
                   user,
                   setUser,
-                  logout,
+                  justLoggedIn,
+                  setJustLoggedIn,
                   isAdmin,
                   chatBackgroundColor,
                   setChatBackgroundColor,
             }),
-            [user, logout, isAdmin, chatBackgroundColor]
-      )
+            [user, justLoggedIn, isAdmin, chatBackgroundColor]
+      );
+
 
       return (
             <AuthContext.Provider value={memoedValue}>

@@ -23,7 +23,7 @@ describe('App', () => {
 
       it('renders login page', async () => {
             render(
-                  <MemoryRouter initialEntries={['/login']}>
+                  <MemoryRouter initialEntries={['/auth']}>
                         <AppRoutes />
                   </MemoryRouter>
             )

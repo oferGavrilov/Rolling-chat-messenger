@@ -9,7 +9,7 @@ export async function sendMessageService(senderId, content, chatId, messageType,
             chat: chatId,
             messageType,
             replyMessage: replyMessage ? replyMessage : null,
-            messageSize: messageSize ? messageSize : undefined
+            messageSize: messageSize ? messageSize : undefined,
         };
         let message = await Message.create(newMessage);
         message = (await message.populate('sender', 'username profileImg'));
@@ -25,10 +25,12 @@ export async function sendMessageService(senderId, content, chatId, messageType,
         // Check if the other user ID is in the deletedBy array
         const chat = await Chat.findById(chatId);
         const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString());
-        if (otherUserId && chat.deletedBy.some((user) => user.toString() === otherUserId.toString())) {
+        chat.deletedBy = [];
+        await chat.save();
+        if (otherUserId && chat.deletedBy.some(({ userId }) => userId.toString() === otherUserId.toString())) {
             // Remove the other user ID from the deletedBy array
-            chat.deletedBy = chat.deletedBy.filter((userId) => userId.toString() !== otherUserId.toString());
-            await chat.save();
+            //chat.deletedBy = chat.deletedBy.filter(({ userId }) => userId.toString() !== otherUserId.toString())
+            // await chat.save()
         }
         await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
         return message;
@@ -41,7 +43,6 @@ export async function getAllMessagesByChatId(chatId, userId) {
     try {
         const messages = await Message.find({ chat: chatId, deletedBy: { $ne: userId } })
             .populate('sender', 'username profileImg')
-            .populate('chat')
             .populate({
             path: 'replyMessage',
             select: '_id content sender messageType',
@@ -50,15 +51,14 @@ export async function getAllMessagesByChatId(chatId, userId) {
                 select: '_id username profileImg'
             }
         });
+        // update unread messages in chat
+        messages.forEach((message) => {
+            if (!message.isReadBy.some(({ userId: id }) => id.toString() === userId.toString())) {
+                message.isReadBy.push({ userId, readAt: new Date() });
+            }
+        });
+        await Promise.all(messages.map(async (message) => await message.save()));
         return messages;
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
-}
-export async function readMessagesService(chatId, userId) {
-    try {
-        await Message.updateMany({ chat: chatId, sender: { $ne: userId } }, { isRead: true });
     }
     catch (error) {
         throw handleErrorService(error);
@@ -81,6 +81,15 @@ export async function removeMessageService(messageId, chatId, userId) {
         else {
             await message.save();
         }
+    }
+    catch (error) {
+        throw handleErrorService(error);
+    }
+}
+export async function readMessagesService(messageIds, chatId, userId) {
+    console.log(messageIds, chatId, userId);
+    try {
+        await Message.updateMany({ _id: { $in: messageIds }, chat: chatId }, { $addToSet: { isReadBy: { userId: userId, readAt: new Date() } } });
     }
     catch (error) {
         throw handleErrorService(error);

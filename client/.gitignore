@@ -27,3 +27,4 @@ dist
 todo.txt
 .netlify
 .env
+.vscode/

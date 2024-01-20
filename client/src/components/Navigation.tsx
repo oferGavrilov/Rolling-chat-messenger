@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useRef } from "react"
-import { Link } from 'react-router-dom'
+import React, { useEffect, useRef } from "react"
+import { Link, useNavigate } from 'react-router-dom'
 import { AuthState } from "../context/useAuth"
-import useChat from '../store/useChat'
+import useChat from '../context/useChat'
 
-import Logo from "../assets/icons/Logo"
-import Story from "../assets/icons/Story"
+import Logo from "./svg/Logo"
+import Story from "./svg/Story"
 import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
 
 import { Tooltip } from "@mui/material"
@@ -12,9 +12,10 @@ import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
-import { useClickOutside } from "../custom/useClickOutside"
+import { useClickOutside } from "../custom-hook/useClickOutside"
 import { ContentType } from "../pages/ChatPage"
 import ProfileImage from "./common/ProfileImage"
+import { userService } from "../services/user.service"
 interface Props {
       contentType: ContentType
       setContentType: React.Dispatch<React.SetStateAction<ContentType>>
@@ -22,14 +23,15 @@ interface Props {
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Navigation ({
+export default function Navigation({
       contentType,
       setContentType,
       showNavigation,
       setShowNavigation
 }: Props): JSX.Element {
-      const { user, logout } = AuthState()
+      const { user, setJustLoggedIn } = AuthState()
       const { setSelectedChat } = useChat()
+      const navigate = useNavigate()
       const navigationRef = useRef<HTMLElement>(null)
       const enableClickOutside = window.innerWidth < 768
 
@@ -50,18 +52,21 @@ export default function Navigation ({
             return () => window.removeEventListener('resize', handleResize)
       }, [setShowNavigation])
 
-      function onSelectContentType (contentType: ContentType) {
+      function onSelectContentType(contentType: ContentType) {
             if (window.innerWidth < 768) {
                   setShowNavigation(false)
             }
             setContentType(contentType)
       }
 
-      const handleLogout = useCallback(() => {
+      async function handleLogout() {
+            await userService.logout()
+            console.log('logged out')
+            navigate('/')
             socketService.emit(SOCKET_LOGOUT, user?._id)
             setSelectedChat(null)
-            logout()
-      }, [user, logout, setSelectedChat])
+            setJustLoggedIn(false)
+      }
 
       if (!user) return <div></div>
       return (

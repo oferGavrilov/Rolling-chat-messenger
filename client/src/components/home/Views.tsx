@@ -1,4 +1,4 @@
-import useIntersectionObserver from "../../custom/useIntersectionObserver";
+import useIntersectionObserver from "../../custom-hook/useIntersectionObserver";
 
 import { BsSun, BsMoon } from 'react-icons/bs'
 import { MdOutlineColorLens } from 'react-icons/md'

@@ -32,6 +32,7 @@ export default {
         'dark-secondary-text': '#242424',
         'dark-input-bg': '#2a3942',
         'light-input-bg':'#e5e7eb',
+        'light-text':'#e9ecef',
         'navigation-bg': '#FAFAFA',
         'primary': '#0099ff',
         'default-hover-bg':'#57c0f8',
