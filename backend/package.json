@@ -14,7 +14,8 @@
     "test": "jest --coverage",
     "lint": "eslint . --ext .ts,",
     "build-dev": "rimraf build && tsc",
-    "build": "tsc --version && tsc"
+    "build": "tsc --version && node -v && tsc",
+    "postinstall": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -50,8 +51,6 @@
     "typescript": "^5.1.6"
   },
   "devDependencies": {
-    "@babel/node": "^7.22.6",
-    "@babel/plugin-transform-modules-commonjs": "^7.22.5",
     "@tsconfig/node-lts-strictest-esm": "^18.12.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/body-parser": "^1.19.5",
