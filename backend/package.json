@@ -15,7 +15,7 @@
     "lint": "eslint . --ext .ts,",
     "build-dev": "rimraf build && tsc",
     "build": "tsc --version && node -v && tsc",
-    "postinstall": "tsc"
+    "postinstall": "npm list"
   },
   "keywords": [],
   "author": "",
