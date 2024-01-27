@@ -2,7 +2,6 @@ import { generateRefreshToken, generateToken } from "../../config/generateToken"
 import type { Response, Request } from "express"
 import type { AuthenticatedRequest } from "../../models/types"
 import { editUserDetailsService, editUserImageService, getUsersService, loginUser, resetPasswordConfirm, searchUsers, signUpUser, validateRefreshToken } from "./service.js"
-import { handleErrorService } from "../../middleware/errorMiddleware"
 import { EmailService } from "../../services/email.service"
 import logger from "../../services/logger.service"
 import { User } from "../../models/user.model"
@@ -39,14 +38,17 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
                   });
             }
 
-      } catch (error) {
-            console.error('Error during sign up:', error);
-            return res.status(500).json({ msg: 'Internal server error' });
+      } catch (error : unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during sign up:', error);
+                  return res.status(500).json({ msg: 'Internal server error' });
+            } else {
+                  throw error;
+            }
       }
 }
 
 export async function login(req: AuthenticatedRequest, res: Response) {
-
       try {
             const { email, password } = req.body
             logger.info('Login request received with the following data:', { email, password })
@@ -96,9 +98,13 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             } else {
                   throw new Error('User not found')
             }
-      } catch (error: any) {
-            logger.error('Error during login:', error)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during login:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -106,8 +112,13 @@ export async function logoutUser(_: Request, res: Response) {
       try {
             res.cookie('token', '', {})
             res.status(200).json({ message: 'User logged out successfully' })
-      } catch (error: any) {
-            res.status(500).json({ error: 'Server error' })
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during logout:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -118,8 +129,13 @@ export async function sendResetPasswordMail(req: Request, res: Response) {
             await emailService.sendResetPasswordMail(email)
 
             res.status(200).json({ message: 'Reset password email sent successfully' })
-      } catch (error: any) {
-            res.status(500).json({ error: 'Server error' })
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during sendResetPasswordMail:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -133,8 +149,13 @@ export async function resetPassword(req: Request, res: Response) {
       try {
             await resetPasswordConfirm(token, password)
             res.status(200).json({ message: 'Password reset successfully' })
-      } catch (error: any) {
-            res.status(500).json({ error: 'Server error' })
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during resetPassword:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -145,8 +166,13 @@ export async function searchUsersByKeyword(req: Request, res: Response) {
       try {
             const users = await searchUsers(keyword)
             res.send(users || [])
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during searchUsersByKeyword:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -156,8 +182,13 @@ export async function getUsers(req: AuthenticatedRequest, res: Response) {
       try {
             const users = await getUsersService(loggedInUserId)
             res.send(users || [])
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during getUsers:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -166,7 +197,7 @@ export async function editUserDetails(req: AuthenticatedRequest, res: Response) 
       const userId = req.user?._id
 
       try {
-            const newNameToSave = newName?.replace(/[\/>]/g, '').trim()
+            const newNameToSave = newName?.replace(/[/>]/g, '').trim();
             const user = await editUserDetailsService(userId, newNameToSave)
 
             if (user) {
@@ -174,8 +205,13 @@ export async function editUserDetails(req: AuthenticatedRequest, res: Response) 
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during editUserDetails:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -191,8 +227,13 @@ export async function editUserImage(req: AuthenticatedRequest, res: Response) {
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during editUserImage:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -217,7 +258,12 @@ export async function refreshAccessToken(req: Request, res: Response) {
 
             res.status(200).json({ message: 'Access token refreshed successfully' })
 
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error('Error during refreshAccessToken:', error)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw error
+            }
       }
 }

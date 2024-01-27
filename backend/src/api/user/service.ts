@@ -53,8 +53,12 @@ export async function signUpUser(username: string, email: string, password: stri
             } else {
                   return { error: 'Invalid user data' }
             }
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -81,8 +85,12 @@ export async function loginUser(email: string, password: string): Promise<{ user
                         about: user.about,
                   }
             }
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -105,14 +113,18 @@ export async function resetPasswordConfirm(token: string, password: string): Pro
             } else {
                   throw new Error('User not found')
             }
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
 export async function searchUsers(keyword: string): Promise<User[]> {
       try {
-            const clearString = keyword?.replace(/[\/>]/g, '')
+            const clearString = keyword?.replace(/[/>]/g, '');
 
             const filter = clearString ? {
                   $or: [
@@ -123,8 +135,12 @@ export async function searchUsers(keyword: string): Promise<User[]> {
 
             const users = await User.find({ ...filter })
             return users
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -132,8 +148,12 @@ export async function getUsersService(loggedInUserId: string): Promise<User[]> {
       try {
             const users = await User.find({ _id: { $ne: loggedInUserId } })
             return users
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -141,7 +161,6 @@ export async function editUserDetailsService(userId: string, newName: string): P
       try {
             const user = await User.findById(userId)
 
-            console.log('user:', user)
             if (user) {
                   user.username = newName
                   await user.save()
@@ -149,8 +168,12 @@ export async function editUserDetailsService(userId: string, newName: string): P
             }
 
             return null
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -165,8 +188,12 @@ export async function editUserImageService(userId: string, newImage: string): Pr
             }
 
             return null
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -179,8 +206,12 @@ export async function validateUser(userId: string): Promise<User | null> {
             }
 
             return null
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -200,7 +231,11 @@ export async function validateRefreshToken(refreshToken: string): Promise<string
 
             return null
 
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }

@@ -4,10 +4,14 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "start": "node build/src/index.js",
     "dev": "nodemon --exec npx tsx ./src/index.ts",
     "test": "jest --coverage",
+    "lint": "eslint . --ext .ts,",
     "build-dev": "rimraf build && tsc",
     "build": "tsc"
   },
@@ -33,7 +37,6 @@
     "nodemailer": "^6.9.8",
     "rimraf": "^5.0.1",
     "socket.io": "^4.7.0",
-    "typescript": "^5.1.6",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"
   },
@@ -53,6 +56,9 @@
     "@types/nodemailer": "^6.4.14",
     "@types/supertest": "^2.0.12",
     "@types/winston": "^2.4.4",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
     "jest": "^29.6.1",
     "mongodb-memory-server-core": "^8.13.0",
     "nodemon": "^3.0.1",

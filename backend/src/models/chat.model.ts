@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import mongoose, { Document, Model, ObjectId, Schema, Types } from 'mongoose'
+import mongoose, { Model, ObjectId, Schema, Types } from 'mongoose'
 import { User } from './user.model.js'
 
 export interface ChatDocument {

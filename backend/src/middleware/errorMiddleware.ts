@@ -6,13 +6,18 @@ export function notFound(req: Request, res: Response, next: NextFunction) {
       next(error)
 }
 
-export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
+export function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction) {
       const statusCode = res.statusCode === 200 ? 500 : res.statusCode
       res.status(statusCode)
-      res.json({
-            message: err.message,
-            stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack
-      })
+
+      if (err instanceof Error) {
+            res.json({
+                  message: err.message,
+                  stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack
+            })
+      } else {
+            console.log('errorMiddleware', err)
+      }
 
       next();
 }
@@ -23,7 +28,6 @@ interface ErrorResponse {
 }
 
 export function handleErrorService(error: Error, status?: number): ErrorResponse {
-      console.log('errorMiddleware', status)
       const statusCode = status || 500
       let message = error.message || 'Something went wrong'
 
@@ -43,7 +47,7 @@ export function handleErrorService(error: Error, status?: number): ErrorResponse
             message = 'Unprocessable Entity'
       }
 
-      const customError = new Error(message) as any
+      const customError = new CustomError(error.message, message, statusCode)
       customError.statusCode = statusCode
       return customError
 }

@@ -16,9 +16,14 @@ export async function createChat(req: RequestChat, res: Response) {
             const chat = await createChatService(userId, currentUserId)
             logger.info(`[API: ${req.path}] - Chat with user: ${userId} created`)
             res.status(200).json(chat)
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while creating chat with user: ${userId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while creating chat with user: ${userId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while creating chat with user: ${userId}`);
+                  throw error;
+            }
       }
 }
 
@@ -29,9 +34,14 @@ export async function getUserChats(req: RequestChat, res: Response) {
             const result = await getUserChatsService(userId)
             logger.info(`[API: ${req.originalUrl}] - UserId: ${userId} chats fetched`)
             res.status(200).send(result || [])
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while fetching user: ${userId} chats`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while fetching user: ${userId} chats: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while fetching user: ${userId} chats`);
+                  throw error;
+            }
       }
 }
 
@@ -46,9 +56,14 @@ export async function createGroupChat(req: RequestChat, res: Response) {
             const createdChat = await createGroupChatService(users, chatName, groupImage, currentUser)
             logger.info(`[API: ${req.path}] - Group chat: ${chatName} created`)
             res.status(200).send(createdChat)
-      } catch (error: any) {
-            logger.error(`Error while creating group chat: ${error.message}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while creating group chat: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while creating group chat`);
+                  throw error;
+            }
       }
 }
 
@@ -62,9 +77,14 @@ export async function renameGroupChat(req: RequestChat, res: Response) {
             const updatedGroupName = await renameGroupChatService(chatId, groupName)
             logger.info(`[API: ${req.path}] - Group name in chatId: ${chatId} updated to ${groupName}`)
             res.status(200).send(updatedGroupName)
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while updating group name in chatId: ${chatId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while updating group name in chatId: ${chatId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while updating group name in chatId: ${chatId}`);
+                  throw error;
+            }
       }
 }
 
@@ -78,9 +98,14 @@ export async function updateGroupImage(req: RequestChat, res: Response) {
             const updatedGroupImage = await updateGroupImageService(chatId, groupImage)
             logger.info(`[API: ${req.path}] - Group image in chatId: ${chatId} updated`)
             res.status(200).send(updatedGroupImage)
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while updating group image in chatId: ${chatId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while updating group image in chatId: ${chatId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while updating group image in chatId: ${chatId}`);
+                  throw error;
+            }
       }
 }
 
@@ -94,9 +119,14 @@ export async function updateUsersInGroupChat(req: RequestChat, res: Response) {
             const updatedChat = await updateUsersInGroupChatService(chatId, users)
             logger.info(`[API: ${req.path}] - Users in chatId: ${chatId} updated`)
             res.status(200).send(updatedChat)
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while updating users in chatId: ${chatId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while updating users in chatId: ${chatId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while updating users in chatId: ${chatId}`);
+                  throw error;
+            }
       }
 }
 
@@ -110,9 +140,14 @@ export async function kickFromGroupChat(req: RequestChat, res: Response) {
             const removedChat = await kickFromGroupChatService(chatId, userId, kickedByUserId)
             logger.info(`[API: ${req.path}] - User ${userId} kicked from chatId: ${chatId}`)
             res.status(200).send(removedChat)
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while kicking user: ${userId} from chatId: ${chatId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while kicking user: ${userId} from chatId: ${chatId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while kicking user: ${userId} from chatId: ${chatId}`);
+                  throw error;
+            }
       }
 }
 
@@ -126,9 +161,14 @@ export async function leaveGroup(req: RequestChat, res: Response) {
             const removedChat = await leaveGroupService(chatId, userId)
             logger.info(`[API: ${req.path}] - User: ${userId} leaving chatId: ${chatId}`)
             res.status(200).send(removedChat)
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while user: ${userId} leaving chatId: ${chatId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while user: ${userId} leaving chatId: ${chatId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while user: ${userId} leaving chatId: ${chatId}`);
+                  throw error;
+            }
       }
 }
 
@@ -142,8 +182,13 @@ export async function removeChat(req: RequestChat, res: Response) {
             await removeChatService(chatId, userId)
             logger.info(`[API: ${req.path}] - ChatId: ${chatId} removed`)
             res.status(200).send({ message: 'Chat removed' })
-      } catch (error: any) {
-            logger.error(`[API: ${req.path}] - Error while removing chatId: ${chatId}`)
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`[API: ${req.path}] - Error while removing chatId: ${chatId}: ${error.message}`);
+                  throw handleErrorService(error);
+            } else {
+                  logger.error(`[API: ${req.path}] - Unknown error while removing chatId: ${chatId}`);
+                  throw error;
+            }
       }
 }

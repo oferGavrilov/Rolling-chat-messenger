@@ -21,8 +21,13 @@ export const connectDB = async (): Promise<void> => {
             connection = await mongoose.connect(mongoURI)
 
             logger.info(`MongoDB environment: ${connection.connection.host}`)
-      } catch (error: any) {
-            console.error(`Error: ${error.message}`)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  logger.error(`Error: ${error.message}`)
+            } else {
+                  logger.error(`Error: ${error}`)
+            }
+
             process.exit(1)
       }
 }

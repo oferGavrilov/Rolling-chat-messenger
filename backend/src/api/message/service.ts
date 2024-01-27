@@ -2,8 +2,6 @@ import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
 import CustomError, { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { PopulatedDoc } from "mongoose"
-import createError from 'http-errors'
-import logger from "../../services/logger.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
 
@@ -45,8 +43,12 @@ export async function sendMessageService(senderId: string, content: string, chat
 
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message })
             return message
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -73,8 +75,12 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
             await Promise.all(messages.map(async (message) => await message.save()))
 
             return messages
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -96,10 +102,15 @@ export async function removeMessageService(messageId: string, chatId: string, us
                   await message.save()
             }
 
-      } catch (error: any) {
-            const statusCode: number = error.statusCode || 500;
-            logger.error(`[API] - While Deleting Message: ${error.message}`, { statusCode, userId })
-            throw { statusCode: error.statusCode as number, message: error.message as string };
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
+            // const statusCode: number = error.statusCode || 500;
+            // logger.error(`[API] - While Deleting Message: ${error.message}`, { statusCode, userId })
+            // throw { statusCode: error.statusCode as number, message: error.message as string };
       }
 }
 
@@ -110,7 +121,11 @@ export async function readMessagesService(messageIds: string[], chatId: string, 
                   { _id: { $in: messageIds }, chat: chatId },
                   { $addToSet: { isReadBy: { userId: userId, readAt: new Date() } } }
             );
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }     

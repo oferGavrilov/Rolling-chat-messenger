@@ -1,6 +1,6 @@
 import { User } from "../../models/user.model.js"
 import { Chat, type ChatDocument } from "../../models/chat.model.js"
-import mongoose, { Types } from "mongoose"
+import { Types } from "mongoose"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { Message } from "../../models/message.model.js"
 
@@ -28,8 +28,8 @@ export async function createChatService(receiverId: string, senderId: string): P
             const chatData: ChatDocument = {
                   chatName: user.username,
                   isGroupChat: false,
-                  users: [senderId, receiverId] as any,
-                  latestMessage: undefined,
+                  users: [new Types.ObjectId(senderId), new Types.ObjectId(receiverId)],
+                  latestMessage: null,
                   deletedBy: [],
                   isOnline: false,
                   lastSeen: new Date(),
@@ -42,8 +42,12 @@ export async function createChatService(receiverId: string, senderId: string): P
                         throw new Error('Failed to retrieve the created chat')
                   }
                   return fullChat as ChatDocument
-            } catch (error: any) {
-                  throw handleErrorService(error)
+            } catch (error: unknown) {
+                  if (error instanceof Error) {
+                        throw handleErrorService(error)
+                  } else {
+                        throw error
+                  }
             }
       }
 }
@@ -82,8 +86,12 @@ export async function getUserChatsService(userId: string): Promise<ChatDocument[
             }));
 
             return chatsWithUnreadCounts;
-      } catch (error) {
-            throw handleErrorService(error);
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -113,8 +121,12 @@ export async function createGroupChatService(users: User[], chatName: string, gr
             }
 
             return fullChat
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -128,8 +140,12 @@ export async function renameGroupChatService(chatId: string, groupName: string):
             ).populate('users', '-password').populate('groupAdmin', '-password')
 
             return groupName
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -138,8 +154,12 @@ export async function updateGroupImageService(chatId: string, groupImage: string
       try {
             await Chat.findByIdAndUpdate(chatId, { groupImage }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
             return groupImage
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -164,8 +184,12 @@ export async function updateUsersInGroupChatService(chatId: string, users: User[
             }
 
             return updated
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -192,8 +216,12 @@ export async function kickFromGroupChatService(chatId: string, userId: string, k
             }
 
             return kicked
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -251,8 +279,12 @@ export async function leaveGroupService(chatId: string, userId: string): Promise
             }
 
             return chatId
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }
 
@@ -287,7 +319,11 @@ export async function removeChatService(chatId: string, userId: string): Promise
             }
 
             return chatId
-      } catch (error: any) {
-            throw handleErrorService(error)
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
       }
 }

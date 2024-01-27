@@ -47,17 +47,17 @@ export function setupSocketAPI(http: HttpServer) {
                   });
             });
 
-            socket.on('join chat', ({ chatId: room, userId }) => {
+            socket.on('join chat', ({ chatId: room }) => {
                   socket.join(room);
-                  let socketsInRoom = roomToSocketIdsMap.get(room) || new Set();
+                  const socketsInRoom = roomToSocketIdsMap.get(room) || new Set();
                   socketsInRoom.add(socket.id);
                   roomToSocketIdsMap.set(room, socketsInRoom);
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`);
             });
 
-            socket.on('leave chat', ({ chatId: room, userId }) => {
+            socket.on('leave chat', ({ chatId: room }) => {
                   socket.leave(room);
-                  let socketsInRoom = roomToSocketIdsMap.get(room);
+                  const socketsInRoom = roomToSocketIdsMap.get(room);
                   if (socketsInRoom) {
                         socketsInRoom.delete(socket.id);
                         if (socketsInRoom.size === 0) {
@@ -74,7 +74,7 @@ export function setupSocketAPI(http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] is typing in room: ${room}`);
             })
 
-            socket.on('stop typing', ({ chatId: room, userId }) => {
+            socket.on('stop typing', ({ chatId: room }) => {
                   socket.in(room).emit('stop typing')
             })
 
@@ -106,7 +106,7 @@ export function setupSocketAPI(http: HttpServer) {
             });
 
             socket.on('new message in group', (newMessageReceived) => {
-                  let chat = newMessageReceived.chat
+                  const chat = newMessageReceived.chat
                   if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
                   if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
                   chat.users.forEach((user: User) => {
