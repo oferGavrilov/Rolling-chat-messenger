@@ -62,12 +62,12 @@ export default function SelectedFile (): JSX.Element {
                               <div className='flex'>
                                     <div className='flex flex-col mr-3 justify-between'>
                                           <div className='flex text-white gap-x-2'>
-                                                <span>{selectedFile.chat.chatName} @</span>
+                                                <span>{selectedFile.chat?.chatName}@</span>
                                                 <span>{selectedFile.sender._id === loggedInUser?._id ? 'You' : selectedFile.sender.username}</span>
                                           </div>
                                           <span className='text-gray-400 dark:text-gray-300 text-sm text-right'>{formatTime(selectedFile.createdAt)}</span>
                                     </div>
-                                    <img src={selectedFile?.sender.profileImg} alt='' className='w-12 h-12 rounded-full object-cover object-top' />
+                                    <img src={selectedFile?.sender.profileImg} alt='' className='w-12 h-12 rounded-full object-cover' />
                               </div>
                         </div>
                   </div>

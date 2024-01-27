@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: true,
+      open: true,
       strictPort: true,
       watch: {
         usePolling: true,
@@ -33,7 +34,6 @@ export default defineConfig(({ mode }) => {
       setupFiles: ['./src/setupTests.ts']
     },
     eslint: {
-      // Use your own configuration file here
       configFile: '.eslintrc.cjs',
     }
   }

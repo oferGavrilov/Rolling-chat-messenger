@@ -11,9 +11,10 @@ import { IChat } from "../../model/chat.model"
 
 interface Props {
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+      isOpen: boolean
 }
 
-export default function UsersToMessage ({ setIsOpen }: Props): JSX.Element {
+export default function UsersToMessage ({ setIsOpen, isOpen }: Props): JSX.Element {
       const [filter, setFilter] = useState<string>('')
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<IUser[]>([])
@@ -22,11 +23,14 @@ export default function UsersToMessage ({ setIsOpen }: Props): JSX.Element {
       const { user: loggedInUser } = AuthState()
 
       useEffect(() => {
-            loadUsers()
-      }, [])
+            if (isOpen) {
+                  loadUsers()
+            }
+      }, [isOpen])
 
       async function loadUsers () {
             setIsLoading(true)
+            console.log('here')
             const users = await userService.getUsers() as IUser[]
             setUsers(users)
             setIsLoading(false)
@@ -46,7 +50,6 @@ export default function UsersToMessage ({ setIsOpen }: Props): JSX.Element {
             let chat: IChat | undefined
             
             if (chats) {
-                  console.log('chats', chats)
                   chat = chats.find((chat) => !chat?.isGroupChat && chat?.users.some((chatUser) => chatUser._id === user._id))
             }
 
@@ -66,7 +69,8 @@ export default function UsersToMessage ({ setIsOpen }: Props): JSX.Element {
                   isGroupChat: false,
                   users: [user, loggedInUser] as IUser[],
                   messages: [],
-                  kickedUsers: []
+                  kickedUsers: [],
+                  unreadMessagesCount: 0
             }
 
             setSelectedChat(newChat)

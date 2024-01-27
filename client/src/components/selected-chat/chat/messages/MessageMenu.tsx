@@ -12,7 +12,7 @@ interface Props {
       onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
-export default function MessageMenu ({ message, incomingMessage, onRemoveMessage }: Props): JSX.Element {
+export default function MessageMenu({ message, incomingMessage, onRemoveMessage }: Props): JSX.Element {
       const [isOpen, setIsOpen] = useState<boolean>(false)
       const menuRef = useRef<HTMLDivElement>(null)
 
@@ -21,7 +21,7 @@ export default function MessageMenu ({ message, incomingMessage, onRemoveMessage
 
       useClickOutside(menuRef, () => setIsOpen(false), isOpen)
 
-      function onReplyMessage (): void {
+      function onReplyMessage(): void {
             if (message.deletedBy.length > 0) return
             const replyMessage: IReplyMessage = {
                   _id: message._id,
@@ -33,13 +33,13 @@ export default function MessageMenu ({ message, incomingMessage, onRemoveMessage
             setIsOpen(false)
       }
 
-      function onCopyToClipboard (): void {
+      function onCopyToClipboard(): void {
             navigator.clipboard.writeText(message.content as string)
             setIsOpen(false)
             showSuccessMsg
       }
 
-      function removeMessage (): void {
+      function removeMessage(): void {
             onRemoveMessage(message, user?._id as string)
             setIsOpen(false)
       }
@@ -56,8 +56,8 @@ export default function MessageMenu ({ message, incomingMessage, onRemoveMessage
                                     <>
                                           <li className='message-menu-option rounded-t-lg' onClick={onReplyMessage}>Reply</li>
                                           <li className='message-menu-option'>Forward</li>
-                                          <li className='message-menu-option' onClick={onCopyToClipboard}>Copy</li>
-                                          <li className='message-menu-option' onClick={removeMessage}>Delete</li>
+                                          <li className='message-menu-option' onClick={onCopyToClipboard}>{message.messageType === 'image' ? 'Copy URL' : 'Copy'}</li>
+                                          {message.sender._id === user?._id && <li className='message-menu-option' onClick={removeMessage}>Delete</li>}
                                     </>
 
                               ) : (

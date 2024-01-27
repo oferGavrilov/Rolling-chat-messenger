@@ -1,6 +1,7 @@
 import { User } from "../../models/user.model.js"
 import { generateToken } from "../../config/generateToken.js"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import jwt from 'jsonwebtoken'
 
 interface SignUpResult {
       error?: string
@@ -95,7 +96,7 @@ export async function resetPasswordConfirm(token: string, password: string): Pro
             if (!user) {
                   throw new Error('Password reset token is invalid or has expired.')
             }
-            
+
             if (user) {
                   user.password = password
                   user.resetPasswordToken = undefined
@@ -178,6 +179,27 @@ export async function validateUser(userId: string): Promise<User | null> {
             }
 
             return null
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
+export async function validateRefreshToken(refreshToken: string): Promise<string | null>{
+      try {
+            const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as { id: string }
+
+            if (!decoded) {
+                  return null
+            }
+            
+            const user = await User.findById(decoded.id)
+
+            if (user) {
+                  return user._id
+            }
+
+            return null
+
       } catch (error: any) {
             throw handleErrorService(error)
       }

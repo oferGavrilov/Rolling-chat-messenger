@@ -33,7 +33,7 @@ export default function GroupUsersList ({ selectedChat, setSelectedChat, loggedI
                         <div key={user._id} className="flex justify-between">
                               <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg w-full p-2  cursor-pointer rounded-lg">
                                     <div className="flex items-center gap-x-3">
-                                          <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover object-top " alt="profile" />
+                                          <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover" alt="profile" />
                                           <span className="text-lg">{user.username}</span>
                                     </div>
                                     {isAdmin(selectedChat, user._id) && (

@@ -8,7 +8,17 @@ export const generateToken = (id: ObjectId | string) => {
       }
 
       return jwt.sign({ id }, jwtSecret, {
-            expiresIn: '30d'
+            expiresIn: '1h'
       });
 }
 
+export const generateRefreshToken = (id: ObjectId | string) => {
+      const jwtSecret = process.env.JWT_REFRESH_SECRET; // Use a different secret for refresh tokens
+      if (!jwtSecret) {
+            throw new Error('JWT refresh secret is not defined');
+      }
+
+      return jwt.sign({ id }, jwtSecret, {
+            expiresIn: '7d'
+      });
+};

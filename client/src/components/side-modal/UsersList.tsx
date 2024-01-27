@@ -20,7 +20,7 @@ export default function UsersList ({ users, onSelectChat, usersType, selectedUse
                                     onClick={() => onSelectChat(user)}
                               >
                                     <div className='flex gap-x-4 items-center'>
-                                          <img className='w-10 h-10 md:w-12 md:h-12 object-cover object-top rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
+                                          <img className='w-10 h-10 md:w-12 md:h-12 object-cover rounded-full' src={user.profileImg || "imgs/guest.jpg"} alt="" />
                                           <div>
                                                 <span className='md:text-xl font-semibold'>{user.username}</span>
                                                 <p className='ellipsis-text text-lg max-w-[270px]'>

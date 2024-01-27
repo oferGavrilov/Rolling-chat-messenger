@@ -5,30 +5,30 @@ import { IMessage, IReplyMessage } from '../model/message.model'
 interface ChatState {
       chats: IChat[]
       selectedChat: IChat | null
-      notification: IMessage[]
       selectedFile: IMessage | null
       replyMessage: IReplyMessage | null
+      messages: IMessage[]
 }
 
 interface ChatActions {
       setChats: (chats: IChat[] | ((currentChats: IChat[]) => IChat[])) => void;
+      setMessages: (messages: IMessage[] | ((currentMessages: IMessage[]) => IMessage[])) => void;
       addChat: (chat: IChat) => void
       removeChat: (chat: IChat) => void
       updateChatWithLatestMessage: (latestMessage: IMessage) => void
       setSelectedChat: (chat: IChat | null) => void
       setSelectedFile: (file: IMessage | null) => void
       setReplyMessage: (message: IReplyMessage | null) => void
+      removeMessage: (messageId: string, chatId: string, removerId: string) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
-      const storedNotification = localStorage.getItem('notification')
-      const initialNotification = storedNotification ? JSON.parse(storedNotification) : []
 
       return {
             // State
             chats: [],
+            messages: [],
             selectedChat: null,
-            notification: initialNotification,
             selectedFile: null,
             replyMessage: null,
 
@@ -64,6 +64,37 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                         return { ...state, chats: updatedChats };
                   });
             },
+            setMessages: (messagesOrUpdater: IMessage[] | ((currentMessages: IMessage[]) => IMessage[])) => {
+                  set((state) => {
+                        const newMessages = typeof messagesOrUpdater === 'function'
+                              ? messagesOrUpdater(state.messages)
+                              : messagesOrUpdater;
+                        return { ...state, messages: newMessages };
+                  });
+            },
+            removeMessage: (messageId: string, chatId: string, removerId: string) => {
+                  set((state) => {
+                      // Update messages
+                      const updatedMessages = state.messages.map(msg =>
+                          msg._id === messageId
+                              ? { ...msg, deletedBy: [...msg.deletedBy, removerId] }
+                              : msg
+                      );
+              
+                      // Update chats
+                      const updatedChats = state.chats.map(chat =>
+                          chat._id === chatId && chat.latestMessage?._id === messageId
+                              ? {
+                                  ...chat,
+                                  latestMessage: { ...chat.latestMessage, deletedBy: [...chat.latestMessage.deletedBy, removerId] }
+                              }
+                              : chat
+                      );
+              
+                      return { ...state, chats: updatedChats, messages: updatedMessages };
+                  });
+              },
+              
       }
 })
 

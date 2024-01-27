@@ -60,16 +60,14 @@
             @apply
             inline-block 
             h-[180px] w-[220px] 
-            rounded-xl p-3 mr-4
-            shadow-md shadow-gray-400 
-            text-teal-400
-            bg-gradient-to-b from-neutral-50 via-gray-100 to-gray-200;
+            rounded-xl px-5 py-7 mr-4
+            text-[#5386e4];
       }
       .carousel-content {
             @apply 
-            flex flex-col justify-evenly items-center 
+            flex flex-col justify-between items-center 
             h-full whitespace-normal  
-            text-center text-2xl;
+            text-center text-lg lg:text-xl;
       }
       /* LOGIN PAGE */
       .auth-btn {
@@ -449,6 +447,19 @@
             @apply fill-[#0099ff] dark:fill-[#005c4b];
       }
       /* End Chat Page */
+
+      .dashed-line::after {
+            content: '';
+            position: absolute;
+            top: 79%;
+            overflow:hidden;
+            height: 500px;
+            bottom: 0; 
+            left: 50%; 
+            width: 1px;
+            transform: translateX(-50%);
+            border-right: 2px dashed gray; 
+        }
 }
 
 /* MUI */
