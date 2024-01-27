@@ -17,16 +17,24 @@ const messageModel = new mongoose.Schema({
       isReadBy: [readReceiptSchema]
 }, { timestamps: true })
 
-export interface RequestMessage extends Request {
-      user?: {
-            _id: string
-      }
+interface CustomBody {
+      messageIds?: string[];
       chatId?: string;
-      messageId?: string;
       content?: string;
       messageType?: string;
-      replyMessage?: string;
+      replyMessage?: ReplyMessage;
       messageSize?: number;
+}
+
+export interface RequestMessage extends Omit<Request, 'body'> {
+      user?: {
+            _id: string;
+      };
+      params: {
+            chatId: string;
+            messageId: string;
+      };
+      body?: CustomBody;
 }
 
 export type ReplyMessage = {

@@ -45,6 +45,7 @@ export interface RequestChat extends Request {
   params: {
     userId?: string;
   };
+  path: string;
 }
 
 const chatSchema: Schema<ChatDocument> = new Schema(

@@ -4,12 +4,12 @@ dotenv.config()
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import path from 'path'
+// import path from 'path'
 import http from 'http'
 import cookieParser from 'cookie-parser'
 import CleanupService from './services/cleanup.service'
 
-import { fileURLToPath } from 'url'
+// import { fileURLToPath } from 'url'
 import { connectDB } from './config/db.js'
 
 import { notFound } from './middleware/errorMiddleware.js'
@@ -30,14 +30,13 @@ import { router as messageRoutes } from './api/message/router.js'
 import { setupSocketAPI } from './services/socket.service.js'
 import logger from './services/logger.service'
 
-// TODO: Check if its needed
-const currentFilePath = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(currentFilePath)
+// const currentFilePath = fileURLToPath(import.meta.url)
+// const __dirname = path.dirname(currentFilePath)
 
 logger.info(`Environment: ${process.env.NODE_ENV}`)
 
 if (process.env.NODE_ENV === 'production') {
-      app.use(express.static(path.resolve(__dirname, '../build')))
+      // app.use(express.static(path.resolve(__dirname, '../build')))
 
       const corsOptions = {
             origin: 'https://rolling-chat-messenger.vercel.app',

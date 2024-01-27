@@ -32,7 +32,7 @@ export async function getUserChats(req: RequestChat, res: Response) {
 
       try {
             const result = await getUserChatsService(userId)
-            logger.info(`[API: ${req.originalUrl}] - UserId: ${userId} chats fetched`)
+            logger.info(`[API: ${req.path}] - UserId: ${userId} chats fetched`)
             res.status(200).send(result || [])
       } catch (error: unknown) {
             if (error instanceof Error) {

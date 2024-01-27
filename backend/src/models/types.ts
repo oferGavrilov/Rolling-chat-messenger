@@ -20,6 +20,10 @@ export interface AuthenticatedRequest extends Request {
     userId: string;
     messageId: string;
   }
+  cookies: {
+    accessToken?: string;
+    refreshToken?: string;
+  }
 }
 
 export interface RequestWithUser extends Request {
