@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-      "module": "commonjs",
+      "module": "ES2020",
       "esModuleInterop": true,
       "allowSyntheticDefaultImports": true,
       "target": "ES2020",
@@ -10,13 +10,11 @@
       "outDir": "build",
       "baseUrl": ".",
       "allowJs": true,
-      
-      
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
   "include": ["./src/**/*"],
-
+  "exclude": ["node_modules", "build"]
   }
