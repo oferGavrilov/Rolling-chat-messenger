@@ -9,9 +9,11 @@
       "sourceMap": true,
       "outDir": "build",
       "baseUrl": ".",
+      "allowJs": true,
       "paths": {
           "*": ["node_modules/*", "src/types/*"]
-      }
+      },
+      "typeRoots": ["node_modules/@types", "src/types"],
   },
   "ts-node": {
     "esm": true,
