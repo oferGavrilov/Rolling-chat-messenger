@@ -1,4 +1,3 @@
-
 import type { Response } from 'express'
 import type { User } from '../../models/user.model.js'
 import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, renameGroupChatService, updateGroupImageService, removeChatService, kickFromGroupChatService, leaveGroupService } from './service.js'
