@@ -26,8 +26,8 @@ export const userService = {
 async function getUsers (): Promise<IUser[] | IUser> {
       try {
             return await httpService.get('/api/auth/all')
-      } catch (error) {
-            console.error(error)
+      } catch (error:any) {
+            console.log(error)
             throw error
       }
 }
@@ -48,8 +48,8 @@ async function loginSignUp (credentials: FormData, formMode: string): Promise<IU
             }
 
             return data
-      } catch (error) {
-            console.error(error)
+      } catch (error: any) {
+            console.log(error)
             throw error
       }
 }

@@ -12,12 +12,12 @@ interface DecodedToken extends jwt.JwtPayload {
 
 export async function authMiddleware (req: AuthenticatedRequest, res: Response, next: NextFunction) {
       try {
-            const token = req.cookies['token']
+            const token = req.cookies['accessToken']
       
             if (!token) {
                   // return res.status(401).json({ message: 'Not authorized, no token' })
                   logger.error(`[API: ${req.path}] - Not authorized, no token`)
-                  throw res.status(401).json({ message: 'Not authorized, no token' })
+                  return res.status(401).json({ message: 'Not authorized, no token' })
             }
 
             const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as DecodedToken

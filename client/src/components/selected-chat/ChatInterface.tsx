@@ -22,11 +22,11 @@ import { messageService } from "../../services/message.service"
 export default function ChatInterface(): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
-      const [messages, setMessages] = useState<IMessage[]>([])
+      // const [messages, setMessages] = useState<IMessage[]>([])
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<IFile | string | null>(null)
 
-      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage } = useChat()
+      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage , messages, setMessages, removeMessage} = useChat()
       const { user: loggedInUser } = AuthState()
 
       const conversationUserRef = useRef<IUser | undefined>(undefined)
@@ -78,33 +78,8 @@ export default function ChatInterface(): JSX.Element {
             }
 
             const handleRemoveMessage = (messageId: string, chatId: string, removerId: string) => {
-                  if (selectedChat?._id === chatId) {
-                        setMessages(prevMessages => prevMessages.map(msg =>
-                              msg._id === messageId
-                                    ? { ...msg, deletedBy: [...msg.deletedBy, removerId] }
-                                    : msg
-                        ))
-                  }
+                  removeMessage(messageId, chatId, removerId);
 
-                  // set the message from the chat's latestMessage as deleted
-                  const chatIndex = chats.findIndex(chat => chat._id === chatId)
-                  if (chatIndex === -1) return
-
-                  const updatedChats = chats.map(chat => ({ ...chat }))
-
-                  const updatedChat = updatedChats[chatIndex]
-
-                  if (updatedChat.latestMessage) {
-                        const updatedDeletedBy = updatedChat.latestMessage.deletedBy.includes(removerId)
-                              ? updatedChat.latestMessage.deletedBy
-                              : [...updatedChat.latestMessage.deletedBy, removerId]
-
-                        updatedChat.latestMessage = { ...updatedChat.latestMessage, deletedBy: updatedDeletedBy }
-                  }
-
-                  updatedChats[chatIndex] = updatedChat
-
-                  setChats(updatedChats)
             }
 
             socketService.on('user-kicked', ({ chatId, userId, kickerId }) => handleKickUser(chatId, userId, kickerId, selectedChat))

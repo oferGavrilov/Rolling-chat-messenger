@@ -1,7 +1,7 @@
 import type { Response } from "express"
 
 import { getAllMessagesByChatId, sendMessageService, readMessagesService, removeMessageService } from "./service.js"
-import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import CustomError, { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { RequestMessage } from "../../models/message.model.js"
 
 export async function getAllMessages(req: RequestMessage, res: Response) {
@@ -45,7 +45,10 @@ export async function deleteMessage(req: RequestMessage, res: Response) {
             await removeMessageService(messageId, chatId, userId)
             res.status(200).json({ message: 'message deleted' })
       } catch (error: any) {
-            throw handleErrorService(error)
+            console.log('error.message', error.message)
+
+            // throw handleErrorService(error, error.statusCode)
+            res.status(error.statusCode).json({ message: error.message })
       }
 }
 

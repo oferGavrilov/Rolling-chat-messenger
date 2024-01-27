@@ -1,10 +1,12 @@
 import React, { useRef } from 'react'
 
-import UsersToMessage from './UsersToMessage'
+// import UsersToMessage from './UsersToMessage'
 import UsersToGroup from './UsersToGroup'
 
 import { useClickOutside } from '../../custom-hook/useClickOutside'
 import { ContentType } from '../../pages/ChatPage'
+
+const UsersToMessage = React.lazy(() => import('./UsersToMessage'))
 
 interface Props {
       isOpen: boolean

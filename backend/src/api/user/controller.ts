@@ -1,10 +1,11 @@
-import { generateToken } from "../../config/generateToken.js"
+import { generateRefreshToken, generateToken } from "../../config/generateToken"
 import type { Response, Request } from "express"
-import type { AuthenticatedRequest } from "../../models/types.js"
-import { editUserDetailsService, editUserImageService, getUsersService, loginUser, resetPasswordConfirm, searchUsers, signUpUser } from "./service.js"
-import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import type { AuthenticatedRequest } from "../../models/types"
+import { editUserDetailsService, editUserImageService, getUsersService, loginUser, resetPasswordConfirm, searchUsers, signUpUser, validateRefreshToken } from "./service.js"
+import { handleErrorService } from "../../middleware/errorMiddleware"
 import { EmailService } from "../../services/email.service"
-import logger from "../../services/logger.service.js"
+import logger from "../../services/logger.service"
+import { User } from "../../models/user.model"
 
 export async function signUp(req: AuthenticatedRequest, res: Response) {
       const { username, email, password, profileImg } = req.body;
@@ -25,7 +26,7 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production',
                         sameSite: 'strict',
-                        maxAge: 24 * 60 * 60 * 1000, 
+                        maxAge: 24 * 60 * 60 * 1000,
                   });
 
                   return res.status(201).json({
@@ -43,7 +44,6 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
             return res.status(500).json({ msg: 'Internal server error' });
       }
 }
-
 
 export async function login(req: AuthenticatedRequest, res: Response) {
 
@@ -65,14 +65,26 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 
             if (user) {
 
-                  const token = generateToken(user._id)
+                  const accessToken = generateToken(user._id);  // Short-lived
+                  const refreshToken = generateRefreshToken(user._id);  // Long-lived
 
-                  res.cookie('token', token, {
+                  await User.findByIdAndUpdate(user._id, { refreshToken })
+
+                  res.cookie('accessToken', accessToken, {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production',
                         sameSite: 'strict',
-                        maxAge: 24 * 60 * 60 * 1000,
-                  })
+                        // maxAge: 24 * 60 * 60 * 1000, // 24 hours
+                        maxAge: 0.5 * 60 * 1000, // 5 minutes
+                  });
+
+                  res.cookie('refreshToken', refreshToken, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: 'strict',
+                        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                  });
+
                   res.json({
                         _id: user._id,
                         username: user.username,
@@ -179,6 +191,32 @@ export async function editUserImage(req: AuthenticatedRequest, res: Response) {
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }
+      } catch (error: any) {
+            throw handleErrorService(error)
+      }
+}
+
+export async function refreshAccessToken(req: Request, res: Response) {
+      try {
+            const refresh = req.cookies['refreshToken']
+            if (!refresh) {
+                  return res.status(401).json({ msg: 'No refresh token, authorization denied' })
+            }
+
+            const userId = await validateRefreshToken(refresh)
+            if (userId) {
+                  const newAccessToken = generateToken(userId.toString())
+
+                  res.cookie('accessToken', newAccessToken, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: 'strict',
+                        maxAge: 24 * 60 * 60 * 1000,
+                  })
+            }
+
+            res.status(200).json({ message: 'Access token refreshed successfully' })
+
       } catch (error: any) {
             throw handleErrorService(error)
       }

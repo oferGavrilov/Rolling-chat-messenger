@@ -1,7 +1,9 @@
 import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
-import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import CustomError, { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { PopulatedDoc } from "mongoose"
+import createError from 'http-errors'
+import logger from "../../services/logger.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
 
@@ -79,12 +81,12 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
 export async function removeMessageService(messageId: string, chatId: string, userId: string): Promise<void> {
       try {
             const chat = await Chat.findById(chatId)
-            if (!chat) throw new Error('Chat not found')
-
+            if (!chat) throw new CustomError('Chat not found', 'You are not allowed to do that.', 403)
+            
             const message = await Message.findById(messageId)
-            if (!message) throw new Error('Message not found')
+            if (!message) throw new CustomError('Message not found', 'You are not allowed to do that.', 403)
 
-            if (message.deletedBy.includes(userId)) throw new Error('Message already deleted')
+            if (message.deletedBy.includes(userId)) throw new CustomError('Message already deleted', 'You are not allowed to do that.', 403)
 
             message.deletedBy.push(userId)
 
@@ -95,9 +97,10 @@ export async function removeMessageService(messageId: string, chatId: string, us
             }
 
       } catch (error: any) {
-            throw handleErrorService(error)
+            const statusCode: number = error.statusCode || 500;
+            logger.error(`[API] - While Deleting Message: ${error.message}`, { statusCode, userId })
+            throw { statusCode: error.statusCode as number, message: error.message as string };
       }
-
 }
 
 export async function readMessagesService(messageIds: string[], chatId: string, userId: string): Promise<void> {

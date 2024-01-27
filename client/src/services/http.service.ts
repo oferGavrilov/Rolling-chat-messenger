@@ -5,8 +5,8 @@ const env = import.meta.env.VITE_NODE_ENV
 
 const BASE_URL =
       env === 'production'
-            ? 'https://rolling-chat-messenger-server.vercel.app'
-            : 'http://localhost:5000'
+            ? env.VITE_SERVER_URL
+            : env.VITE_LOCAL_SERVER_URL
 
 const axiosInstance = axios.create({
       baseURL: BASE_URL,
@@ -39,23 +39,50 @@ async function ajax<T> (endpoint: string, method: string = 'GET', data: unknown 
             })
             return res.data
       } catch (err: any) {
-            console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, data)
+            console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, message: ${err.message} with data: `, data)
             console.dir(err)
-            console.log('status', err.response.status)
+            console.log('status', err?.response?.status)
+            console.log('err.response', err.response.data.message)
             if (err.response) {
                   const status = err.response.status
                   if (status === 401) {
-                        // window.location.assign('/')
-                        // localStorage.clear()
+                        try {
+                              await refreshToken()
+
+                              const res: AxiosResponse<T> = await axiosInstance({
+                                    url: endpoint,
+                                    method,
+                                    data,
+                                    params: method === 'GET' ? params : null,
+                              })
+
+                              return res.data
+                        } catch (err) {
+                              throw err
+                        }
                   } else if (status === 403) {
-                        toast.warn('You are not allowed to do that.')
+                        toast.warn(err.response.data.message || 'You are not allowed to do that.')
                   } else if (status === 404) {
                         toast.warn('Something went wrong, Try again later.')
                   } else if (status === 500) {
-                        window.location.assign('/')
+                        // window.location.assign('/')
                   }
             }
 
             throw err
       }
 }
+
+async function refreshToken() {
+      try {
+          const response = await axiosInstance.post('/api/auth/refresh');
+          const { accessToken } = response.data;
+          localStorage.setItem('accessToken', accessToken);
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          return accessToken;
+      } catch (error) {
+          console.error('Error refreshing token', error);
+          throw error;
+      }
+  }
+  

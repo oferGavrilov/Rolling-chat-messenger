@@ -4,7 +4,7 @@ import PermMediaIcon from '@mui/icons-material/PermMedia';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import { BsFillCameraVideoFill } from 'react-icons/bs'
 import useIntersectionObserver from "../../custom-hook/useIntersectionObserver";
-export default function Features () {
+export default function Features() {
 
       const showOnScrollRef = useIntersectionObserver(
             (entries, observer) => {
@@ -29,23 +29,24 @@ export default function Features () {
                               className="opacity-95 rounded-xl shadow-2xl"
                         />
                         <div className="flex justify-between text-center h-28 md:h-36 text-sm md:text-lg tracking-wide text-neutral-100 font-bold uppercase mt-8 md:mt-12 px-2">
-                              <div className="flex flex-col items-center justify-between flex-1">
+                              <div className="flex flex-col items-center gap-4 flex-1">
                                     <span className="max-w-[85%] md:max-w-[75%]">Share images and files</span>
                                     <PermMediaIcon className="!text-3xl md:!text-5xl text-neutral-100" />
                               </div>
 
-                              <div className="flex flex-col items-center justify-between flex-1">
+                              <div className="flex flex-col items-center gap-4 flex-1">
                                     <span className="max-w-[85%] md:max-w-[75%]">Send Voice messages</span>
                                     <KeyboardVoiceIcon className="!text-3xl md:!text-5xl text-neutral-100" />
                               </div>
 
-                              <div className="flex flex-col items-center justify-between flex-1">
+                              <div className="flex flex-col items-center gap-4 flex-1">
                                     <span className="max-w-[50%] md:max-w-[65%]">Live Video calls</span>
                                     <BsFillCameraVideoFill className="!text-3xl md:!text-5xl text-neutral-100" />
                               </div>
                         </div>
+
                   </div>
-                  <WavesWhite className="bottom-0 md:-bottom-10 lg:-bottom-20"/>
+                  <WavesWhite className="bottom-0 md:-bottom-10 lg:-bottom-20" />
             </div>
       )
 }

@@ -12,9 +12,9 @@ export interface User extends Document {
   updatedAt: Date
   isOnline: boolean
   lastSeen: Date
-  token?: string
   resetPasswordToken?: string
   resetPasswordExpires?: Date
+  refreshToken?: string
 }
 
 const userSchema: Schema<User> = new Schema<User>(
@@ -28,6 +28,7 @@ const userSchema: Schema<User> = new Schema<User>(
     lastSeen: { type: Date, default: Date.now() },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+    refreshToken: String
   },
   { timestamps: true }
 )
