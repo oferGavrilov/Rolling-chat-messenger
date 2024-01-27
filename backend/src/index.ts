@@ -24,10 +24,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 new CleanupService()
 
-import { router as userRoutes } from './api/user/router.js'
-import { router as chatRoutes } from './api/chat/router.js'
-import { router as messageRoutes } from './api/message/router.js'
-import { setupSocketAPI } from './services/socket.service.js'
+import { router as userRoutes } from './api/user/router'
+import { router as chatRoutes } from './api/chat/router'
+import { router as messageRoutes } from './api/message/router'
+import { setupSocketAPI } from './services/socket.service'
 import logger from './services/logger.service'
 
 // const currentFilePath = fileURLToPath(import.meta.url)
