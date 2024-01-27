@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
+import logger from '../services/logger.service';
 let connection = null;
 export const connectDB = async () => {
-    console.log('Connecting to MongoDB...');
-    console.log('MongoUri', process.env.MONGO_ATLAS_URI);
+    logger.info('Connecting to MongoDB...');
     try {
         let mongoURI;
         if (process.env.NODE_ENV === 'production') {
@@ -15,7 +15,7 @@ export const connectDB = async () => {
             throw new Error('MongoDB connection URI is not defined');
         }
         connection = await mongoose.connect(mongoURI);
-        console.log(`MongoDB Connected: ${connection.connection.host}`);
+        logger.info(`MongoDB environment: ${connection.connection.host}`);
     }
     catch (error) {
         console.error(`Error: ${error.message}`);
@@ -25,7 +25,7 @@ export const connectDB = async () => {
 export const disconnectDB = async () => {
     if (connection) {
         await connection.disconnect();
-        console.log('MongoDB Disconnected');
+        logger.info('MongoDB Disconnected');
     }
 };
 //# sourceMappingURL=db.js.map

@@ -30,19 +30,6 @@ export async function sendMessage(req, res) {
         throw handleErrorService(error);
     }
 }
-export async function readMessages(req, res) {
-    const { chatId } = req.params;
-    const userId = req.user?._id;
-    if (!chatId)
-        res.status(400).json({ message: 'ChatId is required' });
-    try {
-        await readMessagesService(chatId, userId);
-        res.status(200).json({ message: 'messages read' });
-    }
-    catch (error) {
-        throw handleErrorService(error);
-    }
-}
 export async function deleteMessage(req, res) {
     const { messageId, chatId } = req.params;
     const userId = req.user?._id;
@@ -53,6 +40,21 @@ export async function deleteMessage(req, res) {
     try {
         await removeMessageService(messageId, chatId, userId);
         res.status(200).json({ message: 'message deleted' });
+    }
+    catch (error) {
+        throw handleErrorService(error);
+    }
+}
+export async function readMessages(req, res) {
+    const { messageIds, chatId } = req.body;
+    const userId = req.user?._id;
+    if (!messageIds)
+        res.status(400).json({ message: 'MessageIds is required' });
+    if (!chatId)
+        res.status(400).json({ message: 'ChatId is required' });
+    try {
+        await readMessagesService(messageIds, chatId, userId);
+        res.status(200).json({ message: 'read status updated' });
     }
     catch (error) {
         throw handleErrorService(error);

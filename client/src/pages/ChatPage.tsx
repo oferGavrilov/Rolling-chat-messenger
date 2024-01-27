@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react'
 
 import Navigation from '../components/Navigation'
-import SearchUsers from '../components/SideModal'
-import DynamicList from '../components/ChatList/DynamicList'
-import Messenger from '../components/selectedChat'
+import SearchUsers from '../components/side-modal'
+import DynamicList from '../components/chat-list/DynamicList'
+import ChatInterface from '../components/selected-chat/ChatInterface'
 import SelectedFile from '../components/SelectedFile'
 
-import { useChat } from '../store/useChat'
+import { useChat } from '../context/useChat'
 import { AuthState } from '../context/useAuth'
-
-import socketService from '../services/socket.service'
 import { userService } from '../services/user.service'
+import socketService from '../services/socket.service'
 
 export type ContentType = 'chats' | 'videos' | 'story' | 'groups' | 'settings' | 'profile'
 
-export default function ChatPage (): JSX.Element {
+export default function ChatPage(): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<ContentType>('chats')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
@@ -22,15 +21,7 @@ export default function ChatPage (): JSX.Element {
       const { user } = AuthState()
 
       useEffect(() => {
-            if (!user) return
-            socketService.setup(user._id)
-            socketService.login(user._id)
-
-            return () => {
-                  // socketService.off('login')
-                  // socketService.emit(SOCKET_LOGOUT, user._id)
-                  // socketService.terminate()
-            }
+            user && socketService.setup(user._id)
       }, [])
 
       useEffect(() => {
@@ -56,7 +47,7 @@ export default function ChatPage (): JSX.Element {
       if (!user) return <div></div>
       return (
             <div className='overflow-hidden flex h-[100svh] dark:bg-[#222e35]' data-testid="chat-page">
-                  <div className='flex flex-1 slide-right md:overflow-hidden' >
+                  <div className='flex flex-1 slide-right md:overflow-hidden'>
                         <Navigation
                               contentType={contentType}
                               setContentType={setContentType}
@@ -70,7 +61,8 @@ export default function ChatPage (): JSX.Element {
                               showNavigation={showNavigation}
                               setShowNavigation={setShowNavigation}
                         />
-                        {selectedChat && <Messenger />}
+
+                        {selectedChat && <ChatInterface />}
                   </div>
                   {selectedFile && (
                         <SelectedFile />
@@ -81,7 +73,6 @@ export default function ChatPage (): JSX.Element {
                         isOpen={showSearch}
                         setIsOpen={setShowSearch}
                   />
-
             </div>
       );
 

@@ -1,9 +1,9 @@
-import { WavesWhite } from "../../assets/icons/Bubble"
+import { WavesWhite } from "../svg/Bubble"
 
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import { BsFillCameraVideoFill } from 'react-icons/bs'
-import useIntersectionObserver from "../../custom/useIntersectionObserver";
+import useIntersectionObserver from "../../custom-hook/useIntersectionObserver";
 export default function Features () {
 
       const showOnScrollRef = useIntersectionObserver(

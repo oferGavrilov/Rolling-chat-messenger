@@ -6,4 +6,5 @@ router.get('/:chatId', authMiddleware, getAllMessages);
 router.post('/', authMiddleware, sendMessage);
 router.put('/read/:chatId', authMiddleware, readMessages);
 router.delete('/remove/:chatId/:messageId', authMiddleware, deleteMessage);
+router.put('/read', authMiddleware, readMessages);
 //# sourceMappingURL=router.js.map

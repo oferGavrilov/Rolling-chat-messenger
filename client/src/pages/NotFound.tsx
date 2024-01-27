@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
-import Logo from "../assets/icons/Logo"
-import { WavesBlue } from "../assets/icons/Bubble"
+import Logo from "../components/svg/Logo"
+import { WavesBlue } from "../components/svg/Bubble"
 
 export default function NotFound (): JSX.Element {
       return (

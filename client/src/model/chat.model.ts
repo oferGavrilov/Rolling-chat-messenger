@@ -13,7 +13,7 @@ export interface IChat {
       updatedAt?: string
       deletedBy?: string[]
       kickedUsers: KickedUsers[]
-      count?: number
+      unreadMessagesCount: number
 }
 
 type KickedUsers = {

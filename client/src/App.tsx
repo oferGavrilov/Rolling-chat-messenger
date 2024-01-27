@@ -13,6 +13,8 @@ import AuthProvider from "./context/useAuth"
 import Loading from "./components/Loading"
 import NotFound from "./pages/NotFound"
 import Notification from "./components/Notification"
+import { Layout } from "./layout/Layout"
+import ResetPassword from "./pages/ResetPassword"
 
 // For testing purposes
 export const AppRoutes = () => {
@@ -20,9 +22,14 @@ export const AppRoutes = () => {
     <AuthProvider>
       <Suspense fallback={<Loading />}>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/login" element={<Login />} />
+
+          <Route index element={<Home />} />
+          <Route path="/" element={<Layout />} >
+            <Route path="/chat" element={<ChatPage />} />
+          </Route>
+
+          <Route path="/auth" element={<Login />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

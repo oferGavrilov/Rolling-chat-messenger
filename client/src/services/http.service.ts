@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios'
-import { getAuthConfig } from '../utils/authConfig'
 import { toast } from 'react-toastify'
 
 const env = import.meta.env.VITE_NODE_ENV
@@ -31,23 +30,23 @@ export const httpService = {
 
 async function ajax<T> (endpoint: string, method: string = 'GET', data: unknown = null, params: unknown = {}): Promise<T> {
       try {
-            const config = getAuthConfig()
 
             const res: AxiosResponse<T> = await axiosInstance({
                   url: endpoint,
                   method,
                   data,
                   params: method === 'GET' ? params : null,
-                  headers: config.headers,
             })
             return res.data
       } catch (err: any) {
             console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, with data: `, data)
             console.dir(err)
+            console.log('status', err.response.status)
             if (err.response) {
                   const status = err.response.status
                   if (status === 401) {
-                        sessionStorage.clear()
+                        // window.location.assign('/')
+                        // localStorage.clear()
                   } else if (status === 403) {
                         toast.warn('You are not allowed to do that.')
                   } else if (status === 404) {

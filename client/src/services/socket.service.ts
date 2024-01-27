@@ -5,7 +5,7 @@ export const SOCKET_LOGIN = 'login'
 
 const baseUrl =
       process.env.NODE_ENV === 'production'
-            ? 'https://rolling-chat-messenger-server.vercel.app'
+            ? process.env.VITE_API_URL as string
             : 'http://localhost:5000'
 
 export const socketService = createSocketService()

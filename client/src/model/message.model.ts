@@ -3,7 +3,8 @@ import { IChat } from "./chat.model"
 export interface IMessage {
       count?: number
       _id: string
-      chat: IChat
+      chatId: string
+      chat?: IChat
       content: string | File
       createdAt: string
       sender: {
@@ -16,7 +17,7 @@ export interface IMessage {
       replyMessage: IReplyMessage | null
       messageSize?: number
       deletedBy: string[]
-      isRead: boolean
+      isReadBy: { userId: string, readAt: Date }[]
 }
 
 export type IReplyMessage = {

@@ -18,7 +18,6 @@ export async function signUpUser(username, email, password, profileImg) {
             email,
             password,
             profileImg,
-            isOnline: true,
             about: User.schema.path('about').default('Available'),
         });
         if (newUser) {
@@ -43,27 +42,46 @@ export async function signUpUser(username, email, password, profileImg) {
 export async function loginUser(email, password) {
     try {
         const user = await User.findOne({ email }).select('+password');
-        if (user && (await user.matchPassword(password))) {
-            user.isOnline = true;
-            await user.save();
-            return {
-                user,
-            };
+        if (!user) {
+            return { error: 'Invalid email or password' };
         }
-        else {
-            return {
-                error: 'Invalid email or password',
-            };
+        const passwordMatch = await user.verifyPassword(password);
+        if (!passwordMatch) {
+            return { error: 'Invalid email or password' };
         }
+        await user.save();
+        return {
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                profileImg: user.profileImg,
+                about: user.about,
+            }
+        };
     }
     catch (error) {
         throw handleErrorService(error);
     }
 }
-export async function updateUserStatus(userId, connectionStatus) {
+export async function resetPasswordConfirm(token, password) {
     try {
-        // Find the user by ID and update the isOnline and lastSeen properties
-        await User.findByIdAndUpdate(userId, { isOnline: connectionStatus, lastSeen: new Date() }, { new: true });
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+        if (!user) {
+            throw new Error('Password reset token is invalid or has expired.');
+        }
+        if (user) {
+            user.password = password;
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save();
+        }
+        else {
+            throw new Error('User not found');
+        }
     }
     catch (error) {
         throw handleErrorService(error);
@@ -116,6 +134,18 @@ export async function editUserImageService(userId, newImage) {
             user.profileImg = newImage;
             await user.save();
             return user.profileImg;
+        }
+        return null;
+    }
+    catch (error) {
+        throw handleErrorService(error);
+    }
+}
+export async function validateUser(userId) {
+    try {
+        const user = await User.findById(userId);
+        if (user) {
+            return user;
         }
         return null;
     }

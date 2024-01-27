@@ -13,7 +13,7 @@ export default function UploadImage ({ image, setImage, editImage }: Props) {
       const [imageLoading, setImageLoading] = useState<boolean>(false)
 
       async function uploadImage (file: File | undefined) {
-            if (!file) return toast.error('Upload image went wrong')
+            if (!file) return toast.warn('Upload image went wrong')
             try {
                   setImageLoading(true)
                   const data = await uploadImg(file)
@@ -28,14 +28,14 @@ export default function UploadImage ({ image, setImage, editImage }: Props) {
       return (
             <label
                   htmlFor="img-upload"
-                  className='upload-img fade-grow-up'
+                  className='upload-img fade-grow-up bg-center'
                   style={{ backgroundImage: `url(${image ? image : 'imgs/guest.jpg'})`, backgroundSize: 'cover' }}
             >
                   {imageLoading ? (
                         <div className='spinner'></div>) : (
 
                         <div className='overlay hidden '>
-                              <div className={`flex flex-col items-center text-sm ${image && 'text-white'}`}>
+                              <div className={`flex flex-col items-center text-sm ${image && 'text-primary'}`}>
                                     <CameraAltRoundedIcon fontSize='large' />
                                     Change Image
                               </div>

@@ -2,25 +2,22 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js';
 import { Chat } from '../models/chat.model.js';
 import { Message } from '../models/message.model.js';
+import logger from '../services/logger.service.js';
 export async function authMiddleware(req, res, next) {
-    let token;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        try {
-            token = req.headers.authorization.split(' ')[1];
-            if (!token) {
-                throw new Error('No token provided');
-            }
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await User.findById(decoded.id).select('-password');
-            next();
+    try {
+        const token = req.cookies['token'];
+        if (!token) {
+            // return res.status(401).json({ message: 'Not authorized, no token' })
+            logger.error(`[API: ${req.path}] - Not authorized, no token`);
+            throw res.status(401).json({ message: 'Not authorized, no token' });
         }
-        catch (error) {
-            console.error('this', error);
-            res.status(401).json({ msg: 'Not authorized, token failed' });
-        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id).select('-password');
+        next();
     }
-    if (!token) {
-        res.status(401).json({ msg: 'Not authorized, no token' });
+    catch (error) {
+        console.error(error);
+        return res.status(401).json({ message: 'Not authorized, token failed' });
     }
 }
 export async function groupAdminMiddleware(req, res, next) {

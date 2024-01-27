@@ -8,7 +8,7 @@ export default function UserInfo ({ user }: { user: IUser | null }): JSX.Element
             <div className="flex flex-col items-center">
                   <img
                         src={user.profileImg}
-                        className="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-lg mb-5 object-cover opacity-0 object-top fade-grow-up-profile"
+                        className="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-lg mb-5 object-cover opacity-0 fade-grow-up-profile"
                         alt="profile"
                   />
                   <span className="text-2xl font-semibold dark:text-dark-primary-text">{user.username}</span>
