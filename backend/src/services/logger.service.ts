@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from 'winston'
-import DailyRotateFile from 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file'
 
 const consoleFormat = format.combine(
     format.colorize(),

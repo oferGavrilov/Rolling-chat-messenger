@@ -7,7 +7,7 @@ import cors from 'cors'
 // import path from 'path'
 import http from 'http'
 import cookieParser from 'cookie-parser'
-import CleanupService from './services/cleanup.service'
+import CleanupService from './services/cleanup.service.js'
 
 // import { fileURLToPath } from 'url'
 import { connectDB } from './config/db.js'
@@ -24,11 +24,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 new CleanupService()
 
-import { router as userRoutes } from './api/user/router'
-import { router as chatRoutes } from './api/chat/router'
-import { router as messageRoutes } from './api/message/router'
-import { setupSocketAPI } from './services/socket.service'
-import logger from './services/logger.service'
+import { router as userRoutes } from './api/user/router.js'
+import { router as chatRoutes } from './api/chat/router.js'
+import { router as messageRoutes } from './api/message/router.js'
+import { setupSocketAPI } from './services/socket.service.js'
+import logger from './services/logger.service.js'
 
 // const currentFilePath = fileURLToPath(import.meta.url)
 // const __dirname = path.dirname(currentFilePath)

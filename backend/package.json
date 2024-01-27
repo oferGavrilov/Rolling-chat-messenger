@@ -8,7 +8,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node build/src/index.js",
+    "start": "node build/index.js",
     "dev": "nodemon --exec npx tsx ./src/index.ts",
     "test": "jest --coverage",
     "lint": "eslint . --ext .ts,",

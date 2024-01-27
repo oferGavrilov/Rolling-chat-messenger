@@ -31,8 +31,8 @@ export interface RequestMessage extends Omit<Request, 'body'> {
             _id: string;
       };
       params: {
-            chatId: string;
-            messageId: string;
+            chatId?: string;
+            messageId?: string;
       };
       body?: CustomBody;
 }

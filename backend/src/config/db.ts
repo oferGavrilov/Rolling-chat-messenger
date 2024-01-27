@@ -1,5 +1,5 @@
 import mongoose, { type Mongoose } from 'mongoose'
-import logger from '../services/logger.service'
+import logger from '../services/logger.service.js'
 
 let connection: Mongoose | null = null
 

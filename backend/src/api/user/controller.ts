@@ -1,10 +1,10 @@
-import { generateRefreshToken, generateToken } from "../../config/generateToken"
 import type { Response, Request } from "express"
-import type { AuthenticatedRequest } from "../../models/types"
+import { generateRefreshToken, generateToken } from "../../config/generateToken.js"
+import type { AuthenticatedRequest } from "../../models/types.js"
 import { editUserDetailsService, editUserImageService, getUsersService, loginUser, resetPasswordConfirm, searchUsers, signUpUser, validateRefreshToken } from "./service.js"
-import { EmailService } from "../../services/email.service"
-import logger from "../../services/logger.service"
-import { User } from "../../models/user.model"
+import { EmailService } from "../../services/email.service.js"
+import logger from "../../services/logger.service.js"
+import { User } from "../../models/user.model.js"
 
 export async function signUp(req: AuthenticatedRequest, res: Response) {
       const { username, email, password, profileImg } = req.body;
