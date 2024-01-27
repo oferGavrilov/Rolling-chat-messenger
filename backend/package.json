@@ -14,7 +14,7 @@
     "test": "jest --coverage",
     "lint": "eslint . --ext .ts,",
     "build-dev": "rimraf build && tsc",
-    "build": "tsc"
+    "build": "tsc --version && tsc"
   },
   "keywords": [],
   "author": "",
