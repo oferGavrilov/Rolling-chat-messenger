@@ -72,7 +72,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
 
       function messageStyles({ replyMessage, messageType }: IMessage) {
             if (replyMessage || messageType === 'image' || messageType === 'file' ||
-                  (messageType === 'text' && message.content.length >= 40)) {
+                  (messageType === 'text' && message.content.toString().length >= 40)) {
                   return 'flex-col'
             }
             if (!incomingMessage) return 'flex-row-reverse'

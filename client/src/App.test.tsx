@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import App, { AppRoutes } from './App'
 import { MemoryRouter } from 'react-router-dom'

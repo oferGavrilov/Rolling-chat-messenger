@@ -6,7 +6,7 @@ import { httpService } from "./http.service"
 const STORAGE_KEY = 'loggedin-user'
 const env = import.meta.env.VITE_NODE_ENV
 
-const BASE_URL = env === 'production' ? 'https://rolling-chat-messenger-server.vercel.app' : 'http://localhost:5000'
+const BASE_URL = env === 'production' ? 'https://rolling-backend.onrender.com/' : 'http://localhost:5000'
 
 export const userService = {
       loginSignUp,

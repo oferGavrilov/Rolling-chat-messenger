@@ -8,6 +8,7 @@ const BASE_URL =
             ? env.VITE_SERVER_URL
             : env.VITE_LOCAL_SERVER_URL
 
+
 const axiosInstance = axios.create({
       baseURL: BASE_URL,
       withCredentials: true,

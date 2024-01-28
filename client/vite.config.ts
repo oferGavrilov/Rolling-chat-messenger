@@ -7,6 +7,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ mode }) => {
   const API_URL = mode === 'production' ? 'https://rolling-chat-messenger-server.vercel.app/' : 'http://localhost:5000'
 
+
   return {
     plugins: [react()],
     preview: {

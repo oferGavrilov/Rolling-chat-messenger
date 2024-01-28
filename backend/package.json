@@ -12,7 +12,7 @@
     "start": "node build/index.js",
     "dev": "nodemon --exec npx tsx ./src/index.ts",
     "test": "jest --coverage",
-    "lint": "eslint . --ext .ts,",
+    "lint": "eslint . --ext .ts",
     "build-dev": "rimraf build && tsc",
     "build": "tsc --version && node -v && tsc",
     "postinstall": "npm list"

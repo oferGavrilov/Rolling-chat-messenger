@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build-dev": "rimraf dist && vite build --mode development",
     "preview": "vite preview",
     "serve": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint . --ext .ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -41,12 +43,14 @@
     "@types/node": "^20.4.2",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.4.1",
-    "@typescript-eslint/parser": "^6.4.1",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.48.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "jsdom": "^22.1.0",
     "mock-local-storage": "^1.1.24",

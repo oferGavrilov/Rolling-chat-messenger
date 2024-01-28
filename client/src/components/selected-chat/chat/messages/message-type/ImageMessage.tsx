@@ -9,7 +9,7 @@ interface Props {
 export default function ImageMessage ({ message, setSelectedFile, userId }: Props) {
       return (
             <div>
-                  {(message.chat.isGroupChat && message.sender._id !== userId) && (
+                  {(message.chat?.isGroupChat && message.sender._id !== userId) && (
                         <span className='mx-2 font-bold text-orange-400 leading-4 lowercase'>{message.sender.username}</span>
                   )}
 

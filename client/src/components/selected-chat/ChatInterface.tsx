@@ -26,7 +26,7 @@ export default function ChatInterface(): JSX.Element {
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<IFile | string | null>(null)
 
-      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage , messages, setMessages, removeMessage} = useChat()
+      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const conversationUserRef = useRef<IUser | undefined>(undefined)
@@ -196,7 +196,7 @@ export default function ChatInterface(): JSX.Element {
                   replyMessage,
                   messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
                   deletedBy: [],
-                  isReadBy: [],
+                  isReadBy: [{ userId: loggedInUser?._id as string, readAt: new Date() }],
             }
 
             // Show the message immediately

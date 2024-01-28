@@ -8,8 +8,6 @@ export const messageService = {
       updateReadStatus
 }
 
-
-
 async function getMessages(chatId: string): Promise<IMessage[]> {
       try {
             return httpService.get<IMessage[]>(`/api/message/${chatId}`, {})

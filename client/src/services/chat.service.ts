@@ -5,6 +5,7 @@ import { IUser } from "../model/user.model"
 import { httpService } from "./http.service"
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-chat-messenger-server.vercel.app' : 'http://localhost:5000'
+// const BASE_URL = "https://rolling-backend.onrender.com"
 
 export const chatService = {
       getUserChats,
