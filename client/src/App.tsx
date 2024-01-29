@@ -3,7 +3,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 
 const Home = lazy(() => import('./pages/Home'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
-const Login = lazy(() => import('./pages/Auth'))
+const Auth = lazy(() => import('./pages/Auth'))
 
 import { ToastContainer } from 'react-toastify'
 
@@ -28,7 +28,7 @@ export const AppRoutes = () => {
             <Route path="/chat" element={<ChatPage />} />
           </Route>
 
-          <Route path="/auth" element={<Login />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -6,7 +6,7 @@ import Logo from '../components/svg/Logo'
 import HomeIcon from '@mui/icons-material/Home'
 import { Tooltip } from '@mui/material'
 
-import Form from '../components/auth/Form'
+import Form from '../components/Auth/Form'
 
 import { WavesBlue } from '../components/svg/Bubble'
 
