@@ -228,8 +228,7 @@ export default function ChatInterface(): JSX.Element {
                         prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
                   )
 
-                  const socketTarget = selectedChat.isGroupChat ? 'new message in group' : 'new message in room'
-                  socketService.emit(socketTarget, { chatId: selectedChat._id, message: messageToUpdate, chatUsers: selectedChat.users })
+                  socketService.emit('new message in room', { chatId: selectedChat._id, message: messageToUpdate, chatUsers: selectedChat.users })
 
             } catch (error) {
                   console.error('Failed to send message:', error)

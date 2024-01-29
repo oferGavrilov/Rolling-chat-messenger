@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
-  const API_URL = mode === 'production' ? 'https://rolling-chat-messenger-server.vercel.app/' : 'http://localhost:5000'
+  const API_URL = mode === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
 
 
   return {

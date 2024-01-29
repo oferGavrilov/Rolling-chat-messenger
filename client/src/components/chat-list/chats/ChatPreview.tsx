@@ -46,8 +46,8 @@ const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
 
       return (
             <li onClick={handleSelectChat}
-                  className={`flex items-center rounded-lg justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200 overflow-hidden
-                   ${selectedChat?._id === chat._id && 'bg-gray-100 dark:bg-dark-secondary-bg border-r-2 border-r-primary'}`}>
+                  className={`flex items-center rounded-l-lg rounded-r-md justify-between px-3 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200 overflow-hidden
+                   ${selectedChat?._id === chat._id && 'bg-gray-100 dark:bg-dark-secondary-bg border-r-4 border-r-primary'}`}>
                   <div className="flex items-center w-full">
                         <div className='h-[40px] w-[40px] lg:h-11 lg:w-11 overflow-hidden rounded-full select-none flex-shrink-0'>
                               <Avatar

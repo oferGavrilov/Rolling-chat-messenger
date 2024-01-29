@@ -1,12 +1,10 @@
 import React, { useRef } from 'react'
 
-// import UsersToMessage from './UsersToMessage'
-import UsersToGroup from './UsersToGroup'
-
 import { useClickOutside } from '../../custom-hook/useClickOutside'
 import { ContentType } from '../../pages/ChatPage'
 
-const UsersToMessage = React.lazy(() => import('./UsersToMessage'))
+import UsersToGroup from './UsersToGroup'
+import UsersToMessage from './UsersToMessage'
 
 interface Props {
       isOpen: boolean
@@ -14,7 +12,7 @@ interface Props {
       contentType: ContentType
 }
 
-export default function SearchUsers(props: Props): JSX.Element {
+export default function DynamicSideModal(props: Props): JSX.Element {
       const menuRef = useRef<HTMLDivElement>(null)
 
       useClickOutside(menuRef, () => props.setIsOpen(false), props.isOpen)
@@ -35,6 +33,11 @@ export default function SearchUsers(props: Props): JSX.Element {
                   className={`side-modal-container
                    ${props.isOpen ? 'translate-x-0' : '-translate-x-[100vh]'}`}>
                   {switchContent()}
+
+                  {/* <CloseIcon className='' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} /> */}
+                  <div className='select-none cursor-pointer absolute right-4 top-6 flex items-center justify-center border-2 border-gray-400 p-1 rounded-full' onClick={() => props.setIsOpen(false)}>
+                        <span className="material-symbols-outlined text-gray-400 dark:text-dark-primary-text">close</span>
+                  </div>
             </div>
       )
 }

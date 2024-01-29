@@ -166,7 +166,9 @@
             bg-blue-500 text-white hover:bg-blue-600 /* LIGHT MODE */
             dark:bg-dark-primary-bg dark:hover:bg-primary; /* DARK MODE */
       }
-
+      .input-icon {
+            @apply  absolute text-gray-400 dark:text-primary right-3 top-1/2 -translate-y-1/2;
+      }
       /* Upload Image */
       .upload-img{
             @apply

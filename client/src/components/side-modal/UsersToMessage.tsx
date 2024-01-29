@@ -2,9 +2,8 @@ import { useEffect, useMemo, useState } from "react"
 import { IUser } from "../../model/user.model"
 import useChat from "../../context/useChat"
 import { userService } from "../../services/user.service"
-import CloseIcon from '@mui/icons-material/Close'
 import Loading from "../SkeltonLoading"
-import UsersInput from "../common/UsersInput"
+import SearchInput from "../common/SearchInput"
 import UsersList from "./UsersList"
 import { AuthState } from "../../context/useAuth"
 import { IChat } from "../../model/chat.model"
@@ -14,7 +13,7 @@ interface Props {
       isOpen: boolean
 }
 
-export default function UsersToMessage ({ setIsOpen, isOpen }: Props): JSX.Element {
+export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Element {
       const [filter, setFilter] = useState<string>('')
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<IUser[]>([])
@@ -28,12 +27,17 @@ export default function UsersToMessage ({ setIsOpen, isOpen }: Props): JSX.Eleme
             }
       }, [isOpen])
 
-      async function loadUsers () {
-            setIsLoading(true)
-            console.log('here')
-            const users = await userService.getUsers() as IUser[]
-            setUsers(users)
-            setIsLoading(false)
+      async function loadUsers(): Promise<void> {
+            try {
+                  setIsLoading(true)
+                  const users = await userService.getUsers()
+                  setUsers(users)
+                  setIsLoading(false)
+
+            } catch (error) {
+                  console.error("An error occurred while loading users:", error)
+                  setIsLoading(false)
+            }
       }
 
       const filteredUsers = useMemo(() => {
@@ -45,10 +49,10 @@ export default function UsersToMessage ({ setIsOpen, isOpen }: Props): JSX.Eleme
             return users
       }, [users, filter])
 
-      async function onSelectChat (user: IUser): Promise<void> {
+      async function onSelectChat(user: IUser): Promise<void> {
             // Check if chat already exists and its not a group chat
             let chat: IChat | undefined
-            
+
             if (chats) {
                   chat = chats.find((chat) => !chat?.isGroupChat && chat?.users.some((chatUser) => chatUser._id === user._id))
             }
@@ -79,17 +83,12 @@ export default function UsersToMessage ({ setIsOpen, isOpen }: Props): JSX.Eleme
       }
 
       return (
-            <section className="text-secondary-text dark:text-dark-primary-text">
-                  <div className='flex justify-between items-center py-4 px-4 shadow-lg shadow-gray-100 dark:shadow-dark-primary-bg'>
-                        <h2 className="text-xl">Search Users</h2>
-                        <CloseIcon className='cursor-pointer' onClick={() => {
-                              setFilter('')
-                              setIsOpen(false)
-                        }} />
-                  </div>
+            <section className="py-6 text-secondary-text dark:text-dark-primary-text">
+                  <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>Create Group Chat</h2>
+
 
                   <div className='py-6 mx-3 flex relative px-2 gap-x-2'>
-                        <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
+                        <SearchInput filter={filter} setFilter={setFilter} placeholder="Filter by name or email..." />
                   </div>
 
                   <div className={`${users.length && 'border-t-2 dark:border-gray-500'}`}>

@@ -164,7 +164,7 @@ export async function searchUsersByKeyword(req: Request, res: Response) {
 
       try {
             const users = await searchUsers(keyword)
-            res.send(users || [])
+            res.status(200).send(users)
       } catch (error: unknown) {
             if (error instanceof Error) {
                   logger.error('Error during searchUsersByKeyword:', error)
@@ -180,7 +180,7 @@ export async function getUsers(req: AuthenticatedRequest, res: Response) {
 
       try {
             const users = await getUsersService(loggedInUserId)
-            res.send(users || [])
+            res.status(200).json(users)
       } catch (error: unknown) {
             if (error instanceof Error) {
                   logger.error('Error during getUsers:', error)
@@ -200,7 +200,8 @@ export async function editUserDetails(req: AuthenticatedRequest, res: Response) 
             const user = await editUserDetailsService(userId, newNameToSave)
 
             if (user) {
-                  res.send(user)
+                  res.status(200).json({ message: 'User details updated successfully' })
+
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }
@@ -222,7 +223,7 @@ export async function editUserImage(req: AuthenticatedRequest, res: Response) {
             const user = await editUserImageService(userId, image)
 
             if (user) {
-                  res.send(user)
+                  res.status(200).json({ message: 'User image updated successfully' })
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }

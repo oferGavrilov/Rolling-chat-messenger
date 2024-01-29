@@ -91,9 +91,9 @@ export default function Navigation({
                                           <BsChatText size={20} />
                                     </div>
                               </Tooltip>
-                              <Tooltip title="Videos" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'videos' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('videos')}>
-                                          <BsCameraVideo size={20} />
+                              <Tooltip title="Groups" arrow placement='right'>
+                                    <div className={`navigation-icon ${contentType === 'groups' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('groups')}>
+                                          <PeopleOutlinedIcon />
                                     </div>
                               </Tooltip>
                               <Tooltip title="Stories" arrow placement='right'>
@@ -101,9 +101,9 @@ export default function Navigation({
                                           <Story />
                                     </div>
                               </Tooltip>
-                              <Tooltip title="Groups" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'groups' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('groups')}>
-                                          <PeopleOutlinedIcon />
+                              <Tooltip title="Videos" arrow placement='right'>
+                                    <div className={`navigation-icon ${contentType === 'videos' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('videos')}>
+                                          <BsCameraVideo size={20} />
                                     </div>
                               </Tooltip>
                         </div>

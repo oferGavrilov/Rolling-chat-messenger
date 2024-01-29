@@ -1,28 +1,23 @@
 import React, { useEffect, useMemo, useState } from "react"
-
 import { userService } from "../../services/user.service"
 import { chatService } from '../../services/chat.service'
-
 import { AuthState } from '../../context/useAuth'
 import useChat from '../../context/useChat'
-
 import Loading from "../SkeltonLoading"
-import CloseIcon from '@mui/icons-material/Close'
-
 import { IUser } from "../../model/user.model"
-
 import { toast } from 'react-toastify'
-import { io } from 'socket.io-client'
 
 import UploadImage from '../UploadImage'
-import UsersInput from '../common/UsersInput'
+import SearchInput from '../common/SearchInput'
 import UsersList from './UsersList'
+import socketService from "../../services/socket.service"
 
 interface Props {
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+      isOpen: boolean
 }
 
-export default function UsersToGroup ({ setIsOpen }: Props) {
+export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
       const [filter, setFilter] = useState<string>('')
       const [users, setUsers] = useState<IUser[]>([])
       const [group, setGroup] = useState<{ chatName: string, users: IUser[] }>({ chatName: '', users: [] })
@@ -33,21 +28,23 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
       const { chats, setChats } = useChat()
 
       useEffect(() => {
-            loadUsers()
-      }, [])
+            if (isOpen) {
+                  loadUsers()
+            }
+      }, [isOpen])
 
-      async function loadUsers () {
+      async function loadUsers() {
             try {
                   setIsLoading(true)
                   const users = await userService.getUsers() as IUser[]
                   setUsers(users)
-            } catch (err) {
-                  console.error("An error occurred while loading users:", err)
-            } finally {
+                  setIsLoading(false)
+
+            } catch (error) {
+                  console.error("An error occurred while loading users:", error)
                   setIsLoading(false)
             }
       }
-
       const filteredUsers = useMemo(() => {
             if (filter) {
                   return users.filter(user =>
@@ -57,9 +54,17 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
             return users
       }, [users, filter])
 
-      async function onCreateGroup () {
-            if (!group.chatName) return toast.error('Please enter a group name')
-            if (group.users.length === 0) return toast.error('Please select at least one user')
+      async function onCreateGroup(): Promise<void> {
+            if (!group.chatName) {
+                  toast.error('Please enter a group name')
+                  return
+            }
+
+            if (group.users.length === 0) {
+                  toast.error('Please select at least one user')
+                  return
+            }
+
             try {
                   const groupToAdd = { ...group, groupImage: image }
                   const newChat = await chatService.createGroup(groupToAdd)
@@ -68,22 +73,24 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                   setIsOpen(false)
                   setGroup({ chatName: '', users: [] })
 
-                  const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000', { transports: ['websocket'] })
-                  socket.emit('create group', group.users, user?._id, newChat)
+                  // const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000', { transports: ['websocket'] })
+                  // socket.emit('create group', group.users, user?._id, newChat)
+                  socketService.emit('create group', { users: group.users, adminId: user?._id, group: newChat })
             } catch (error) {
                   console.error("An error occurred while creating group:", error)
             }
       }
 
-      function handleGroupUsers (user: IUser) {
+      function handleGroupUsers(user: IUser): void {
             if (group.users.find(u => u._id === user._id)) {
-                  return setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
+                  setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
+                  return
             }
 
             setGroup({ ...group, users: [...group.users, user] })
       }
 
-      function clearSelectedUsers (): void {
+      function clearSelectedUsers(): void {
             setGroup({ ...group, users: [] })
       }
 
@@ -95,13 +102,13 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                         <UploadImage image={image} setImage={setImage} />
                         <input
                               type="text"
-                              className='bg-gray-100 p-2 py-3 rounded-lg px-3 dark:text-black focus:outline-none focus:ring-2 focus:ring-primary'
+                              className='bg-gray-100 p-2 py-2 rounded-lg px-3 dark:text-black focus:outline-none focus:ring-1 focus:ring-primary'
                               value={group.chatName}
                               onChange={(e) => setGroup({ ...group, chatName: e.target.value })}
-                              placeholder="Group Name*"
+                              placeholder="* Group Name"
                         />
                         <div className='flex relative'>
-                              <UsersInput filter={filter} setFilter={setFilter} placeholder="Filter by name and email" />
+                              <SearchInput filter={filter} setFilter={setFilter} placeholder="Filter by name or email..." />
                         </div>
                         <button
                               onClick={onCreateGroup}
@@ -122,7 +129,6 @@ export default function UsersToGroup ({ setIsOpen }: Props) {
                         <Loading type="users" />
                   )}
 
-                  <CloseIcon className='cursor-pointer dark:text-dark-primary-text absolute right-4 top-6' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} />
             </div>
       )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import Navigation from '../components/Navigation'
-import SearchUsers from '../components/side-modal'
+import DynamicSideModal from '../components/side-modal/DynamicSideModal'
 import DynamicList from '../components/chat-list/DynamicList'
 import ChatInterface from '../components/selected-chat/ChatInterface'
 import SelectedFile from '../components/SelectedFile'
@@ -68,7 +68,7 @@ export default function ChatPage(): JSX.Element {
                         <SelectedFile />
                   )}
 
-                  <SearchUsers
+                  <DynamicSideModal
                         contentType={contentType}
                         isOpen={showSearch}
                         setIsOpen={setShowSearch}

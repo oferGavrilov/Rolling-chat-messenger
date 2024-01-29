@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io'
 import type { User } from '../models/user.model.js'
 import { type ChatDocument } from '../models/chat.model.js'
 import logger from './logger.service.js'
+import { IMessage } from 'src/models/message.model.js'
 
 let gIo: Server | null = null
 const roomToSocketIdsMap = new Map();
@@ -37,7 +38,8 @@ export function setupSocketAPI(http: HttpServer) {
                   }
             })
 
-            socket.on('create group', (users: User[], adminId: string, group: ChatDocument) => {
+            socket.on('create group', ({ users, adminId, group }: { users: User[], adminId: string, group: ChatDocument }) => {
+                  console.log('users', users, 'adminId', adminId, 'group', group)
                   const notifiedUsers = users.filter(user => user._id !== adminId);
 
                   logger.info(`Group created by AdminID: ${adminId}. Notifying Users: ${notifiedUsers.map(user => user._id).join(', ')}`);
@@ -47,7 +49,7 @@ export function setupSocketAPI(http: HttpServer) {
                   });
             });
 
-            socket.on('join chat', ({ chatId: room }) => {
+            socket.on('join chat', ({ chatId: room }: { chatId: string }) => {
                   socket.join(room);
                   const socketsInRoom = roomToSocketIdsMap.get(room) || new Set();
                   socketsInRoom.add(socket.id);
@@ -55,7 +57,7 @@ export function setupSocketAPI(http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`);
             });
 
-            socket.on('leave chat', ({ chatId: room }) => {
+            socket.on('leave chat', ({ chatId: room }: { chatId: string }) => {
                   socket.leave(room);
                   const socketsInRoom = roomToSocketIdsMap.get(room);
                   if (socketsInRoom) {
@@ -69,16 +71,16 @@ export function setupSocketAPI(http: HttpServer) {
                   logger.info(`Socket [id: ${socket.id}] left room: ${room}`);
             });
 
-            socket.on('typing', ({ chatId: room, userId }) => {
+            socket.on('typing', ({ chatId: room, userId }: { chatId: string, userId: string }) => {
                   socket.in(room).emit('typing', room, userId)
                   logger.info(`Socket [id: ${socket.id}] is typing in room: ${room}`);
             })
 
-            socket.on('stop typing', ({ chatId: room }) => {
+            socket.on('stop typing', ({ chatId: room }: { chatId: string }) => {
                   socket.in(room).emit('stop typing')
             })
 
-            socket.on('new message in room', async ({ chatId: room, message, chatUsers }) => {
+            socket.on('new message in room', async ({ chatId: room, message, chatUsers }: { chatId: string, message: IMessage, chatUsers: User[] }) => {
                   try {
                         // Fetch all socket instances in the room
                         const socketsInRoom = await gIo.in(room).fetchSockets();
@@ -105,23 +107,24 @@ export function setupSocketAPI(http: HttpServer) {
                   }
             });
 
-            socket.on('new message in group', (newMessageReceived) => {
-                  const chat = newMessageReceived.chat
-                  if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
-                  if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
-                  chat.users.forEach((user: User) => {
-                        if (user._id === newMessageReceived.sender._id) return
-                        socket.in(user._id).emit('message received', newMessageReceived)
-                        logger.info(`[SOCKET - Event 'new message'] SocketID: ${socket.id}] sent a message to chat: ${newMessageReceived.chat._id}`)
-                  })
-            })
+            // collapsed to new message in room
+            // socket.on('new message in group', (newMessageReceived) => {
+            //       const chat = newMessageReceived.chat
+            //       if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
+            //       if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
+            //       chat.users.forEach((user: User) => {
+            //             if (user._id === newMessageReceived.sender._id) return
+            //             socket.in(user._id).emit('message received', newMessageReceived)
+            //             logger.info(`[SOCKET - Event 'new message'] SocketID: ${socket.id}] sent a message to chat: ${newMessageReceived.chat._id}`)
+            //       })
+            // })
 
-            socket.on('kick-from-group', async ({ chatId, userId, kickerId }) => {
+            socket.on('kick-from-group', ({ chatId, userId, kickerId }: { chatId: string, userId: string, kickerId: string }) => {
                   socket.in(userId).emit('user-kicked', { chatId, userId, kickerId })
                   logger.info(`user: ${kickerId} kicked user: ${userId} from chat: ${chatId}`)
             })
 
-            socket.on('add-to-group', async ({ chatId, users, adderId }: { chatId: string, users: User[], adderId: string }) => {
+            socket.on('add-to-group', ({ chatId, users, adderId }: { chatId: string, users: User[], adderId: string }) => {
                   logger.info(`user: ${adderId} added users: ${users.map(user => user._id)} to chat: ${chatId}`)
 
                   users.forEach((user: User) => {
@@ -129,7 +132,7 @@ export function setupSocketAPI(http: HttpServer) {
                   })
             })
 
-            socket.on('leave-from-group', async ({ chatId, userId, chatUsers }) => {
+            socket.on('leave-from-group', ({ chatId, userId, chatUsers }: { chatId: string, userId: string, chatUsers: User[] }) => {
                   console.log(`user: ${userId} left chat: ${chatId}`)
 
                   chatUsers.forEach((user: User) => {
@@ -139,7 +142,7 @@ export function setupSocketAPI(http: HttpServer) {
                   })
             })
 
-            socket.on('message-removed', async ({ messageId, chatId, removerId, chatUsers }) => {
+            socket.on('message-removed', ({ messageId, chatId, removerId, chatUsers }: { messageId: string, chatId: string, removerId: string, chatUsers: User[] }) => {
                   console.log(`user: ${removerId} removed message: ${messageId} from chat: ${chatId}`)
 
                   chatUsers.forEach((user: User) => {
