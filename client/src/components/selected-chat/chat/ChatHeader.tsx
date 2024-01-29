@@ -12,13 +12,13 @@ import socketService from '../../../services/socket.service'
 import ProfileImage from '../../common/ProfileImage'
 
 interface Props {
-      connectionStatus: string
       conversationUser: IUser | null
       chatMode: "chat" | "info" | "send-file"
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      connectionStatus: string
 }
 
-export default function ChatHeader ({ connectionStatus, conversationUser, chatMode, setChatMode }: Props): JSX.Element {
+export default function ChatHeader({ connectionStatus, conversationUser, chatMode, setChatMode }: Props): JSX.Element {
       const { selectedChat, setSelectedChat } = useChat()
       const { user: loggedInUser } = AuthState()
       const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -33,7 +33,38 @@ export default function ChatHeader ({ connectionStatus, conversationUser, chatMo
             }
       }, [selectedChat]);
 
-      function toggleChatInfo (): void {
+      // useEffect(() => {
+      //       socketService.on(SOCKET_LOGIN, handleConnection, true)
+      //       socketService.on(SOCKET_LOGOUT, handleConnection, false)
+
+      //       return () => {
+      //             socketService.off(SOCKET_LOGIN, handleConnection)
+      //             socketService.off(SOCKET_LOGOUT, handleConnection)
+      //       }
+      // }, [])
+
+      // function handleConnection(userId: string, status: boolean): void {
+      //       // if (userId !== conversationUserRef.current?._id) return
+
+      //       // if (conversationUserRef.current) {
+      //       const date = new Date()
+      //       setConnectionStatus(
+      //             status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`
+      //       )
+      //       // }
+      // }
+
+      // useEffect(() => {
+      //       async function getConversationUserConnection() {
+      //             if (!conversationUser) return
+      //             const status = conversationUser.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
+      //             setConnectionStatus(status)
+      //       }
+
+      //       getConversationUserConnection()
+      // }, [conversationUser])
+
+      function toggleChatInfo(): void {
             if (chatMode === 'info') setChatMode('chat')
             else setChatMode('info')
       }

@@ -1,55 +1,64 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useChat from '../../../context/useChat'
 import { AuthState } from '../../../context/useAuth'
 import Messages from './messages/Messages'
 import socketService from '../../../services/socket.service'
 import { IMessage } from '../../../model/message.model'
 import { scrollToBottom } from '../../../utils/functions'
+import { messageService } from '../../../services/message.service'
 
 interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       messages: IMessage[]
-      fetchMessages: () => Promise<void>
-      onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
-export default function Chat({
-      setChatMode,
-      messages,
-      fetchMessages: fetchMessagesCallback,
-      onRemoveMessage
-}: Props): JSX.Element {
+export default function Chat({ setChatMode, messages }: Props): JSX.Element {
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
-
-      const { selectedChat, replyMessage, setReplyMessage } = useChat()
+      const { selectedChat, replyMessage, setReplyMessage, setMessages, updateChatReadReceipts } = useChat()
       const { user: loggedInUser, chatBackgroundColor } = AuthState()
-
       const chatRef = useRef<HTMLDivElement>(null)
 
       useEffect(() => {
             if (!selectedChat || !loggedInUser) return
 
-            socketService.emit('join chat', { chatId: selectedChat._id, userId: loggedInUser._id })
-
-            setReplyMessage(null)
-
-            const fetchMessages = async (): Promise<void> => {
-                  setLoadingMessages(true)
-                  await fetchMessagesCallback()
-                  setLoadingMessages(false)
-                  scrollToBottom(chatRef)
+            const joinChat = async () => {
+                  socketService.emit('join chat', { chatId: selectedChat._id, userId: loggedInUser._id })
+                  setReplyMessage(null)
+                  await fetchMessages()
             }
 
-            fetchMessages()
+            joinChat()
 
             return () => {
                   socketService.emit('leave chat', { chatId: selectedChat._id, userId: loggedInUser._id })
             }
-      }, [selectedChat])
+
+      }, [selectedChat, loggedInUser, setReplyMessage])
 
       useEffect(() => {
             scrollToBottom(chatRef)
       }, [messages, replyMessage])
+
+      const fetchMessages = useCallback(async () => {
+            if (!selectedChat || selectedChat._id === 'temp-id' || !loggedInUser) {
+                  setMessages([])
+                  return
+            }
+
+            try {
+                  setLoadingMessages(true)
+                  const fetchedMessages = await messageService.getMessages(selectedChat._id)
+
+                  updateChatReadReceipts(selectedChat._id, loggedInUser._id);
+
+                  setMessages(fetchedMessages)
+                  scrollToBottom(chatRef)
+            } catch (error) {
+                  console.error('Failed to fetch messages:', error)
+            } finally {
+                  setLoadingMessages(false)
+            }
+      }, [selectedChat, loggedInUser, setMessages, updateChatReadReceipts]);
 
       return (
             <>
@@ -65,7 +74,6 @@ export default function Chat({
                               <Messages
                                     messages={messages}
                                     setChatMode={setChatMode}
-                                    onRemoveMessage={onRemoveMessage}
                               />
                         }
                   </div>

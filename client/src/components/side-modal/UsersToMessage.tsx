@@ -84,7 +84,7 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
 
       return (
             <section className="py-6 text-secondary-text dark:text-dark-primary-text">
-                  <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>Create Group Chat</h2>
+                  <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>New Chat</h2>
 
 
                   <div className='py-6 mx-3 flex relative px-2 gap-x-2'>

@@ -28,7 +28,7 @@ interface ErrorResponse {
 }
 
 export function handleErrorService(error: Error, status?: number): ErrorResponse {
-      const statusCode = status || 500
+      const statusCode = status || 403
       let message = error.message || 'Something went wrong'
 
       if (statusCode === 500) {

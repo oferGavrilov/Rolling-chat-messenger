@@ -54,7 +54,12 @@ export async function sendMessageService(senderId: string, content: string, chat
 
 export async function getAllMessagesByChatId(chatId: string, userId: string) {
       try {
-            const messages = await Message.find({ chat: chatId, deletedBy: { $ne: userId } })
+            const chatUserIds = (await Chat.findById(chatId, 'users')).users.map((user) => user.toString())
+
+            const messages = await Message.find({
+                  chat: chatId,
+                  deletedBy: { $not: { $all: chatUserIds } }
+            })
                   .populate('sender', 'username profileImg')
                   .populate({
                         path: 'replyMessage',
@@ -88,7 +93,7 @@ export async function removeMessageService(messageId: string, chatId: string, us
       try {
             const chat = await Chat.findById(chatId)
             if (!chat) throw new CustomError('Chat not found', 'You are not allowed to do that.', 403)
-            
+
             const message = await Message.findById(messageId)
             if (!message) throw new CustomError('Message not found', 'You are not allowed to do that.', 403)
 

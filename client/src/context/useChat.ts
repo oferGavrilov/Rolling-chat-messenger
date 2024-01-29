@@ -20,6 +20,8 @@ interface ChatActions {
       setSelectedFile: (file: IMessage | null) => void
       setReplyMessage: (message: IReplyMessage | null) => void
       removeMessage: (messageId: string, chatId: string, removerId: string) => void
+      updateChatReadReceipts: (chatId: string, userId: string) => void;
+      bringChatToTop: (message: IMessage) => void
 }
 
 export const useChat = create<ChatState & ChatActions>((set) => {
@@ -64,6 +66,33 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                         return { ...state, chats: updatedChats };
                   });
             },
+            updateChatReadReceipts: (chatId: string, userId: string) => {
+                  set((state) => {
+                      const updatedChats = state.chats.map(chat => {
+                          if (chat._id === chatId && chat.latestMessage) {
+                              const alreadyReadByUser = chat.latestMessage.isReadBy.some(readReceipt => readReceipt.userId === userId);
+                              let updatedReadBy = chat.latestMessage.isReadBy;
+      
+                              if (!alreadyReadByUser) {
+                                  updatedReadBy = [...updatedReadBy, { userId, readAt: new Date() }];
+                              }
+      
+                              const updatedChat = {
+                                  ...chat,
+                                  latestMessage: {
+                                      ...chat.latestMessage,
+                                      isReadBy: updatedReadBy
+                                  }
+                              };
+      
+                              return updatedChat;
+                          }
+                          return chat;
+                      });
+      
+                      return { ...state, chats: updatedChats };
+                  });
+              },
             setMessages: (messagesOrUpdater: IMessage[] | ((currentMessages: IMessage[]) => IMessage[])) => {
                   set((state) => {
                         const newMessages = typeof messagesOrUpdater === 'function'
@@ -94,7 +123,19 @@ export const useChat = create<ChatState & ChatActions>((set) => {
                       return { ...state, chats: updatedChats, messages: updatedMessages };
                   });
               },
-              
+              bringChatToTop: (message: IMessage) => {
+                  set((state) => {
+                      const chatIndex = state.chats.findIndex(chat => chat._id === message.chatId);
+                      if (chatIndex === -1) return state;
+      
+                      const updatedChats = [...state.chats];
+                      const updatedChat = { ...updatedChats[chatIndex], latestMessage: message };
+                      updatedChats.splice(chatIndex, 1);
+                      updatedChats.unshift(updatedChat);
+      
+                      return { ...state, chats: updatedChats };
+                  });
+              },
       }
 })
 

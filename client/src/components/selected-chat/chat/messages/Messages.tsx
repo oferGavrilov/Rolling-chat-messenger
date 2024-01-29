@@ -6,15 +6,16 @@ import MessageArrow from "../../../svg/MessageArrow"
 import MessagePreview from "./MessagePreview"
 import ProfileImage from "../../../common/ProfileImage"
 import MessageDateSeparator from "./MessageDateSeparator"
+import { messageService } from "../../../../services/message.service"
+import socketService from "../../../../services/socket.service"
 
 interface Props {
       messages: IMessage[]
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
-      onRemoveMessage: (message: IMessage, removerId: string) => void
 }
 
-export default function Messages({ messages, setChatMode, onRemoveMessage }: Props): JSX.Element {
-      const { selectedChat, replyMessage, setReplyMessage } = useChat()
+export default function Messages({ messages, setChatMode }: Props): JSX.Element {
+      const { selectedChat, replyMessage, setReplyMessage, setMessages } = useChat()
       const { user } = AuthState()
 
       function onReplyMessage(message: IMessage): void {
@@ -31,12 +32,25 @@ export default function Messages({ messages, setChatMode, onRemoveMessage }: Pro
             }
       }
 
+      async function onRemoveMessage(message: IMessage, removerId: string): Promise<void> {
+            try {
+                  await messageService.removeMessage(message._id, selectedChat?._id as string)
+                  setMessages(messages.map((msg) => msg._id === message._id ? { ...msg, deletedBy: [...msg.deletedBy, removerId] } : msg))
+
+                  socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, removerId, chatUsers: selectedChat?.users })
+
+            } catch (error) {
+                  console.log(error)
+            }
+      }
+
       function isUserKicked(): boolean {
             if (!selectedChat) return false;
             return selectedChat.kickedUsers?.some(kickedUser => kickedUser.userId === user?._id);
       }
 
       if (!messages || !user) return <div></div>
+
       return (
             <section className={`py-6 ${replyMessage && 'mb-16'}`}>
                   {messages.map((message, idx) => (

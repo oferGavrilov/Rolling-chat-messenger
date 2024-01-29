@@ -7,6 +7,7 @@ import { IMessage } from 'src/models/message.model.js'
 
 let gIo: Server | null = null
 const roomToSocketIdsMap = new Map();
+const onlineUsers = new Map();
 
 export function setupSocketAPI(http: HttpServer) {
       gIo = new Server(http, {
@@ -26,16 +27,17 @@ export function setupSocketAPI(http: HttpServer) {
 
             socket.on('login', (userId: string) => {
                   socket.join(userId)
+                  onlineUsers.set(userId, socket.id)
                   socket.broadcast.emit('login', userId)
+                  // socket.in(room)
                   logger.info(`[SOCKET - Event:'login'] - User connected: ${userId}`)
             })
 
             socket.on('logout', (userId: string) => {
-                  if (userId) {
-                        logger.info(`[SOCKET - Event:'logout'] - User disconnected: ${userId}`)
-                        socket.disconnect(true)
-                        socket.broadcast.emit('logout', userId)
-                  }
+                  logger.info(`[SOCKET - Event:'logout'] - User disconnected: ${userId}`)
+                  // socket.disconnect(true)
+                  onlineUsers.delete(userId)
+                  socket.broadcast.emit('logout', userId)
             })
 
             socket.on('create group', ({ users, adminId, group }: { users: User[], adminId: string, group: ChatDocument }) => {

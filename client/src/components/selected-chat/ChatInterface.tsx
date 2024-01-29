@@ -1,13 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { Suspense, lazy, useEffect, useRef, useState } from "react"
 
 import { AuthState } from "../../context/useAuth"
 import useChat from "../../context/useChat"
 
-import ChatHeader from "./chat/ChatHeader"
-import Info from "./info/Index"
-import Chat from "./chat/Chat"
-import FileEditor from "./file/FileEditor"
-import TextPanel from "./chat/TextPanel"
+// import ChatHeader from "./chat/ChatHeader"
+// import Info from "./info/Index"
+// import Chat from "./chat/Chat"
+// import FileEditor from "./file/FileEditor"
+// import TextPanel from "./chat/TextPanel"
+
+const ChatHeader = lazy(() => import("./chat/ChatHeader"));
+const Info = lazy(() => import("./info/Index"));
+const Chat = lazy(() => import("./chat/Chat"));
+const FileEditor = lazy(() => import("./file/FileEditor"));
+const TextPanel = lazy(() => import("./chat/TextPanel"));
 
 import { formatLastSeenDate } from "../../utils/functions"
 
@@ -22,11 +28,10 @@ import { messageService } from "../../services/message.service"
 export default function ChatInterface(): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
-      // const [messages, setMessages] = useState<IMessage[]>([])
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<IFile | string | null>(null)
 
-      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage } = useChat()
+      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useChat()
       const { user: loggedInUser } = AuthState()
 
       const conversationUserRef = useRef<IUser | undefined>(undefined)
@@ -119,45 +124,6 @@ export default function ChatInterface(): JSX.Element {
             getConversationUserConnection()
       }, [conversationUser])
 
-      const fetchMessages = useCallback(async () => {
-            if (!selectedChat || !loggedInUser) return
-            if (selectedChat._id === 'temp-id') return setMessages([])
-            try {
-                  const fetchedMessages = await messageService.getMessages(selectedChat._id)
-
-                  setChats(chats.map(chat => {
-                        if (chat._id === selectedChat._id) {
-                              const updatedChat = { ...chat }
-
-                              if (!chat.latestMessage) {
-                                    return updatedChat
-                              }
-
-                              const alreadyReadByUser = chat.latestMessage.isReadBy.some(readReceipt => readReceipt.userId === loggedInUser._id)
-
-                              let updatedReadBy = chat.latestMessage.isReadBy
-
-                              if (!alreadyReadByUser) {
-                                    updatedReadBy = [...updatedReadBy, { userId: loggedInUser._id, readAt: new Date() }]
-                              }
-
-                              updatedChat.latestMessage = {
-                                    ...chat.latestMessage,
-                                    isReadBy: updatedReadBy
-                              }
-
-                              return updatedChat
-                        }
-                        return chat
-                  }))
-
-
-                  setMessages(fetchedMessages)
-            } catch (error) {
-                  console.error('Failed to fetch messages:', error)
-            }
-      }, [selectedChat, loggedInUser, messages, setMessages, setChats])
-
       function fetchConversationUser(): void {
             const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0]
             if (conversationUser) {
@@ -202,7 +168,7 @@ export default function ChatInterface(): JSX.Element {
             // Show the message immediately
             setReplyMessage(null)
             setMessages([...messages, optimisticMessage])
-            setChatOnTop(optimisticMessage)
+            bringChatToTop(optimisticMessage)
 
             try {
                   let chatToUpdate: IChat | undefined
@@ -238,33 +204,6 @@ export default function ChatInterface(): JSX.Element {
             }
       }
 
-      function setChatOnTop(message: IMessage) {
-            const chatToUpdateIndex = chats.findIndex((chat) => chat._id === message.chatId)
-
-            if (chatToUpdateIndex !== -1) {
-                  const updatedChats = [...chats]
-                  const updatedChat = {
-                        ...updatedChats[chatToUpdateIndex],
-                        latestMessage: message,
-                  }
-                  updatedChats.splice(chatToUpdateIndex, 1)
-                  updatedChats.unshift(updatedChat)
-                  setChats([...updatedChats])
-            }
-      }
-
-      async function onRemoveMessage(message: IMessage, removerId: string) {
-            try {
-                  await messageService.removeMessage(message._id, selectedChat?._id as string)
-                  setMessages(messages.map((msg) => msg._id === message._id ? { ...msg, deletedBy: [...msg.deletedBy, removerId] } : msg))
-
-                  socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, removerId, chatUsers: selectedChat?.users })
-
-            } catch (error) {
-                  console.log(error)
-            }
-      }
-
       function isKicked(): boolean {
             if (!selectedChat) return false
             return selectedChat?.kickedUsers?.some(kickedUser => kickedUser.userId === loggedInUser?._id) as boolean
@@ -272,46 +211,46 @@ export default function ChatInterface(): JSX.Element {
 
       if (!selectedChat) return <div></div>
       return (
-            <section className='flex-1 grid h-full overflow-hidden slide-left max-h-screen' style={{ gridTemplateRows: chatMode === 'chat' ? '64px 1fr 64px' : '64px 1fr' }}>
+            <Suspense fallback={<div>Loading...</div>}>
+                  <section className='flex-1 grid h-full overflow-hidden slide-left max-h-screen' style={{ gridTemplateRows: chatMode === 'chat' ? '64px 1fr 64px' : '64px 1fr' }}>
 
-                  <ChatHeader
-                        connectionStatus={connectionStatus}
-                        conversationUser={conversationUser}
-                        chatMode={chatMode}
-                        setChatMode={setChatMode}
-                  />
-
-                  {chatMode === 'chat' && (
-                        <Chat
-                              setChatMode={setChatMode}
-                              messages={messages}
-                              onRemoveMessage={onRemoveMessage}
-                              fetchMessages={fetchMessages}
-                        />
-                  )}
-                  {chatMode === 'info' && (
-                        <Info
+                        <ChatHeader
+                              connectionStatus={connectionStatus}
                               conversationUser={conversationUser}
-                              messages={messages}
+                              chatMode={chatMode}
                               setChatMode={setChatMode}
                         />
-                  )}
-                  {chatMode === 'send-file' && (
-                        <FileEditor
-                              file={file}
-                              setChatMode={setChatMode}
-                              sendMessage={onSendMessage}
-                        />
-                  )}
 
-                  {(chatMode === 'chat' && !isKicked()) && (
-                        <TextPanel
-                              onSendMessage={onSendMessage}
-                              setFile={setFile}
-                              setChatMode={setChatMode}
-                        />
-                  )}
+                        {chatMode === 'chat' && (
+                              <Chat
+                                    setChatMode={setChatMode}
+                                    messages={messages}
+                              />
+                        )}
+                        {chatMode === 'info' && (
+                              <Info
+                                    conversationUser={conversationUser}
+                                    messages={messages}
+                                    setChatMode={setChatMode}
+                              />
+                        )}
+                        {chatMode === 'send-file' && (
+                              <FileEditor
+                                    file={file}
+                                    setChatMode={setChatMode}
+                                    sendMessage={onSendMessage}
+                              />
+                        )}
 
-            </section>
+                        {(chatMode === 'chat' && !isKicked()) && (
+                              <TextPanel
+                                    onSendMessage={onSendMessage}
+                                    setFile={setFile}
+                                    setChatMode={setChatMode}
+                              />
+                        )}
+
+                  </section>
+            </Suspense>
       )
 }
