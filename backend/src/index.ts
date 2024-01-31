@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser'
 import CleanupService from './services/cleanup.service.js'
 
 import { connectDB } from './config/db.js'
-import { notFound } from './middleware/errorMiddleware.js'
 import { errorHandler } from './middleware/errorMiddleware.js'
 
 const app = express()
@@ -49,7 +48,6 @@ app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
 setupSocketAPI(server)
 
-app.use(notFound)
 app.use(errorHandler)
 app.use('/', (req: express.Request, res: express.Response) => {
       res.send('API is running... :)')      

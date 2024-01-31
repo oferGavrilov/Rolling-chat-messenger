@@ -1,11 +1,11 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { Request, Response } from 'express'
 import { ForbiddenError, NotFoundError } from '../utils/errorHandler.js'
 
-export function notFound(req: Request, res: Response, next: NextFunction) {
-      const error = new Error(`Not Found - ${req.originalUrl}`)
-      res.status(404)
-      next(error)
-}
+// export function notFound(req: Request, res: Response, next: NextFunction) {
+//       const error = new Error(`Not Found - ${req.originalUrl}`)
+//       res.status(404)
+//       next(error)
+// }
 
 export function errorHandler(err: unknown, req: Request, res: Response) {
       if (err instanceof NotFoundError || err instanceof ForbiddenError) {
