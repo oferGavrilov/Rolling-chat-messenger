@@ -8,6 +8,7 @@ import ProfileImage from "../../../common/ProfileImage"
 import MessageDateSeparator from "./MessageDateSeparator"
 import { messageService } from "../../../../services/message.service"
 import socketService from "../../../../services/socket.service"
+import { toast } from "react-toastify"
 
 interface Props {
       messages: IMessage[]
@@ -38,7 +39,7 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
                   setMessages(messages.map((msg) => msg._id === message._id ? { ...msg, deletedBy: [...msg.deletedBy, removerId] } : msg))
 
                   socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, removerId, chatUsers: selectedChat?.users })
-
+                  toast.success('Message deleted', { autoClose: 1500 })
             } catch (error) {
                   console.log(error)
             }

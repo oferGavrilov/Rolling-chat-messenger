@@ -5,7 +5,6 @@ export const messageService = {
       getMessages,
       sendMessage,
       removeMessage,
-      updateReadStatus
 }
 
 async function getMessages(chatId: string): Promise<IMessage[]> {
@@ -39,14 +38,5 @@ async function removeMessage(messageId: string, chatId: string): Promise<void> {
       } catch (error) {
             console.log(error)
             throw new Error('Failed to delete message.')
-      }
-}
-
-async function updateReadStatus(messageIds: string[], chatId: string): Promise<void> {
-      try {
-            return httpService.put('/api/message/read', { messageIds, chatId })
-      } catch (error) {
-            console.log(error)
-            throw new Error('Failed to update read status.')
       }
 }

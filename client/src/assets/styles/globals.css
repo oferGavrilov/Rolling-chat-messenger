@@ -213,6 +213,9 @@
       .clip-modal-option {
             @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500 dark:hover:bg-dark-default-hover-bg;
       }
+      .selected-chat {
+            box-shadow: inset -4px 0px 0 0 #0099ff;
+      }
        /* Chat Messages */
       .message-container:hover .message-menu-icon {
             opacity: 100;

@@ -36,9 +36,10 @@ const LatestMessageContent: React.FC<{ message: IMessage }> = ({ message }) => {
 const LatestMessagePreview: React.FC<ChatMessagePreviewProps> = React.memo(({ chat, loggedinUser, unreadMessagesCount, selectedChat }) => {
     const latestMessage = chat.latestMessage;
     if (!latestMessage) return null;
-
     const isSender = latestMessage.sender?._id === loggedinUser?._id;
     const isReadByOtherUser = latestMessage.isReadBy?.some(user => user.userId !== loggedinUser?._id);
+
+    const isReadByLoggedinUser = latestMessage.isReadBy?.some(user => user.userId === loggedinUser?._id);
     let senderPrefix = '';
     if (isSender) {
         senderPrefix = 'You: ';
@@ -52,8 +53,8 @@ const LatestMessagePreview: React.FC<ChatMessagePreviewProps> = React.memo(({ ch
 
     return (
         <div className='flex justify-between items-center w-full'>
-            <div className={`text-base h-6 max-h-[24px] flex items-center ${!isSender && selectedChat?._id !== chat._id ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}>
-                <span className={`max-w-[260px] ${isSender && 'mr-2'}`}>{senderPrefix}</span>
+            <div className={`text-base h-6 max-h-[24px] flex items-center ${!isSender && selectedChat?._id !== chat._id && !isReadByLoggedinUser ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}>
+                <span className={`max-w-[260px] ${senderPrefix !== '' && 'mr-2'}`}>{senderPrefix}</span>
                 <LatestMessageContent message={latestMessage} />
             </div>
             {isShowUnreadMessagesCount() && (

@@ -26,7 +26,7 @@ export const userService = {
 async function getUsers (): Promise<IUser[]> {
       try {
             // throw new Error('Not implemented yet')
-            return await httpService.get('/api/auth/all')
+            return await httpService.get('/api/user/all')
       } catch (error:any) {
             console.log(error)
             throw error
@@ -98,7 +98,7 @@ async function updateUserImage (image: string): Promise<string> {
                   throw new Error('User is not logged in.')
             }
 
-            const updatedImage = await httpService.put('/api/auth/image', { image }) as string
+            const updatedImage = await httpService.put('/api/user/image', { image }) as string
             if (updatedImage) {
                   _saveToLocalStorage({ ...user, profileImg: updatedImage })
             }
@@ -117,7 +117,7 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
                   throw new Error('User is not logged in.')
             }
 
-            const response = await httpService.put('/api/auth/details', { newName }) as IUser
+            const response = await httpService.put('/api/user/details', { newName }) as IUser
 
             if (response) {
                   const user = getLoggedinUser()

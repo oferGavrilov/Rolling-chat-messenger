@@ -1,5 +1,4 @@
 import { IUser } from '../../model/user.model'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 interface Props {
       users: IUser[]
@@ -34,10 +33,10 @@ export default function UsersList({ users, onSelectChat, usersType, selectedUser
 
                         {(selectedUsers && selectedUsers?.length > 0) && (
                               <div
-                                    className='absolute bottom-5 right-5 bg-gray-200 shadow-xl shadow-gray-400 dark:bg-dark-dropdown-bg rounded-full p-4 cursor-pointer'
+                                    className='absolute bottom-5 right-5 flex items-center justify-center backdrop-blur-sm bg-gray-500/30 dark:bg-white/30 rounded-full h-14 w-14 cursor-pointer text-white hover:text-red-500 group'
                                     onClick={clearSelectedUsers}
                               >
-                                    <DeleteForeverIcon className='text-red-500' />
+                                    <span className="material-symbols-outlined text-3xl transition-all duration-200 group-hover:scale-110">delete</span>
                               </div>
                         )}
                   </ul>

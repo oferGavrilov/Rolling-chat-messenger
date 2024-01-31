@@ -3,6 +3,7 @@ import { chatService } from '../../../services/chat.service'
 import socketService from '../../../services/socket.service'
 import { IChat } from '../../../model/chat.model'
 import { IUser } from '../../../model/user.model'
+import useChat from '../../../context/useChat'
 
 interface Props {
       selectedChat: IChat | null
@@ -11,9 +12,10 @@ interface Props {
       isAdmin: (chat: IChat, userId: string) => boolean
 }
 
-export default function GroupUsersList ({ selectedChat, setSelectedChat, loggedInUser, isAdmin }: Props): JSX.Element {
+export default function GroupUsersList({ selectedChat, setSelectedChat, loggedInUser, isAdmin }: Props): JSX.Element {
 
-      async function onKickFromGroup (userId: string) {
+      const { onSelectChat } = useChat()
+      async function onKickFromGroup(userId: string) {
             if (!selectedChat || !loggedInUser) return
             try {
                   const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
@@ -26,12 +28,18 @@ export default function GroupUsersList ({ selectedChat, setSelectedChat, loggedI
             }
       }
 
+      function onNavigateToUser(userToChat: IUser) {
+            if (loggedInUser && loggedInUser?._id === userToChat._id) return
+
+            onSelectChat(userToChat, loggedInUser as IUser)
+      }
+
       if (!selectedChat || !loggedInUser) return <div></div>
       return (
             <div className="flex flex-col gap-y-2 border-2 dark:border-dark-primary-bg rounded-lg">
                   {selectedChat.users.map(user => (
                         <div key={user._id} className="flex justify-between">
-                              <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg w-full p-2  cursor-pointer rounded-lg">
+                              <div className="flex items-center justify-between gap-x-3 border-b-2 last:border-b-0 py-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg w-full p-2  cursor-pointer rounded-lg" onClick={() => onNavigateToUser(user)}>
                                     <div className="flex items-center gap-x-3">
                                           <img src={user.profileImg} className="w-10 h-10 rounded-full object-cover" alt="profile" />
                                           <span className="text-lg">{user.username}</span>

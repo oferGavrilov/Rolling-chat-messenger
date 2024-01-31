@@ -27,7 +27,7 @@ export default function ChatList({ chats }: { chats: IChat[] }) {
 
       return (
             <div className="overflow-y-auto h-[79vh]">
-                  <ul className="px-1">
+                  <ul className="pl-1">
                         {chats.map(chat => (
                               <ChatPreview key={chat._id} chat={chat} />
                         ))}

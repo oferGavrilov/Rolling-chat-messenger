@@ -5,6 +5,7 @@ import { ContentType } from '../../pages/ChatPage'
 
 import UsersToGroup from './UsersToGroup'
 import UsersToMessage from './UsersToMessage'
+import { WavesBlue } from '../svg/Bubble'
 
 interface Props {
       isOpen: boolean
@@ -34,10 +35,13 @@ export default function DynamicSideModal(props: Props): JSX.Element {
                    ${props.isOpen ? 'translate-x-0' : '-translate-x-[100vh]'}`}>
                   {switchContent()}
 
-                  {/* <CloseIcon className='' color='disabled' fontSize="large" onClick={() => setIsOpen(false)} /> */}
                   <div className='select-none cursor-pointer absolute right-4 top-6 flex items-center justify-center border-2 border-gray-400 p-1 rounded-full' onClick={() => props.setIsOpen(false)}>
                         <span className="material-symbols-outlined text-gray-400 dark:text-dark-primary-text">close</span>
                   </div>
+
+
+                  <WavesBlue className="bottom-0 md:-bottom-10 lg:-bottom-20" />
+
             </div>
       )
 }

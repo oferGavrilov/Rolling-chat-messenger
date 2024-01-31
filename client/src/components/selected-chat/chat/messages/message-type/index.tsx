@@ -1,0 +1,5 @@
+export { default as AudioMessage } from './AudioMessage'
+export { default as FileMessage } from './FileMessage'
+export { default as ImageMessage } from './ImageMessage'
+export { default as TextMessage } from './TextMessage'
+export { default as DeletedMessage } from './DeletedMessage'

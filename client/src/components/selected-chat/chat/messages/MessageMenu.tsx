@@ -3,8 +3,8 @@ import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownR
 import { useClickOutside } from '../../../../custom-hook/useClickOutside'
 import { IMessage, IReplyMessage } from '../../../../model/message.model'
 import useChat from '../../../../context/useChat'
-import { showSuccessMsg } from '../../../../services/event-bus.service'
 import { AuthState } from '../../../../context/useAuth'
+import { toast } from 'react-toastify'
 
 interface Props {
       message: IMessage
@@ -36,7 +36,7 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
       function onCopyToClipboard(): void {
             navigator.clipboard.writeText(message.content as string)
             setIsOpen(false)
-            showSuccessMsg
+            toast.success('Copied to clipboard', { autoClose: 1500 })
       }
 
       function removeMessage(): void {

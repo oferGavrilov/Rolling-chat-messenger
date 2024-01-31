@@ -87,7 +87,7 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
                   <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>New Chat</h2>
 
 
-                  <div className='py-6 mx-3 flex relative px-2 gap-x-2'>
+                  <div className='py-4 mx-3 flex relative px-2 gap-x-2'>
                         <SearchInput filter={filter} setFilter={setFilter} placeholder="Filter by name or email..." />
                   </div>
 

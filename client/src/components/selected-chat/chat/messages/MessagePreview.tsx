@@ -8,16 +8,12 @@ import { IUser } from '../../../../model/user.model'
 
 import { formatDate } from '../../../../utils/functions'
 
+import MessageArrow from '../../../svg/MessageArrow'
+
 import ReplyMessage from './ReplyMessage'
 import MessageMenu from './MessageMenu'
-import MessageArrow from '../../../svg/MessageArrow'
-import AudioMessage from './message-type/AudioMessage'
-import FileMessage from './message-type/FileMessage'
-import ImageMessage from './message-type/ImageMessage'
-import TextMessage from './message-type/TextMessage'
 
-import DoneAllIcon from '@mui/icons-material/DoneAll'
-import DeletedMessage from './message-type/DeletedMessage'
+import { DeletedMessage, TextMessage, ImageMessage, FileMessage, AudioMessage } from './message-type'
 
 interface Props {
       message: IMessage
@@ -86,7 +82,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                   <div
                         className={`select-text relative w-max flex items-center max-w-[75%] text-white rounded-t-2xl 
                                     ${message.replyMessage?._id && 'flex-col'}
-                                    ${message?.sender._id === user._id ? 'out-going-message' : 'incoming-message'}`}
+                                    ${(message.sender._id === user._id) ? 'out-going-message' : 'incoming-message'}`}
                   >
                         {message.replyMessage?._id && (
                               <ReplyMessage
@@ -109,8 +105,8 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                               {renderMessageContent(message)}
 
                               <div className={`flex my-1 ${incomingMessage ? 'mr-2 flex-row-reverse' : 'ml-2'}`}>
-                                    <DoneAllIcon className='!text-sm text-gray-200 mt-auto' />
-                                    <span className='text-[11px] md:text-xs text-gray-200 relative mt-auto mx-2'>
+                                    {!incomingMessage && <span className="material-symbols-outlined text-[14px] text-gray-200 mt-auto">done_all</span>}
+                                    <span className='text-[11px] md:text-xs text-gray-200 relative mt-auto ml-2 mx-1'>
                                           {formatDate(message.createdAt)}
                                     </span>
                               </div>

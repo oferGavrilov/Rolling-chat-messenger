@@ -34,7 +34,6 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
 
       async function loadUsers () {
             try {
-                  console.log('loading users')
                   setIsLoading(true)
                   const allUsers = await userService.getUsers() as IUser[]
 

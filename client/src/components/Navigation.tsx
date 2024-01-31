@@ -11,11 +11,11 @@ import { Tooltip } from "@mui/material"
 import { BsCameraVideo, BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
 import { useClickOutside } from "../custom-hook/useClickOutside"
 import { ContentType } from "../pages/ChatPage"
 import ProfileImage from "./common/ProfileImage"
 import { userService } from "../services/user.service"
+
 interface Props {
       contentType: ContentType
       setContentType: React.Dispatch<React.SetStateAction<ContentType>>
@@ -93,7 +93,13 @@ export default function Navigation({
                               </Tooltip>
                               <Tooltip title="Groups" arrow placement='right'>
                                     <div className={`navigation-icon ${contentType === 'groups' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('groups')}>
-                                          <PeopleOutlinedIcon />
+                                          {/* <PeopleOutlinedIcon /> */}
+                                          <span className="material-symbols-outlined">group</span>
+                                    </div>
+                              </Tooltip>
+                              <Tooltip title="Groups" arrow placement='right'>
+                                    <div className={`navigation-icon ${contentType === 'gallery' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('gallery')}>
+                                    <span className="material-symbols-outlined">crop</span>
                                     </div>
                               </Tooltip>
                               <Tooltip title="Stories" arrow placement='right'>

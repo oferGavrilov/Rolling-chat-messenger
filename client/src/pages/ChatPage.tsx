@@ -11,7 +11,7 @@ import { AuthState } from '../context/useAuth'
 import { userService } from '../services/user.service'
 import socketService from '../services/socket.service'
 
-export type ContentType = 'chats' | 'videos' | 'story' | 'groups' | 'settings' | 'profile'
+export type ContentType = 'chats' | 'groups' | 'gallery' | 'videos' | 'story' | 'settings' | 'profile'
 
 export default function ChatPage(): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)

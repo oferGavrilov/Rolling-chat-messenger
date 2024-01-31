@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { toast } from 'react-toastify'
+import { userService } from './user.service'
 
 const env = import.meta.env.VITE_NODE_ENV
 
@@ -31,7 +32,6 @@ export const httpService = {
 
 async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown = null, params: unknown = {}): Promise<T> {
       try {
-
             const res: AxiosResponse<T> = await axiosInstance({
                   url: endpoint,
                   method,
@@ -40,23 +40,20 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
             })
             return res.data
       } catch (err: any) {
-            console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, message: ${err.message} with data: `, data)
-            console.dir(err)
+            if (env === 'development') {
+                  console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, message: ${err.message} with data: `, data)
+                  console.dir(err)
+            }
+
             console.log('status', err?.response?.status)
-            console.log('err.response', err.response.data.message)
+            console.log('message', err.response.data.message)
             if (err.response) {
                   const status = err.response.status
                   if (status === 401) {
-                        await refreshToken()
+                        // when user is logged in but with expired tokens
+                        userService.logout()
+                        window.location.assign('/auth')
 
-                        const res: AxiosResponse<T> = await axiosInstance({
-                              url: endpoint,
-                              method,
-                              data,
-                              params: method === 'GET' ? params : null,
-                        })
-
-                        return res.data
                   } else if (status === 403) {
                         toast.warn(err.response.data.message || 'You are not allowed to do that.')
                   } else if (status === 404) {
@@ -67,18 +64,5 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
             }
 
             throw err
-      }
-}
-
-async function refreshToken() {
-      try {
-            const response = await axiosInstance.post('/api/auth/refresh');
-            const { accessToken } = response.data;
-            localStorage.setItem('accessToken', accessToken);
-            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-            return accessToken;
-      } catch (error) {
-            console.error('Error refreshing token', error);
-            throw error;
       }
 }

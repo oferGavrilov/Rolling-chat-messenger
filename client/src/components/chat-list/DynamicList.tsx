@@ -26,6 +26,15 @@ function Videos(): JSX.Element {
       )
 }
 
+function Gallery(): JSX.Element {
+      return (
+            <section className='pt-7 px-4 relative'>
+
+                  Coming soon...
+            </section>
+      )
+}
+
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
       contentType: ContentType
@@ -41,6 +50,10 @@ export default function DynamicList(props: Props) {
             switch (props.contentType) {
                   case 'chats':
                         return <Chats contentType={props.contentType} />
+                  case 'groups':
+                        return <Chats contentType={props.contentType} />
+                  case 'gallery':
+                        return <Gallery />
                   case 'videos':
                         return <Videos />
                   case 'story':
@@ -49,8 +62,6 @@ export default function DynamicList(props: Props) {
                         return <Settings setContentType={props.setContentType} />
                   case 'profile':
                         return <Profile />
-                  case 'groups':
-                        return <Chats contentType={props.contentType} />
                   default:
                         return <Chats contentType={props.contentType} />
             }

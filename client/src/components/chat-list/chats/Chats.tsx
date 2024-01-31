@@ -3,7 +3,6 @@ import { chatService } from '../../../services/chat.service'
 import useChat from '../../../context/useChat'
 import ChatLoading from '../../SkeltonLoading'
 import MessagesInput from '../../common/MessagesInput'
-import { userService } from '../../../services/user.service'
 import { AuthState } from '../../../context/useAuth'
 import { IUser } from '../../../model/user.model'
 import { IChat } from '../../../model/chat.model'
@@ -18,13 +17,13 @@ interface MessagesProps {
       contentType: ContentType
 }
 
-export default function Chats({ contentType }: MessagesProps) {
+export default function Chats({ contentType }: MessagesProps): JSX.Element {
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [filter, setFilter] = useState<string>('')
       const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
 
-      const { chats, setChats } = useChat()
+      const { chats, setChats, updateChatsWithNewMessage } = useChat()
       const { user: loggedinUser } = AuthState()
 
       const modalRef = useRef<HTMLUListElement>(null)
@@ -34,16 +33,24 @@ export default function Chats({ contentType }: MessagesProps) {
       useEffect(() => {
             if (!loggedinUser) return
             socketService.setup(loggedinUser._id)
-            socketService.on('user-kicked', loadChats)
-            socketService.on('user-joined', loadChats)
-            socketService.on('user-left', loadChats)
+            socketService.on('user-kicked', () => loadChats('user-kicked'))
+            socketService.on('user-joined', () => loadChats('user-joined'))
+            socketService.on('user-left', () => loadChats('user-left'))
 
-            async function loadChats(): Promise<void> {
+            async function loadChats(event?: string): Promise<void> {
+                  if (!loggedinUser) return
+
+                  if (event === 'user-joined') {
+                        socketService.emit('join-user', loggedinUser?._id)
+                  } else if (event === 'user-left' || event === 'user-kicked') {
+                        socketService.emit('leave-user', loggedinUser?._id)
+                  }
+
                   try {
                         setIsLoading(true)
-                        const user = userService.getLoggedinUser()
-                        if (!user) return
-                        const chats = await chatService.getUserChats(user._id)
+                        // const user = userService.getLoggedinUser()
+                        // if (!user) return
+                        const chats = await chatService.getUserChats(loggedinUser._id)
                         setChats(chats)
 
                   } catch (err) {
@@ -87,26 +94,7 @@ export default function Chats({ contentType }: MessagesProps) {
       }, [chats, filter, contentType, loggedinUser, sort, setChats])
 
       useEffect(() => {
-            socketService.on('notification', (newMessage: IMessage) => {
-                  setChats(currentChats => {
-                        const isChatExists = currentChats.some(chat => chat._id === newMessage.chat?._id);
-
-                        if (!isChatExists && newMessage.chat) {
-                              newMessage.chat.unreadMessagesCount = 1;
-                              newMessage.chat.latestMessage = newMessage;
-                              return [newMessage.chat, ...currentChats];
-                        } else {
-                              currentChats = currentChats.map(chat => {
-                                    if (chat._id === newMessage.chat?._id) {
-                                          chat.latestMessage = newMessage;
-                                          chat.unreadMessagesCount = (chat.unreadMessagesCount || 0) + 1;
-                                    }
-                                    return chat;
-                              });
-                        }
-                        return currentChats;
-                  });
-            });
+            socketService.on('notification', (newMessage: IMessage) => updateChatsWithNewMessage(newMessage))
 
             return () => {
                   socketService.off('notification');
