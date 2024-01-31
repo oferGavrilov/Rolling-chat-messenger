@@ -7,7 +7,7 @@ import { ForbiddenError, NotFoundError } from '../utils/errorHandler.js'
 //       next(error)
 // }
 
-export function errorHandler(err: unknown, req: Request, res: Response) {
+export function errorHandler(req: Request, res: Response, err: unknown) {
       if (err instanceof NotFoundError || err instanceof ForbiddenError) {
             res.status(err.statusCode).json({ message: err.message })
       } else if (err instanceof Error) {
