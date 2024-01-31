@@ -52,9 +52,12 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
                   const status = err.response.status
                   if (status === 401) {
                         // when user is logged in but with expired tokens
-                        userService.logout()
-                        window.location.assign('/auth')
-
+                        if (err.response.data.message === 'expired') {
+                              await userService.logout()
+                              window.location.assign('/auth')
+                        } else {
+                              toast.warn(err.response.data.message || 'You are not logged in.')
+                        }
                   } else if (status === 403) {
                         toast.warn(err.response.data.message || 'You are not allowed to do that.')
                   } else if (status === 404) {

@@ -17,7 +17,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
 
             if (!accessToken && !refreshToken) {
                   logger.error(`[API: ${req.path}] - Not authorized, no token`)
-                  return res.status(401).json({ message: 'Not authorized, no token' })
+                  return res.status(401).json({ message: 'expired' })
             }
 
             let decoded
