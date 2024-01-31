@@ -57,7 +57,7 @@ async function loginSignUp (credentials: FormData, formMode: string): Promise<IU
 
 async function sendResetPasswordMail (email: string): Promise<void> {
       try {
-            await httpService.post('/api/auth/send-reset-password-mail', { email })
+            await httpService.post(`${BASE_URL}/api/auth/send-reset-password-mail`, { email })
       } catch (error) {
             console.error(error)
             throw error
@@ -66,7 +66,7 @@ async function sendResetPasswordMail (email: string): Promise<void> {
 
 async function resetPasswordConfirm(token: string, password: string): Promise<void> {
       try {
-            await httpService.post('/api/auth/reset-password', { token, password })
+            await httpService.post(`${BASE_URL}/api/auth/reset-password`, { token, password })
       } catch (error) {
             console.error(error)
             throw error
@@ -80,7 +80,7 @@ async function logout (): Promise<void> {
                   throw new Error('User is not logged in.')
             }
 
-            await httpService.put('/api/auth/logout', {})
+            await httpService.put(`${BASE_URL}/api/auth/logout`, {})
 
             localStorage.removeItem(STORAGE_KEY)
             
@@ -98,7 +98,7 @@ async function updateUserImage (image: string): Promise<string> {
                   throw new Error('User is not logged in.')
             }
 
-            const updatedImage = await httpService.put('/api/user/image', { image }) as string
+            const updatedImage = await httpService.put(`${BASE_URL}/api/user/image`, { image }) as string
             if (updatedImage) {
                   _saveToLocalStorage({ ...user, profileImg: updatedImage })
             }
@@ -117,7 +117,7 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
                   throw new Error('User is not logged in.')
             }
 
-            const response = await httpService.put('/api/user/details', { newName }) as IUser
+            const response = await httpService.put(`${BASE_URL}/api/user/details`, { newName }) as IUser
 
             if (response) {
                   const user = getLoggedinUser()
