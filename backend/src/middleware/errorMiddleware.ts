@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { ForbiddenError, NotFoundError } from '../utils/errorHandler'
+import { ForbiddenError, NotFoundError } from '../utils/errorHandler.js'
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
       const error = new Error(`Not Found - ${req.originalUrl}`)
