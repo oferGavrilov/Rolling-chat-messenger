@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express"
 import { getAllMessagesByChatId, sendMessageService, removeMessageService } from "./service.js"
 import { RequestMessage } from "../../models/message.model.js"
-import { ForbiddenError, NotFoundError } from "src/utils/errorHandler.js"
+import { ForbiddenError, NotFoundError } from "../../utils/errorHandler.js"
 
 export async function sendMessage(req: RequestMessage, res: Response, next: NextFunction) {
       const { content, chatId, messageType, replyMessage, messageSize } = req.body

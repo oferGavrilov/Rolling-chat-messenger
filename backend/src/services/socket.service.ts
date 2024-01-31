@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io'
 import type { User } from '../models/user.model.js'
 import { type ChatDocument } from '../models/chat.model.js'
 import logger from './logger.service.js'
-import { IMessage } from 'src/models/message.model.js'
+import { IMessage } from '../models/message.model.js'
 
 let gIo: Server | null = null
 const roomToSocketIdsMap = new Map();

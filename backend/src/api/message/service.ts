@@ -1,8 +1,8 @@
 import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
 import { PopulatedDoc } from "mongoose"
-import { ForbiddenError, InternalServerError, NotFoundError, ValidationError } from "src/utils/errorHandler.js"
-import logger from "src/services/logger.service.js"
+import { ForbiddenError, InternalServerError, NotFoundError, ValidationError } from "../../utils/errorHandler.js"
+import logger from "../../services/logger.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
       try {

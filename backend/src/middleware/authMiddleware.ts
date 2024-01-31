@@ -4,7 +4,7 @@ import type { Response, NextFunction } from 'express'
 import type { AuthenticatedRequest } from '../models/types.js'
 import { Chat, ChatDocument } from '../models/chat.model.js'
 import logger from '../services/logger.service.js'
-import { generateToken } from 'src/config/generateToken.js'
+import { generateToken } from '../config/generateToken.js'
 
 interface DecodedToken extends jwt.JwtPayload {
       id: string

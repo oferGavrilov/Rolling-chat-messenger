@@ -5,7 +5,7 @@ import { loginUser, resetPasswordConfirm, signUpService } from "./service.js"
 import { EmailService } from "../../services/email.service.js"
 import logger from "../../services/logger.service.js"
 import { User } from "../../models/user.model.js"
-import { ConflictError, InternalServerError } from "src/utils/errorHandler.js"
+import { ConflictError, InternalServerError } from "../../utils/errorHandler.js"
 
 export async function signUp(req: AuthenticatedRequest, res: Response) {
     const { username, email, password } = req.body
