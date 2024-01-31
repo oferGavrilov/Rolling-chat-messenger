@@ -67,15 +67,14 @@ export async function getUserChatsService(userId: string): Promise<ChatDocument[
                   $or: [
                         { users: userId },
                         { "kickedUsers.userId": userId },
+                  ],
+                  $nor: [
+                        { "deletedBy.userId": userId }
                   ]
             }).populate(populateOptions);
 
-
-            const filteredChats = chats.filter(chat =>
-                  !chat.deletedBy.some(deleted => deleted.userId.equals(userId))
-            );
             // Add unread messages count for each chat
-            const chatsWithUnreadCounts = await Promise.all(filteredChats.map(async chat => {
+            const chatsWithUnreadCounts = await Promise.all(chats.map(async chat => {
                   const unreadMessagesCount = await Message.count({
                         chat: chat._id,
                         isReadBy: { $not: { $elemMatch: { userId: userId } } },

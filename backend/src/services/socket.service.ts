@@ -135,8 +135,6 @@ export function setupSocketAPI(http: HttpServer) {
             })
 
             socket.on('leave-from-group', ({ chatId, userId, chatUsers }: { chatId: string, userId: string, chatUsers: User[] }) => {
-                  console.log(`user: ${userId} left chat: ${chatId}`)
-
                   chatUsers.forEach((user: User) => {
                         if (user._id !== userId) {
                               socket.in(user._id).emit('user-left', { chatId, userId })

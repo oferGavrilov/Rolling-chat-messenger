@@ -1,11 +1,21 @@
 import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
-import CustomError, { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { PopulatedDoc } from "mongoose"
+import { ForbiddenError, InternalServerError, NotFoundError, ValidationError } from "src/utils/errorHandler.js"
+import logger from "src/services/logger.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
-
       try {
+            if (!senderId || !content) {
+                  throw new ValidationError('Sender and content are required')
+            }
+            const chat = await Chat.findById(chatId)
+
+            // check if the user is in the group chat
+            if (chat.isGroupChat && !chat.users.some((user) => user.toString() === senderId.toString())) {
+                  throw new ForbiddenError('You are not in this group chat')
+            }
+
             const newMessage = {
                   sender: senderId,
                   content,
@@ -18,7 +28,7 @@ export async function sendMessageService(senderId: string, content: string, chat
             let message = await Message.create(newMessage)
 
             message = (await message.populate('sender', 'username profileImg')) as PopulatedDoc<IMessage>
-            message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })) as PopulatedDoc<IMessage>;
+            message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })) as PopulatedDoc<IMessage>
             message = (await message.populate({
                   path: 'replyMessage',
                   select: '_id content sender',
@@ -26,39 +36,37 @@ export async function sendMessageService(senderId: string, content: string, chat
                         path: 'sender',
                         select: '_id username profileImg'
                   }
-            })) as PopulatedDoc<IMessage>;
+            })) as PopulatedDoc<IMessage>
 
-            // Check if the other user ID is in the deletedBy array
-            const chat = await Chat.findById(chatId)
-            const otherUserId = chat.users.find((user) => user.toString() !== senderId.toString())
+            if (!message) throw new InternalServerError('Failed to send message')
+
+            // Remove all deletedBy from chat
+            if (!chat) throw new NotFoundError('Chat not found')
             chat.deletedBy = []
             await chat.save()
-
-            if (otherUserId && chat.deletedBy.some(({ userId }) => userId.toString() === otherUserId.toString())) {
-                  // Remove the other user ID from the deletedBy array
-                  //chat.deletedBy = chat.deletedBy.filter(({ userId }) => userId.toString() !== otherUserId.toString())
-                  // await chat.save()
-
-            }
 
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message })
             return message
       } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
-            } else {
+            if (error instanceof NotFoundError || error instanceof ForbiddenError || error instanceof ValidationError) {
                   throw error
+            } else {
+                  logger.error(`Error in sendMessageService: ${error}`)
+                  throw new InternalServerError('Something went wrong')
             }
       }
 }
 
 export async function getAllMessagesByChatId(chatId: string, userId: string) {
       try {
-            const chatUserIds = (await Chat.findById(chatId, 'users')).users.map((user) => user.toString())
+            const chat = await Chat.findById(chatId)
+            if (!chat) throw new NotFoundError('Chat not found')
+
+            const chatUserIds = chat.users.map((user) => user.toString())
 
             const messages = await Message.find({
                   chat: chatId,
-                  deletedBy: { $not: { $all: chatUserIds } }
+                  deletedBy: { $not: { $all: chatUserIds } } // all messages that are not deleted by all users in chat
             })
                   .populate('sender', 'username profileImg')
                   .populate({
@@ -68,7 +76,7 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
                               path: 'sender',
                               select: '_id username profileImg'
                         }
-                  });
+                  })
 
             // update unread messages in chat
             messages.forEach((message) => {
@@ -81,10 +89,11 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
 
             return messages
       } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
-            } else {
+            if (error instanceof NotFoundError) {
                   throw error
+            } else {
+                  logger.error(`Error in getAllMessagesByChatId: ${error}`)
+                  throw new Error('Something went wrong')
             }
       }
 }
@@ -92,12 +101,12 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
 export async function removeMessageService(messageId: string, chatId: string, userId: string): Promise<void> {
       try {
             const chat = await Chat.findById(chatId)
-            if (!chat) throw new CustomError('Chat not found', 'You are not allowed to do that.', 403)
+            if (!chat) throw new NotFoundError('Chat not found')
 
             const message = await Message.findById(messageId)
-            if (!message) throw new CustomError('Message not found', 'You are not allowed to do that.', 403)
+            if (!message) throw new NotFoundError('Message not found')
 
-            if (message.deletedBy.includes(userId)) throw new CustomError('Message already deleted', 'You are not allowed to do that.', 403)
+            if (message.deletedBy.includes(userId)) throw new ForbiddenError('Message already deleted')
 
             message.deletedBy.push(userId)
 
@@ -108,29 +117,11 @@ export async function removeMessageService(messageId: string, chatId: string, us
             }
 
       } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
+            if (error instanceof NotFoundError || error instanceof ForbiddenError) {
+                  throw error;
             } else {
-                  throw error
+                  logger.error(`Error in removeMessageService: ${error}`);
+                  throw new InternalServerError('Something went wrong in removeMessageService');
             }
-            // const statusCode: number = error.statusCode || 500;
-            // logger.error(`[API] - While Deleting Message: ${error.message}`, { statusCode, userId })
-            // throw { statusCode: error.statusCode as number, message: error.message as string };
       }
 }
-
-export async function readMessagesService(messageIds: string[], chatId: string, userId: string): Promise<void> {
-      console.log(messageIds, chatId, userId)
-      try {
-            await Message.updateMany(
-                  { _id: { $in: messageIds }, chat: chatId },
-                  { $addToSet: { isReadBy: { userId: userId, readAt: new Date() } } }
-            );
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
-            } else {
-                  throw error
-            }
-      }
-}     

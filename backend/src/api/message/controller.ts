@@ -1,80 +1,64 @@
-import type { Response } from "express"
-import { getAllMessagesByChatId, sendMessageService, readMessagesService, removeMessageService } from "./service.js"
-import { handleErrorService } from "../../middleware/errorMiddleware.js"
+import { Response, NextFunction } from "express"
+import { getAllMessagesByChatId, sendMessageService, removeMessageService } from "./service.js"
 import { RequestMessage } from "../../models/message.model.js"
+import { ForbiddenError, NotFoundError } from "src/utils/errorHandler.js"
 
-export async function getAllMessages(req: RequestMessage, res: Response) {
-      const { chatId } = req.params
-      const userId = req.user?._id
-
-      if (!chatId) res.status(400).json({ message: 'ChatId is required' })
-
-      try {
-            const messages = await getAllMessagesByChatId(chatId, userId)
-            res.status(200).json(messages || [])
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
-            } else {
-                  throw error
-            }
-      }
-}
-
-export async function sendMessage(req: RequestMessage, res: Response) {
+export async function sendMessage(req: RequestMessage, res: Response, next: NextFunction) {
       const { content, chatId, messageType, replyMessage, messageSize } = req.body
       const senderId = req.user?._id
 
-      if (!content) res.status(400).json({ message: 'Content is required' })
-      if (!chatId) res.status(400).json({ message: 'ChatId is required' })
-      if (!messageType) res.status(400).json({ message: 'MessageType is required' })
+      if (!content || !chatId || !messageType) {
+            return res.status(400).json({ message: 'Content, ChatId, and MessageType are required' })
+      }
 
       try {
             const message = await sendMessageService(senderId, content, chatId, messageType, replyMessage, messageSize)
-            res.status(201).json(message)
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
+            return res.status(201).json(message)
+      } catch (error) {
+            if (error instanceof ForbiddenError || error instanceof NotFoundError) {
+                  return res.status(error.statusCode).json({ message: error.message });
             } else {
-                  throw error
+                  next(error);
             }
       }
 }
 
-export async function deleteMessage(req: RequestMessage, res: Response) {
+export async function getAllMessages(req: RequestMessage, res: Response, next: NextFunction) {
+      const { chatId } = req.params
+      const userId = req.user?._id
+
+      if (!chatId) {
+            return res.status(400).json({ message: 'ChatId is required' })
+      }
+
+      try {
+            const messages = await getAllMessagesByChatId(chatId, userId)
+            return res.status(200).json(messages || [])
+      } catch (error) {
+            if (error instanceof ForbiddenError || error instanceof NotFoundError) {
+                  return res.status(error.statusCode).json({ message: error.message });
+            } else {
+                  next(error);
+            }
+      }
+}
+
+export async function removeMessage(req: RequestMessage, res: Response, next: NextFunction) {
       const { messageId, chatId } = req.params
       const userId = req.user?._id
 
-      if (!messageId) res.status(400).json({ message: 'MessageId is required' })
-      if (!chatId) res.status(400).json({ message: 'ChatId is required' })
+      if (!messageId || !chatId) {
+            return res.status(400).json({ message: 'MessageId and ChatId are required' })
+      }
 
       try {
             await removeMessageService(messageId, chatId, userId)
-            res.status(200).json({ message: 'message deleted' })
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
+            return res.status(200).json({ message: 'Message deleted' })
+      } catch (error) {
+            if (error instanceof ForbiddenError || error instanceof NotFoundError) {
+                  return res.status(error.statusCode).json({ message: error.message });
             } else {
-                  throw error
-            }
-      }
-}
-
-export async function readMessages(req: RequestMessage, res: Response) {
-      const { messageIds, chatId } = req.body
-      const userId = req.user?._id
-
-      if (!messageIds) res.status(400).json({ message: 'MessageIds is required' })
-      if (!chatId) res.status(400).json({ message: 'ChatId is required' })
-
-      try {
-            await readMessagesService(messageIds, chatId, userId)
-            res.status(200).json({ message: 'read status updated' })
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
-            } else {
-                  throw error
+                  next(error);
             }
       }
 }

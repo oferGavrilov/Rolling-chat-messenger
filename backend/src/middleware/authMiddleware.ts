@@ -1,89 +1,86 @@
-import jwt, { type Secret } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { User } from '../models/user.model.js'
 import type { Response, NextFunction } from 'express'
 import type { AuthenticatedRequest } from '../models/types.js'
-import { Chat } from '../models/chat.model.js'
-import { Message } from '../models/message.model.js'
+import { Chat, ChatDocument } from '../models/chat.model.js'
 import logger from '../services/logger.service.js'
+import { generateToken } from 'src/config/generateToken.js'
 
 interface DecodedToken extends jwt.JwtPayload {
       id: string
 }
 
-export async function authMiddleware (req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function authMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
       try {
-            const token = req.cookies['accessToken']
-      
-            if (!token) {
-                  // return res.status(401).json({ message: 'Not authorized, no token' })
+            const accessToken = req.cookies['accessToken']
+            const refreshToken = req.cookies['refreshToken']
+
+            if (!accessToken && !refreshToken) {
                   logger.error(`[API: ${req.path}] - Not authorized, no token`)
                   return res.status(401).json({ message: 'Not authorized, no token' })
             }
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as DecodedToken
-            req.user = await User.findById(decoded.id).select('-password')
+            let decoded
+            if (accessToken) {
+                  try {
+                        decoded = jwt.verify(accessToken, process.env.JWT_SECRET) as DecodedToken
+                  } catch (error) {
+                        decoded = null // Invalid access token
+                  }
+            }
 
-            next()
+            if (decoded) {
+                  req.user = await User.findById(decoded.id).select('-password')
+                  return next()
+            }
+
+            // Handle refresh token
+            if (refreshToken) {
+                  try {
+                        const decodedRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as DecodedToken
+                        const newAccessToken = generateToken(decodedRefresh.id)
+                        res.cookie('accessToken', newAccessToken, {
+                              httpOnly: true,
+                              secure: process.env.NODE_ENV === 'production',
+                              sameSite: 'strict',
+                              maxAge: 24 * 60 * 60 * 1000, // 24 hours
+                        })
+                        req.user = await User.findById(decodedRefresh.id).select('-password')
+                        return next()
+                  } catch (error) {
+                        console.error(error)
+                        return res.status(401).json({ message: 'Not authorized, token failed' })
+                  }
+            }
+
+            return res.status(401).json({ message: 'Not authorized, token failed' })
       } catch (error) {
             console.error(error)
             return res.status(401).json({ message: 'Not authorized, token failed' })
       }
 }
 
-export async function groupAdminMiddleware (req: AuthenticatedRequest, res: Response, next: NextFunction) {
+
+export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
       const { chatId } = req.body
-      let token: string | undefined
+      const userId = req.user?._id
 
-      if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            try {
-                  token = req.headers.authorization.split(' ')[1]
-                  if (!token) {
-                        return res.status(401).json({ msg: 'Not authorized, no token' })
-                  }
-
-                  const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as DecodedToken
-                  req.user = await User.findById(decoded.id).select('-password')
-
-                  const chat = await Chat.findById(chatId)
-                  if (chat && chat.groupAdmin && chat.groupAdmin.toString() === req.user?._id.toString()) {
-                        next()
-                  } else {
-                        return res.status(401).json({ msg: 'Not authorized as an admin' })
-                  }
-            } catch (error) {
-                  console.error(error)
-                  return res.status(401).json({ msg: 'Not authorized, token failed' })
-            }
+      if (!chatId) {
+            return res.status(400).json({ message: "Missing chatId" })
       }
-}
-
-export async function checkMessageOwnership (req: AuthenticatedRequest, res: Response, next: NextFunction) {
-      const { messageId } = req.params
-
-      let token: string | undefined
 
       try {
-            if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-                  token = req.headers.authorization.split(' ')[1]
-                  if (!token) {
-                        return res.status(401).json({ message: 'Not authorized, no token' })
-                  }
-
-                  const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret) as DecodedToken
-                  req.user = await User.findById(decoded.id).select('-password')
+            const chat: ChatDocument = await Chat.findById(chatId)
+            console.log(userId, chat?.groupAdmin.toString())
+            // check if the user is the admin of the group
+            if (chat && chat?.groupAdmin.toString() === userId.toString()) {
+                  next()
+            } else {
+                  return res.status(401).json({ message: "Not authorized as an admin" })
             }
 
-            const message = await Message.findById(messageId)
-            if (!message) {
-                  return res.status(404).json({ message: "Message not found" })
-            }
-
-            if (message.sender.toString() !== req.user?._id.toString()) {
-                  return res.status(403).json({ message: "You do not have permission to delete this message" })
-            }
-
-            next()
       } catch (error) {
+            console.error(error)
             return res.status(500).json({ message: "An error occurred" })
       }
 }

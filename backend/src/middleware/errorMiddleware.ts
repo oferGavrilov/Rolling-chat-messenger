@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
+import { ForbiddenError, NotFoundError } from 'src/utils/errorHandler'
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
       const error = new Error(`Not Found - ${req.originalUrl}`)
@@ -6,20 +7,22 @@ export function notFound(req: Request, res: Response, next: NextFunction) {
       next(error)
 }
 
-export function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction) {
-      const statusCode = res.statusCode === 200 ? 500 : res.statusCode
-      res.status(statusCode)
-
-      if (err instanceof Error) {
-            res.json({
+export function errorHandler(err: unknown, req: Request, res: Response) {
+      if (err instanceof NotFoundError || err instanceof ForbiddenError) {
+            res.status(err.statusCode).json({ message: err.message })
+      } else if (err instanceof Error) {
+            const statusCode = res.statusCode === 200 ? 500 : res.statusCode
+            res.status(statusCode).json({
                   message: err.message,
                   stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack
             })
       } else {
-            console.log('errorMiddleware', err)
+            console.error('Non-Error object received in errorHandler:', err)
+            res.status(500).json({
+                  message: 'An unknown error occurred',
+                  stack: process.env.NODE_ENV === 'production' ? '🥞' : ''
+            })
       }
-
-      next();
 }
 
 interface ErrorResponse {
@@ -28,38 +31,24 @@ interface ErrorResponse {
 }
 
 export function handleErrorService(error: Error, status?: number): ErrorResponse {
-      const statusCode = status || 403
+      const statusCode = status || 500
       let message = error.message || 'Something went wrong'
 
       if (statusCode === 500) {
             console.error(error)
       } else if (statusCode === 401) {
             message = 'Not authorized'
-      } else if (statusCode === 404) {
-            message = 'Not found'
       } else if (statusCode === 400) {
             message = 'Bad request'
       } else if (statusCode === 403) {
             message = 'Forbidden'
+      } else if (statusCode === 404) {
+            message = 'Not found'
       } else if (statusCode === 409) {
             message = 'Conflict'
       } else if (statusCode === 422) {
             message = 'Unprocessable Entity'
       }
 
-      const customError = new CustomError(error.message, message, statusCode)
-      customError.statusCode = statusCode
-      return customError
+      return { message, statusCode }
 }
-
-class CustomError extends Error {
-      statusCode: number
-      constructor(log: string, message: string, statusCode: number) {
-            console.log('CustomError', statusCode)
-            super(message);
-            this.statusCode = statusCode;
-
-      }
-}
-
-export default CustomError;

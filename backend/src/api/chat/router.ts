@@ -14,12 +14,12 @@ import {
 
 export const router = express.Router()
 
-router.get('/:userId', authMiddleware, getUserChats) 
+router.get('/:userId', authMiddleware, getUserChats)
 router.post('/createchat', authMiddleware, createChat)
 router.post('/creategroup', authMiddleware, createGroupChat)
-router.put('/rename', groupAdminMiddleware, renameGroupChat)
-router.put('/groupimage', groupAdminMiddleware, updateGroupImage)
-router.put('/updateusers', groupAdminMiddleware, updateUsersInGroupChat)
-router.put('/kick', groupAdminMiddleware, kickFromGroupChat)
 router.put('/leave', authMiddleware, leaveGroup)
 router.put('/remove', authMiddleware, removeChat)
+router.put('/rename', authMiddleware, groupAdminMiddleware, renameGroupChat)
+router.put('/groupimage', authMiddleware, groupAdminMiddleware, updateGroupImage)
+router.put('/updateusers', authMiddleware, groupAdminMiddleware, updateUsersInGroupChat)
+router.put('/kick', authMiddleware, groupAdminMiddleware, kickFromGroupChat)

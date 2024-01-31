@@ -21,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 new CleanupService()
 
+import {router as authRouter } from './api/auth/router.js'
 import { router as userRoutes } from './api/user/router.js'
 import { router as chatRoutes } from './api/chat/router.js'
 import { router as messageRoutes } from './api/message/router.js'
@@ -31,7 +32,7 @@ logger.info(`Environment: ${process.env.NODE_ENV}`)
 
 if (process.env.NODE_ENV === 'production') {
       const corsOptions = {
-            origin: ['https://rolling-chat-messenger.vercel.app','http://127.0.0.1:3000', 'http://localhost:3000'],
+            origin: ['https://rolling-chat-messenger.vercel.app'],
             credentials: true,
       }
       app.use(cors(corsOptions))
@@ -42,8 +43,8 @@ if (process.env.NODE_ENV === 'production') {
       }
       app.use(cors(corsOptions))
 }
-
-app.use('/api/auth', userRoutes)
+app.use('/api/auth', authRouter)
+app.use('/api/user', userRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
 setupSocketAPI(server)
