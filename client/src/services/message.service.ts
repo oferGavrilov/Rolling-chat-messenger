@@ -6,10 +6,12 @@ export const messageService = {
       sendMessage,
       removeMessage,
 }
+const env = import.meta.env.VITE_NODE_ENV
+const BASE_URL = env === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
 
 async function getMessages(chatId: string): Promise<IMessage[]> {
       try {
-            return httpService.get<IMessage[]>(`/api/message/${chatId}`, {})
+            return httpService.get<IMessage[]>(`${BASE_URL}/api/message/${chatId}`, {})
       } catch (error) {
             console.log(error)
             throw new Error('Failed to fetch messages.')
@@ -25,7 +27,7 @@ async function sendMessage(
             messageSize?: number,
       }): Promise<IMessage> {
       try {
-            return httpService.post('/api/message', message)
+            return httpService.post(`${BASE_URL}/api/message`, message)
       } catch (error) {
             console.log(error)
             throw new Error('Failed to send message.')
@@ -34,7 +36,7 @@ async function sendMessage(
 
 async function removeMessage(messageId: string, chatId: string): Promise<void> {
       try {
-            return httpService.delete(`/api/message/remove/${chatId}/${messageId}`, {})
+            return httpService.delete(`${BASE_URL}/api/message/remove/${chatId}/${messageId}`, {})
       } catch (error) {
             console.log(error)
             throw new Error('Failed to delete message.')

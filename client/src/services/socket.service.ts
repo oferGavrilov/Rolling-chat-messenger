@@ -3,10 +3,13 @@ import io, { Socket } from 'socket.io-client'
 export const SOCKET_LOGOUT = 'logout'
 export const SOCKET_LOGIN = 'login'
 
-const baseUrl =
-      process.env.NODE_ENV === 'production'
-            ? process.env.VITE_API_URL as string
-            : 'http://localhost:5000'
+const env = import.meta.env.VITE_NODE_ENV
+const baseUrl = env === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
+
+// const baseUrl =
+//       process.env.NODE_ENV === 'production'
+//             ? process.env.VITE_API_URL as string
+//             : 'http://localhost:5000'
 
 export const socketService = createSocketService()
 

@@ -39,7 +39,7 @@ async function getUserChats (userId: string): Promise<IChat[]> {
 async function createChat (userId: string): Promise<IChat> {
       try {
             const currentUserId = getLoggedinUser()?._id 
-            return httpService.post('/api/chat/createchat', { userId, currentUserId })
+            return httpService.post(`${BASE_URL}/api/chat/createchat`, { userId, currentUserId })
       } catch (error) {
             console.error(error)
             throw error
@@ -59,7 +59,7 @@ async function removeChat (chatId: string, userId: string) {
 
 async function createGroup (group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
       try {
-            return httpService.post('/api/chat/creategroup', group)
+            return httpService.post(`${BASE_URL}/api/chat/creategroup`, group)
       } catch (error) {
             console.error(error)
             throw new Error('Failed to create group.')
@@ -70,10 +70,10 @@ async function updateGroupInfo (chatId: string, updateType: 'image' | 'name', up
       try {
             let url: string, dataKey: string
             if (updateType === 'image') {
-                  url = '/api/chat/groupimage'
+                  url = `${BASE_URL}/api/chat/groupimage`
                   dataKey = 'groupImage'
             } else if (updateType === 'name') {
-                  url = '/api/chat/rename'
+                  url = `${BASE_URL}/api/chat/rename`
                   dataKey = 'groupName'
             } else {
                   throw new Error('Invalid update type.')
@@ -88,7 +88,7 @@ async function updateGroupInfo (chatId: string, updateType: 'image' | 'name', up
 
 async function updateUsersGroup (chatId: string, users: IUser[]) {
       try {
-            return httpService.put('/api/chat/updateusers', { chatId, users })
+            return httpService.put(`${BASE_URL}/api/chat/updateusers`, { chatId, users })
 
       } catch (error) {
             console.error(error)
@@ -98,7 +98,7 @@ async function updateUsersGroup (chatId: string, users: IUser[]) {
 
 async function leaveFromGroup (chatId: string, userId: string): Promise<string> {
       try {
-            return httpService.put('/api/chat/leave', { chatId, userId })
+            return httpService.put(`${BASE_URL}/api/chat/leave`, { chatId, userId })
 
       } catch (error) {
             console.error(error)
@@ -108,7 +108,7 @@ async function leaveFromGroup (chatId: string, userId: string): Promise<string> 
 
 async function kickFromGroup (chatId: string, userId: string, kickedByUserId: string): Promise<IChat> {
       try {
-            return httpService.put('/api/chat/kick', { chatId, userId, kickedByUserId })
+            return httpService.put(`${BASE_URL}/api/chat/kick`, { chatId, userId, kickedByUserId })
       } catch (error) {
             console.log(error)
             throw new Error('Failed to remove user from group.')

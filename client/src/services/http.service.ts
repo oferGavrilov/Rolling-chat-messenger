@@ -4,6 +4,7 @@ import { userService } from './user.service'
 
 const env = import.meta.env.VITE_NODE_ENV
 
+console.log('env', env)
 const BASE_URL =
       env === 'production'
             ? env.VITE_SERVER_URL
