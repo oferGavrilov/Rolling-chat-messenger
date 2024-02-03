@@ -1,4 +1,4 @@
-import { Gallery } from "src/models/gallery.model"
+import { Gallery } from "../../models/gallery.model.js"
 import { v2 as cloudinary } from 'cloudinary'
 import { unlink } from "fs"
 
@@ -36,7 +36,7 @@ export async function createGalleryService(filePath: string, title: string, user
         await gallery.save()
         return gallery
     } catch (error) {
-        
+
         unlink(filePath, (err) => {
             if (err) {
                 console.error(err)

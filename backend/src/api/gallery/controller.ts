@@ -1,5 +1,5 @@
-import { IGalleryRequest, IGalleryResponse } from "src/models/gallery.model";
-import { createGalleryService, getGalleryService } from "./service";
+import { IGalleryRequest, IGalleryResponse } from "../../models/gallery.model.js";
+import { createGalleryService, getGalleryService } from "./service.js";
 
 
 export async function getGallery(req: IGalleryRequest, res: IGalleryResponse) {
