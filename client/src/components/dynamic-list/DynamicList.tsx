@@ -1,5 +1,5 @@
 import Chats from "./chats/Chats"
-import useChat from "../../context/useChat"
+import useStore from "../../context/store/useStore"
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import VideoCallIcon from '@mui/icons-material/VideoCall'
@@ -7,6 +7,7 @@ import Settings from "./user/Settings"
 import MenuIcon from '@mui/icons-material/Menu'
 import Profile from "./user/Profile"
 import { ContentType } from "../../pages/ChatPage"
+import Gallery from "./gallery/Gallery"
 
 function Story(): JSX.Element {
       return (
@@ -26,15 +27,6 @@ function Videos(): JSX.Element {
       )
 }
 
-function Gallery(): JSX.Element {
-      return (
-            <section className='pt-7 px-4 relative'>
-
-                  Coming soon...
-            </section>
-      )
-}
-
 interface Props {
       setShowSearch: React.Dispatch<React.SetStateAction<boolean>>
       contentType: ContentType
@@ -44,7 +36,7 @@ interface Props {
 }
 
 export default function DynamicList(props: Props) {
-      const { selectedChat } = useChat()
+      const { selectedChat } = useStore()
 
       function getContent(): JSX.Element {
             switch (props.contentType) {

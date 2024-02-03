@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { chatService } from '../../../services/chat.service'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 import ChatLoading from '../../SkeltonLoading'
 import MessagesInput from '../../common/MessagesInput'
 import { AuthState } from '../../../context/useAuth'
@@ -23,7 +23,7 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
       const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
 
-      const { chats, setChats, updateChatsWithNewMessage } = useChat()
+      const { chats, setChats, updateChatsWithNewMessage } = useStore()
       const { user: loggedinUser } = AuthState()
 
       const modalRef = useRef<HTMLUListElement>(null)
@@ -50,8 +50,22 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
                         setIsLoading(true)
                         // const user = userService.getLoggedinUser()
                         // if (!user) return
-                        const chats = await chatService.getUserChats(loggedinUser._id)
-                        setChats(chats)
+
+                        // reduced the number of api calls by checking if chats are already fetched
+                        const isUserChatFetched = chatService.isUserChatsFetched()
+                        if (!isUserChatFetched) {
+                              let fetchedChats = await chatService.getUserChats(loggedinUser._id)
+                              setChats(fetchedChats)
+                        } else {
+                              console.log('chats from store', chats)
+                              if (chats.length === 0) {
+                                    let newChats = await chatService.getUserChats(loggedinUser._id)
+                                    setChats(newChats)
+                                    return
+                              }
+                              setChats(chats)
+                        }
+                        // const chats = await chatService.getUserChats(loggedinUser._id)
 
                   } catch (err) {
                         console.log(err)

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
 import { useClickOutside } from '../../../../custom-hook/useClickOutside'
 import { IMessage, IReplyMessage } from '../../../../model/message.model'
-import useChat from '../../../../context/useChat'
+import useStore from '../../../../context/store/useStore'
 import { AuthState } from '../../../../context/useAuth'
 import { toast } from 'react-toastify'
 
@@ -16,7 +16,7 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
       const [isOpen, setIsOpen] = useState<boolean>(false)
       const menuRef = useRef<HTMLDivElement>(null)
 
-      const { setReplyMessage } = useChat()
+      const { setReplyMessage } = useStore()
       const { user } = AuthState()
 
       useClickOutside(menuRef, () => setIsOpen(false), isOpen)

@@ -14,24 +14,24 @@ const baseUrl = env === 'production' ? 'https://rolling-backend.onrender.com' : 
 export const socketService = createSocketService()
 
 interface SocketService {
-      setup (userId: string): void
-      login (userId: string): void
-      logout (userId: string): void
-      on (eventName: string, cb: (...args: any[]) => void, boolParam?: boolean): void
-      off (eventName: string, cb?: (...args: any[]) => void): void
-      emit (eventName: string, data: any): void
-      terminate (): void
+      setup(userId: string): void
+      login(userId: string): void
+      logout(userId: string): void
+      on(eventName: string, cb: (...args: any[]) => void, boolParam?: boolean): void
+      off(eventName: string, cb?: (...args: any[]) => void): void
+      emit(eventName: string, data: any, callback?: CallableFunction): void
+      terminate(): void
 }
 
-function createSocketService (): SocketService {
+function createSocketService(): SocketService {
       let socket: Socket | null = null
 
       const socketService: SocketService = {
-            setup (userId) {
+            setup(userId) {
                   socket = io(baseUrl, { reconnection: false })
                   socket.emit('setup', userId)
             },
-            on (eventName, cb, boolParam = true) {
+            on(eventName, cb, boolParam = true) {
                   if (socket) {
                         socket.on(eventName, (...args) => {
                               if (boolParam !== undefined) {
@@ -42,7 +42,7 @@ function createSocketService (): SocketService {
                         })
                   }
             },
-            off (eventName, cb) {
+            off(eventName, cb) {
                   if (!socket) return
                   if (!cb) {
                         socket.removeAllListeners(eventName)
@@ -50,18 +50,22 @@ function createSocketService (): SocketService {
                         socket.off(eventName, cb)
                   }
             },
-            login (userId) {
+            login(userId) {
                   this.emit(SOCKET_LOGIN, userId)
             },
-            logout (userId) {
+            logout(userId) {
                   this.emit(SOCKET_LOGOUT, userId)
+                  this.terminate()
             },
-            emit (eventName, data) {
+            emit(eventName, data, callback) {
                   if (socket) {
-                        socket.emit(eventName, data)
+                        socket.emit(eventName, data, (response) => {
+                              // console.log(response)
+                              // if (callback) callback(response)
+                        })
                   }
             },
-            terminate () {
+            terminate() {
                   if (socket) {
                         socket.disconnect()
                         socket = null

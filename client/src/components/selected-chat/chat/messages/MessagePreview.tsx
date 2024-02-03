@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
 import { AuthState } from '../../../../context/useAuth'
-import useChat from '../../../../context/useChat'
+import useStore from '../../../../context/store/useStore'
 
 import { IMessage } from '../../../../model/message.model'
 import { IUser } from '../../../../model/user.model'
@@ -23,7 +23,7 @@ interface Props {
 
 export default function MessagePreview({ message, onReplyMessage, onRemoveMessage }: Props): JSX.Element {
       const { user } = AuthState() as { user: IUser }
-      const { setSelectedFile } = useChat()
+      const { setSelectedFile } = useStore()
 
       const renderMessageContent = (message: IMessage): ReactNode => {
             // If the message is deleted by the sender, show a message that the message was deleted

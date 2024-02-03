@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 
 import Navigation from '../components/Navigation'
 import DynamicSideModal from '../components/side-modal/DynamicSideModal'
-import DynamicList from '../components/chat-list/DynamicList'
+import DynamicList from '../components/dynamic-list/DynamicList'
 import ChatInterface from '../components/selected-chat/ChatInterface'
 import SelectedFile from '../components/SelectedFile'
 
-import { useChat } from '../context/useChat'
+import useStore  from '../context/store/useStore'
 import { AuthState } from '../context/useAuth'
 import { userService } from '../services/user.service'
 import socketService from '../services/socket.service'
+import SelectedImage from '../components/gallery-editor/selected-image'
 
 export type ContentType = 'chats' | 'groups' | 'gallery' | 'videos' | 'story' | 'settings' | 'profile'
 
@@ -17,11 +18,13 @@ export default function ChatPage(): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<ContentType>('chats')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
-      const { selectedChat, selectedFile } = useChat()
+      const { selectedChat, selectedFile, selectedImage, setSelectedImage } = useStore()
       const { user } = AuthState()
 
       useEffect(() => {
-            user && socketService.setup(user._id)
+            if (user) {
+                  socketService.setup(user._id)
+            }
       }, [])
 
       useEffect(() => {
@@ -63,6 +66,7 @@ export default function ChatPage(): JSX.Element {
                         />
 
                         {selectedChat && <ChatInterface />}
+                        {selectedImage && <SelectedImage />}
                   </div>
                   {selectedFile && (
                         <SelectedFile />

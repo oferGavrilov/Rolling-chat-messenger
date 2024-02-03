@@ -1,7 +1,7 @@
 import React from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import SendIcon from '@mui/icons-material/Send'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 import { IReplyMessage } from '../../../model/message.model'
 import { IFile } from '../../../model/chat.model'
 import Loading from '../../Loading'
@@ -14,7 +14,7 @@ interface Props {
 
 export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
 
-      const { replyMessage } = useChat()
+      const { replyMessage } = useStore()
 
       const isImage = typeof file === 'string'
 

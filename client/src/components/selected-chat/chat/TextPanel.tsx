@@ -4,7 +4,7 @@ import AddFileModal from './AddFileModal'
 import AudioRecorder from './AudioRecorder'
 
 import { AuthState } from '../../../context/useAuth'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 
 import socketService from '../../../services/socket.service'
 import { uploadAudio } from '../../../utils/cloudinary'
@@ -44,7 +44,7 @@ export default function TextPanel ({
 
       useClickOutside(emojiRef, () => setShowEmojiPicker(false), showEmojiPicker)
 
-      const { selectedChat, replyMessage, setReplyMessage } = useChat()
+      const { selectedChat, replyMessage, setReplyMessage } = useStore()
       const { user: loggedInUser } = AuthState()
 
       async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { AuthState } from '../context/useAuth'
-import useChat from '../context/useChat'
+import useStore from '../context/store/useStore'
 
 import { formatTime, onDownloadFile } from '../utils/functions'
 
@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import DownloadIcon from '@mui/icons-material/Download'
 
 export default function SelectedFile (): JSX.Element {
-      const { selectedFile, setSelectedFile } = useChat()
+      const { selectedFile, setSelectedFile } = useStore()
       const { user: loggedInUser } = AuthState()
 
       const headerDivRef = useRef<HTMLDivElement>(null)

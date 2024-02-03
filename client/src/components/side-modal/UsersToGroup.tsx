@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react"
 import { userService } from "../../services/user.service"
 import { chatService } from '../../services/chat.service'
 import { AuthState } from '../../context/useAuth'
-import useChat from '../../context/useChat'
+import useStore from '../../context/store/useStore'
 import Loading from "../SkeltonLoading"
 import { IUser } from "../../model/user.model"
 import { toast } from 'react-toastify'
@@ -25,7 +25,7 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
       const [image, setImage] = useState<string>('')
       const { user } = AuthState()
 
-      const { chats, setChats } = useChat()
+      const { chats, setChats } = useStore()
 
       useEffect(() => {
             if (isOpen) {

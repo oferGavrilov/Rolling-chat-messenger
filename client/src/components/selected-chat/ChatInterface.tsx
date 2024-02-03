@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react"
 
 import { AuthState } from "../../context/useAuth"
-import useChat from "../../context/useChat"
+import useStore from "../../context/store/useStore"
 
 // import ChatHeader from "./chat/ChatHeader"
 // import Info from "./info/Index"
@@ -31,7 +31,7 @@ export default function ChatInterface(): JSX.Element {
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<IFile | string | null>(null)
 
-      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useChat()
+      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useStore()
       const { user: loggedInUser } = AuthState()
 
       const conversationUserRef = useRef<IUser | undefined>(undefined)

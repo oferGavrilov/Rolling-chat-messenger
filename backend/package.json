@@ -38,6 +38,7 @@
     "async_hooks": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "cloudinary": "^2.0.0",
     "cls-hooked": "^4.2.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -49,6 +50,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.0",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.8",
     "rimraf": "^5.0.1",
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@tsconfig/node-lts-strictest-esm": "^18.12.1",
+    "@types/multer": "^1.4.11",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.56.0",

@@ -4,7 +4,7 @@ import { BsCameraVideo } from 'react-icons/bs'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { IoIosArrowBack } from 'react-icons/io'
 
-import useChat from "../../../context/useChat"
+import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
 
 import { IUser } from "../../../model/user.model"
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default function ChatHeader({ connectionStatus, conversationUser, chatMode, setChatMode }: Props): JSX.Element {
-      const { selectedChat, setSelectedChat } = useChat()
+      const { selectedChat, setSelectedChat } = useStore()
       const { user: loggedInUser } = AuthState()
       const [isTyping, setIsTyping] = useState<boolean>(false);
 

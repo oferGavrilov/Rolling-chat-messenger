@@ -1,13 +1,13 @@
 import { useEffect } from "react"
 import { IChat } from "../../../model/chat.model"
-import useChat from "../../../context/useChat"
+import useStore from "../../../context/store/useStore"
 
 import { AuthState } from "../../../context/useAuth"
 import socketService from "../../../services/socket.service"
 import ChatPreview from "./ChatPreview"
 
 export default function ChatList({ chats }: { chats: IChat[] }) {
-      const { setChats } = useChat()
+      const { setChats } = useStore()
       const { user } = AuthState()
 
       useEffect(() => {

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useChat } from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 import { IChat, IUser } from '../../../model/'
 import { AuthState } from '../../../context/useAuth'
 import { formatTime } from '../../../utils/functions'
@@ -19,7 +19,7 @@ const defaultUser: IUser = {
 }
 
 const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
-      const { setSelectedChat, selectedChat } = useChat()
+      const { setSelectedChat, selectedChat } = useStore()
       const { user: loggedinUser } = AuthState()
 
 

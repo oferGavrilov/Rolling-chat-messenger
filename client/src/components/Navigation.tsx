@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react"
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthState } from "../context/useAuth"
-import useChat from '../context/useChat'
+import useStore from '../context/store/useStore'
 
 import Logo from "./svg/Logo"
 import Story from "./svg/Story"
@@ -30,7 +30,7 @@ export default function Navigation({
       setShowNavigation
 }: Props): JSX.Element {
       const { user, setJustLoggedIn } = AuthState()
-      const { setSelectedChat } = useChat()
+      const { setSelectedChat } = useStore()
       const navigate = useNavigate()
       const navigationRef = useRef<HTMLElement>(null)
       const enableClickOutside = window.innerWidth < 768
@@ -61,7 +61,6 @@ export default function Navigation({
 
       async function handleLogout() {
             await userService.logout()
-            console.log('logged out')
             navigate('/')
             socketService.emit(SOCKET_LOGOUT, user?._id)
             setSelectedChat(null)
@@ -93,15 +92,14 @@ export default function Navigation({
                               </Tooltip>
                               <Tooltip title="Groups" arrow placement='right'>
                                     <div className={`navigation-icon ${contentType === 'groups' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('groups')}>
-                                          {/* <PeopleOutlinedIcon /> */}
                                           <span className="material-symbols-outlined">group</span>
                                     </div>
                               </Tooltip>
-                              <Tooltip title="Groups" arrow placement='right'>
+                              {/* <Tooltip title="Gallery" arrow placement='right'>
                                     <div className={`navigation-icon ${contentType === 'gallery' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('gallery')}>
-                                    <span className="material-symbols-outlined">crop</span>
+                                          <span className="material-symbols-outlined">crop</span>
                                     </div>
-                              </Tooltip>
+                              </Tooltip> */}
                               <Tooltip title="Stories" arrow placement='right'>
                                     <div className={`navigation-icon  ${contentType === 'story' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('story')}>
                                           <Story />

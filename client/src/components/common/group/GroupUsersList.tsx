@@ -3,7 +3,7 @@ import { chatService } from '../../../services/chat.service'
 import socketService from '../../../services/socket.service'
 import { IChat } from '../../../model/chat.model'
 import { IUser } from '../../../model/user.model'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 
 interface Props {
       selectedChat: IChat | null
@@ -14,7 +14,7 @@ interface Props {
 
 export default function GroupUsersList({ selectedChat, setSelectedChat, loggedInUser, isAdmin }: Props): JSX.Element {
 
-      const { onSelectChat } = useChat()
+      const { onSelectChat } = useStore()
       async function onKickFromGroup(userId: string) {
             if (!selectedChat || !loggedInUser) return
             try {

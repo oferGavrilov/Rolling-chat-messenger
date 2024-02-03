@@ -4,7 +4,7 @@ import { useClickOutside } from '../../../custom-hook/useClickOutside'
 import { userService } from '../../../services/user.service'
 import { toast } from 'react-toastify'
 import { chatService } from '../../../services/chat.service'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 import Loading from '../../SkeltonLoading'
 import { IChat } from '../../../model/chat.model'
 import socketService from '../../../services/socket.service'
@@ -24,7 +24,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
       const [selectedUsers, setSelectedUsers] = useState<IUser[]>([])
       const [isLoading, setIsLoading] = useState<boolean>(false)
 
-      const { setChats, chats, setSelectedChat } = useChat()
+      const { setChats, chats, setSelectedChat } = useStore()
 
       useClickOutside(usersModal, () => setIsOpen(false), isOpen)
 

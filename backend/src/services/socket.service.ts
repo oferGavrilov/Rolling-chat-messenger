@@ -7,7 +7,7 @@ import { IMessage } from '../models/message.model.js'
 
 let gIo: Server | null = null
 const roomToSocketIdsMap = new Map();
-const onlineUsers = new Map();
+const onlineUsers = new Map<string, string>();
 
 export function setupSocketAPI(http: HttpServer) {
       gIo = new Server(http, {
@@ -26,16 +26,16 @@ export function setupSocketAPI(http: HttpServer) {
             })
 
             socket.on('login', (userId: string) => {
-                  socket.join(userId)
-                  onlineUsers.set(userId, socket.id)
-                  socket.broadcast.emit('login', userId)
-                  // socket.in(room)
-                  logger.info(`[SOCKET - Event:'login'] - User connected: ${userId}`)
+                  if (!onlineUsers.has(userId)) {
+                        logger.info(`[SOCKET - Event:'login'] - User connected: ${userId}`)
+                        socket.join(userId)
+                        onlineUsers.set(userId, socket.id)
+                        socket.broadcast.emit('login', userId)
+                  }
             })
 
             socket.on('logout', (userId: string) => {
                   logger.info(`[SOCKET - Event:'logout'] - User disconnected: ${userId}`)
-                  // socket.disconnect(true)
                   onlineUsers.delete(userId)
                   socket.broadcast.emit('logout', userId)
             })
@@ -103,23 +103,13 @@ export function setupSocketAPI(http: HttpServer) {
                         socket.in(room).emit('message received', message);
                         logger.info(`Socket [id: ${socket.id}] sent a message to room: ${room}`);
 
-
+                        // if (callback && typeof callback === 'function') {
+                        //       callback({ status: 'success', message: 'Message received' });
+                        // }
                   } catch (error) {
                         logger.error(`Error in 'new message in room' handler: ${error}`);
                   }
             });
-
-            // collapsed to new message in room
-            // socket.on('new message in group', (newMessageReceived) => {
-            //       const chat = newMessageReceived.chat
-            //       if (!chat) return logger.info(`Socket [id: ${socket.id}] tried to send a message without a chat`)
-            //       if (!chat?.users) return logger.info(`Socket [id: ${socket.id}] tried to send a message to a chat without users`)
-            //       chat.users.forEach((user: User) => {
-            //             if (user._id === newMessageReceived.sender._id) return
-            //             socket.in(user._id).emit('message received', newMessageReceived)
-            //             logger.info(`[SOCKET - Event 'new message'] SocketID: ${socket.id}] sent a message to chat: ${newMessageReceived.chat._id}`)
-            //       })
-            // })
 
             socket.on('kick-from-group', ({ chatId, userId, kickerId }: { chatId: string, userId: string, kickerId: string }) => {
                   socket.in(userId).emit('user-kicked', { chatId, userId, kickerId })
@@ -150,8 +140,28 @@ export function setupSocketAPI(http: HttpServer) {
                   })
             })
 
-            socket.off('setup', () => {
-                  socket.leave(socket.id)
+            socket.on('disconnect', () => {
+                  logger.info(`Socket ${socket.id} has disconnected`)
+
+                  for (const [room, sockets] of roomToSocketIdsMap.entries()) {
+                        if (sockets.has(socket.id)) {
+                              sockets.delete(socket.id);
+                              if (sockets.size === 0) {
+                                    roomToSocketIdsMap.delete(room);
+                              } else {
+                                    roomToSocketIdsMap.set(room, sockets);
+                              }
+                              break;
+                        }
+                  }
+
+                  for (const [userId, socketId] of onlineUsers.entries()) {
+                        if (socketId === socket.id) {
+                              onlineUsers.delete(userId);
+                              gIo?.emit('logout', userId);
+                              break;
+                        }
+                  }
             })
       })
 }

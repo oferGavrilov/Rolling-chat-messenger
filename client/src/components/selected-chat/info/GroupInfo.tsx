@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import useChat from "../../../context/useChat"
+import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
 
 import UploadImage from "../../UploadImage"
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function GroupInfo({ messages, isAddUsers, setIsAddUsers }: Props): JSX.Element {
-      const { selectedChat, setSelectedChat, chats, setChats } = useChat()
+      const { selectedChat, setSelectedChat, chats, setChats } = useStore()
       const { isAdmin, user: loggedInUser } = AuthState()
 
       const [image, setImage] = useState<string>(selectedChat?.groupImage || '')

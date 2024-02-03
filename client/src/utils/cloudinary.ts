@@ -44,3 +44,28 @@ export async function uploadAudio (audioBlob: Blob) {
             return null
       }
 }
+
+export async function uploadToCloudinary(blob : Blob) {
+      try {
+            const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME
+            const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload/`
+            const UPLOAD_PRESET = 'chat-app'
+
+            const formData = new FormData()
+            formData.append('file', blob)
+            formData.append('upload_preset', UPLOAD_PRESET)
+            formData.append('cloud_name', CLOUD_NAME)
+
+            const res = await fetch(UPLOAD_URL, {
+                  method: 'POST',
+                  body: formData,
+            })
+
+            const data = await res.json()
+            console.log(data)
+            return data.secure_url
+      } catch (err) {
+            console.log(err)
+            return null
+      }
+}

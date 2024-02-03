@@ -84,3 +84,5 @@ export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Respo
             return res.status(500).json({ message: "An error occurred" })
       }
 }
+
+// socket auth middleware

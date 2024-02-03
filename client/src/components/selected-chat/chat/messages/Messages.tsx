@@ -1,5 +1,5 @@
 import { AuthState } from "../../../../context/useAuth"
-import useChat from "../../../../context/useChat"
+import useStore from "../../../../context/store/useStore"
 import { IMessage, IReplyMessage } from "../../../../model/message.model"
 import { isLastMessage, isSameSender } from "../../../../utils/functions"
 import MessageArrow from "../../../svg/MessageArrow"
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function Messages({ messages, setChatMode }: Props): JSX.Element {
-      const { selectedChat, replyMessage, setReplyMessage, setMessages } = useChat()
+      const { selectedChat, replyMessage, setReplyMessage, setMessages } = useStore()
       const { user } = AuthState()
 
       function onReplyMessage(message: IMessage): void {

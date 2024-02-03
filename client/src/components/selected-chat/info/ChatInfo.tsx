@@ -1,5 +1,5 @@
 import { IUser } from "../../../model/user.model"
-import useChat from "../../../context/useChat"
+import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
 import { chatService } from "../../../services/chat.service"
 import { IMessage } from "../../../model/message.model"
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function ChatInfo ({ conversationUser, messages }: Props): JSX.Element {
-      const { chats, setChats, selectedChat, setSelectedChat } = useChat()
+      const { chats, setChats, selectedChat, setSelectedChat } = useStore()
       const { user } = AuthState()
 
       async function onRemoveChat () {

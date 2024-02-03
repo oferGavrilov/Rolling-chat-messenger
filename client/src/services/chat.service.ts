@@ -5,6 +5,7 @@ import { IUser } from "../model/user.model"
 import { httpService } from "./http.service"
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
+const CHAT_SESSION_KEY = 'userChatsFetched'
 // const BASE_URL = "https://rolling-backend.onrender.com"
 
 export const chatService = {
@@ -15,10 +16,11 @@ export const chatService = {
       kickFromGroup,
       updateUsersGroup,
       removeChat,
-      leaveFromGroup
+      leaveFromGroup,
+      isUserChatsFetched
 }
 
-async function getUserChats (userId: string): Promise<IChat[]> {
+async function getUserChats(userId: string): Promise<IChat[]> {
       try {
             const chats = await httpService.get(BASE_URL + `/api/chat/${userId}`, {}) as IChat[]
 
@@ -29,6 +31,9 @@ async function getUserChats (userId: string): Promise<IChat[]> {
                   return bDate - aDate
             })
 
+            // save a flag to session storage to indicate that the user has fetched his chats
+            sessionStorage.setItem(CHAT_SESSION_KEY, 'true')
+
             return sortedData
       } catch (error) {
             console.error(error)
@@ -36,9 +41,9 @@ async function getUserChats (userId: string): Promise<IChat[]> {
       }
 }
 
-async function createChat (userId: string): Promise<IChat> {
+async function createChat(userId: string): Promise<IChat> {
       try {
-            const currentUserId = getLoggedinUser()?._id 
+            const currentUserId = getLoggedinUser()?._id
             return httpService.post(`${BASE_URL}/api/chat/createchat`, { userId, currentUserId })
       } catch (error) {
             console.error(error)
@@ -46,7 +51,7 @@ async function createChat (userId: string): Promise<IChat> {
       }
 }
 
-async function removeChat (chatId: string, userId: string) {
+async function removeChat(chatId: string, userId: string) {
       try {
             return httpService.put('/api/chat/remove', { chatId, userId })
       } catch (error) {
@@ -57,7 +62,7 @@ async function removeChat (chatId: string, userId: string) {
 
 //////////////////// GROUP - Operations ////////////////////
 
-async function createGroup (group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
+async function createGroup(group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
       try {
             return httpService.post(`${BASE_URL}/api/chat/creategroup`, group)
       } catch (error) {
@@ -66,7 +71,7 @@ async function createGroup (group: { chatName: string, users: IUser[], groupImag
       }
 }
 
-async function updateGroupInfo (chatId: string, updateType: 'image' | 'name', updateData: string): Promise<string> {
+async function updateGroupInfo(chatId: string, updateType: 'image' | 'name', updateData: string): Promise<string> {
       try {
             let url: string, dataKey: string
             if (updateType === 'image') {
@@ -86,7 +91,7 @@ async function updateGroupInfo (chatId: string, updateType: 'image' | 'name', up
       }
 }
 
-async function updateUsersGroup (chatId: string, users: IUser[]) {
+async function updateUsersGroup(chatId: string, users: IUser[]) {
       try {
             return httpService.put(`${BASE_URL}/api/chat/updateusers`, { chatId, users })
 
@@ -96,7 +101,7 @@ async function updateUsersGroup (chatId: string, users: IUser[]) {
       }
 }
 
-async function leaveFromGroup (chatId: string, userId: string): Promise<string> {
+async function leaveFromGroup(chatId: string, userId: string): Promise<string> {
       try {
             return httpService.put(`${BASE_URL}/api/chat/leave`, { chatId, userId })
 
@@ -106,11 +111,15 @@ async function leaveFromGroup (chatId: string, userId: string): Promise<string> 
       }
 }
 
-async function kickFromGroup (chatId: string, userId: string, kickedByUserId: string): Promise<IChat> {
+async function kickFromGroup(chatId: string, userId: string, kickedByUserId: string): Promise<IChat> {
       try {
             return httpService.put(`${BASE_URL}/api/chat/kick`, { chatId, userId, kickedByUserId })
       } catch (error) {
             console.log(error)
             throw new Error('Failed to remove user from group.')
       }
+}
+
+function isUserChatsFetched() {
+      return sessionStorage.getItem(CHAT_SESSION_KEY)
 }

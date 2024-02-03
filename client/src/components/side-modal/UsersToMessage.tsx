@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { IUser } from "../../model/user.model"
-import useChat from "../../context/useChat"
+import useStore from "../../context/store/useStore"
 import { userService } from "../../services/user.service"
 import Loading from "../SkeltonLoading"
 import SearchInput from "../common/SearchInput"
@@ -18,7 +18,7 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<IUser[]>([])
 
-      const { setSelectedChat, chats } = useChat()
+      const { setSelectedChat, chats } = useStore()
       const { user: loggedInUser } = AuthState()
 
       useEffect(() => {

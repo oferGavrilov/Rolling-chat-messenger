@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 import { AuthState } from '../../../context/useAuth'
 import Messages from './messages/Messages'
 import socketService from '../../../services/socket.service'
@@ -14,7 +14,7 @@ interface Props {
 
 export default function Chat({ setChatMode, messages }: Props): JSX.Element {
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
-      const { selectedChat, replyMessage, setReplyMessage, setMessages, updateChatReadReceipts } = useChat()
+      const { selectedChat, replyMessage, setReplyMessage, setMessages, updateChatReadReceipts } = useStore()
       const { user: loggedInUser, chatBackgroundColor } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
 

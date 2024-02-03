@@ -3,7 +3,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { IMessage } from '../../../model/message.model'
-import useChat from '../../../context/useChat'
+import useStore from '../../../context/store/useStore'
 
 interface Props {
       messages: IMessage[]
@@ -14,7 +14,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
       const [showLeftButton, setShowLeftButton] = useState(false)
       const [showRightButton, setShowRightButton] = useState(false)
 
-      const { setSelectedFile } = useChat()
+      const { setSelectedFile } = useStore()
 
       const messagesFilesRef = useRef<HTMLDivElement>(null)
 

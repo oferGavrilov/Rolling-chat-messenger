@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import useChat from "../../../context/useChat"
+import useStore from "../../../context/store/useStore"
 import { IUser } from "../../../model/user.model"
 
 import CloseIcon from '@mui/icons-material/Close'
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function Info ({ conversationUser, setChatMode, messages }: Props): JSX.Element {
-      const { selectedChat } = useChat()
+      const { selectedChat } = useStore()
       const [isAddUsers, setIsAddUsers] = useState<boolean>(false)
 
       return (

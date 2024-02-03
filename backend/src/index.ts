@@ -20,10 +20,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 new CleanupService()
 
-import {router as authRouter } from './api/auth/router.js'
+import { router as authRouter } from './api/auth/router.js'
 import { router as userRoutes } from './api/user/router.js'
 import { router as chatRoutes } from './api/chat/router.js'
 import { router as messageRoutes } from './api/message/router.js'
+import { router as galleryRoutes } from './api/gallery/router.js'
 import { setupSocketAPI } from './services/socket.service.js'
 import logger from './services/logger.service.js'
 
@@ -46,11 +47,12 @@ app.use('/api/auth', authRouter)
 app.use('/api/user', userRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
+app.use('/api/gallery', galleryRoutes)
 setupSocketAPI(server)
 
 app.use(errorHandler)
 app.use('/', (req: express.Request, res: express.Response) => {
-      res.send('API is running... :)')      
+      res.send('API is running... :)')
 })
 
 const port = process.env.PORT || 5000
