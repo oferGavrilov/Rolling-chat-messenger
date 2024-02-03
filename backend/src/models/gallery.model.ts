@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { ObjectId } from "mongodb";
-import mongoose, { Model, Schema } from "mongoose";
+import { Request, Response } from "express"
+import { ObjectId } from "mongodb"
+import mongoose, { Model, Schema } from "mongoose"
 export interface IGallery {
     title: string
     url: string
@@ -11,6 +11,9 @@ export interface IGalleryDocument extends IGallery, Document {
     _id: ObjectId
 }
 
+export interface MulterFile extends Express.Multer.File {}
+
+
 export interface IGalleryRequest extends Request {
     body: {
         title: string
@@ -19,7 +22,7 @@ export interface IGalleryRequest extends Request {
     user: {
         _id: string
     }
-    file: Express.Multer.File;
+    file: MulterFile
 }
 
 export interface IGalleryResponse extends Response {

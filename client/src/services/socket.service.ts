@@ -57,12 +57,9 @@ function createSocketService(): SocketService {
                   this.emit(SOCKET_LOGOUT, userId)
                   this.terminate()
             },
-            emit(eventName, data, callback) {
+            emit(eventName, data) {
                   if (socket) {
-                        socket.emit(eventName, data, (response) => {
-                              // console.log(response)
-                              // if (callback) callback(response)
-                        })
+                        socket.emit(eventName, data)
                   }
             },
             terminate() {

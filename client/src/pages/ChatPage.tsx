@@ -18,7 +18,7 @@ export default function ChatPage(): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<ContentType>('chats')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
-      const { selectedChat, selectedFile, selectedImage, setSelectedImage } = useStore()
+      const { selectedChat, selectedFile, selectedImage } = useStore()
       const { user } = AuthState()
 
       useEffect(() => {
