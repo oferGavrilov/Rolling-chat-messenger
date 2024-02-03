@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import mongoose, { Model, Schema } from "mongoose";
-
 export interface IGallery {
     title: string
     url: string
@@ -15,12 +14,12 @@ export interface IGalleryDocument extends IGallery, Document {
 export interface IGalleryRequest extends Request {
     body: {
         title: string
-        url: string
         userId: string
     }
     user: {
         _id: string
     }
+    file: Express.Multer.File;
 }
 
 export interface IGalleryResponse extends Response {
