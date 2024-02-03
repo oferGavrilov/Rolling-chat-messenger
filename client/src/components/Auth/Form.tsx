@@ -99,11 +99,10 @@ export default function Form(): JSX.Element {
                   return;
             }
 
-
             try {
                   const user = await userService.loginSignUp(modifiedValues, formMode)
                   setUser(user)
-                  setJustLoggedIn(true); 
+                  setJustLoggedIn(true);
                   navigate('/chat')
             } catch (error) {
                   if (axios.isAxiosError(error)) toast.warn(error?.response?.data.msg || "An error occurred")
@@ -119,15 +118,17 @@ export default function Form(): JSX.Element {
 
                         <div className="flex justify-between gap-x-2">
                               <Button
-                                    className={`auth-btn ${formMode === 'login' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'login' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
                                     onClick={() => setFormMode('login')}
-                                    type='button'>
+                                    type='button'
+                                    disabled={isLoading}>
                                     Login
                               </Button>
                               <Button
-                                    className={`auth-btn ${formMode === 'sign-up' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'sign-up' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
                                     onClick={() => setFormMode('sign-up')}
-                                    type='button'>
+                                    type='button'
+                                    disabled={isLoading}>
                                     Sign Up
                               </Button>
                         </div>
@@ -137,7 +138,14 @@ export default function Form(): JSX.Element {
                               {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} />}
                               {formMode === 'reset' && <ForgotPassword formik={formik} />}
 
-                              {formMode === 'login' && <button type="button" className='underline underline-offset-2 text-sm transition-all duration-100 hover:tracking-wide' onClick={() => setFormMode('reset')}>Forget you'r password ?</button>}
+                              {formMode === 'login' && (
+                                    <button
+                                          type="button"
+                                          className='underline underline-offset-2 text-sm transition-all duration-100 hover:tracking-wide disabled:cursor-not-allowed'
+                                          onClick={() => setFormMode('reset')}
+                                          disabled={isLoading}>
+                                          Forget you'r password ?</button>
+                              )}
                               <div className='flex flex-col gap-[2px] mt-4'>
                                     <Button
                                           className="bg-primary transition-colors text-white duration-300 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-[#23a7ff]"
@@ -148,9 +156,10 @@ export default function Form(): JSX.Element {
                                     </Button>
                                     {formMode === 'login' && (
                                           <Button
-                                                className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff]"
+                                                className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff] disabled:cursor-not-allowed"
                                                 type="button"
-                                                onClick={setGuestUser}>
+                                                onClick={setGuestUser}
+                                                disabled={isLoading}>
                                                 Get Guest User Credentials
                                           </Button>
                                     )}

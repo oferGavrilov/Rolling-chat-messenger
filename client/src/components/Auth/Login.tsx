@@ -12,7 +12,7 @@ type LoginData = {
       password?: string
 }
 
-export default function Login({ formik }: LoginProps) {
+export default function Login({ formik}: LoginProps) {
       const [showPassword, setShowPassword] = useState<boolean>(false)
 
       return (
