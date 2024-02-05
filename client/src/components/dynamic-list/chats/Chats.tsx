@@ -51,20 +51,8 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
                         // const user = userService.getLoggedinUser()
                         // if (!user) return
 
-                        // reduced the number of api calls by checking if chats are already fetched
-                        const isUserChatFetched = chatService.isUserChatsFetched()
-                        if (!isUserChatFetched) {
-                              let fetchedChats = await chatService.getUserChats(loggedinUser._id)
-                              setChats(fetchedChats)
-                        } else {
-                              console.log('chats from store', chats)
-                              if (chats.length === 0) {
-                                    let newChats = await chatService.getUserChats(loggedinUser._id)
-                                    setChats(newChats)
-                                    return
-                              }
-                              setChats(chats)
-                        }
+                        let chats = await chatService.getUserChats()
+                        setChats(chats)
                         // const chats = await chatService.getUserChats(loggedinUser._id)
 
                   } catch (err) {
