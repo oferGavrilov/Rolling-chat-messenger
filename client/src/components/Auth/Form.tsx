@@ -72,6 +72,11 @@ export default function Form(): JSX.Element {
             formik.setValues({ email: 'example@example.com', password: 'demo1234' })
       }
 
+
+      function setOferUser() {
+            formik.setValues({ email: 'ofergavri@gmail.com', password: 'Yes12345' })
+      }
+
       async function handleResetPassword(values: FormData) {
             try {
                   await userService.sendResetPasswordMail(values.email)
@@ -155,13 +160,26 @@ export default function Form(): JSX.Element {
                                           Submit
                                     </Button>
                                     {formMode === 'login' && (
-                                          <Button
-                                                className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff] disabled:cursor-not-allowed"
-                                                type="button"
-                                                onClick={setGuestUser}
-                                                disabled={isLoading}>
-                                                Get Guest User Credentials
-                                          </Button>
+                                          <>
+                                                <Button
+                                                      className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff] disabled:cursor-not-allowed"
+                                                      type="button"
+                                                      onClick={setGuestUser}
+                                                      disabled={isLoading}>
+                                                      Get Guest User Credentials
+                                                </Button>
+
+                                                {process.env.NODE_ENV === 'development' && (
+                                                      <Button
+                                                            className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff] disabled:cursor-not-allowed"
+                                                            type="button"
+                                                            onClick={setOferUser}
+                                                            disabled={isLoading}>
+                                                            Get OFER User Credentials
+                                                      </Button>
+
+                                                )}
+                                          </>
                                     )}
                               </div>
                         </form>

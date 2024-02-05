@@ -93,7 +93,7 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
 
                   <div className={`${users.length && 'border-t-2 dark:border-gray-500'}`}>
                         {isLoading && <Loading type="users" />}
-                        {(filteredUsers.length > 0 && !isLoading) && (
+                        {(filteredUsers.length > 0) && (
                               <UsersList users={filteredUsers} onSelectChat={onSelectChat} usersType="message" />)
                         }
                   </div>

@@ -30,9 +30,7 @@ export async function createChatService(receiverId: string, senderId: string): P
                   isGroupChat: false,
                   users: [new Types.ObjectId(senderId), new Types.ObjectId(receiverId)],
                   latestMessage: null,
-                  deletedBy: [],
-                  isOnline: false,
-                  lastSeen: new Date(),
+                  deletedBy: []
             }
 
             try {

@@ -25,6 +25,7 @@ export async function signUpService(username: string, email: string, password: s
         password,
         profileImg,
         about: User.schema.path('about').default('Available'),
+        isOnline: true,
     })
 
     return {
@@ -49,6 +50,8 @@ export async function loginUser(email: string, password: string): Promise<{ user
         return { error: 'Invalid email or password' }
     }
 
+    // change the user's status to online when they log in
+    user.isOnline = true
     await user.save()
 
     return {
@@ -57,7 +60,7 @@ export async function loginUser(email: string, password: string): Promise<{ user
             username: user.username,
             email: user.email,
             profileImg: user.profileImg,
-            about: user.about,
+            about: user.about
         }
     }
 }

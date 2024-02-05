@@ -1,6 +1,6 @@
 import type { Response, Request } from "express"
 import type { AuthenticatedRequest } from "../../models/types.js"
-import { editUserDetailsService, editUserImageService, getUsersService, searchUsers} from "./service.js"
+import { editUserDetailsService, editUserImageService, getUserStatusById, getUsersService, searchUsers } from "./service.js"
 import logger from "../../services/logger.service.js"
 
 export async function searchUsersByKeyword(req: Request, res: Response) {
@@ -78,6 +78,22 @@ export async function editUserImage(req: AuthenticatedRequest, res: Response) {
                   return res.status(500).json({ msg: 'Internal server error' })
             } else {
                   throw error
+            }
+      }
+}
+
+export async function getUserStatus(req: AuthenticatedRequest, res: Response) {
+      const userId = req.params.userId
+
+      try {
+            const userStatus = await getUserStatusById(userId)
+            res.status(200).json(userStatus)
+      } catch (err: unknown) {
+            if (err instanceof Error) {
+                  logger.error('Error during getUserStatus:', err)
+                  return res.status(500).json({ msg: 'Internal server error' })
+            } else {
+                  throw err
             }
       }
 }

@@ -8,12 +8,10 @@ export interface ChatDocument {
   isGroupChat: boolean
   users: Types.ObjectId[]
   latestMessage: Types.ObjectId
-  isOnline?: boolean
   groupAdmin?: Types.ObjectId
   groupImage?: string
   deletedBy: DeletedBy[]
   kickedUsers?: KickedUsers[]
-  lastSeen?: Date
   unreadMessages?: number
 }
 

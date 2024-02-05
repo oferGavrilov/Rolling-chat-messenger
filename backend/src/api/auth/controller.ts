@@ -6,6 +6,7 @@ import { EmailService } from "../../services/email.service.js"
 import logger from "../../services/logger.service.js"
 import { User } from "../../models/user.model.js"
 import { ConflictError, InternalServerError } from "../../utils/errorHandler.js"
+import moment, { Moment } from "moment"
 
 export async function signUp(req: AuthenticatedRequest, res: Response) {
     const { username, email, password } = req.body
@@ -54,7 +55,6 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
             email: user.email,
             profileImg: user.profileImg,
             about: user.about,
-            isOnline: true
         })
 
     } catch (error: unknown) {
@@ -100,21 +100,20 @@ export async function login(req: AuthenticatedRequest, res: Response) {
                 sameSite,
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
-            
+
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure,
                 sameSite,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
-            
+
             res.json({
                 _id: user._id,
                 username: user.username,
                 email: user.email,
                 profileImg: user.profileImg,
                 about: user.about,
-                isOnline: true,
             })
         } else {
             throw new Error('User not found')
@@ -129,10 +128,13 @@ export async function login(req: AuthenticatedRequest, res: Response) {
     }
 }
 
-export async function logoutUser(_: Request, res: Response) {
+export async function logoutUser(req: AuthenticatedRequest, res: Response) {
     try {
         res.cookie('accessToken', '', { expires: new Date(0), httpOnly: true })
         res.cookie('refreshToken', '', { expires: new Date(0), httpOnly: true })
+
+        //update the user to set isOnline to false and lastSeen to current time
+        await User.findByIdAndUpdate(req.user._id, { isOnline: false, lastSeen: moment.utc().toDate() })
 
         res.status(200).json({ message: 'User logged out successfully' })
     } catch (error: unknown) {

@@ -75,3 +75,30 @@ export async function editUserImageService(userId: string, newImage: string): Pr
             }
       }
 }
+
+interface UserStatus {
+      isOnline: boolean;
+      lastSeen?: Date;
+}
+
+export async function getUserStatusById(userId: string): Promise<UserStatus> {
+      try {
+            // return the user status
+            const user = await User.findById(userId).select('isOnline lastSeen')
+
+            if (!user) {
+                  throw new Error('User not found')
+            }
+
+            return {
+                  isOnline: user.isOnline,
+                  lastSeen: user.lastSeen
+            }
+      } catch (err) {
+            if (err instanceof Error) {
+                  throw handleErrorService(err)
+            } else {
+                  throw err
+            }
+      }
+}
