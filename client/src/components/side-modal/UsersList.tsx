@@ -9,6 +9,8 @@ interface Props {
 }
 
 export default function UsersList({ users, onSelectChat, usersType, selectedUsers, clearSelectedUsers }: Props): JSX.Element {
+
+      if (!users.length) return <div></div>
       return (
             <div className={`${usersType === 'group' ? 'h-[calc(100svh-416px)] mt-6 md:h-[calc(100svh-476px)]' : 'h-[calc(100svh-148px)] md:h-[calc(100svh-156px)]'} overflow-y-auto`}>
                   <ul className='flex flex-col'>
