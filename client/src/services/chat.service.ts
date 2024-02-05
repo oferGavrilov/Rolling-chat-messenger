@@ -20,7 +20,7 @@ export const chatService = {
       isUserChatsFetched
 }
 
-async function getUserChats(userId: string): Promise<IChat[]> {
+async function getUserChats(): Promise<IChat[]> {
       try {
             const chats = await httpService.get(BASE_URL + `/api/chat/`, {}) as IChat[]
 
