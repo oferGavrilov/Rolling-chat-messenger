@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser'
 import CleanupService from './services/cleanup.service.js'
 
 import { connectDB } from './config/db.js'
-import { errorHandler } from './middleware/errorMiddleware.js'
+import { errorHandler, notFound } from './middleware/errorMiddleware.js'
 
 const app = express()
 connectDB()
@@ -43,17 +43,18 @@ if (process.env.NODE_ENV === 'production') {
       }
       app.use(cors(corsOptions))
 }
+setupSocketAPI(server)
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
 app.use('/api/gallery', galleryRoutes)
-setupSocketAPI(server)
 
-app.use(errorHandler)
-app.use('/', (req: express.Request, res: express.Response) => {
-      res.send('API is running... :)')
+app.get('/', (req: express.Request, res: express.Response) => {
+      res.send('How You Doinn :)')
 })
+app.use(notFound)
+app.use(errorHandler)
 
 const port = process.env.PORT || 5000
 

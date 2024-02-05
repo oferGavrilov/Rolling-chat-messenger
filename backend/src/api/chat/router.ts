@@ -14,7 +14,7 @@ import {
 
 export const router = express.Router()
 
-router.get('/:userId', authMiddleware, getUserChats)
+router.get('/', authMiddleware, getUserChats)
 router.post('/createchat', authMiddleware, createChat)
 router.post('/creategroup', authMiddleware, createGroupChat)
 router.put('/leave', authMiddleware, leaveGroup)
