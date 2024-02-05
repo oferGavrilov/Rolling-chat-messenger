@@ -10,11 +10,19 @@ interface Props {
 
 export default function UsersList({ users, onSelectChat, usersType, selectedUsers, clearSelectedUsers }: Props): JSX.Element {
 
-      if (!users.length) return <div></div>
+      if (!users || users.length === 0) {
+            return (
+                  <div className="text-center py-4">
+                        <p>No users available.</p>
+                  </div>
+            );
+      }
+
+      console.log('UsersList', users)
       return (
             <div className={`${usersType === 'group' ? 'h-[calc(100svh-416px)] mt-6 md:h-[calc(100svh-476px)]' : 'h-[calc(100svh-148px)] md:h-[calc(100svh-156px)]'} overflow-y-auto`}>
                   <ul className='flex flex-col'>
-                        {users.map((user: IUser) => (
+                        {users?.map((user: IUser) => (
                               <li
                                     key={user._id}
                                     className={`user-card ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary text-white' : ''}`}

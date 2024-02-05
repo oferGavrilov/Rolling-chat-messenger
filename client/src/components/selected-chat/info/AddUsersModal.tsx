@@ -89,6 +89,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
             setIsOpen(false)
       }
 
+      console.log('AddUsersModal', users)
       return (
             <div
                   ref={usersModal}

@@ -25,11 +25,11 @@ export const userService = {
 
 async function getUsers (): Promise<IUser[]> {
       try {
-            // throw new Error('Not implemented yet')
-            return await httpService.get('/api/user/all')
+            return await httpService.get('/api/user/all') as IUser[]  || []
+
       } catch (error:any) {
             console.log(error)
-            throw error
+            return []
       }
 }
 
