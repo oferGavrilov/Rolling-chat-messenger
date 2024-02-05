@@ -34,6 +34,8 @@
     "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.14",
     "@types/supertest": "^2.0.12",
+    "@types/mongodb": "^4.0.7",
+    "@types/winston": "^3.4.4",
     "async_hooks": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
