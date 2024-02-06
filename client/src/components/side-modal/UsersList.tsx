@@ -19,6 +19,11 @@ export default function UsersList({ users, onSelectChat, usersType, selectedUser
       }
 
       console.log('UsersList', users)
+      console.log('selectedUsers', selectedUsers)
+      console.log('usersType', usersType)
+      console.log('typeof users', typeof users)
+      console.log('typeof selectedUsers', typeof selectedUsers)
+      console.log('typeof usersType', typeof usersType)
       return (
             <div className={`${usersType === 'group' ? 'h-[calc(100svh-416px)] mt-6 md:h-[calc(100svh-476px)]' : 'h-[calc(100svh-148px)] md:h-[calc(100svh-156px)]'} overflow-y-auto`}>
                   <ul className='flex flex-col'>

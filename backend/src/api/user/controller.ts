@@ -9,6 +9,7 @@ export async function searchUsersByKeyword(req: Request, res: Response) {
 
       try {
             const users = await searchUsers(keyword)
+            console.log('users:', users)
             res.status(200).send(users)
       } catch (error: unknown) {
             if (error instanceof Error) {
