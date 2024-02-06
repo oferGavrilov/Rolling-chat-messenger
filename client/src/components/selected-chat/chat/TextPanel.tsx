@@ -103,7 +103,7 @@ export default function TextPanel ({
                   <div className='flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-gray-50 dark:bg-dark-secondary-bg relative'>
                         {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
-                        <form onSubmit={handleSubmit} className='w-full flex items-center'>
+                        <form onSubmit={handleSubmit} className='w-full flex items-center' id='text-panel-form'>
                               {!isRecording && (
 
                                     <div className='relative w-full flex'>
@@ -122,6 +122,7 @@ export default function TextPanel ({
                                                 className='bg-light-input-bg hide-scrollbar flex dark:text-white dark:bg-dark-input-bg w-full h-10 overflow-hidden transition-all duration-200 resize-none px-4 rounded-tr-xl py-2 focus-visible:outline-none focus:overflow-y-auto'
                                                 placeholder='Type a message...'
                                                 value={newMessage}
+                                                name='text-message'
                                                 maxLength={201}
                                                 onChange={typingHandler}
                                                 onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {

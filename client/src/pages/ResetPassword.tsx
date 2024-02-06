@@ -30,7 +30,7 @@ export default function ResetPassword() {
     return (
         <div className="m-auto my-20 w-1/2 ">
             <h4 className="text-center font-bold text-primary text-xl mt-2 mb-4 tracking-wider">Reset Password</h4>
-            <form onSubmit={handleSubmit} className="bg-slate-100 flex flex-col p-8 gap-y-4 shadow-xl rounded-lg">
+            <form onSubmit={handleSubmit} className="bg-slate-100 flex flex-col p-8 gap-y-4 shadow-xl rounded-lg" id="reset-pass-form">
                 <input className="auth-input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="New Password" required />
                 <input className="auth-input" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirm New Password" required />
                 <button

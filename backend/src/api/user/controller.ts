@@ -9,7 +9,6 @@ export async function searchUsersByKeyword(req: Request, res: Response) {
 
       try {
             const users = await searchUsers(keyword)
-            console.log('users:', users)
             res.status(200).send(users)
       } catch (error: unknown) {
             if (error instanceof Error) {
@@ -86,6 +85,9 @@ export async function editUserImage(req: AuthenticatedRequest, res: Response) {
 export async function getUserStatus(req: AuthenticatedRequest, res: Response) {
       const userId = req.params.userId
 
+      if (!userId) {
+            return res.status(400).json({ msg: 'User ID is required' })
+      }
       try {
             const userStatus = await getUserStatusById(userId)
             res.status(200).json(userStatus)

@@ -8,6 +8,7 @@ import { IMessage } from '../models/message.model.js'
 let gIo: Server | null = null
 const roomToSocketIdsMap = new Map();
 const onlineUsers = new Map<string, string>();
+const userToRoomMap = new Map();
 
 export function setupSocketAPI(http: HttpServer) {
       gIo = new Server(http, {
@@ -51,11 +52,16 @@ export function setupSocketAPI(http: HttpServer) {
                   });
             });
 
-            socket.on('join chat', ({ chatId: room }: { chatId: string }) => {
+            socket.on('join chat', ({ chatId: room, userId }: { chatId: string, userId: string }) => {
                   socket.join(room);
                   const socketsInRoom = roomToSocketIdsMap.get(room) || new Set();
                   socketsInRoom.add(socket.id);
                   roomToSocketIdsMap.set(room, socketsInRoom);
+                  
+                  let rooms = userToRoomMap.get(userId) || new Set();
+                  rooms.add(room);
+                  userToRoomMap.set(userId, rooms);
+
                   logger.info(`Socket [id: ${socket.id}] joined room: ${room}`);
             });
 

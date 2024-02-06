@@ -5,7 +5,7 @@
 @layer base {
 
       body {
-            @apply text-[#242424] font-sf-regular scroll-smooth;
+            @apply text-[#242424] font-openSans scroll-smooth tracking-wide;
       }
       
       ::-webkit-scrollbar {
@@ -36,22 +36,10 @@
             user-select: none;
       }
 
-      @font-face {
+      /* @font-face {
             font-family: 'sf-pro-display';
             src: url('../fonts/SF-Pro-Text-Regular.ttf');
-      }
-      
-      @font-face {
-            font-family: 'litia';
-            src: url('../fonts/LilitaOne-Regular.ttf');
-      }
-      
-      @font-face {
-            font-family: 'alfa';
-            font-weight: 600;
-            color: #242424;
-            src: local('alfa') url('../fonts/AlfaSlabOne-Regular.ttf') format('ttf');
-      }
+      } */
 }
 
 @layer components {

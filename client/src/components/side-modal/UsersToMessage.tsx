@@ -31,7 +31,6 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
             try {
                   setIsLoading(true)
                   const users = await userService.getUsers()
-                  console.log('loadUsers', users)
                   setUsers(users)
                   setIsLoading(false)
 
@@ -92,10 +91,13 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
                   </div>
 
                   <div className={`${users.length && 'border-t-2 dark:border-gray-500'}`}>
-                        {isLoading && <Loading type="users" />}
-                        {(filteredUsers.length > 0) && (
-                              <UsersList users={filteredUsers} onSelectChat={onSelectChat} usersType="message" />)
-                        }
+                        {isLoading ? (
+                              <Loading type="users" />
+                        ) : (
+                              filteredUsers.length > 0 && (
+                                    <UsersList users={filteredUsers} onSelectChat={onSelectChat} usersType="message" />
+                              )
+                        )}
                   </div>
             </section>
       )

@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import useStore from "../../../context/store/useStore"
 import { IUser } from "../../../model/user.model"
 
-import CloseIcon from '@mui/icons-material/Close'
-
 import ChatInfo from "./ChatInfo"
 import GroupInfo from "./GroupInfo"
 import { IMessage } from "../../../model/message.model"
@@ -23,7 +21,7 @@ export default function Info ({ conversationUser, setChatMode, messages }: Props
                   {selectedChat?.isGroupChat ?
                         (<GroupInfo messages={messages} isAddUsers={isAddUsers} setIsAddUsers={setIsAddUsers} />) :
                         (<ChatInfo conversationUser={conversationUser} messages={messages} />)}
-                  <CloseIcon className="absolute top-5 right-5 dark:text-dark-primary-text cursor-pointer !text-2xl md:!text-3xl" onClick={() => setChatMode('chat')} />
+                  <span className="material-symbols-outlined absolute top-5 right-5 dark:text-dark-primary-text cursor-pointer !text-2xl md:!text-3xl" onClick={() => setChatMode('chat')}>close</span>
             </div>
       )
 }

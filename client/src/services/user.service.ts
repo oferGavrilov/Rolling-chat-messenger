@@ -9,31 +9,32 @@ const env = import.meta.env.VITE_NODE_ENV
 const BASE_URL = env === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
 
 export const userService = {
+      getUsers,
       loginSignUp,
+      logout,
+      getUserConnectionStatus,
       sendResetPasswordMail,
       resetPasswordConfirm,
-      getUsers,
       editUserDetails,
       updateUserImage,
       getLoggedinUser,
-      logout,
       saveBackgroundColor,
       getBackgroundColor,
       getTheme,
       saveTheme
 }
 
-async function getUsers (): Promise<IUser[]> {
+async function getUsers(): Promise<IUser[]> {
       try {
-            return await httpService.get(`${BASE_URL}/api/user/all`) as IUser[]  || []
+            return await httpService.get(`${BASE_URL}/api/user/all`) as IUser[] || []
 
-      } catch (error:any) {
+      } catch (error: any) {
             console.log(error)
             return []
       }
 }
 
-async function loginSignUp (credentials: FormData, formMode: string): Promise<IUser> {
+async function loginSignUp(credentials: FormData, formMode: string): Promise<IUser> {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
       const config = {
             ...getConfig(),
@@ -55,7 +56,7 @@ async function loginSignUp (credentials: FormData, formMode: string): Promise<IU
       }
 }
 
-async function sendResetPasswordMail (email: string): Promise<void> {
+async function sendResetPasswordMail(email: string): Promise<void> {
       try {
             await httpService.post(`${BASE_URL}/api/auth/send-reset-password-mail`, { email })
       } catch (error) {
@@ -73,7 +74,7 @@ async function resetPasswordConfirm(token: string, password: string): Promise<vo
       }
 }
 
-async function logout (): Promise<void> {
+async function logout(): Promise<void> {
       try {
             const user = getLoggedinUser()
             if (!user) {
@@ -83,15 +84,19 @@ async function logout (): Promise<void> {
             await httpService.put(`${BASE_URL}/api/auth/logout`, {})
 
             localStorage.removeItem(STORAGE_KEY)
-            
+
       } catch (error) {
             console.error(error)
-            // window.location.reload()
             throw error
       }
 }
 
-async function updateUserImage (image: string): Promise<string> {
+async function getUserConnectionStatus(userId: string) {
+      
+      return await httpService.get(`${BASE_URL}/api/user/status/${userId}`)
+}
+
+async function updateUserImage(image: string): Promise<string> {
       try {
             const user = getLoggedinUser()
             if (!user) {
@@ -110,7 +115,7 @@ async function updateUserImage (image: string): Promise<string> {
       }
 }
 
-async function editUserDetails (newName: string, key: string): Promise<IUser> {
+async function editUserDetails(newName: string, key: string): Promise<IUser> {
       try {
             const user = getLoggedinUser()
             if (!user) {
@@ -132,7 +137,7 @@ async function editUserDetails (newName: string, key: string): Promise<IUser> {
       }
 }
 
-function getTheme (): "light" | "dark" {
+function getTheme(): "light" | "dark" {
       try {
             const theme = localStorage.getItem('theme')
 
@@ -147,7 +152,7 @@ function getTheme (): "light" | "dark" {
       }
 }
 
-function saveTheme (theme: "light" | "dark"): void {
+function saveTheme(theme: "light" | "dark"): void {
       try {
             localStorage.setItem('theme', theme)
       } catch (error) {
@@ -155,7 +160,7 @@ function saveTheme (theme: "light" | "dark"): void {
       }
 }
 
-function saveBackgroundColor (color: string): void {
+function saveBackgroundColor(color: string): void {
       try {
             localStorage.setItem('backgroundColor', color)
       } catch (error) {
@@ -163,7 +168,7 @@ function saveBackgroundColor (color: string): void {
       }
 }
 
-function getBackgroundColor (): string | null {
+function getBackgroundColor(): string | null {
       try {
             return localStorage.getItem('backgroundColor')
       } catch (error) {
@@ -172,14 +177,14 @@ function getBackgroundColor (): string | null {
       }
 }
 
-export function getLoggedinUser () {
+export function getLoggedinUser() {
       const storedItem = localStorage.getItem(STORAGE_KEY)
       if (storedItem) {
             return JSON.parse(storedItem)
       }
 }
 
-function _saveToLocalStorage (user: FormData): FormData {
+function _saveToLocalStorage(user: FormData): FormData {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
       return user
 }

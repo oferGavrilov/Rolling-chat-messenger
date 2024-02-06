@@ -12,8 +12,7 @@ export default {
       },
       fontFamily: {
         'sf-regular': ['sf-pro-display', 'sans-serif'],
-        lilita: ['Lilita', 'cursive', 'bold'],
-        alfa: ['Alfa Slab One', 'sans-serif'],
+        openSans: ['Open Sans', 'sans-serif'],
       },
       dropShadow: {
         'primary': 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'

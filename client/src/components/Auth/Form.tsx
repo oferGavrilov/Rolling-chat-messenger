@@ -138,7 +138,7 @@ export default function Form(): JSX.Element {
                               </Button>
                         </div>
 
-                        <form className="flex flex-col gap-y-4 mt-6" onSubmit={formik.handleSubmit}>
+                        <form className="flex flex-col gap-y-4 mt-6" onSubmit={formik.handleSubmit} id='auth-form'>
                               {formMode === 'login' && <Login formik={formik} />}
                               {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} />}
                               {formMode === 'reset' && <ForgotPassword formik={formik} />}

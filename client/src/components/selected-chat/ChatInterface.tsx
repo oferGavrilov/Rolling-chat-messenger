@@ -1,5 +1,4 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react"
-
 import { AuthState } from "../../context/useAuth"
 import useStore from "../../context/store/useStore"
 
@@ -15,36 +14,23 @@ const Chat = lazy(() => import("./chat/Chat"));
 const FileEditor = lazy(() => import("./file/FileEditor"));
 const TextPanel = lazy(() => import("./chat/TextPanel"));
 
-import { formatLastSeenDate } from "../../utils/functions"
-
-import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from "../../services/socket.service"
+import socketService from "../../services/socket.service"
 import { chatService } from "../../services/chat.service"
 
 import { IMessage, IReplyMessage } from "../../model/message.model"
 import { IUser } from "../../model/user.model"
 import { IChat, IFile } from "../../model/chat.model"
 import { messageService } from "../../services/message.service"
+import Loading from "../Loading";
 
 export default function ChatInterface(): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
-      const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [file, setFile] = useState<IFile | string | null>(null)
-
       const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useStore()
       const { user: loggedInUser } = AuthState()
 
-      const conversationUserRef = useRef<IUser | undefined>(undefined)
-
-      useEffect(() => {
-            socketService.on(SOCKET_LOGIN, handleConnection, true)
-            socketService.on(SOCKET_LOGOUT, handleConnection, false)
-
-            return () => {
-                  socketService.off(SOCKET_LOGIN, handleConnection)
-                  socketService.off(SOCKET_LOGOUT, handleConnection)
-            }
-      }, [])
+      const conversationUserRef = useRef<IUser | null>(null)
 
       useEffect(() => {
             const handleKickUser = (chatId: string, userId: string, kickerId: string, chat: IChat | null) => {
@@ -84,7 +70,6 @@ export default function ChatInterface(): JSX.Element {
 
             const handleRemoveMessage = (messageId: string, chatId: string, removerId: string) => {
                   removeMessage(messageId, chatId, removerId);
-
             }
 
             socketService.on('user-kicked', ({ chatId, userId, kickerId }) => handleKickUser(chatId, userId, kickerId, selectedChat))
@@ -114,32 +99,11 @@ export default function ChatInterface(): JSX.Element {
             }
       }, [selectedChat])
 
-      useEffect(() => {
-            async function getConversationUserConnection() {
-                  if (!conversationUser) return
-                  const status = conversationUser.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
-                  setConnectionStatus(status)
-            }
-
-            getConversationUserConnection()
-      }, [conversationUser])
-
       function fetchConversationUser(): void {
             const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0]
             if (conversationUser) {
                   setConversationUser(conversationUser)
                   conversationUserRef.current = conversationUser
-            }
-      }
-
-      function handleConnection(userId: string, status: boolean): void {
-            if (userId !== conversationUserRef.current?._id) return
-
-            if (conversationUserRef.current) {
-                  const date = new Date()
-                  setConnectionStatus(
-                        status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`
-                  )
             }
       }
 
@@ -211,14 +175,14 @@ export default function ChatInterface(): JSX.Element {
 
       if (!selectedChat) return <div></div>
       return (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loading />}>
                   <section className='flex-1 grid h-full overflow-hidden slide-left max-h-screen' style={{ gridTemplateRows: chatMode === 'chat' ? '64px 1fr 64px' : '64px 1fr' }}>
 
                         <ChatHeader
-                              connectionStatus={connectionStatus}
                               conversationUser={conversationUser}
                               chatMode={chatMode}
                               setChatMode={setChatMode}
+                              conversationUserRef={conversationUserRef}
                         />
 
                         {chatMode === 'chat' && (

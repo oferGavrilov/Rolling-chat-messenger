@@ -84,6 +84,7 @@ interface UserStatus {
 export async function getUserStatusById(userId: string): Promise<UserStatus> {
       try {
             // return the user status
+            console.log('userId', userId)
             const user = await User.findById(userId).select('isOnline lastSeen')
 
             if (!user) {

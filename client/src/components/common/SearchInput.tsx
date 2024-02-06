@@ -13,6 +13,7 @@ export default function SearchInput({ filter, setFilter, placeholder }: Props): 
                         className="w-full h-10 md:h-10 px-3 border border-gray-300 rounded-lg dark:text-black focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
                         placeholder={placeholder}
                         value={filter}
+                        name="search-users"
                         onChange={(e) => setFilter(e.target.value)}
                   />
                   {filter ? (

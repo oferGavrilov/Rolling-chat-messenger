@@ -15,6 +15,7 @@ export default function MessagesInput ({ filter, setFilter }: Props) {
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         placeholder="Search"
+                        name='search'
                         className="bg-[#f4f2f2] h-10 w-full text-black px-12 rounded-xl text-lg placeholder:text-lg border-2 border-gray-100 focus:border-blue-400 focus-visible:outline-none"
                   />
                   <BsSearch
