@@ -25,7 +25,7 @@ export const userService = {
 
 async function getUsers (): Promise<IUser[]> {
       try {
-            return await httpService.get('/api/user/all') as IUser[]  || []
+            return await httpService.get(`${BASE_URL}/api/user/all`) as IUser[]  || []
 
       } catch (error:any) {
             console.log(error)
