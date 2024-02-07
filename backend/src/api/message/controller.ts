@@ -1,21 +1,35 @@
 import { Response, NextFunction } from "express"
 import { getAllMessagesByChatId, sendMessageService, removeMessageService } from "./service.js"
 import { RequestMessage } from "../../models/message.model.js"
-import { ForbiddenError, NotFoundError } from "../../utils/errorHandler.js"
+import { ForbiddenError, NotFoundError, ValidationError } from "../../utils/errorHandler.js"
 
 export async function sendMessage(req: RequestMessage, res: Response, next: NextFunction) {
       const { content, chatId, messageType, replyMessage, messageSize } = req.body
-      const senderId = req.user?._id
+      const senderId = req.user._id
 
-      if (!content || !chatId || !messageType) {
-            return res.status(400).json({ message: 'Content, ChatId, and MessageType are required' })
+      if (!content.trim()) {
+            return res.status(400).json({ message: 'Content cannot be empty' })
       }
+
+      if (messageType === 'text' && content.length > 700) {
+            return res.status(400).json({ message: 'Text message cannot be more than 700 characters' })
+      }
+
+      if ((messageType === 'image' || messageType === 'audio' || messageType === 'file') && !messageSize) {
+            return res.status(400).json({ message: 'Image message must have a size' })
+      }
+
+      if (!chatId) {
+            return res.status(400).json({ message: 'ChatId is required' })
+      }
+
+      console.log('senderId', senderId)
 
       try {
             const message = await sendMessageService(senderId, content, chatId, messageType, replyMessage, messageSize)
             return res.status(201).json(message)
       } catch (error) {
-            if (error instanceof ForbiddenError || error instanceof NotFoundError) {
+            if (error instanceof ForbiddenError || error instanceof NotFoundError || error instanceof ValidationError) {
                   return res.status(error.statusCode).json({ message: error.message });
             } else {
                   next(error);

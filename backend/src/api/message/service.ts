@@ -6,10 +6,11 @@ import logger from "../../services/logger.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
       try {
-            if (!senderId || !content) {
-                  throw new ValidationError('Sender and content are required')
-            }
             const chat = await Chat.findById(chatId)
+
+            if (!chat) throw new NotFoundError('Chat not found')
+
+            console.log('Service - senderId', senderId)
 
             // check if the user is in the group chat
             if (chat.isGroupChat && !chat.users.some((user) => user.toString() === senderId.toString())) {
@@ -40,7 +41,6 @@ export async function sendMessageService(senderId: string, content: string, chat
 
             if (!message) throw new InternalServerError('Failed to send message')
 
-            // Remove all deletedBy from chat
             if (!chat) throw new NotFoundError('Chat not found')
             chat.deletedBy = []
             await chat.save()

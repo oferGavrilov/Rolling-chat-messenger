@@ -31,6 +31,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
 
             if (decoded) {
                   req.user = await User.findById(decoded.id).select('-password')
+                  console.log('req.user', req.user)
                   return next()
             }
 
