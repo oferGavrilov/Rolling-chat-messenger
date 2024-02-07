@@ -1,6 +1,6 @@
 import { User } from "../../models/user.model.js"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
-import { ConflictError } from "../../utils/errorHandler.js"
+import { ConflictError, NotFoundError } from "../../utils/errorHandler.js"
 
 interface SignUpResult {
     user: {
@@ -42,12 +42,12 @@ export async function signUpService(username: string, email: string, password: s
 export async function loginUser(email: string, password: string): Promise<{ user?: Partial<User>, error?: string }> {
     const user = await User.findOne({ email }).select('+password')
     if (!user) {
-        return { error: 'Invalid email or password' }
+        throw new NotFoundError('Invalid email or password')
     }
 
     const passwordMatch = await user.verifyPassword(password)
     if (!passwordMatch) {
-        return { error: 'Invalid email or password' }
+        throw new NotFoundError('Invalid email or password')
     }
 
     // change the user's status to online when they log in

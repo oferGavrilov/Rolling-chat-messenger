@@ -80,7 +80,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
         const result = await loginUser(email, password)
 
         if (result.error) {
-            return res.status(401).json({ msg: result.error })
+            return res.status(404).json({ msg: result.error })
         }
 
         const { user } = result
