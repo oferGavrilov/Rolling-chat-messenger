@@ -6,7 +6,7 @@ import { EmailService } from "../../services/email.service.js"
 import logger from "../../services/logger.service.js"
 import { User } from "../../models/user.model.js"
 import { ConflictError, InternalServerError } from "../../utils/errorHandler.js"
-import moment, { Moment } from "moment"
+import moment from "moment"
 
 export async function signUp(req: AuthenticatedRequest, res: Response) {
     const { username, email, password } = req.body
@@ -37,15 +37,19 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
 
         await User.findByIdAndUpdate(user._id, { refreshToken })
 
+        const isProduction = process.env.NODE_ENV === 'production';
+        const sameSite = isProduction ? 'none' : 'lax';
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            sameSite: 'strict',
+            secure: isProduction,
+            sameSite,
             maxAge: 24 * 60 * 60 * 1000,
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            sameSite: 'strict',
+            secure: isProduction,
+            sameSite,
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
@@ -89,21 +93,20 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             const refreshToken = generateRefreshToken(user._id)  // Long-lived
 
             const isProduction = process.env.NODE_ENV === 'production';
-            const secure = isProduction;
             const sameSite = isProduction ? 'none' : 'lax';
 
             await User.findByIdAndUpdate(user._id, { refreshToken })
 
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure,
+                secure: isProduction,
                 sameSite,
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure,
+                secure: isProduction,
                 sameSite,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
