@@ -81,7 +81,7 @@ async function logout(): Promise<void> {
                   throw new Error('User is not logged in.')
             }
 
-            await httpService.put(`${BASE_URL}/api/auth/logout`, {})
+            await httpService.put(`${BASE_URL}/api/auth/logout`, {userId: user._id})
 
             localStorage.removeItem(STORAGE_KEY)
 

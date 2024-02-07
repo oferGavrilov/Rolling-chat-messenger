@@ -32,9 +32,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
 
             if (decoded) {
                   req.user = await User.findById(decoded.id).select('-password')
-                  console.log('req.user', req.user)
-                  console.log('decoded2', decoded)
-                  console.log('decoded.id', decoded.id)
+
                   if (!req.user) {
                         return res.status(401).json({ message: 'Not authorized, token failed' })
                   }

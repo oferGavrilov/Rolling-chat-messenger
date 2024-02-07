@@ -6,6 +6,6 @@ export const router = express.Router()
 
 router.post('/signup', signUp)
 router.post('/login', login)
-router.put('/logout' ,authMiddleware, logoutUser)
+router.put('/logout', logoutUser)
 router.post('/send-reset-password-mail', sendResetPasswordMail)
 router.post('/reset-password', resetPassword)

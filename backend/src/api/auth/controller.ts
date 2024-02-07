@@ -132,11 +132,13 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 
 export async function logoutUser(req: AuthenticatedRequest, res: Response) {
     try {
+        const {userId} = req.body
+
         res.cookie('accessToken', '', { expires: new Date(0), httpOnly: true })
         res.cookie('refreshToken', '', { expires: new Date(0), httpOnly: true })
 
         //update the user to set isOnline to false and lastSeen to current time
-        await User.findByIdAndUpdate(req.user._id, { isOnline: false, lastSeen: moment.utc().toDate() })
+        await User.findByIdAndUpdate(userId, { isOnline: false, lastSeen: moment.utc().toDate() })
 
         res.status(200).json({ message: 'User logged out successfully' })
     } catch (error: unknown) {
