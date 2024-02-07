@@ -24,6 +24,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             if (accessToken) {
                   try {
                         decoded = jwt.verify(accessToken, process.env.JWT_SECRET) as DecodedToken
+                        console.log('decoded', decoded)
                   } catch (error) {
                         decoded = null // Invalid access token
                   }
@@ -32,6 +33,11 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             if (decoded) {
                   req.user = await User.findById(decoded.id).select('-password')
                   console.log('req.user', req.user)
+                  console.log('decoded2', decoded)
+                  console.log('decoded.id', decoded.id)
+                  if (!req.user) {
+                        return res.status(401).json({ message: 'Not authorized, token failed' })
+                  }
                   return next()
             }
 
