@@ -1,4 +1,4 @@
-import { FormData, IUser } from "../model/user.model"
+import { FormData, IColorPalette, IUser } from "../model/user.model"
 import axios from 'axios'
 import { getConfig } from '../utils/authConfig'
 import { httpService } from "./http.service"
@@ -81,7 +81,7 @@ async function logout(): Promise<void> {
                   throw new Error('User is not logged in.')
             }
 
-            await httpService.put(`${BASE_URL}/api/auth/logout`, {userId: user._id})
+            await httpService.put(`${BASE_URL}/api/auth/logout`, { userId: user._id })
 
             localStorage.removeItem(STORAGE_KEY)
 
@@ -92,7 +92,7 @@ async function logout(): Promise<void> {
 }
 
 async function getUserConnectionStatus(userId: string) {
-      
+
       return await httpService.get(`${BASE_URL}/api/user/status/${userId}`)
 }
 
@@ -160,20 +160,23 @@ function saveTheme(theme: "light" | "dark"): void {
       }
 }
 
-function saveBackgroundColor(color: string): void {
+function saveBackgroundColor(color: IColorPalette): void {
       try {
-            localStorage.setItem('backgroundColor', color)
+            const colorString = JSON.stringify(color); // Serialize the object
+            localStorage.setItem('backgroundColor', colorString)
       } catch (error) {
             console.log(error)
       }
 }
 
-function getBackgroundColor(): string | null {
+function getBackgroundColor(): IColorPalette | null {
       try {
-            return localStorage.getItem('backgroundColor')
+            const colorString = localStorage.getItem('backgroundColor');
+            if (!colorString) return null
+            return JSON.parse(colorString)
       } catch (error) {
-            console.log(error)
-            return null
+            console.error("Error retrieving background color from localStorage:", error);
+            return null;
       }
 }
 

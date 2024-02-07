@@ -6,7 +6,7 @@ interface Props {
       onLeaveFromGroup: () => void
 }
 
-export default function GroupActionButton ({ isKicked, onRemoveGroup, onLeaveFromGroup }: Props): JSX.Element {
+export default function GroupActionButton({ isKicked, onRemoveGroup, onLeaveFromGroup }: Props): JSX.Element {
       const handleClick = isKicked ? onRemoveGroup : onLeaveFromGroup
       const actionText = isKicked ? 'Delete Chat' : 'Leave The Group'
 
@@ -15,10 +15,10 @@ export default function GroupActionButton ({ isKicked, onRemoveGroup, onLeaveFro
                   className="p-4 mt-2 flex gap-x-2 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer"
                   onClick={handleClick}
             >
-                  <div className="text-red-600">
+                  <div className="text-red-500">
                         <LogoutOutlinedIcon />
                   </div>
-                  <div>
+                  <div className='text-red-500'>
                         {actionText}
                   </div>
             </div>

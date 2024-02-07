@@ -18,3 +18,8 @@ export interface IUser {
       isOnline: boolean
       lastSeen?: string
 }
+
+export interface IColorPalette {
+      color: string
+      opacity: number
+}
