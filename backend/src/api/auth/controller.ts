@@ -39,15 +39,13 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
+            sameSite: 'strict',
             maxAge: 24 * 60 * 60 * 1000,
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
+            sameSite: 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
@@ -80,7 +78,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
         const result = await loginUser(email, password)
 
         if (result.error) {
-            return res.status(404).json({ msg: result.error })
+            return res.status(401).json({ msg: result.error })
         }
 
         const { user } = result
@@ -90,23 +88,23 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             const accessToken = generateToken(user._id)  // Short-lived
             const refreshToken = generateRefreshToken(user._id)  // Long-lived
 
-            // const isProduction = process.env.NODE_ENV === 'production';
-            // const secure = isProduction;
-            // const sameSite = isProduction ? 'none' : 'lax';
+            const isProduction = process.env.NODE_ENV === 'production';
+            const secure = isProduction;
+            const sameSite = isProduction ? 'none' : 'lax';
 
             await User.findByIdAndUpdate(user._id, { refreshToken })
 
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure: true,
-                sameSite: 'lax',
+                secure,
+                sameSite,
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure: true,
-                sameSite: 'lax',
+                secure,
+                sameSite,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
 
@@ -131,9 +129,8 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 }
 
 export async function logoutUser(req: AuthenticatedRequest, res: Response) {
+    const { userId } = req.body
     try {
-        const {userId} = req.body
-
         res.cookie('accessToken', '', { expires: new Date(0), httpOnly: true })
         res.cookie('refreshToken', '', { expires: new Date(0), httpOnly: true })
 
