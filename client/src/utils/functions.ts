@@ -34,7 +34,7 @@ export function debounce<T extends (...args: unknown[]) => void>(
 export function isSameSender(messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
   if (!messages.length || !m || !m.sender || i >= messages.length - 1) return false;
 
-  const nextMessage = messages[i + 1];
+  const nextMessage = messages[i + 1]
   if (!nextMessage || !nextMessage.sender) return false;
 
   return (
@@ -43,14 +43,15 @@ export function isSameSender(messages: IMessage[], m: IMessage, i: number, userI
   );
 }
 
-export function isLastMessage(messages: IMessage[], i: number, userId: string) {
-  if (!messages.length || !messages[messages.length - 1]?.sender?._id) return false
-  return (
-    i === messages.length - 1 &&
-    messages[messages.length - 1]?.sender?._id !== userId &&
-    messages[messages.length - 1]?.sender?._id
-  )
+export function isLastMessageFromUser(messages: IMessage[], currentMessageIndex: number, userId: string): boolean {
+  for (let i = currentMessageIndex + 1; i < messages.length; i++) {
+    if (messages[i].sender._id === userId) {
+      return false
+    }
+  }
+  return true
 }
+
 
 export function formatTime(timestamp: string): string {
   if (!timestamp) return ''

@@ -1,8 +1,7 @@
 import { AuthState } from "../../../../context/useAuth"
 import useStore from "../../../../context/store/useStore"
 import { IMessage, IReplyMessage } from "../../../../model/message.model"
-import { isLastMessage, isSameSender } from "../../../../utils/functions"
-import MessageArrow from "../../../svg/MessageArrow"
+import { isLastMessageFromUser } from "../../../../utils/functions"
 import MessagePreview from "./MessagePreview"
 import ProfileImage from "../../../common/ProfileImage"
 import MessageDateSeparator from "./MessageDateSeparator"
@@ -54,43 +53,52 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
 
       return (
             <section className={`py-6 ${replyMessage && 'mb-16'}`}>
-                  {messages.map((message, idx) => (
-                        <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
 
-                              {/* Profile Image */}
-                              <div className="flex relative">
-                                    {(isSameSender(messages, message, idx, user._id) ||
-                                          isLastMessage(messages, idx, user._id)) ? (
-                                          <div>
-                                                <ProfileImage
-                                                      className="default-profile-img h-8 w-8 hidden md:block hover:scale-110"
-                                                      src={message.sender.profileImg}
-                                                      alt="conversation-user"
-                                                      onClick={() => setChatMode('info')}
-                                                />
-                                                <MessageArrow className='message-arrow' />
-                                          </div>
-                                    ) : <span className="md:pl-8"></span>}
-                              </div>
 
-                              <div className="flex flex-col w-full relative">
+                  {messages.map((message, idx) => {
+                        // Logics to determine if the message is the last one sent by the sender in the entire message array
+                        const isUserMessage = message.sender._id === user._id;
+                        const isFollowedByDifferentSender = idx < messages.length - 1 && messages[idx + 1].sender._id !== message.sender._id;
+                        const shouldShowArrow = isLastMessageFromUser(messages, idx, message.sender._id) || isFollowedByDifferentSender;
+                        const arrowDirection = shouldShowArrow ? (isUserMessage ? 'right' : 'left') : 'none';
 
-                                    {/* Day of Message */}
-                                    <MessageDateSeparator
-                                          prevMessage={messages[idx - 1]}
-                                          currMessage={message}
-                                          idx={idx}
-                                    />
+                        return (
 
-                                    {/* Message */}
-                                    <MessagePreview
-                                          message={message}
-                                          onReplyMessage={onReplyMessage}
-                                          onRemoveMessage={onRemoveMessage}
-                                    />
-                              </div>
-                        </div >
-                  ))}
+                              <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
+                                    <div className="flex relative">
+                                          {message.sender._id !== user._id && isLastMessageFromUser(messages, idx, message.sender._id) && (
+                                                <div>
+                                                      <ProfileImage
+                                                            className="default-profile-img h-8 w-8 hidden md:block hover:scale-110"
+                                                            src={message.sender.profileImg}
+                                                            alt="Sender profile"
+                                                            onClick={() => setChatMode('info')}
+                                                      />
+                                                </div>
+                                          )}
+                                    </div>
+
+                                    <div className="flex flex-col w-full relative">
+
+                                          {/* Message Time */}
+                                          <MessageDateSeparator
+                                                prevMessage={messages[idx - 1]}
+                                                currMessage={message}
+                                                idx={idx}
+                                          />
+
+                                          {/* Message */}
+                                          <MessagePreview
+                                                message={message}
+                                                onReplyMessage={onReplyMessage}
+                                                onRemoveMessage={onRemoveMessage}
+                                                arrowDirection={arrowDirection}
+                                          />
+                                    </div>
+                              </div >
+                        )
+
+                  })}
 
                   {selectedChat?.isGroupChat && isUserKicked() && (
                         <div className="mx-auto text-center bg-gray-500 w-max py-2 px-4 my-4 rounded-full">

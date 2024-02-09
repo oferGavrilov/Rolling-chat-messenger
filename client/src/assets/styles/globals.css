@@ -397,28 +397,25 @@
             transition: all .3s ease;
       }
       .out-going-message {
-            @apply bg-primary dark:bg-dark-outgoing-chat-bg ml-auto rounded-bl-xl;
+            @apply bg-primary dark:bg-dark-outgoing-chat-bg ml-auto ;
       }
       .incoming-message {
-            @apply bg-gray-400 dark:bg-dark-incoming-chat-bg ml-0 rounded-br-xl;
+            @apply bg-gray-400 dark:bg-dark-incoming-chat-bg ml-0 ;
       }
       .input-arrow {
             position: absolute;
-            bottom: -0.1875rem;
-            right: -0.551rem;
-            width: 0.5625rem;
-            height: 1.25rem;
+            bottom: -0.5875rem;
+            right: -1.751rem;
+            /* width: 0.5625rem;
+            height: 1.25rem; */
             transition: opacity 200ms;
             font-size: 1rem !important;
-            @apply fill-[#e5e7eb] dark:fill-[#2a3942];
+            @apply bg-[#e5e7eb] dark:bg-[#2a3942];
       }
       .message-arrow {
             position: absolute;
-            display: block;
-            bottom: -0.1875rem;
-            right: -0.551rem;
-            width: 0.5625rem;
-            height: 1.25rem;
+            bottom: -9.9px;
+            left: -1.76rem;
             transition: opacity 200ms;
             font-size: 1rem !important;
             -moz-transform: scale(-1, 1);
@@ -426,20 +423,22 @@
             -o-transform: scale(-1, 1);
             -ms-transform: scale(-1, 1);
             transform: scale(-1, 1);
-            @apply fill-[#9ca3af] dark:fill-[#202c33];
+            @apply bg-[#9ca3af] dark:bg-[#202c33];
       }
 
       .message-arrow-left {
             position: absolute;
-            display: block;
-            bottom: -0.1875rem;
-            right: -0.551rem;
-            width: 0.5625rem;
-            height: 1.25rem;
+            bottom: -.62rem;
+            right: -1.75rem;
             transition: opacity 200ms;
             font-size: 1rem !important;
-
-            @apply fill-[#0099ff] dark:fill-[#005c4b];
+            @apply bg-[#0099ff] dark:bg-[#005c4b];
+      }
+      
+      .shape {
+            width: 3rem;
+            height: 3rem;
+            clip-path: polygon(41% 56%, 44% 68%, 50% 76%, 57% 80%, 41% 80%);
       }
       /* End Chat Page */
 

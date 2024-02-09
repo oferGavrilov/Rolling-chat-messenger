@@ -93,9 +93,9 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
                   />
                   <div className='flex items-center gap-4 ml-4 justify-between w-full'>
                         <div className='flex flex-col'>
-                              <h2 className='md:text-lg font-semibold cursor-pointer dark:text-dark-primary-text underline-offset-2 hover:underline' onClick={toggleChatInfo}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
+                              <h2 className='cursor-pointer font-semibold tracking-wider dark:text-dark-primary-text underline-offset-2 hover:underline' onClick={toggleChatInfo}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
                               {!selectedChat.isGroupChat ? (
-                                    <span className='text-primary dark:text-dark-primary-text text-xs md:text-base'>
+                                    <span className='text-primary dark:text-dark-primary-text text-sm'>
                                           {isTyping ? 'Typing...' : isLoadingStatus ? '' : connectionStatus}
                                     </span>
                               ) : (

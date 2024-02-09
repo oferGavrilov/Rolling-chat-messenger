@@ -19,9 +19,10 @@ interface Props {
       message: IMessage
       onReplyMessage: (message: IMessage) => void
       onRemoveMessage: (message: IMessage, removerId: string) => void
+      arrowDirection: 'none' | 'left' | 'right'
 }
 
-export default function MessagePreview({ message, onReplyMessage, onRemoveMessage }: Props): JSX.Element {
+export default function MessagePreview({ message, onReplyMessage, onRemoveMessage, arrowDirection }: Props): JSX.Element {
       const { user } = AuthState() as { user: IUser }
       const { setSelectedFile } = useStore()
 
@@ -74,13 +75,20 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
             if (!incomingMessage) return 'flex-row-reverse'
       }
 
+      function getMessageBorderRadius(arrowDirection: 'none' | 'left' | 'right') {
+            if (arrowDirection === 'none') return 'rounded-xl'
+            if (arrowDirection === 'left') return 'rounded-t-2xl rounded-br-2xl'
+            return 'rounded-t-2xl rounded-bl-2xl'
+      }
+
       if (!message.sender) return <DeletedMessage isUnknownUser={true} />
 
       const incomingMessage = message.sender?._id !== user?._id
       return (
             <div className="select-none message-container" onDoubleClick={() => handleDoubleClick(message)}>
                   <div
-                        className={`select-text relative w-max flex items-center max-w-[75%] text-white rounded-t-2xl 
+                        className={`select-text relative w-max flex items-center max-w-[75%] text-white 
+                                    ${getMessageBorderRadius(arrowDirection)}
                                     ${message.replyMessage?._id && 'flex-col'}
                                     ${(message.sender._id === user._id) ? 'out-going-message' : 'incoming-message'}`}
                   >
@@ -98,8 +106,8 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                               onRemoveMessage={onRemoveMessage}
                         />
 
-                        {message.sender._id === user._id && (
-                              <MessageArrow className='message-arrow-left' />
+                        {arrowDirection !== 'none' && (
+                              <MessageArrow className={arrowDirection === 'left' ? 'message-arrow' : 'message-arrow-left'} />
                         )}
                         <div className={`flex w-full ${messageStyles(message)}`}>
                               {renderMessageContent(message)}
