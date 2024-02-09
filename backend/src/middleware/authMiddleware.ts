@@ -16,6 +16,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             const refreshToken = req.cookies['refreshToken']
 
             if (!accessToken && !refreshToken) {
+                  console.log('no token at all access:', accessToken, 'refresh:', refreshToken)
                   logger.error(`[API: ${req.path}] - Not authorized, no token`)
                   return res.status(401).json({ message: 'expired' })
             }
@@ -23,6 +24,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             let decoded
             if (accessToken) {
                   try {
+                        console.log('access token:', accessToken)
                         decoded = jwt.verify(accessToken, process.env.JWT_SECRET) as DecodedToken
                         console.log('decoded', decoded)
                   } catch (error) {

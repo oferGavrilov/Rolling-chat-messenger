@@ -60,7 +60,8 @@ export async function loginUser(email: string, password: string): Promise<{ user
             username: user.username,
             email: user.email,
             profileImg: user.profileImg,
-            about: user.about
+            about: user.about,
+            refreshToken: user.refreshToken
         }
     }
 }

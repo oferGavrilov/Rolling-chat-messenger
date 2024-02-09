@@ -90,12 +90,13 @@ export async function login(req: AuthenticatedRequest, res: Response) {
         if (user) {
 
             const accessToken = generateToken(user._id)  // Short-lived
-            const refreshToken = generateRefreshToken(user._id)  // Long-lived
 
-            // const isProduction = process.env.NODE_ENV === 'production'
-            // const sameSite = isProduction ? 'none' : 'lax'
+            let { refreshToken } = user
 
-            await User.findByIdAndUpdate(user._id, { refreshToken })
+            if (!refreshToken) {
+                refreshToken = generateRefreshToken(user._id); // Long-lived
+                await User.findByIdAndUpdate(user._id, { refreshToken });
+            }
 
             console.log('before setting tokens user:', user)
             res.cookie('accessToken', accessToken, {
