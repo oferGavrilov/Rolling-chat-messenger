@@ -45,12 +45,13 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
                         const decodedRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as DecodedToken
                         const newAccessToken = generateToken(decodedRefresh.id)
 
-                        const isProduction = process.env.NODE_ENV === 'production'
-                        const sameSite = isProduction ? 'none' : 'lax'
+                        // const isProduction = process.env.NODE_ENV === 'production'
+                        // const sameSite = isProduction ? 'none' : 'lax'
                         res.cookie('accessToken', newAccessToken, {
                               httpOnly: true,
-                              secure: isProduction,
-                              sameSite,
+                              secure: true,
+                              sameSite: 'none',
+                              path: '/',
                               maxAge: 24 * 60 * 60 * 1000, // 24 hours
                         })
                         req.user = await User.findById(decodedRefresh.id).select('-password')

@@ -19,6 +19,18 @@ export interface IUser {
       lastSeen?: string
 }
 
+export interface IUserStored {
+      _id: string
+      username: string
+      email: string
+      profileImg: string
+      about: string
+      isOnline?: boolean
+      lastSeen?: string
+      createdAt: string
+      updatedAt: string
+}
+
 export interface IColorPalette {
       color: string
       opacity: number

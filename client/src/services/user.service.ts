@@ -1,6 +1,4 @@
 import { FormData, IColorPalette, IUser } from "../model/user.model"
-import axios from 'axios'
-import { getConfig } from '../utils/authConfig'
 import { httpService } from "./http.service"
 
 const STORAGE_KEY = 'loggedin-user'
@@ -34,16 +32,12 @@ async function getUsers(): Promise<IUser[]> {
       }
 }
 
-async function loginSignUp(credentials: FormData, formMode: string): Promise<IUser> {
+async function loginSignUp(credentials: FormData, formMode: string) {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
-      const config = {
-            ...getConfig(),
-            withCredentials: true
-      }
 
       try {
-            const response = await axios.post(BASE_URL + path, credentials, config)
-            const { data } = response
+            // const response = await axios.post(BASE_URL + path, credentials, config)
+            const data = await httpService.post(`${BASE_URL}${path}`, credentials) 
 
             if (data) {
                   _saveToLocalStorage(data)
@@ -187,7 +181,7 @@ export function getLoggedinUser() {
       }
 }
 
-function _saveToLocalStorage(user: FormData): FormData {
+function _saveToLocalStorage(user) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
       return user
 }

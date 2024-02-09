@@ -57,8 +57,8 @@ export function setupSocketAPI(http: HttpServer) {
                   const socketsInRoom = roomToSocketIdsMap.get(room) || new Set();
                   socketsInRoom.add(socket.id);
                   roomToSocketIdsMap.set(room, socketsInRoom);
-                  
-                  let rooms = userToRoomMap.get(userId) || new Set();
+
+                  const rooms = userToRoomMap.get(userId) || new Set();
                   rooms.add(room);
                   userToRoomMap.set(userId, rooms);
 

@@ -1,6 +1,5 @@
 import express from 'express'
 import { signUp, login, logoutUser, sendResetPasswordMail, resetPassword } from './controller.js'
-import { authMiddleware } from '../../middleware/authMiddleware.js'
 
 export const router = express.Router()
 

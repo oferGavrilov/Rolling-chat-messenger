@@ -92,22 +92,24 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             const accessToken = generateToken(user._id)  // Short-lived
             const refreshToken = generateRefreshToken(user._id)  // Long-lived
 
-            const isProduction = process.env.NODE_ENV === 'production'
-            const sameSite = isProduction ? 'none' : 'lax'
+            // const isProduction = process.env.NODE_ENV === 'production'
+            // const sameSite = isProduction ? 'none' : 'lax'
 
             await User.findByIdAndUpdate(user._id, { refreshToken })
 
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure: isProduction,
-                sameSite,
+                secure: true,//isProduction,
+                sameSite: 'none', //sameSite,
+                path: '/',
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure: isProduction,
-                sameSite,
+                secure: true,//isProduction
+                sameSite: 'none', //sameSite,
+                path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
 
@@ -134,8 +136,22 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 export async function logoutUser(req: AuthenticatedRequest, res: Response) {
     const { userId } = req.body
     try {
-        res.cookie('accessToken', '', { expires: new Date(0) })
-        res.cookie('refreshToken', '', { expires: new Date(0) })
+        res.cookie('accessToken', '', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            path: '/',
+            expires: new Date(0),
+        });
+
+        res.cookie('refreshToken', '', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            path: '/',
+            expires: new Date(0),
+        });
+
 
         //update the user to set isOnline to false and lastSeen to current time
         await User.findByIdAndUpdate(userId, { isOnline: false, lastSeen: moment.utc().toDate() })

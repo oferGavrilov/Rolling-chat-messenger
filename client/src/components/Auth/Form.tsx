@@ -10,6 +10,7 @@ import { userService } from '../../services/user.service'
 import { useNavigate } from 'react-router-dom'
 import Button from '../common/Button'
 import ForgotPassword from './ForgotPassword'
+import { IUser } from '../../model'
 
 interface FormData {
       username?: string
@@ -24,8 +25,8 @@ export default function Form(): JSX.Element {
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
       const { setUser, setJustLoggedIn } = AuthState()
-      const navigate = useNavigate()
-
+      const navigate = useNavigate();
+        
       const validationSchema = (() => {
             switch (formMode) {
                   case 'login':
@@ -105,7 +106,7 @@ export default function Form(): JSX.Element {
             }
 
             try {
-                  const user = await userService.loginSignUp(modifiedValues, formMode)
+                  const user = await userService.loginSignUp(modifiedValues, formMode) as IUser
                   setUser(user)
                   setJustLoggedIn(true);
                   navigate('/chat')
