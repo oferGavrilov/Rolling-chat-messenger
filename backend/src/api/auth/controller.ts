@@ -38,18 +38,18 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
         await User.findByIdAndUpdate(user._id, { refreshToken })
 
         const isProduction = process.env.NODE_ENV === 'production';
-        const sameSite = isProduction ? 'none' : 'lax';
+        // const sameSite = isProduction ? 'none' : 'lax';
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: isProduction,
-            sameSite,
+            sameSite: 'lax',
             maxAge: 24 * 60 * 60 * 1000,
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: isProduction,
-            sameSite,
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
@@ -102,7 +102,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
                 secure: true,//isProduction,
-                sameSite: 'none', //sameSite,
+                sameSite: "lax", //sameSite,
                 path: '/',
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
@@ -110,7 +110,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,//isProduction
-                sameSite: 'none', //sameSite,
+                sameSite: 'lax', //sameSite,
                 path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
