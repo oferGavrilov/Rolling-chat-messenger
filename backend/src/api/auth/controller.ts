@@ -42,14 +42,14 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: isProduction,
-            sameSite: 'lax',
+            sameSite: 'none',
             maxAge: 24 * 60 * 60 * 1000,
         })
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: isProduction,
-            sameSite: 'lax',
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
@@ -100,17 +100,17 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 
             console.log('before setting tokens user:', user)
             res.cookie('accessToken', accessToken, {
-                httpOnly: false,
+                httpOnly: true,
                 secure: true,//isProduction,
-                sameSite: "lax", //sameSite,
+                sameSite: "none", //sameSite,
                 path: '/',
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
 
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: false,
+                httpOnly: true,
                 secure: true,//isProduction
-                sameSite: 'lax', //sameSite,
+                sameSite: 'none', //sameSite,
                 path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
@@ -141,7 +141,7 @@ export async function logoutUser(req: AuthenticatedRequest, res: Response) {
     const { userId } = req.body
     try {
         res.cookie('accessToken', '', {
-            httpOnly: false,
+            httpOnly: true,
             secure: true,
             sameSite: 'none',
             path: '/',
@@ -149,7 +149,7 @@ export async function logoutUser(req: AuthenticatedRequest, res: Response) {
         });
 
         res.cookie('refreshToken', '', {
-            httpOnly: false,
+            httpOnly: true,
             secure: true,
             sameSite: 'none',
             path: '/',
