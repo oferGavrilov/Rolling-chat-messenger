@@ -27,31 +27,6 @@ export default function Form(): JSX.Element {
       const { setUser, setJustLoggedIn } = AuthState()
       const navigate = useNavigate();
 
-      (function () {
-            const oldLog = console.log;
-            console.log = function (message?: any, ...optionalParams: any[]) {
-                  const args = [message, ...optionalParams].map(arg => {
-                        if (typeof arg === 'object') {
-                              try {
-                                    return JSON.stringify(arg, null, 2); // Attempt to stringify the object
-                              } catch (error) {
-                                    return "Unable to stringify object."; // Handle errors, like circular references
-                              }
-                        } else {
-                              return arg; // Return non-objects as is
-                        }
-                  });
-
-                  // Append converted strings to the body
-                  document.body.innerHTML += `<p>${args.join(' ')}</p>`;
-
-                  // Use spread operator to convert arguments object to an array
-                  oldLog.apply(console, [...arguments]);
-            };
-      })();
-
-
-
       const validationSchema = (() => {
             switch (formMode) {
                   case 'login':
