@@ -100,7 +100,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 
             console.log('before setting tokens user:', user)
             res.cookie('accessToken', accessToken, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: true,//isProduction,
                 sameSite: "lax", //sameSite,
                 path: '/',
@@ -108,7 +108,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             });
 
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: true,//isProduction
                 sameSite: 'lax', //sameSite,
                 path: '/',
@@ -141,7 +141,7 @@ export async function logoutUser(req: AuthenticatedRequest, res: Response) {
     const { userId } = req.body
     try {
         res.cookie('accessToken', '', {
-            httpOnly: true,
+            httpOnly: false,
             secure: true,
             sameSite: 'none',
             path: '/',
@@ -149,7 +149,7 @@ export async function logoutUser(req: AuthenticatedRequest, res: Response) {
         });
 
         res.cookie('refreshToken', '', {
-            httpOnly: true,
+            httpOnly: false,
             secure: true,
             sameSite: 'none',
             path: '/',

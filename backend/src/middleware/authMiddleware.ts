@@ -50,7 +50,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
                         // const isProduction = process.env.NODE_ENV === 'production'
                         // const sameSite = isProduction ? 'none' : 'lax'
                         res.cookie('accessToken', newAccessToken, {
-                              httpOnly: true,
+                              httpOnly: false,
                               secure: true,
                               sameSite: 'lax',
                               path: '/',
