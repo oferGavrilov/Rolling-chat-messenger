@@ -50,7 +50,7 @@ app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
 app.use('/api/gallery', galleryRoutes)
 
-app.get('/', (req: express.Request, res: express.Response) => {
+app.get('/', (_: express.Request, res: express.Response) => {
       res.send('How You Doinn :)')
 })
 app.use(notFound)

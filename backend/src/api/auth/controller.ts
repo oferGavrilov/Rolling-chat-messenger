@@ -40,14 +40,14 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
         const isProduction = process.env.NODE_ENV === 'production';
         const sameSite = isProduction ? 'none' : 'lax';
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
+            httpOnly: false,
             secure: isProduction,
             sameSite,
             maxAge: 24 * 60 * 60 * 1000,
         })
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
+            httpOnly: false,
             secure: isProduction,
             sameSite,
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -98,14 +98,14 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             await User.findByIdAndUpdate(user._id, { refreshToken })
 
             res.cookie('accessToken', accessToken, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: isProduction,
                 sameSite,
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
 
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: isProduction,
                 sameSite,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
