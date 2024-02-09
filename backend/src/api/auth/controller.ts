@@ -97,6 +97,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 
             await User.findByIdAndUpdate(user._id, { refreshToken })
 
+            console.log('before setting tokens user:', user)
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
                 secure: true,//isProduction,
@@ -112,6 +113,8 @@ export async function login(req: AuthenticatedRequest, res: Response) {
                 path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
+
+            console.log('tokens set', accessToken, "/n", refreshToken)
 
             res.json({
                 _id: user._id,

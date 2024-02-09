@@ -11,9 +11,10 @@ const BASE_URL =
             : env.VITE_LOCAL_SERVER_URL
 
 
+axios.defaults.withCredentials = true
 const axiosInstance = axios.create({
       baseURL: BASE_URL,
-      withCredentials: true,
+      withCredentials: true
 })
 
 export const httpService = {
