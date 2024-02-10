@@ -1,7 +1,7 @@
 <h2 align="center">Rolling - Real-Time Chat Application</h2>
 
 
-🚀 [Link For The live App](https://rolling-chat-messenger.vercel.app) 
+🚀 [Link For The live App](https://www.rolling-chat.com) 
 
 Welcome to the Rolling Chat App repository! This project is a dynamic, real-time chat application designed to provide a seamless, intuitive, and engaging platform for online communication. Whether you're looking to chat with friends, collaborate with colleagues, or explore new connections, our app is tailored to facilitate effortless and enriching interactions.
 
