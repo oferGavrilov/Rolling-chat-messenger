@@ -36,7 +36,6 @@ async function loginSignUp(credentials: FormData, formMode: string) {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
 
       try {
-            // const response = await axios.post(BASE_URL + path, credentials, config)
             const data = await httpService.post(`${BASE_URL}${path}`, credentials) 
 
             if (data) {

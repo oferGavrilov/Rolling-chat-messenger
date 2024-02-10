@@ -1,4 +1,4 @@
-import type { Response, Request } from "express"
+import type { Response, Request, CookieOptions } from "express"
 import { generateRefreshToken, generateToken } from "../../config/generateToken.js"
 import type { AuthenticatedRequest } from "../../models/types.js"
 import { loginUser, resetPasswordConfirm, signUpService } from "./service.js"
@@ -32,26 +32,29 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
             throw new InternalServerError('Failed to create user')
         }
 
-        const accessToken = generateToken(user._id)  // Short-lived
-        const refreshToken = generateRefreshToken(user._id)  // Long-lived
+        const accessToken: string = generateToken(user._id)  // Short-lived
+        const refreshToken: string = generateRefreshToken(user._id)  // Long-lived
 
         await User.findByIdAndUpdate(user._id, { refreshToken })
 
-        const isProduction = process.env.NODE_ENV === 'production';
-        // const sameSite = isProduction ? 'none' : 'lax';
-        res.cookie('accessToken', accessToken, {
+        const isProduction: boolean = process.env.NODE_ENV === 'production';
+
+        const cookiesConfig: CookieOptions = {
             httpOnly: true,
             secure: isProduction,
-            sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000,
-        })
+            sameSite: "lax",
+            path: '/',
+        }
+
+        res.cookie('accessToken', accessToken, {
+            ...cookiesConfig,
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: isProduction,
-            sameSite: 'none',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        })
+            ...cookiesConfig,
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
 
         return res.status(201).json({
             _id: user._id,
@@ -89,33 +92,33 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 
         if (user) {
 
-            const accessToken = generateToken(user._id)  // Short-lived
+            const accessToken: string = generateToken(user._id)  // Short-lived
 
-            let { refreshToken } = user
+            let refreshToken: string | undefined = user.refreshToken;
 
             if (!refreshToken) {
                 refreshToken = generateRefreshToken(user._id); // Long-lived
                 await User.findByIdAndUpdate(user._id, { refreshToken });
             }
 
-            console.log('before setting tokens user:', user)
-            res.cookie('accessToken', accessToken, {
+            const isProduction: boolean = process.env.NODE_ENV === 'production';
+
+            const cookiesConfig: CookieOptions = {
                 httpOnly: true,
-                secure: true,//isProduction,
-                sameSite: "none", //sameSite,
+                secure: isProduction,
+                sameSite: "lax",
                 path: '/',
+            }
+
+            res.cookie('accessToken', accessToken, {
+                ...cookiesConfig,
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
             });
 
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: true,//isProduction
-                sameSite: 'none', //sameSite,
-                path: '/',
+                ...cookiesConfig,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
-
-            console.log('tokens set', accessToken, "/n", refreshToken)
 
             res.json({
                 _id: user._id,
@@ -140,19 +143,22 @@ export async function login(req: AuthenticatedRequest, res: Response) {
 export async function logoutUser(req: AuthenticatedRequest, res: Response) {
     const { userId } = req.body
     try {
-        res.cookie('accessToken', '', {
+        const isProduction: boolean = process.env.NODE_ENV === 'production';
+
+        const cookiesConfig: CookieOptions = {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: isProduction,
+            sameSite: "lax",
             path: '/',
+        }
+
+        res.cookie('accessToken', '', {
+            ...cookiesConfig,
             expires: new Date(0),
         });
 
         res.cookie('refreshToken', '', {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            path: '/',
+            ...cookiesConfig,
             expires: new Date(0),
         });
 

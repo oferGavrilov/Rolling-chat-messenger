@@ -16,7 +16,6 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             const refreshToken = req.cookies['refreshToken']
 
             if (!accessToken && !refreshToken) {
-                  console.log('no token at all access:', accessToken, 'refresh:', refreshToken)
                   logger.error(`[API: ${req.path}] - Not authorized, no token`)
                   return res.status(401).json({ message: 'expired' })
             }
@@ -24,9 +23,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             let decoded
             if (accessToken) {
                   try {
-                        console.log('access token:', accessToken)
                         decoded = jwt.verify(accessToken, process.env.JWT_SECRET) as DecodedToken
-                        console.log('decoded', decoded)
                   } catch (error) {
                         decoded = null // Invalid access token
                   }
@@ -47,15 +44,16 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
                         const decodedRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as DecodedToken
                         const newAccessToken = generateToken(decodedRefresh.id)
 
-                        // const isProduction = process.env.NODE_ENV === 'production'
-                        // const sameSite = isProduction ? 'none' : 'lax'
+                        const isProduction = process.env.NODE_ENV === 'production'
+
                         res.cookie('accessToken', newAccessToken, {
                               httpOnly: true,
-                              secure: true,
-                              sameSite: 'none',
+                              secure: isProduction,
+                              sameSite: 'lax',
                               path: '/',
                               maxAge: 24 * 60 * 60 * 1000, // 24 hours
                         })
+
                         req.user = await User.findById(decodedRefresh.id).select('-password')
                         return next()
                   } catch (error) {
@@ -71,7 +69,6 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
       }
 }
 
-
 export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
       const { chatId } = req.body
       const userId = req.user?._id
@@ -82,7 +79,6 @@ export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Respo
 
       try {
             const chat: ChatDocument = await Chat.findById(chatId)
-            console.log(userId, chat?.groupAdmin.toString())
             // check if the user is the admin of the group
             if (chat && chat?.groupAdmin.toString() === userId.toString()) {
                   next()
@@ -95,5 +91,3 @@ export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Respo
             return res.status(500).json({ message: "An error occurred" })
       }
 }
-
-// socket auth middleware
