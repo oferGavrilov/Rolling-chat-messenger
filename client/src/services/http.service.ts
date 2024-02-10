@@ -17,22 +17,6 @@ const axiosInstance = axios.create({
       withCredentials: true
 })
 
-// // Setup request interceptor
-// axiosInstance.interceptors.request.use(request => {
-//       console.log('Starting Request', JSON.stringify(request, null, 2)); // Pretty print the request
-//       return request;
-// });
-
-// // Setup response interceptor
-// axiosInstance.interceptors.response.use(response => {
-//       console.log('Response:', JSON.stringify(response, null, 2)); // Pretty print the response
-//       return response;
-// }, error => {
-//       // Optional: Handle errors
-//       console.error('Response Error:', error);
-//       return Promise.reject(error);
-// });
-
 export const httpService = {
       async get<T>(endpoint: string, params = {}): Promise<T> {
             return ajax(endpoint, 'GET', null, params)

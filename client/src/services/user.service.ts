@@ -4,7 +4,7 @@ import { httpService } from "./http.service"
 const STORAGE_KEY = 'loggedin-user'
 const env = import.meta.env.VITE_NODE_ENV
 
-const BASE_URL = env === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
+const BASE_URL = env === 'production' ? 'https://server.rolling-chat.com' : 'http://localhost:5000'
 
 export const userService = {
       getUsers,

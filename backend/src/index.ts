@@ -31,7 +31,7 @@ import logger from './services/logger.service.js'
 logger.info(`Environment: ${process.env.NODE_ENV}`)
 
 if (process.env.NODE_ENV === 'production') {
-      app.use(cors({ origin: ['https://rolling-chat-messenger.vercel.app'], credentials: true }));
+      app.use(cors({ origin: ['https://rolling-chat-messenger.vercel.app' , 'https://www.rolling-chat.com'], credentials: true }));
 } else {
       app.use(cors({ origin: true, credentials: true }));
 }

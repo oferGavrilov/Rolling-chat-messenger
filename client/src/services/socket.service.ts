@@ -4,7 +4,7 @@ export const SOCKET_LOGOUT = 'logout'
 export const SOCKET_LOGIN = 'login'
 
 const env = import.meta.env.VITE_NODE_ENV
-const baseUrl = env === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
+const baseUrl = env === 'production' ? 'https://server.rolling-chat.com' : 'http://localhost:5000'
 
 // const baseUrl =
 //       process.env.NODE_ENV === 'production'

@@ -7,7 +7,7 @@ export const messageService = {
       removeMessage,
 }
 const env = import.meta.env.VITE_NODE_ENV
-const BASE_URL = env === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
+const BASE_URL = env === 'production' ? 'https://server.rolling-chat.com' : 'http://localhost:5000'
 
 async function getMessages(chatId: string): Promise<IMessage[]> {
       try {
