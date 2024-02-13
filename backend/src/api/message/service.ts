@@ -2,7 +2,7 @@ import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
 import { ForbiddenError, InternalServerError, NotFoundError, ValidationError } from "../../utils/errorHandler.js"
 import logger from "../../services/logger.service.js"
-import { uploadImageToCloudinary } from "src/services/cloudinary.service.js"
+import { uploadImageToCloudinary } from "../../services/cloudinary.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
       try {

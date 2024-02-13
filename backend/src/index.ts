@@ -25,6 +25,7 @@ import { router as userRoutes } from './api/user/router.js'
 import { router as chatRoutes } from './api/chat/router.js'
 import { router as messageRoutes } from './api/message/router.js'
 import { router as galleryRoutes } from './api/gallery/router.js'
+import { router as cloudinaryRoutes } from './api/cloudinary/router.js'
 import { setupSocketAPI } from './services/socket.service.js'
 import logger from './services/logger.service.js'
 
@@ -42,6 +43,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/message', messageRoutes)
 app.use('/api/gallery', galleryRoutes)
+app.use('/api/cloudinary', cloudinaryRoutes)
 
 app.get('/', (_: express.Request, res: express.Response) => {
       res.send('How You Doinn :)')

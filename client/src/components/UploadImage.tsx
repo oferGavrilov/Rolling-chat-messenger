@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { uploadImg } from '../utils/cloudinary'
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded'
+import { cloudinaryService } from '../services/cloudinary.service'
 
 interface Props {
       image: string
@@ -9,21 +9,39 @@ interface Props {
       editImage?: (updateType: 'image' | 'name', updateData: string) => Promise<void>
 }
 
-export default function UploadImage ({ image, setImage, editImage }: Props) {
+export default function UploadImage({ image, setImage, editImage }: Props) {
       const [imageLoading, setImageLoading] = useState<boolean>(false)
 
-      async function uploadImage (file: File | undefined) {
+      async function uploadImage(file: File | undefined) {
             if (!file) return toast.warn('Upload image went wrong')
+
             try {
                   setImageLoading(true)
-                  const data = await uploadImg(file)
-                  setImage(data?.url || image)
-                  if (editImage) editImage('image', data.url)
+                  const formData = new FormData()
+                  formData.append('image', file)
+
+                  const newImageUrl = await cloudinaryService.uploadImageToCloudinary(formData)
+                  console.log(newImageUrl)
+                  setImage(newImageUrl)
+                  if (editImage) editImage('image', newImageUrl)
+
+
             } catch (err) {
                   console.log(err)
             } finally {
                   setImageLoading(false)
             }
+
+            // try {
+            //       setImageLoading(true)
+            //       const data = await uploadImg(file)
+            //       setImage(data?.url || image)
+            //       if (editImage) editImage('image', data.url)
+            // } catch (err) {
+            //       console.log(err)
+            // } finally {
+            //       setImageLoading(false)
+            // }
       }
       return (
             <label

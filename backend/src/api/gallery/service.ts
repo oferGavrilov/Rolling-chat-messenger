@@ -18,8 +18,6 @@ export async function createGalleryService(filePath: string, title: string, user
         api_secret: process.env.CLOUDINARY_API_SECRET
     })
 
-    console.log('Cloudinary config:', cloudinary.config())
-
     try {
 
         const result = await cloudinary.uploader.upload(filePath, {

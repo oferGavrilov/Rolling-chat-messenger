@@ -96,11 +96,11 @@ export default function Navigation({
                                           <span className="material-symbols-outlined">group</span>
                                     </div>
                               </Tooltip>
-                              <Tooltip title="Gallery" arrow placement='right'>
+                              {/* <Tooltip title="Gallery" arrow placement='right'>
                                     <div className={`navigation-icon ${contentType === 'gallery' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('gallery')}>
                                           <span className="material-symbols-outlined">crop</span>
                                     </div>
-                              </Tooltip>
+                              </Tooltip> */}
                               <Tooltip title="Stories" arrow placement='right'>
                                     <div className={`navigation-icon  ${contentType === 'story' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('story')}>
                                           <Story />

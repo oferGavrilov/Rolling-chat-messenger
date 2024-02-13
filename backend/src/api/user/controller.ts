@@ -68,7 +68,7 @@ export async function editUserImage(req: AuthenticatedRequest, res: Response) {
             const user = await editUserImageService(userId, image)
 
             if (user) {
-                  res.status(200).json({ message: 'User image updated successfully' })
+                  res.status(200).json(image)
             } else {
                   res.status(404).json({ msg: 'User not found' })
             }
