@@ -1,51 +1,68 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import SendIcon from '@mui/icons-material/Send'
 import useStore from '../../../context/store/useStore'
 import { IReplyMessage } from '../../../model/message.model'
-import { IFile } from '../../../model/chat.model'
-import Loading from '../../Loading'
 
 interface Props {
-      file: IFile | string | null
+      file: File | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       sendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessage: IReplyMessage | null, recordingTimer?: number) => void
 }
 
-export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
-
+export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
       const { replyMessage } = useStore()
+      const [fileSrc, setFileSrc] = useState<string | null>(null)
+      const [isLoadingImage, setIsLoadingImage] = useState<boolean>(true)
 
-      const isImage = typeof file === 'string'
+      useEffect(() => {
+            if (typeof file === 'string') {
+                  setFileSrc(file)
+                  setIsLoadingImage(false)
+            } else if (file) {
+                  setIsLoadingImage(true)
+                  const reader = new FileReader()
+                  reader.onload = (e) => {
+                        setFileSrc(e.target?.result as string)
+                        setIsLoadingImage(false)
+                  }
+                  reader.readAsDataURL(file)
+            }
+      }, [file])
 
-      function onSendMessage () {
-            const type = isImage ? 'image' : 'file'
-            const message = isImage ? file : file?.url
-            sendMessage(message as string, type, replyMessage ? replyMessage : null, undefined)
+      const isImage = file && file.type && file.type.startsWith('image/')
+
+      function onSendMessage(): void {
+            if (!file || !fileSrc) return
+
+            const type = file.type.startsWith('image/') ? 'image' : 'file'
+
+            sendMessage(fileSrc, type, replyMessage, file.size)
       }
 
       return (
             <div className='bg-white h-full dark:bg-dark-secondary-bg relative'>
 
                   <div className={`flex justify-center w-full h-full ${isImage && 'items-center'}`}>
-                        {file ? (
+                        {!isLoadingImage ? (
                               <>
                                     {isImage ? (
                                           <img
-                                                src={file}
+                                                src={fileSrc as string}
                                                 alt="picked-file"
                                                 className="object-contain max-w-[240px] md:max-w-md drop-shadow-2xl -mt-24 md:-mt-28"
                                           />
                                     ) : (
                                           <iframe
-                                                src={file.url}
+                                                src={fileSrc as string}
                                                 title="picked-pdf"
-                                                className="w-full h-[400px] md:h-[700px] mt-12"
+                                                allowFullScreen={true}
+                                                className="w-4/5 h-[400px] md:h-[700px]"
                                           ></iframe>
                                     )}
                               </>
                         ) : (
-                              <Loading />
+                              <div className='spinner' />
                         )}
                   </div>
                   <CloseIcon
@@ -61,5 +78,6 @@ export default function FileEditor ({ file, setChatMode, sendMessage }: Props) {
                         </div>
                   </div>
             </div >
+
       )
 }

@@ -1,8 +1,8 @@
 import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
 import { Chat } from "../../models/chat.model.js"
-import { PopulatedDoc } from "mongoose"
 import { ForbiddenError, InternalServerError, NotFoundError, ValidationError } from "../../utils/errorHandler.js"
 import logger from "../../services/logger.service.js"
+import { uploadImageToCloudinary } from "src/services/cloudinary.service.js"
 
 export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
       try {
@@ -10,34 +10,40 @@ export async function sendMessageService(senderId: string, content: string, chat
 
             if (!chat) throw new NotFoundError('Chat not found')
 
-            console.log('Service - senderId', senderId)
-
             // check if the user is in the group chat
             if (chat.isGroupChat && !chat.users.some((user) => user.toString() === senderId.toString())) {
                   throw new ForbiddenError('You are not in this group chat')
             }
 
-            const newMessage = {
+            if (messageType === 'image' && typeof content === 'string') {
+                  content = await uploadImageToCloudinary(content, 'chat_app')
+            }
+
+            const newMessage: Omit<IMessage, '_id'> = {
                   sender: senderId,
                   content,
                   chat: chatId,
                   messageType,
                   replyMessage: replyMessage ? replyMessage : null,
                   messageSize: messageSize ? messageSize : undefined,
+                  deletedBy: [],
+                  isReadBy: [],
+                  createdAt: new Date(),
+                  updatedAt: new Date()
             }
 
             let message = await Message.create(newMessage)
 
-            message = (await message.populate('sender', 'username profileImg')) as PopulatedDoc<IMessage>
-            message = (await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })) as PopulatedDoc<IMessage>
-            message = (await message.populate({
+            message = await message.populate('sender', 'username profileImg')
+            message = await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })
+            message = await message.populate({
                   path: 'replyMessage',
                   select: '_id content sender',
                   populate: {
                         path: 'sender',
                         select: '_id username profileImg'
                   }
-            })) as PopulatedDoc<IMessage>
+            })
 
             if (!message) throw new InternalServerError('Failed to send message')
 

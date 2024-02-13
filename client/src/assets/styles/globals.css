@@ -5,7 +5,7 @@
 @layer base {
 
       body {
-            @apply text-[#242424] font-openSans scroll-smooth tracking-wide;
+            @apply text-[#242424] font-roboto-regular scroll-smooth tracking-wide;
       }
       
       ::-webkit-scrollbar {
@@ -131,7 +131,7 @@
       /* Side Modal */
       .side-modal-container {
             @apply
-            w-full md:w-[435px] h-screen max-w-[100vw]
+            w-full md:w-[435px] xl:w-[470px] h-screen max-w-[100vw]
             fixed top-0 left-0 z-50
             shadow-xl
             transition-all duration-300
@@ -169,6 +169,27 @@
       }
       .upload-img:hover .overlay{
             @apply block;
+      }
+
+      .gallery-item {
+            @apply relative;
+      }
+      .gallery-item:hover .remove-btn {
+            @apply bg-red-600 opacity-100 translate-x-0;
+        }
+
+      .gallery-item .remove-btn {
+            @apply
+            absolute top-1 right-1 
+            w-4 h-4 p-3
+            rounded-full 
+            bg-red-500 
+            translate-x-8
+            opacity-0 
+            transition-all duration-300 
+            flex items-center justify-center 
+            cursor-pointer
+            hover:scale-110;
       }
 
       /* Settings */

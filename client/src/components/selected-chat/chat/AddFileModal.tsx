@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
 
-import { Client } from 'filestack-js'
 import { toast } from 'react-toastify'
 
 import { uploadImg } from '../../../utils/cloudinary'
@@ -15,11 +14,11 @@ import Camera from './Camera'
 import { IFile } from '../../../model/chat.model'
 
 interface Props {
-      setFile: React.Dispatch<React.SetStateAction<IFile | string | null>>
+      setFile: React.Dispatch<React.SetStateAction<IFile | null>>
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
 }
 
-export default function AddFileModal ({ setFile, setChatMode }: Props) {
+export default function AddFileModal({ setFile, setChatMode }: Props) {
       const [showClipModal, setShowClipModal] = useState<boolean>(false)
       const [showCamera, setShowCamera] = useState<boolean>(false)
 
@@ -49,47 +48,11 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
             }
       }
 
-      async function uploadImage (file: File | undefined) {
-            if (!file) return toast.error('Upload image went wrong')
-            try {
-                  // Show the file editor immediately and then show the file
-                  setFile(null)
-                  setChatMode('send-file')
-
-                  const response = await uploadImg(file)
-                  if (!response || !response.url) {
-                        return toast.error('Invalid response from Cloudinary')
-                  }
-
-                  setFile(response.url)
-            } catch (err) {
-                  console.log(err)
-            }
-      }
-
-      async function handleFileUpload () {
-            const apiKey = import.meta.env.VITE_FILESTACK_API_KEY
-            try {
-                  const client = new Client(apiKey)
-
-                  const pickerOptions = {
-                        accept: ['.pdf'],
-                        maxFiles: 1,
-                        fromSources: ['local_file_system', 'googledrive', 'dropbox', 'onedrive'],
-                        onUploadDone: (result) => {
-                              if (result.filesUploaded && result.filesUploaded.length > 0) {
-                                    const fileUrl = result.filesUploaded[0]
-                                    setFile(fileUrl)
-                                    setChatMode('send-file')
-                              }
-                        },
-                  }
-
-                  await client.picker(pickerOptions).open()
-
-            } catch (error) {
-                  console.error(error)
-            }
+      function onSelectedFile(e: React.ChangeEvent<HTMLInputElement>) {
+            if (!e.target.files) return
+            const file = e.target.files[0]
+            setFile(file)
+            setChatMode('send-file')
       }
 
       return (
@@ -107,9 +70,13 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                         ${showClipModal ? 'max-h-[300px] py-2 w-[210px]' : 'max-h-0 !py-0 w-[40px]'}`}>
 
                         <label className='clip-modal-option whitespace-nowrap py-1 flex '>
-                              <input type="file" name='image' id='img-upload' className='opacity-0 h-0 w-0' accept='image/gif, image/jpeg, image/png' onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    uploadImage(e.target.files?.[0])
-                              } />
+                              <input
+                                    type="file"
+                                    name="image"
+                                    className="opacity-0 w-0 h-0"
+                                    accept="image/jpeg, image/png, image/jpg, image/gif, image/webp, video/mp4, video/x-m4v"
+                                    onChange={onSelectedFile}
+                              />
                               <span className=''>
                                     <PermMediaIcon className='mr-2 text-primary shadow-lg' />
                                     Images and Videos
@@ -119,10 +86,19 @@ export default function AddFileModal ({ setFile, setChatMode }: Props) {
                               <LocalSeeIcon className='mr-2 text-[#ff2e74]' />
                               Camera
                         </li>
-                        <li className='clip-modal-option py-1 flex items-center' onClick={handleFileUpload}>
-                              <TextSnippetIcon className='mr-2 text-purple-500' />
-                              File
-                        </li>
+                        <label className='clip-modal-option whitespace-nowrap py-1 flex '>
+                              <input
+                                    type="file"
+                                    name="file"
+                                    className="opacity-0 w-0 h-0"
+                                    accept=".pdf"
+                                    onChange={onSelectedFile}
+                              />
+                              <span className=''>
+                                    <TextSnippetIcon className='mr-2 text-purple-500' />
+                                    File
+                              </span>
+                        </label>
                   </ul>
 
                   {showCamera && (

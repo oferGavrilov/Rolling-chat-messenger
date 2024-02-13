@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 
-import { BsCameraVideo } from 'react-icons/bs'
-import { AiOutlineInfoCircle } from 'react-icons/ai'
-import { IoIosArrowBack } from 'react-icons/io'
-
 import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
 
@@ -44,7 +40,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
       }, [selectedChat, conversationUser]);
 
       async function fetchConnectionStatus() {
-            if ( selectedChat?.isGroupChat || !conversationUser?._id) return
+            if (selectedChat?.isGroupChat || !conversationUser?._id) return
             try {
                   setIsLoadingStatus(true)
                   const connection = await userService.getUserConnectionStatus(conversationUser._id as string) as connection
@@ -84,7 +80,11 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
       if (!selectedChat) return <div></div>
       return (
             <header className='flex items-center px-2 chat-header-shadow bg-white dark:bg-dark-secondary-bg'>
-                  <IoIosArrowBack size={30} className='md:hidden text-primary dark:text-dark-primary-text ml-2 mr-4 cursor-pointer' onClick={() => setSelectedChat(null)} />
+                  <span
+                        className="material-symbols-outlined md:hidden text-3xl leading-none text-primary dark:text-dark-primary-text ml-2 mr-4 cursor-pointer"
+                        onClick={() => setSelectedChat(null)}
+                        >chevron_left
+                  </span>
                   <ProfileImage
                         className="default-profile-img w-10 h-10 max-w-none hover:scale-105"
                         src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg}
@@ -110,11 +110,8 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
                               )}
                         </div>
                         <div className='flex items-center gap-x-2'>
-                              <div className='text-primary dark:text-dark-primary-text text-2xl hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg py-2 px-2 rounded-lg cursor-pointer'>
-                                    <BsCameraVideo />
-                              </div>
-                              <div className='text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg text-2xl py-2 px-1 rounded-lg cursor-pointer' onClick={() => setChatMode('info')}>
-                                    <AiOutlineInfoCircle />
+                              <div className='flex items-center justify-center text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg leading-none p-2 rounded-xl cursor-pointer' onClick={() => setChatMode('info')}>
+                                    <span className="material-symbols-outlined">info</span>
                               </div>
                         </div>
                   </div>

@@ -5,9 +5,6 @@ import { AuthState } from '../../../context/useAuth'
 import ChatColorsPalette from './ChatColorsPalette'
 import ThemeSelector from './ThemeSelector'
 
-import FormatColorFillOutlinedIcon from '@mui/icons-material/FormatColorFillOutlined'
-import WallpaperOutlinedIcon from '@mui/icons-material/WallpaperOutlined'
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import { ContentType } from '../../../pages/ChatPage'
 
 interface SettingsProps {
@@ -36,21 +33,21 @@ export default function Settings({ setContentType }: SettingsProps): JSX.Element
                   </div>
                   <ul>
                         <li className={`settings-option ${selectedSettings === 'theme' && 'bg-gray-100 dark:bg-dark-secondary-bg'}`} onClick={() => onSelectSettings('theme')}>
-                              <FormatColorFillOutlinedIcon className='mr-4 text-inherit' />
+                              <span className="material-symbols-outlined mr-4">colors</span>
                               Theme
                         </li>
 
                         <ThemeSelector settings={selectedSettings} />
 
                         <li className={`settings-option mt-1 ${selectedSettings === 'background' && 'bg-gray-100 dark:bg-dark-secondary-bg'}`} onClick={() => onSelectSettings('background')}>
-                              <WallpaperOutlinedIcon className='mr-4 text-inherit' />
-                              Chat background
+                              <span className="material-symbols-outlined mr-4">palette</span>
+                              Chat Background Color
                         </li>
 
                         <ChatColorsPalette selectedSettings={selectedSettings} setSelectedSettings={setSelectedSettings} />
 
                         <li className='settings-option' onClick={() => setContentType('chats')}>
-                              <KeyboardArrowLeftIcon fontSize='small' className='mr-1 text-inherit' />
+                              <span className="material-symbols-outlined ">keyboard_arrow_left</span>
                               Back
                         </li>
                   </ul>

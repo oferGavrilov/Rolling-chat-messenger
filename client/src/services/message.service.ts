@@ -20,7 +20,7 @@ async function getMessages(chatId: string): Promise<IMessage[]> {
 
 async function sendMessage(
       message: {
-            content: string | File,
+            content: string | File ,
             chatId: string,
             messageType: string,
             replyMessage: IReplyMessage | null,

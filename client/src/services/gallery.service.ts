@@ -5,7 +5,8 @@ const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://server.rolling
 
 export const galleryService = {
     getGallery,
-    createGallery
+    createGallery,
+    deleteGalleryItem
 }
 
 async function getGallery(): Promise<IGallery[]> {
@@ -14,4 +15,15 @@ async function getGallery(): Promise<IGallery[]> {
 
 async function createGallery(formData: FormData): Promise<IGallery> {
     return await httpService.post(`${BASE_URL}/api/gallery`, formData)
+}
+
+async function deleteGalleryItem(id: string): Promise<boolean> {
+    try {
+
+        const response = await httpService.delete<{ success: boolean }>(`${BASE_URL}/api/gallery/${id}`, {})
+        return response.success
+    } catch (error) {
+        console.error(error)
+        return false
+    }
 }

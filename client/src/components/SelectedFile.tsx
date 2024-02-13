@@ -72,7 +72,7 @@ export default function SelectedFile (): JSX.Element {
                         </div>
                   </div>
 
-                  <section className='h-screen w-screen flex flex-col  items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
+                  <section className='h-screen w-screen flex flex-col items-center justify-center z-20' style={{ background: 'rgba(0, 0, 0, 0.9)' }}>
                         <div className='flex w-full h-full items-center justify-center opacity-0 mb-20 fade-grow-up-selected-file'>
                               {isImage ? (
                                     <img

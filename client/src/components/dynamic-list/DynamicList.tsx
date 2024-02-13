@@ -1,10 +1,6 @@
 import Chats from "./chats/Chats"
 import useStore from "../../context/store/useStore"
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
-import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
-import VideoCallIcon from '@mui/icons-material/VideoCall'
 import Settings from "./user/Settings"
-import MenuIcon from '@mui/icons-material/Menu'
 import Profile from "./user/Profile"
 import { ContentType } from "../../pages/ChatPage"
 import Gallery from "./gallery/Gallery"
@@ -21,7 +17,6 @@ function Story(): JSX.Element {
 function Videos(): JSX.Element {
       return (
             <section className='pt-7 px-4 relative'>
-
                   Coming soon...
             </section>
       )
@@ -59,43 +54,49 @@ export default function DynamicList(props: Props) {
             }
       }
 
-      function getIcon(): JSX.Element {
+      function getSearchIcon(): JSX.Element {
             switch (props.contentType) {
                   case 'chats':
-                        return <PersonAddIcon className="dark:text-dark-primary-text" />
-                  case 'videos':
-                        return <VideoCallIcon />
-                  case 'story':
-                        return <PersonAddIcon />
-                  case 'settings':
-                        return <div ></div>
-                  case 'profile':
-                        return <div className="pointer-events-none"></div>
+                        return (
+                              <div onClick={onShowSearch} className='message-filter-icon'>
+                                    <span className="material-symbols-outlined dark:text-dark-primary-text">person_add</span>
+                              </div>
+                        )
                   case 'groups':
-                        return <GroupAddOutlinedIcon className="dark:text-dark-primary-text" />
+                        return (
+                              <div onClick={onShowSearch} className='message-filter-icon'>
+                                    <span className="material-symbols-outlined dark:text-dark-primary-text">group_add</span>
+                              </div>
+                        )
+                  case 'videos':
+                  case 'story':
+                  case 'settings':
+                  case 'profile':
+                        return <div></div>
                   default:
-                        return <PersonAddIcon />
+                        return (
+                              <div onClick={onShowSearch} className='message-filter-icon'>
+                                    <span className="material-symbols-outlined dark:text-dark-primary-text">person_add</span>
+                              </div>
+                        )
             }
       }
 
       function onShowSearch() {
             props.setShowSearch(true)
-            // setSelectedChat(null)
       }
 
       return (
             <section className={`${selectedChat ? 'hidden md:block' : 'block'} 
             bg-white dark:bg-dark-primary-bg dark:text-dark-primary-text overflow-hidden
-                  w-full md:w-[364px] border-r-2 border-[#EEEEEE] dark:border-none slide-right`}>
+                  w-full md:w-[364px] xl:w-[400px] border-r-2 border-[#EEEEEE] dark:border-none slide-right`}>
 
                   <div className='flex justify-between items-center md:pb-4 pt-3 md:pt-7 mx-4'>
-                        <div className={`md:!hidden p-2 rounded-full cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation && 'pointer-events-none'}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>
-                              <MenuIcon />
+                        <div className={`md:!hidden flex items-center justify-center p-2 rounded-full leading-none cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation && 'pointer-events-none'}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>
+                              <span className="material-symbols-outlined">menu</span>
                         </div>
-                        <h2 className="text-xl md:text-3xl font-sf-regular font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>
-                        <div onClick={onShowSearch} className='message-filter-icon'>
-                              {getIcon()}
-                        </div>
+                        <h2 className="text-xl md:text-3xl font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>
+                        {getSearchIcon()}
                   </div>
 
                   {getContent()}

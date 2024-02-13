@@ -19,14 +19,14 @@ import { chatService } from "../../services/chat.service"
 
 import { IMessage, IReplyMessage } from "../../model/message.model"
 import { IUser } from "../../model/user.model"
-import { IChat, IFile } from "../../model/chat.model"
+import { IChat } from "../../model/chat.model"
 import { messageService } from "../../services/message.service"
 import Loading from "../Loading";
 
 export default function ChatInterface(): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
-      const [file, setFile] = useState<IFile | string | null>(null)
+      const [file, setFile] = useState<File | null>(null)
       const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useStore()
       const { user: loggedInUser } = AuthState()
 
@@ -111,7 +111,7 @@ export default function ChatInterface(): JSX.Element {
             message: string | File,
             messageType: "text" | "image" | "audio" | "file",
             replyMessage: IReplyMessage | null,
-            recordTimer?: number | undefined
+            size?: number
       ): Promise<void> {
             if (!selectedChat || !message) return
 
@@ -124,7 +124,7 @@ export default function ChatInterface(): JSX.Element {
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
                   replyMessage,
-                  messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
+                  messageSize: size !== undefined ? Math.floor(size) : undefined,
                   deletedBy: [],
                   isReadBy: [{ userId: loggedInUser?._id as string, readAt: new Date() }],
             }
@@ -151,7 +151,7 @@ export default function ChatInterface(): JSX.Element {
                         chatId: selectedChat._id !== 'temp-id' ? selectedChat._id : chatToUpdate?._id as string,
                         messageType: messageType,
                         replyMessage,
-                        messageSize: recordTimer !== undefined ? Math.floor(recordTimer) : undefined,
+                        messageSize: size !== undefined ? Math.floor(size) : undefined,
                   })
 
                   setMessages((prevMessages) =>

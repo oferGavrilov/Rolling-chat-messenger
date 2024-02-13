@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import mongoose, { Document, Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 
 const readReceiptSchema = new mongoose.Schema({
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -48,13 +48,14 @@ export type ReplyMessage = {
       messageType: "text" | "image" | "audio" | "file"
 }
 
-export interface IMessage extends Document {
+export interface IMessage {
       sender: string
       content: string
       chat: string
       messageType: string
       deletedBy: string[]
       isReadBy: { userId: string, readAt: Date }[]
+      replyMessage: ReplyMessage | null
       messageSize?: number
       createdAt: Date
       updatedAt: Date

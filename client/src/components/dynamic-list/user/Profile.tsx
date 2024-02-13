@@ -6,17 +6,14 @@ import { AuthState } from '../../../context/useAuth'
 import { userService } from '../../../services/user.service'
 import { IUser } from '../../../model/user.model'
 
-import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline'
 import { Tooltip } from '@mui/material'
-import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
 
 interface UserValues {
       username: string | undefined
       about: string | undefined
 }
 
-export default function Profile (): JSX.Element {
+export default function Profile(): JSX.Element {
       const { user, setUser } = AuthState()
       const [image, setImage] = useState<string>(user?.profileImg || '')
       const [editType, setEditType] = useState<'username' | 'about' | ''>('')
@@ -25,7 +22,7 @@ export default function Profile (): JSX.Element {
             about: user?.about ?? '',
       })
 
-      async function handleEdit () {
+      async function handleEdit() {
             if (!editType || !user) return
 
             const newValue = userValues[editType as keyof UserValues] as string
@@ -34,6 +31,10 @@ export default function Profile (): JSX.Element {
             const specialSymbolsRegex = /[!@#$%^&*()_+\-=[\]{}':"\\|,.<>/?]+/
             if (specialSymbolsRegex.test(newValue)) {
                   return toast.error(`Please enter a valid ${editType} without special symbols`)
+            }
+
+            if (newValue === user?.[editType]) {
+                  return toast.warn(`There is no change in ${editType}`)
             }
 
             if (newValue === user?.[editType] || newValue === '') {
@@ -46,7 +47,7 @@ export default function Profile (): JSX.Element {
             toast.success(`${editType} changed successfully`)
       }
 
-      async function handleImageChange (newImage: string): Promise<void> {
+      async function handleImageChange(newImage: string): Promise<void> {
             setImage(newImage)
             const savedImage = await userService.updateUserImage(newImage)
             const userToSave = {
@@ -65,20 +66,19 @@ export default function Profile (): JSX.Element {
                         <div className='flex items-center gap-x-2 py-5'>
                               {editType === 'username' ? (
                                     <>
-                                          <CheckIcon fontSize='small' className='text-primary cursor-pointer' onClick={handleEdit} />
+                                          <span className="material-symbols-outlined text-primary cursor-pointer" onClick={handleEdit}>check</span>
                                           <input
                                                 type="text"
                                                 className='border-b-2 w-full px-2 bg-inherit border-primary'
                                                 value={userValues.username}
                                                 onChange={(e) => setUserValues({ ...userValues, username: e.target.value })}
                                           />
-
-                                          <CloseIcon className='ml-2 !text-2xl text-red-500 cursor-pointer' onClick={() => setEditType('')} />
+                                          <span className="material-symbols-outlined text-red-500 cursor-pointer" onClick={() => setEditType('')}>close</span>
                                     </>
                               ) : (
                                     <>
                                           <Tooltip title='Edit Name' placement='top' arrow>
-                                                <ModeEditOutlineIcon fontSize='small' className='cursor-pointer' onClick={() => setEditType('username')} />
+                                                <span className="material-symbols-outlined text-xl leading-none mr-1 cursor-pointer" onClick={() => setEditType('username')}>edit</span>
                                           </Tooltip>
                                           <span className='text-gray-500 dark:text-dark-primary-text'>{user?.username}</span>
                                     </>
@@ -90,20 +90,21 @@ export default function Profile (): JSX.Element {
                               <div className='flex items-center gap-x-2 py-5'>
                                     {editType === 'about' ? (
                                           <>
-                                                <CheckIcon fontSize='small' className='text-primary cursor-pointer' onClick={handleEdit} />
+                                                <span className="material-symbols-outlined text-primary cursor-pointer" onClick={handleEdit}>check</span>
                                                 <input
                                                       type="text"
                                                       className='border-b-2 w-full px-2 bg-inherit border-primary'
                                                       value={userValues.about}
                                                       onChange={(e) => setUserValues({ ...userValues, about: e.target.value })}
                                                 />
-
-                                                <CloseIcon className='ml-2 !text-2xl text-red-500 cursor-pointer' onClick={() => setEditType('')} />
+                                                <span className="material-symbols-outlined text-red-500 cursor-pointer" onClick={() => setEditType('')}>close</span>
                                           </>
                                     ) : (
                                           <>
                                                 <Tooltip title='Edit About' placement='top' arrow>
-                                                      <ModeEditOutlineIcon fontSize='small' className='cursor-pointer' onClick={() => setEditType('about')} />
+                                                      {/* <ModeEditOutlineIcon fontSize='small' className='cursor-pointer' onClick={() => setEditType('about')} /> */}
+                                                      <span className="material-symbols-outlined text-xl leading-none mr-1 cursor-pointer" onClick={() => setEditType('about')}>edit</span>
+
                                                 </Tooltip>
                                                 <span className='text-gray-500 dark:text-dark-primary-text'>{user?.about}</span>
                                           </>

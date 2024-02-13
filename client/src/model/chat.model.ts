@@ -37,5 +37,6 @@ export type LatestMessage = {
 }
 
 export interface IFile extends File {
-      url: string
+      url?: string
+      type: string
 }

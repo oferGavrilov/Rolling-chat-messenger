@@ -62,28 +62,48 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
             return null
       }
 
-      function handleDoubleClick(message: IMessage) {
+      function handleDoubleClick(message: IMessage): void {
             if (message.deletedBy?.length) return
             onReplyMessage(message)
       }
 
-      function messageStyles({ replyMessage, messageType }: IMessage) {
+      function messageStyles({ replyMessage, messageType }: IMessage): string {
             if (replyMessage || messageType === 'image' || messageType === 'file' ||
                   (messageType === 'text' && message.content.toString().length >= 40)) {
                   return 'flex-col'
             }
             if (!incomingMessage) return 'flex-row-reverse'
+            return ''
       }
 
-      function getMessageBorderRadius(arrowDirection: 'none' | 'left' | 'right') {
+      function getMessageBorderRadius(arrowDirection: 'none' | 'left' | 'right'): string {
             if (arrowDirection === 'none') return 'rounded-xl'
             if (arrowDirection === 'left') return 'rounded-t-2xl rounded-br-2xl'
             return 'rounded-t-2xl rounded-bl-2xl'
       }
 
+      function getReceiptStatus(): ReactNode | null {
+            if (message.sender._id !== user._id) return null;
+
+            const isMessageFullyRead = message.isReadBy?.length === 2;
+            const isMessagePartiallyRead = message.isReadBy?.length === 1;
+
+            const iconBaseClass = "material-symbols-outlined text-[18px] mt-auto";
+            const fullyReadIconClass = `${iconBaseClass} text-[#00fa9a] dark:text-[#00bfff]`;
+            const partiallyReadIconClass = `${iconBaseClass} text-gray-200`;
+
+            if (isMessageFullyRead) {
+                  return <span className={fullyReadIconClass}>done_all</span>;
+            } else if (isMessagePartiallyRead) {
+                  return <span className={partiallyReadIconClass}>done_all</span>;
+            }
+
+            return null;
+      }
+
       if (!message.sender) return <DeletedMessage isUnknownUser={true} />
 
-      const incomingMessage = message.sender?._id !== user?._id
+      const incomingMessage: boolean = message.sender?._id !== user?._id
       return (
             <div className="select-none message-container" onDoubleClick={() => handleDoubleClick(message)}>
                   <div
@@ -113,7 +133,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                               {renderMessageContent(message)}
 
                               <div className={`flex my-1 ${incomingMessage ? 'mr-2 flex-row-reverse' : 'ml-2'}`}>
-                                    {!incomingMessage && <span className="material-symbols-outlined text-[14px] text-gray-200 mt-auto">done_all</span>}
+                                    {getReceiptStatus()}
                                     <span className='text-[11px] md:text-xs text-gray-200 relative mt-auto ml-2 mx-1'>
                                           {formatDate(message.createdAt)}
                                     </span>

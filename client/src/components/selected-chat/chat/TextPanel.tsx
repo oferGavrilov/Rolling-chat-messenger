@@ -23,7 +23,7 @@ import { IFile } from '../../../model/chat.model'
 type Timer = NodeJS.Timeout | number
 
 interface Props {
-      setFile: React.Dispatch<React.SetStateAction<IFile | string | null>>
+      setFile: React.Dispatch<React.SetStateAction<IFile | null>>
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
       onSendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessageId: IReplyMessage | null, recordingTimer?: number) => void
 }

@@ -1,11 +1,10 @@
 import { IChat } from "./chat.model"
 
 export interface IMessage {
-      count?: number
       _id: string
       chatId: string
       chat?: IChat
-      content: string | File
+      content: string | File 
       createdAt: string
       sender: {
             _id: string

@@ -30,7 +30,7 @@ export default function Navigation({
       setShowNavigation
 }: Props): JSX.Element {
       const { user, setJustLoggedIn } = AuthState()
-      const { setSelectedChat } = useStore()
+      const { setSelectedChat, setSelectedImage } = useStore()
       const navigate = useNavigate()
       const navigationRef = useRef<HTMLElement>(null)
       const enableClickOutside = window.innerWidth < 768
@@ -53,6 +53,7 @@ export default function Navigation({
       }, [setShowNavigation])
 
       function onSelectContentType(contentType: ContentType) {
+            setSelectedImage(null)
             if (window.innerWidth < 768) {
                   setShowNavigation(false)
             }
@@ -95,11 +96,11 @@ export default function Navigation({
                                           <span className="material-symbols-outlined">group</span>
                                     </div>
                               </Tooltip>
-                              {/* <Tooltip title="Gallery" arrow placement='right'>
+                              <Tooltip title="Gallery" arrow placement='right'>
                                     <div className={`navigation-icon ${contentType === 'gallery' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('gallery')}>
                                           <span className="material-symbols-outlined">crop</span>
                                     </div>
-                              </Tooltip> */}
+                              </Tooltip>
                               <Tooltip title="Stories" arrow placement='right'>
                                     <div className={`navigation-icon  ${contentType === 'story' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('story')}>
                                           <Story />
