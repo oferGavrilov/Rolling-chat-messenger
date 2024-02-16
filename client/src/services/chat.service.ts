@@ -53,7 +53,7 @@ async function createChat(userId: string): Promise<IChat> {
 
 async function removeChat(chatId: string, userId: string) {
       try {
-            return httpService.put('/api/chat/remove', { chatId, userId })
+            return httpService.put(`${BASE_URL}/api/chat/remove`, { chatId, userId })
       } catch (error) {
             console.log(error)
             throw new Error('Failed to remove chat.')
