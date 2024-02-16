@@ -1,10 +1,9 @@
 import { AuthState } from "../../../../context/useAuth"
 import useStore from "../../../../context/store/useStore"
 import { IMessage, IReplyMessage } from "../../../../model/message.model"
-import { isLastMessageFromUser } from "../../../../utils/functions"
+import { formatMessageSentDate, hasDayPassed, isLastMessageFromUser } from "../../../../utils/functions"
 import MessagePreview from "./MessagePreview"
 import ProfileImage from "../../../common/ProfileImage"
-import MessageDateSeparator from "./MessageDateSeparator"
 import { messageService } from "../../../../services/message.service"
 import socketService from "../../../../services/socket.service"
 import { toast } from "react-toastify"
@@ -44,6 +43,13 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
             }
       }
 
+      const getSeparatorDate = (prevMessage: IMessage | undefined, currMessage: IMessage, idx: number): string => {
+            if (idx === 0 || (prevMessage && hasDayPassed(prevMessage.createdAt, currMessage.createdAt))) {
+                  return formatMessageSentDate(currMessage.createdAt);
+            }
+            return '';
+      };
+
       function isUserKicked(): boolean {
             if (!selectedChat) return false;
             return selectedChat.kickedUsers?.some(kickedUser => kickedUser.userId === user?._id);
@@ -52,9 +58,7 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
       if (!messages || !user) return <div></div>
 
       return (
-            <section className={`py-6 ${replyMessage && 'mb-16'}`}>
-
-
+            <section className={`pb-6 ${replyMessage ? 'mb-16' : ''}`}>
                   {messages.map((message, idx) => {
                         // Logics to determine if the message is the last one sent by the sender in the entire message array
                         const isUserMessage = message.sender._id === user._id;
@@ -62,10 +66,13 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
                         const shouldShowArrow = isLastMessageFromUser(messages, idx, message.sender._id) || isFollowedByDifferentSender;
                         const arrowDirection = shouldShowArrow ? (isUserMessage ? 'right' : 'left') : 'none';
 
-                        return (
+                        // Logics to determine if between the messages there should be a date separator
+                        const formattedDate = getSeparatorDate(messages[idx - 1], message, idx);
+                        const displayDateSeparator = !!formattedDate;
 
-                              <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3">
-                                    <div className="flex relative">
+                        return (
+                              <div key={message._id} className="flex items-end gap-x-2 py-[2px] px-3 relative">
+                                    <div className={`flex relative ${displayDateSeparator ? 'mt-9' : ''}`}>
                                           {message.sender._id !== user._id && isLastMessageFromUser(messages, idx, message.sender._id) && (
                                                 <div>
                                                       <ProfileImage
@@ -77,17 +84,17 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
                                                 </div>
                                           )}
                                     </div>
+                                    {displayDateSeparator && (
+                                          <div className="absolute top-0 left-1/2 -translate-x-1/2">
+                                                <div className="w-max mx-auto mt-4">
+                                                      <div className="bg-gray-400 text-white text-sm px-2 rounded-full select-none">
+                                                            <span>{formattedDate}</span>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                    )}
 
-                                    <div className="flex flex-col w-full relative">
-
-                                          {/* Message Time */}
-                                          <MessageDateSeparator
-                                                prevMessage={messages[idx - 1]}
-                                                currMessage={message}
-                                                idx={idx}
-                                          />
-
-                                          {/* Message */}
+                                    <div className={`flex flex-col w-full relative ${displayDateSeparator ? 'mt-9' : ''}`}>
                                           <MessagePreview
                                                 message={message}
                                                 onReplyMessage={onReplyMessage}
@@ -100,6 +107,7 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
 
                   })}
 
+                  {/* If The User has been kicked from group */}
                   {selectedChat?.isGroupChat && isUserKicked() && (
                         <div className="mx-auto text-center bg-gray-500 w-max py-2 px-4 my-4 rounded-full">
                               <span className="text-white text-sm">You were kicked from this chat</span>

@@ -264,7 +264,7 @@
       .message-container:hover .message-menu-icon:hover { 
       
             height: 27px;
-            & svg {
+            & span {
                   font-size: 1.2rem !important;
             }
       }

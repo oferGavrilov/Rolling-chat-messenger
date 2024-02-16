@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { toast } from 'react-toastify'
+import { userService } from './user.service'
 // import { userService } from './user.service'
 
 const env = import.meta.env.VITE_NODE_ENV
@@ -54,8 +55,8 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
                   if (status === 401) {
                         // when user is logged in but with expired tokens
                         if (err.response.data.message === 'expired') {
-                              // await userService.logout()
-                              // window.location.assign('/auth')
+                              await userService.logout()
+                              window.location.assign('/auth')
                         } else {
                               toast.warn(err.response.data.message || 'You are not logged in.')
                         }

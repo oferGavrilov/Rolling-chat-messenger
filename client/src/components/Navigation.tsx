@@ -87,12 +87,12 @@ export default function Navigation({
                   <div className="flex flex-col justify-between h-full">
                         <div className="flex flex-col gap-y-4">
                               <Tooltip title="Messages" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'chats' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('chats')}>
+                                    <div className={`navigation-icon ${contentType === 'chats' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('chats')}>
                                           <BsChatText size={20} />
                                     </div>
                               </Tooltip>
                               <Tooltip title="Groups" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'groups' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('groups')}>
+                                    <div className={`navigation-icon ${contentType === 'groups' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('groups')}>
                                           <span className="material-symbols-outlined">group</span>
                                     </div>
                               </Tooltip>
@@ -102,19 +102,19 @@ export default function Navigation({
                                     </div>
                               </Tooltip> */}
                               <Tooltip title="Stories" arrow placement='right'>
-                                    <div className={`navigation-icon  ${contentType === 'story' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('story')}>
+                                    <div className={`navigation-icon  ${contentType === 'story' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('story')}>
                                           <Story />
                                     </div>
                               </Tooltip>
                               <Tooltip title="Videos" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'videos' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('videos')}>
+                                    <div className={`navigation-icon ${contentType === 'videos' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('videos')}>
                                           <BsCameraVideo size={20} />
                                     </div>
                               </Tooltip>
                         </div>
                         <div className="flex flex-col ">
                               <Tooltip title="Settings" arrow placement='right'>
-                                    <div className={`navigation-icon ${contentType === 'settings' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('settings')}>
+                                    <div className={`navigation-icon ${contentType === 'settings' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('settings')}>
                                           <FiSettings className="text-2xl" />
                                     </div>
                               </Tooltip>

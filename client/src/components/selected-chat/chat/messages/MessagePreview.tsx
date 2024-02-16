@@ -106,12 +106,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
       const incomingMessage: boolean = message.sender?._id !== user?._id
       return (
             <div className="select-none message-container" onDoubleClick={() => handleDoubleClick(message)}>
-                  <div
-                        className={`select-text relative w-max flex items-center max-w-[75%] text-white 
-                                    ${getMessageBorderRadius(arrowDirection)}
-                                    ${message.replyMessage?._id && 'flex-col'}
-                                    ${(message.sender._id === user._id) ? 'out-going-message' : 'incoming-message'}`}
-                  >
+                  <div className={`select-text relative w-max flex items-center max-w-[75%] text-white ${getMessageBorderRadius(arrowDirection)} ${message.replyMessage?._id ? 'flex-col' : ''} ${(message.sender._id === user._id) ? 'out-going-message' : 'incoming-message'}`}>
                         {message.replyMessage?._id && (
                               <ReplyMessage
                                     message={message}
@@ -134,7 +129,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
 
                               <div className={`flex my-1 ${incomingMessage ? 'mr-2 flex-row-reverse' : 'ml-2'}`}>
                                     {getReceiptStatus()}
-                                    <span className='text-[11px] md:text-xs text-gray-200 relative mt-auto ml-2 mx-1'>
+                                    <span className='text-[11px] lg:text-xs text-gray-200 relative mt-auto mx-1'>
                                           {formatDate(message.createdAt)}
                                     </span>
                               </div>

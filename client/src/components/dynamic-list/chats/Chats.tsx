@@ -115,7 +115,7 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
                   <div className='p-2 mx-4 text-sm lg:text-md flex'>
                         Sort by
                         <div className='px-2 relative'>
-                              <span className={`flex items-center text-primary font-semibold cursor-pointer hover:underline ${showSortModal && 'pointer-events-none'}`} onClick={() => setShowSortModal((prev) => !prev)}>
+                              <span className={'flex items-center text-primary font-semibold cursor-pointer hover:underline' + `${showSortModal ? 'pointer-events-none' : ''}`} onClick={() => setShowSortModal((prev) => !prev)}>
                                     {!sort ? 'None' : sort}
                                     <KeyboardArrowUpRoundedIcon fontSize='small' className={`!transition-transform duration-700 ${showSortModal ? 'rotate-180' : ''} `} />
                               </span>
@@ -124,9 +124,9 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
                                     ref={modalRef}
                                     className={`sort-list ${showSortModal ? 'w-auto max-h-[300px]' : 'max-h-0 py-0'}`}
                               >
-                                    <li className={`sort-option  ${sort === 'Newest' && 'sort-option-active'}`} onClick={() => onSetSort('Newest')}>Newest</li>
-                                    <li className={`sort-option border-y dark:border-white ${sort === 'Oldest' && 'sort-option-active'}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
-                                    <li className={`sort-option ${!sort && 'sort-option-active'}`} onClick={() => onSetSort(null)}>None</li>
+                                    <li className={`sort-option  ${sort === 'Newest' ? 'sort-option-active' : ''}`} onClick={() => onSetSort('Newest')}>Newest</li>
+                                    <li className={`sort-option border-y dark:border-white ${sort === 'Oldest' ? 'sort-option-active' : ''}`} onClick={() => onSetSort('Oldest')}>Oldest</li>
+                                    <li className={`sort-option ${!sort ? 'sort-option-active' : ''}`} onClick={() => onSetSort(null)}>None</li>
                               </ul>
                         </div>
                   </div>

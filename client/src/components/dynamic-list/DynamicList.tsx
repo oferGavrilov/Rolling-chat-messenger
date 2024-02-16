@@ -92,7 +92,7 @@ export default function DynamicList(props: Props) {
                   w-full md:w-[364px] xl:w-[400px] border-r-2 border-[#EEEEEE] dark:border-none slide-right`}>
 
                   <div className='flex justify-between items-center md:pb-4 pt-3 md:pt-7 mx-4'>
-                        <div className={`md:!hidden flex items-center justify-center p-2 rounded-full leading-none cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation && 'pointer-events-none'}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>
+                        <div className={`md:!hidden flex items-center justify-center p-2 rounded-full leading-none cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation ? 'pointer-events-none' : ''}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>
                               <span className="material-symbols-outlined">menu</span>
                         </div>
                         <h2 className="text-xl md:text-3xl font-bold">{props.contentType.charAt(0).toUpperCase() + props.contentType.slice(1)}</h2>

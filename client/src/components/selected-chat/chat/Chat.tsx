@@ -66,8 +66,7 @@ export default function Chat({ setChatMode, messages }: Props): JSX.Element {
                   <div className="chat-bg-img" style={{opacity: chatBackgroundColor.opacity }}/>
 
                   <div
-                        className={`overflow-y-auto overflow-x-hidden slide-left h-full bg-no-repeat bg-cover bg-center scroll-smooth 
-                                    ${loadingMessages && 'blur-[2px]'}`}
+                        className={`overflow-y-auto overflow-x-hidden slide-left h-full bg-no-repeat bg-cover bg-center scroll-smooth ${loadingMessages ? 'blur-[2px]' : ''}`}
                         ref={chatRef}
                   >
                         {messages &&

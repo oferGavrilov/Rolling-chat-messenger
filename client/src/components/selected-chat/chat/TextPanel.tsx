@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 
 import AddFileModal from './AddFileModal'
 import AudioRecorder from './AudioRecorder'
@@ -10,8 +10,6 @@ import socketService from '../../../services/socket.service'
 import { uploadAudio } from '../../../utils/cloudinary'
 
 import MessageArrow from '../../svg/MessageArrow'
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
 import SendIcon from '@mui/icons-material/Send'
 
 import EmojiPicker, { Theme } from 'emoji-picker-react'
@@ -28,7 +26,7 @@ interface Props {
       onSendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessageId: IReplyMessage | null, recordingTimer?: number) => void
 }
 
-export default function TextPanel ({
+export default function TextPanel({
       setFile,
       setChatMode,
       onSendMessage
@@ -47,17 +45,17 @@ export default function TextPanel ({
       const { selectedChat, replyMessage, setReplyMessage } = useStore()
       const { user: loggedInUser } = AuthState()
 
-      async function handleSubmit (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) {
-            e.preventDefault()
-            if (!newMessage || !selectedChat) return
-            onSendMessage(newMessage, 'text', replyMessage ? replyMessage : null, undefined)
-            setNewMessage('')
-            setTyping(false)
+      const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement> | React.FormEvent<HTMLTextAreaElement>) => {
+            e.preventDefault();
+            if (!newMessage.trim() || !selectedChat) return;
 
-            socketService.emit('stop typing', { chatId: selectedChat?._id, userId: loggedInUser?._id })
-      }
+            onSendMessage(newMessage.trim(), 'text', replyMessage || null);
+            setNewMessage('');
+            setTyping(false);
+            socketService.emit('stop typing', { chatId: selectedChat._id, userId: loggedInUser?._id });
+      }, [newMessage, onSendMessage, replyMessage, selectedChat, loggedInUser]);
 
-      function typingHandler (e: React.ChangeEvent<HTMLTextAreaElement>) {
+      const typingHandler = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
             const { value } = e.target
             setNewMessage(value)
 
@@ -81,7 +79,7 @@ export default function TextPanel ({
                   socketService.emit('stop typing', { chatId: selectedChat?._id, userId: loggedInUser?._id })
                   setTyping(false)
             }, timerLength)
-      }
+      }, [typing, selectedChat, loggedInUser]);
 
       const handleSendAudio = async (audioBlob: Blob, recordingTimer: number): Promise<void> => {
             try {
@@ -103,12 +101,12 @@ export default function TextPanel ({
                   <div className='flex items-center md:pl-4 gap-x-3 overflow-x-hidden bg-gray-50 dark:bg-dark-secondary-bg relative'>
                         {!isRecording && <AddFileModal setFile={setFile} setChatMode={setChatMode} />}
 
-                        <form onSubmit={handleSubmit} className='w-full flex items-center' id='text-panel-form'>
+                        <form onSubmit={handleSubmit} className='w-full flex items-center h-full py-3' id='text-panel-form'>
                               {!isRecording && (
 
-                                    <div className='relative w-full flex'>
-                                          <div className={`bg-light-input-bg dark:bg-dark-input-bg rounded-l-xl flex justify-center items-center pl-3 ${showEmojiPicker && 'pointer-events-none'}`}>
-                                                <InsertEmoticonIcon className='text-primary cursor-pointer' onClick={() => setShowEmojiPicker(!showEmojiPicker)} />
+                                    <div className='relative w-full h-full flex items-center'>
+                                          <div className={`bg-light-input-bg dark:bg-dark-input-bg rounded-l-xl flex justify-center items-center pl-3 h-full ${showEmojiPicker ? 'pointer-events-none' : ''}`}>
+                                                <span className="material-symbols-outlined text-primary cursor-pointer" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>add_reaction</span>
                                           </div>
                                           {showEmojiPicker && <div ref={emojiRef} className='fixed bottom-20 transition-transform duration-200 left-4 md:left-auto'>
                                                 <EmojiPicker
@@ -140,7 +138,7 @@ export default function TextPanel ({
                               ) : (
                                     <button disabled={isMessageEmpty} type='submit'
                                           className={`mx-2 text-white transition-all duration-200 ease-in whitespace-nowrap bg-primary hover:bg-default-hover-bg p-2 rounded-full
-                                    ${isMessageEmpty && 'disabled:!text-gray-400 disabled:cursor-not-allowed '}`
+                                    ${isMessageEmpty ? 'disabled:!text-gray-400 disabled:cursor-not-allowed' : ''}`
                                           }>
                                           <SendIcon />
                                     </button>
@@ -150,7 +148,7 @@ export default function TextPanel ({
                         <div className={`fixed w-full left-0 ease-out text-white rounded-t-xl transition-all duration-300 ${replyMessage ? 'bottom-[64px] max-h-20' : 'max-h-0 [&>*]:p-0 [&>*]:hidden'}`}>
                               <div className="flex items-center h-full bg-gray-50 dark:bg-dark-secondary-bg pt-3 pr-12">
                                     <div className="flex items-center justify-center w-20 ">
-                                          <CloseRoundedIcon className='text-[#727e86] !text-3xl cursor-pointer' onClick={() => setReplyMessage(null)} />
+                                          <span className="material-symbols-outlined text-[#727e86] text-4xl cursor-pointer" onClick={() => setReplyMessage(null)}>close_small</span>
                                     </div>
 
                                     <div className='flex bg-[#d2d7de] dark:bg-dark-primary-bg px-4 rounded-lg w-full h-full p-2 border-r-4 border-[#ffb703] dark:border-primary'>

@@ -20,34 +20,38 @@ const defaultUser: IUser = {
 
 const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
       const { setSelectedChat, selectedChat } = useStore()
-      const { user: loggedinUser } = AuthState()
+      const { user: loggedInUser } = AuthState()
 
+      const getSender = useCallback((users: IUser[]): IUser => {
+            const user = users.find((currUser) => currUser._id !== loggedInUser?._id)
+            return user || defaultUser
+      }, [loggedInUser?._id])
 
-      const getSender = useCallback(
-            (users: IUser[]): IUser => {
-                  const user = users.find((currUser) => currUser._id !== loggedinUser?._id)
-                  return user || defaultUser
-            },
-            [loggedinUser?._id]
-      )
+      const handleSelectChat = useCallback(() => {
+            if (selectedChat?._id === chat._id) return
 
-      const handleSelectChat =() => {
-            if(selectedChat?._id === chat._id) return
-            
-            let updatedChat = chat
-            // for case the other user account has been deleted or removed from the system
-            if (chat.users.length === 1) {
-                  updatedChat = { ...chat, users: [...chat.users, defaultUser] }
-            }
-            setSelectedChat(updatedChat)
-      }
+            const updatedChat = getUpdatedChat(chat);
+            setSelectedChat(updatedChat);
 
-      if (!loggedinUser) return null
+      }, [chat, selectedChat, setSelectedChat])
+
+      const getUpdatedChat = (chat: IChat): IChat => {
+            return chat.users.length === 1 ? { ...chat, users: [...chat.users, defaultUser] } : chat;
+      };
+
+      if (!loggedInUser) return null
+
+      const isSelectedChat = selectedChat?._id === chat._id;
+      const chatClassName = `flex items-center rounded-l-lg justify-between pl-3 pr-4 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200 overflow-hidden ${isSelectedChat ? 'bg-gray-100 dark:bg-dark-secondary-bg selected-chat' : ''}`;
 
       return (
-            <li onClick={handleSelectChat}
-                  className={`flex items-center rounded-l-lg  justify-between pl-3 pr-4 py-3 my-1 hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg cursor-pointer transition-colors duration-200 overflow-hidden
-                   ${selectedChat?._id === chat._id && 'bg-gray-100 dark:bg-dark-secondary-bg selected-chat'}`}>
+            <li
+                  onClick={handleSelectChat}
+                  className={chatClassName}
+                  role='button'
+                  tabIndex={0}
+                  aria-label={`Select chat with ${chat.isGroupChat ? chat.chatName : getSender(chat.users).username}`}
+            >
                   <div className="flex items-center w-full">
                         <div className='h-[40px] w-[40px] lg:h-11 lg:w-11 overflow-hidden rounded-full select-none flex-shrink-0'>
                               <Avatar
@@ -63,7 +67,7 @@ const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
                                     </span>
                               </div>
                               <div className='flex justify-between'>
-                                    <LatestMessagePreview chat={chat} loggedinUser={loggedinUser} unreadMessagesCount={chat.unreadMessagesCount} selectedChat={selectedChat} />
+                                    <LatestMessagePreview chat={chat} loggedinUser={loggedInUser} unreadMessagesCount={chat.unreadMessagesCount} selectedChat={selectedChat} />
                               </div>
                         </div>
                   </div>
@@ -72,4 +76,3 @@ const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
 }
 
 export default React.memo(ChatPreview)
-

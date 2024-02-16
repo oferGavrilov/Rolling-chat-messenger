@@ -1,7 +1,7 @@
 import { IMessage } from "../../../../model"
 import { formatMessageSentDate, hasDayPassed } from "../../../../utils/functions"
 
-interface IMessageDateSeperator {
+interface IMessageDateSeparator {
     prevMessage: IMessage
     currMessage: IMessage
     idx: number
@@ -19,7 +19,7 @@ function getFormattedDateIfDayPassed(prevMessage: IMessage, currMessage: IMessag
     return ''
 }
 
-const MessageDateSeparator: React.FC<IMessageDateSeperator> = ({ prevMessage, currMessage, idx }): JSX.Element | null => {
+const MessageDateSeparator: React.FC<IMessageDateSeparator> = ({ prevMessage, currMessage, idx }): JSX.Element | null => {
     const formattedDate = getFormattedDateIfDayPassed(prevMessage, currMessage, idx)
     if (!formattedDate) return null
 

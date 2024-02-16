@@ -1,5 +1,4 @@
-import { useRef, useState } from 'react'
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
+import { useCallback, useRef, useState } from 'react'
 import { useClickOutside } from '../../../../custom-hook/useClickOutside'
 import { IMessage, IReplyMessage } from '../../../../model/message.model'
 import useStore from '../../../../context/store/useStore'
@@ -21,7 +20,7 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
 
       useClickOutside(menuRef, () => setIsOpen(false), isOpen)
 
-      function onReplyMessage(): void {
+      const onReplyMessage = useCallback((): void => {
             if (message.deletedBy.length > 0) return
             const replyMessage: IReplyMessage = {
                   _id: message._id,
@@ -31,23 +30,27 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
             }
             setReplyMessage(replyMessage)
             setIsOpen(false)
-      }
+      }, [message, setReplyMessage])
 
-      function onCopyToClipboard(): void {
-            navigator.clipboard.writeText(message.content as string)
-            setIsOpen(false)
-            toast.success('Copied to clipboard', { autoClose: 1500 })
-      }
+      const onCopyToClipboard = useCallback((): void => {
+            navigator.clipboard.writeText(message.content as string).then(() => {
+                  toast.success('Copied to clipboard', { autoClose: 1500 })
+            }).catch(() => {
+                  toast.error('Failed to copy to clipboard', { autoClose: 1500 })
+            }).finally(() => {
+                  setIsOpen(false)
+            })
+      }, [message.content])
 
-      function removeMessage(): void {
+      const removeMessage = useCallback((): void => {
             onRemoveMessage(message, user?._id as string)
             setIsOpen(false)
-      }
+      }, [message, onRemoveMessage, user?._id])
 
       return (
             <>
-                  <div className={`message-menu-icon ${incomingMessage ? 'right-0 rounded-bl-2xl rounded-tr-3xl rounded-br-md' : 'left-1 rounded-br-2xl rounded-tl-xl'} ${isOpen && 'pointer-events-none'}`} onClick={() => setIsOpen(true)}>
-                        <KeyboardArrowDownRoundedIcon fontSize="small" className='!text-sm !transition-all !duration-150' />
+                  <div className={`message-menu-icon ${incomingMessage ? 'right-0 rounded-bl-2xl rounded-tr-3xl rounded-br-md' : 'left-1 rounded-br-2xl rounded-tl-xl'}${isOpen ? 'pointer-events-none' : ''}`} onClick={() => setIsOpen(true)}>
+                        <span className="material-symbols-outlined text-sm transition-all duration-150">expand_more</span>
                   </div>
 
                   <div ref={menuRef} className={`message-menu-container ${incomingMessage ? 'incoming-message' : 'outgoing-message'}`}>
