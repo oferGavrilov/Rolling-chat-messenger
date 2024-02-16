@@ -26,6 +26,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
                         decoded = jwt.verify(accessToken, process.env.JWT_SECRET) as DecodedToken
                   } catch (error) {
                         decoded = null // Invalid access token
+                        console.log('access token verify', error)
                   }
             }
 
@@ -57,8 +58,8 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
                         req.user = await User.findById(decodedRefresh.id).select('-password')
                         return next()
                   } catch (error) {
-                        console.error(error)
-                        return res.status(401).json({ message: 'Not authorized, token failed' })
+                        console.error('refresh token',error)
+                        return res.status(401).json({ message: 'expired' })
                   }
             }
 
