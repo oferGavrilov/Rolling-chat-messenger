@@ -35,7 +35,7 @@ export async function sendMessageService(senderId: string, content: string, chat
             let message = await Message.create(newMessage)
 
             message = await message.populate('sender', 'username profileImg')
-            message = await message.populate({ path: 'chat', populate: { path: 'users', select: '-password' } })
+            message = await message.populate({ path: 'chat', populate: { path: 'users', select: '-password -refreshToken' } })
             message = await message.populate({
                   path: 'replyMessage',
                   select: '_id content sender',

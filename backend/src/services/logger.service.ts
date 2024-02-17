@@ -23,9 +23,9 @@ const logger = createLogger({
     level: process.env.NODE_ENV === 'production' ? 'error' : 'debug',
     transports: [
         dailyRotateFileTransport,
-        new transports.Console({
+        ...(process.env.NODE_ENV === 'production' ? [] : [new transports.Console({
             format: consoleFormat,
-        }),
+        })]),
     ],
 });
 
