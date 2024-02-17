@@ -15,7 +15,7 @@ export interface IMessage {
       messageType: "text" | "image" | "audio" | "file"
       replyMessage: IReplyMessage | null
       messageSize?: number
-      deletedBy: string[]
+      deletedBy: { userId: string, deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[]
       isReadBy: { userId: string, readAt: Date }[]
 }
 

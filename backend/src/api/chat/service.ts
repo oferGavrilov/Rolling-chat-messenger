@@ -92,6 +92,52 @@ export async function getUserChatsService(userId: string): Promise<ChatDocument[
       }
 }
 
+export async function removeChatService(chatId: string, userId: string): Promise<string> {
+      try {
+            const chat = await Chat.findById(chatId)
+
+            if (!chat) {
+                  throw new Error('Chat not found')
+            }
+
+            // check if the user is already in the deletedBy array
+            if (chat.deletedBy.some((user) => user?.userId.toString() === userId)) {
+                  throw new Error('Chat already deleted')
+            }
+
+            chat.deletedBy.push({ userId: new Types.ObjectId(userId), deletedAt: new Date() })
+            await chat.save();
+
+            // update the messages in the chat to be deleted by the user with the deletionType 'forMe'
+            const messages = await Message.find({
+                  chat: chatId,
+                  deletedBy: {
+                        $not: {
+                              $elemMatch: { userId: userId, deletionType: 'forMe' }
+                        }
+                  }
+            }).select('_id').lean();
+
+            // Now that you have messages without a "forMe" deletion by this user, update them
+            const messageIdsToUpdate = messages.map(message => message._id);
+
+            if (messageIdsToUpdate.length > 0) {
+                  await Message.updateMany(
+                        { _id: { $in: messageIdsToUpdate } },
+                        { $push: { deletedBy: { userId: new Types.ObjectId(userId), deletionType: 'forMe' } } }
+                  );
+            }
+
+            return chatId
+      } catch (error: unknown) {
+            if (error instanceof Error) {
+                  throw handleErrorService(error)
+            } else {
+                  throw error
+            }
+      }
+}
+
 export async function createGroupChatService(users: User[], chatName: string, groupImage: string | undefined, currentUser: User): Promise<ChatDocument> {
 
       const usersIds = users.map((user) => user._id)
@@ -273,46 +319,6 @@ export async function leaveGroupService(chatId: string, userId: string): Promise
 
             if (!updatedChat) {
                   throw new Error('Could not leave group')
-            }
-
-            return chatId
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  throw handleErrorService(error)
-            } else {
-                  throw error
-            }
-      }
-}
-
-export async function removeChatService(chatId: string, userId: string): Promise<string> {
-      try {
-            const chat = await Chat.findById(chatId)
-
-            if (!chat) {
-                  throw new Error('Chat not found')
-            }
-
-            // check if the user is already in the deletedBy array
-            if (chat.deletedBy.some((user) => user?.userId.toString() === userId)) {
-                  throw new Error('Chat already deleted')
-            }
-
-
-            chat.deletedBy.push({ userId: new Types.ObjectId(userId), deletedAt: new Date() })
-
-            const allUsersDeleted = chat.users.every((user) => chat.deletedBy.some((deletedUser) => deletedUser.userId.toString() === user.toString()))
-            // const allUsersDeleted = chat.users.every((user) => chat.deletedBy.includes(user.toString()))
-
-            if (allUsersDeleted) {
-                  await Message.deleteMany({ chat: new Types.ObjectId(chatId) })
-                  const deleteResult = await Chat.deleteOne({ _id: new Types.ObjectId(chatId) })
-
-                  if (deleteResult.deletedCount !== 1) {
-                        console.log(`Chat with ID ${chatId} could not be deleted.`)
-                  }
-            } else {
-                  await chat.save()
             }
 
             return chatId

@@ -12,9 +12,12 @@ interface ChatMessagePreviewProps {
 }
 
 const LatestMessageContent: React.FC<{ message: IMessage }> = ({ message }) => {
-    if (message.deletedBy?.includes(message.sender._id)) {
+    const isMessageDeletedForUser = message.deletedBy?.some(deletion =>
+        deletion.userId === message.sender._id && deletion.deletionType === 'forEveryone' || deletion.deletionType === 'forEveryoneAndMe')
+
+    if (isMessageDeletedForUser) {
         return (
-            <div className="text-base flex items-center gap-x-1 text-gray-400 font-thin">
+            <div className="flex items-center gap-x-1 text-sm text-gray-400 font-thin">
                 <NotInterestedIcon className='!text-base' />
                 This message was deleted
             </div>

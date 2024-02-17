@@ -13,7 +13,10 @@ const messageModel = new mongoose.Schema({
       messageType: { type: String, default: 'text' },
       replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
       messageSize: { type: Number, default: 0 },
-      deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
+      deletedBy: [{
+            userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            deletionType: { type: String, enum: ['forMe', 'forEveryone', 'forEveryoneAndMe'] }
+      }],
       isReadBy: [readReceiptSchema]
 }, { timestamps: true })
 
@@ -24,6 +27,7 @@ interface CustomBody {
       messageType?: string;
       replyMessage?: ReplyMessage;
       messageSize?: number;
+      deletionType?: 'forMe' | 'forEveryone';
 }
 
 export interface RequestMessage extends Omit<Request, 'body'> {
@@ -53,7 +57,8 @@ export interface IMessage {
       content: string
       chat: string
       messageType: string
-      deletedBy: string[]
+      // deletedBy: string[]
+      deletedBy: { userId: string, deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[]
       isReadBy: { userId: string, readAt: Date }[]
       replyMessage: ReplyMessage | null
       messageSize?: number

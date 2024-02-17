@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 interface Props {
       message: IMessage
       incomingMessage: boolean
-      onRemoveMessage: (message: IMessage, removerId: string) => void
+      onRemoveMessage: (message: IMessage, deleteAction: 'forMe' | 'forEveryone') => void
 }
 
 export default function MessageMenu({ message, incomingMessage, onRemoveMessage }: Props): JSX.Element {
@@ -42,10 +42,10 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
             })
       }, [message.content])
 
-      const removeMessage = useCallback((): void => {
-            onRemoveMessage(message, user?._id as string)
+      const removeMessage = useCallback((deleteAction: 'forMe' | 'forEveryone'): void => {
+            onRemoveMessage(message, deleteAction)
             setIsOpen(false)
-      }, [message, onRemoveMessage, user?._id])
+      }, [message, onRemoveMessage])
 
       return (
             <>
@@ -60,11 +60,14 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
                                           <li className='message-menu-option rounded-t-lg' onClick={onReplyMessage}>Reply</li>
                                           <li className='message-menu-option'>Forward</li>
                                           <li className='message-menu-option' onClick={onCopyToClipboard}>{message.messageType === 'image' ? 'Copy URL' : 'Copy'}</li>
-                                          {message.sender._id === user?._id && <li className='message-menu-option' onClick={removeMessage}>Delete</li>}
+                                          {message.sender._id === user?._id && (
+                                                <li className='message-menu-option' onClick={() => removeMessage('forEveryone')}>Delete For Everyone</li>
+                                          )}
+                                          <li className='message-menu-option' onClick={() => removeMessage('forMe')}>Delete For Me</li>
                                     </>
 
                               ) : (
-                                    <li className='message-menu-option rounded-lg' onClick={removeMessage}>Delete</li>
+                                    <li className='message-menu-option rounded-lg' onClick={() => removeMessage('forMe')}>Delete</li>
                               )}
                         </ul>
                   </div>

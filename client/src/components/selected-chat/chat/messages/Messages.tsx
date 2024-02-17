@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function Messages({ messages, setChatMode }: Props): JSX.Element {
-      const { selectedChat, replyMessage, setReplyMessage, setMessages } = useStore()
+      const { selectedChat, replyMessage, setReplyMessage, setMessages, removeMessage } = useStore()
       const { user } = AuthState()
 
       function onReplyMessage(message: IMessage): void {
@@ -31,12 +31,18 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
             }
       }
 
-      async function onRemoveMessage(message: IMessage, removerId: string): Promise<void> {
+      async function onRemoveMessage(message: IMessage, deleteAction: 'forMe' | 'forEveryone'): Promise<void> {
+            if (!user || !selectedChat) return
             try {
-                  await messageService.removeMessage(message._id, selectedChat?._id as string)
-                  setMessages(messages.map((msg) => msg._id === message._id ? { ...msg, deletedBy: [...msg.deletedBy, removerId] } : msg))
+                  await messageService.removeMessage(message._id, selectedChat._id, deleteAction)
+                  if (deleteAction === 'forEveryone') {
+                        removeMessage(message._id, selectedChat._id, user._id, deleteAction)
+                        socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat._id, removerId: user._id, chatUsers: selectedChat.users, deleteAction })
 
-                  socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat?._id, removerId, chatUsers: selectedChat?.users })
+                  } else if (deleteAction === 'forMe') {
+                        // await messageService.removeMessage(message._id, selectedChat._id, deleteAction)
+                        setMessages(messages.filter((msg) => msg._id !== message._id))
+                  }
                   toast.success('Message deleted', { autoClose: 1500 })
             } catch (error) {
                   console.log(error)

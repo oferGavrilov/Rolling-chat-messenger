@@ -13,7 +13,7 @@ interface ChatActions {
     updateChatWithLatestMessage: (latestMessage: IMessage) => void
     setSelectedChat: (chat: IChat | null) => void
     setReplyMessage: (message: IReplyMessage | null) => void
-    removeMessage: (messageId: string, chatId: string, removerId: string) => void
+    removeMessage: (messageId: string, chatId: string, removerId: string, deleteAction: 'forMe' | 'forEveryone') => void
     updateChatReadReceipts: (chatId: string, userId: string) => void;
     bringChatToTop: (message: IMessage) => void
     updateChatsWithNewMessage: (newMessage: IMessage) => void
@@ -93,21 +93,25 @@ export const createChatSlice = (set, get): IChatStore => ({
             return { ...state, messages: newMessages };
         });
     },
-    removeMessage: (messageId: string, chatId: string, removerId: string) => {
+    removeMessage: (messageId: string, chatId: string, removerId: string, deletionType: 'forMe' | 'forEveryone') => {
         set((state: ChatState) => {
-            // Update messages
+            const deletionObject = { userId: removerId, deletionType };
+
+            // Update messages with the correct deletion object
             const updatedMessages = state.messages.map(msg =>
                 msg._id === messageId
-                    ? { ...msg, deletedBy: [...msg.deletedBy, removerId] }
+                    ? { ...msg, deletedBy: [...msg.deletedBy, deletionObject] }
                     : msg
             );
-
-            // Update chats
+            // Update latestMessage in chats with the correct deletion object
             const updatedChats = state.chats.map(chat =>
                 chat._id === chatId && chat.latestMessage?._id === messageId
                     ? {
                         ...chat,
-                        latestMessage: { ...chat.latestMessage, deletedBy: [...chat.latestMessage.deletedBy, removerId] }
+                        latestMessage: {
+                            ...chat.latestMessage,
+                            deletedBy: [...chat.latestMessage.deletedBy, deletionObject]
+                        }
                     }
                     : chat
             );

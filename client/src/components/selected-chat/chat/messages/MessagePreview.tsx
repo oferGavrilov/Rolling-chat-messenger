@@ -18,7 +18,7 @@ import { DeletedMessage, TextMessage, ImageMessage, FileMessage, AudioMessage } 
 interface Props {
       message: IMessage
       onReplyMessage: (message: IMessage) => void
-      onRemoveMessage: (message: IMessage, removerId: string) => void
+      onRemoveMessage: (message: IMessage, deleteAction: 'forMe' | 'forEveryone') => void
       arrowDirection: 'none' | 'left' | 'right'
 }
 
@@ -27,8 +27,9 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
       const { setSelectedFile } = useStore()
 
       const renderMessageContent = (message: IMessage): ReactNode => {
+            if (!user) return null
             // If the message is deleted by the sender, show a message that the message was deleted
-            if (message.deletedBy?.length) {
+            if (message.deletedBy.some(deletion => deletion.userId === user._id)) {
                   return (
                         <DeletedMessage />
                   )
@@ -36,12 +37,12 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
 
             if (message.messageType === 'text') {
                   return <TextMessage message={message} />
-            }
-            else if (message.messageType === 'image' && typeof message.content === 'string') {
+
+            } else if (message.messageType === 'image' && typeof message.content === 'string') {
                   return <ImageMessage
                         message={message}
                         setSelectedFile={setSelectedFile}
-                        userId={user?._id as string}
+                        userId={user._id}
                   />
             } else if (message.messageType === 'file') {
                   return <FileMessage
@@ -50,7 +51,6 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                   />
 
             } else if (message.messageType === 'audio') {
-                  if (!user) return null
                   return (
                         <AudioMessage
                               message={message}
@@ -85,6 +85,8 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
       function getReceiptStatus(): ReactNode | null {
             if (message.sender._id !== user._id) return null;
 
+            // if (message.deletedBy.some(deletion => deletion.userId === user._id)) return null;
+
             const isMessageFullyRead = message.isReadBy?.length === 2;
             const isMessagePartiallyRead = message.isReadBy?.length === 1;
 
@@ -96,9 +98,9 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                   return <span className={fullyReadIconClass}>done_all</span>;
             } else if (isMessagePartiallyRead) {
                   return <span className={partiallyReadIconClass}>done_all</span>;
+            } else {
+                  return <span className={partiallyReadIconClass}>done</span>;
             }
-
-            return null;
       }
 
       if (!message.sender) return <DeletedMessage isUnknownUser={true} />

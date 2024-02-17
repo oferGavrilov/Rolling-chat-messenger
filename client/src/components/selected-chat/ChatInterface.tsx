@@ -2,12 +2,6 @@ import { Suspense, lazy, useEffect, useRef, useState } from "react"
 import { AuthState } from "../../context/useAuth"
 import useStore from "../../context/store/useStore"
 
-// import ChatHeader from "./chat/ChatHeader"
-// import Info from "./info/Index"
-// import Chat from "./chat/Chat"
-// import FileEditor from "./file/FileEditor"
-// import TextPanel from "./chat/TextPanel"
-
 const ChatHeader = lazy(() => import("./chat/ChatHeader"));
 const Info = lazy(() => import("./info/Index"));
 const Chat = lazy(() => import("./chat/Chat"));
@@ -68,14 +62,14 @@ export default function ChatInterface(): JSX.Element {
                   setSelectedChat(updatedChat)
             }
 
-            const handleRemoveMessage = (messageId: string, chatId: string, removerId: string) => {
-                  removeMessage(messageId, chatId, removerId);
+            const handleRemoveMessage = (messageId: string, chatId: string, removerId: string, deleteAction: 'forMe' | 'forEveryone') => {
+                  removeMessage(messageId, chatId, removerId, deleteAction);
             }
 
             socketService.on('user-kicked', ({ chatId, userId, kickerId }) => handleKickUser(chatId, userId, kickerId, selectedChat))
             socketService.on('user-joined', ({ chatId, user }) => handleAddUser(chatId, user, selectedChat))
             socketService.on('user-left', ({ chatId, userId }) => handleLeftUser(chatId, userId, selectedChat))
-            socketService.on('message removed', ({ messageId, chatId, removerId }) => handleRemoveMessage(messageId, chatId, removerId))
+            socketService.on('message removed', ({ messageId, chatId, removerId, deleteAction }) => handleRemoveMessage(messageId, chatId, removerId, deleteAction))
 
             fetchConversationUser()
             setChatMode('chat')
@@ -90,8 +84,9 @@ export default function ChatInterface(): JSX.Element {
 
       useEffect(() => {
             socketService.on('message received', (newMessage: IMessage) => {
-                  setMessages((prevMessages) => [...prevMessages, newMessage])
+                  console.log('newMessage:', newMessage)
                   updateChatWithLatestMessage(newMessage)
+                  setMessages((prevMessages) => [...prevMessages, newMessage])
             })
 
             return () => {
@@ -113,11 +108,11 @@ export default function ChatInterface(): JSX.Element {
             replyMessage: IReplyMessage | null,
             size?: number
       ): Promise<void> {
-            if (!selectedChat || !message) return
+            if (!selectedChat || !message || !loggedInUser) return
 
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
-                  sender: loggedInUser!,
+                  sender: loggedInUser,
                   messageType,
                   content: message,
                   chatId: selectedChat._id,
@@ -135,30 +130,38 @@ export default function ChatInterface(): JSX.Element {
             bringChatToTop(optimisticMessage)
 
             try {
-                  let chatToUpdate: IChat | undefined
+                  let updatedChat: IChat | undefined = selectedChat
                   // Chats that are not created yet have _id = 'temp-id'
                   if (selectedChat._id === 'temp-id') {
-                        const targetUser: string = selectedChat.users.find((user) => user._id !== loggedInUser?._id)?._id as string
-                        chatToUpdate = await chatService.createChat(targetUser)
-                        if (!chatToUpdate) throw new Error('Failed to create chat')
-                        setSelectedChat(chatToUpdate)
-                        chatToUpdate.latestMessage = optimisticMessage
-                        setChats([chatToUpdate, ...chats])
-                  }
+                        const targetUser: string = selectedChat.users.find(user => user._id !== loggedInUser._id)?._id as string;
+                        const newChat = await chatService.createChat(targetUser);
+                        if (!newChat) throw new Error('Failed to create chat');
 
-                  const messageToUpdate = await messageService.sendMessage({
+                        updatedChat = newChat;
+                        setSelectedChat(newChat);
+                        setChats([newChat, ...chats]);
+                        socketService.emit('join chat', { chatId: newChat._id, userId: loggedInUser._id });
+                  }
+                  const realMessage = await messageService.sendMessage({
                         content: message,
-                        chatId: selectedChat._id !== 'temp-id' ? selectedChat._id : chatToUpdate?._id as string,
+                        chatId: updatedChat._id,
                         messageType: messageType,
                         replyMessage,
                         messageSize: size !== undefined ? Math.floor(size) : undefined,
                   })
 
-                  setMessages((prevMessages) =>
-                        prevMessages.map((message) => (message._id === 'temp-id' ? messageToUpdate : message))
-                  )
+                  // Update messages with the real message details
+                  setMessages(prevMessages =>
+                        prevMessages.map(msg => msg._id === 'temp-id' ? { ...msg, ...realMessage } : msg)
+                  );
 
-                  socketService.emit('new message in room', { chatId: selectedChat._id, message: messageToUpdate, chatUsers: selectedChat.users })
+                  setChats(prevChats =>
+                        prevChats.map(chat =>
+                              chat._id === updatedChat?._id ? { ...chat, latestMessage: realMessage } : chat
+                        )
+                  );
+
+                  socketService.emit('new message in room', { chatId: updatedChat._id, message: realMessage, chatUsers: updatedChat.users });
 
             } catch (error) {
                   console.error('Failed to send message:', error)

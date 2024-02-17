@@ -176,6 +176,7 @@ export async function removeChat(req: RequestChat, res: Response) {
       const userId = req.user?._id
 
       if (!chatId) res.status(400).json({ message: 'No chat id sent to the server' })
+      if (chatId === 'temp-id') return res.status(200).send({ message: 'Chat removed' })
 
       try {
             await removeChatService(chatId, userId)

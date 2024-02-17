@@ -27,7 +27,7 @@ export async function sendMessageService(senderId: string, content: string, chat
                   replyMessage: replyMessage ? replyMessage : null,
                   messageSize: messageSize ? messageSize : undefined,
                   deletedBy: [],
-                  isReadBy: [],
+                  isReadBy: [{ userId: senderId, readAt: new Date()}],
                   createdAt: new Date(),
                   updatedAt: new Date()
             }
@@ -68,11 +68,14 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
             const chat = await Chat.findById(chatId)
             if (!chat) throw new NotFoundError('Chat not found')
 
-            const chatUserIds = chat.users.map((user) => user.toString())
+            // const chatUserIds = chat.users.map((user) => user.toString())
 
             const messages = await Message.find({
                   chat: chatId,
-                  deletedBy: { $not: { $all: chatUserIds } } // all messages that are not deleted by all users in chat
+                  $nor: [
+                        { deletedBy: { $elemMatch: { userId, deletionType: 'forMe' } } },
+                        { deletedBy: { $elemMatch: { userId, deletionType: 'forEveryoneAndMe' } } }
+                  ]
             })
                   .populate('sender', 'username profileImg')
                   .populate({
@@ -104,30 +107,42 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
       }
 }
 
-export async function removeMessageService(messageId: string, chatId: string, userId: string): Promise<void> {
+export async function removeMessageService(messageId: string, chatId: string, userId: string, deletionType: 'forMe' | 'forEveryone'): Promise<void> {
       try {
-            const chat = await Chat.findById(chatId)
-            if (!chat) throw new NotFoundError('Chat not found')
+            const chat = await Chat.findById(chatId);
+            if (!chat) throw new NotFoundError('Chat not found');
 
-            const message = await Message.findById(messageId)
-            if (!message) throw new NotFoundError('Message not found')
+            const message = await Message.findById(messageId);
+            if (!message) throw new NotFoundError('Message not found');
 
-            if (message.deletedBy.includes(userId)) throw new ForbiddenError('Message already deleted')
+            const userDeletionIndex = message.deletedBy.findIndex(deletion => deletion.userId.toString() === userId.toString());
 
-            message.deletedBy.push(userId)
-
-            if (message.deletedBy.length === chat.users.length) {
-                  await Message.findByIdAndDelete(messageId)
-            } else {
-                  await message.save()
+            // If the message is already deleted by the user for themselves, throw an error
+            if (userDeletionIndex !== -1 && message.deletedBy[userDeletionIndex].deletionType === 'forMe' && deletionType === 'forMe') {
+                  throw new ForbiddenError('Message already deleted for you');
             }
 
-      } catch (error: unknown) {
+            // If the message is deleted by the user for everyone, and now they want to delete for themselves, adjust the type
+            if (userDeletionIndex !== -1 && message.deletedBy[userDeletionIndex].deletionType === 'forEveryone' && deletionType === 'forMe') {
+                  message.deletedBy[userDeletionIndex].deletionType = 'forEveryoneAndMe'; // Adjust deletion type accordingly
+            } else if (userDeletionIndex === -1) { // If there's no deletion record for this user, add one
+                  message.deletedBy.push({ userId, deletionType });
+            }
+
+            // Perform deletion if all users have marked the message for deletion in some form
+            if (message.deletedBy.filter(deletion => deletion.deletionType === 'forMe' || deletion.deletionType === 'forEveryoneAndMe').length === chat.users.length) {
+                  await Message.findByIdAndDelete(messageId);
+            } else {
+                  await message.save();
+            }
+
+      } catch (error) {
             if (error instanceof NotFoundError || error instanceof ForbiddenError) {
                   throw error;
             } else {
-                  logger.error(`Error in removeMessageService: ${error}`);
+                  console.error(`Error in removeMessageService: ${error}`);
                   throw new InternalServerError('Something went wrong in removeMessageService');
             }
       }
 }
+

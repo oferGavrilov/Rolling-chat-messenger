@@ -237,7 +237,7 @@
             rounded-lg
             dark:bg-dark-dropdown-bg;
             &.incoming-message {
-                  @apply -right-20 md:-right-28;
+                  @apply -right-20 md:-right-28 lg:-right-32;
                   & li {
                        @apply 
                        bg-gray-500 hover:bg-gray-600
@@ -245,10 +245,10 @@
                   }
             }
             &.outgoing-message {
-                  @apply -left-[7.1rem];
+                  @apply -left-[7.1rem] md:-left-[8rem] lg:-left-[9.5rem];
                   & li {
                         @apply
-                        bg-[#23adfd] hover:bg-primary
+                        bg-[#9ca3af] hover:bg-primary
                         dark:bg-dark-outgoing-chat-bg dark:hover:bg-dark-outgoing-chat-reply-bg;
                   }
             }
@@ -256,7 +256,7 @@
       .message-menu-list {
             @apply  
             transition-all duration-200 overflow-hidden
-            text-center w-28 uppercase text-xs  
+            w-28 md:w-36 lg:w-40 text-xs  
             shadow-lg rounded-b-lg
             shadow-gray-400
             dark:shadow-dark-dropdown-bg;
@@ -270,8 +270,8 @@
       }
       .message-menu-option {
             @apply
-            p-3
-            border-b-2 border-white last:border-b-0
+            py-2 px-4
+            border-b border-gray-300 last:border-b-0
             transition-colors duration-200 cursor-pointer;
       }
       .message-menu-icon {

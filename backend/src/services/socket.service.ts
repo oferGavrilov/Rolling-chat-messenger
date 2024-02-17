@@ -138,11 +138,11 @@ export function setupSocketAPI(http: HttpServer) {
                   })
             })
 
-            socket.on('message-removed', ({ messageId, chatId, removerId, chatUsers }: { messageId: string, chatId: string, removerId: string, chatUsers: User[] }) => {
+            socket.on('message-removed', ({ messageId, chatId, removerId, chatUsers, deleteAction }: { messageId: string, chatId: string, removerId: string, chatUsers: User[], deleteAction: 'forMe' | 'forEveryone' }) => {
                   console.log(`user: ${removerId} removed message: ${messageId} from chat: ${chatId}`)
 
                   chatUsers.forEach((user: User) => {
-                        socket.in(user._id).emit('message removed', { messageId, chatId, removerId })
+                        socket.in(user._id).emit('message removed', { messageId, chatId, removerId, deleteAction })
                   })
             })
 
