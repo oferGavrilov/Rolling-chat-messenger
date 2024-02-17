@@ -33,6 +33,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
             socketService.on('stop typing', () => setIsTyping(false));
 
             fetchConnectionStatus()
+
             return () => {
                   socketService.on('stop typing', () => setIsTyping(false));
                   setIsTyping(false)
@@ -40,7 +41,8 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
       }, [selectedChat, conversationUser]);
 
       async function fetchConnectionStatus() {
-            if (selectedChat?.isGroupChat || !conversationUser?._id) return
+            if (selectedChat?.isGroupChat || !conversationUser?._id || selectedChat?.isNewChat) return
+            
             try {
                   setIsLoadingStatus(true)
                   const connection = await userService.getUserConnectionStatus(conversationUser._id as string) as connection
@@ -83,7 +85,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
                   <span
                         className="material-symbols-outlined md:hidden text-3xl leading-none text-primary dark:text-dark-primary-text ml-2 mr-4 cursor-pointer"
                         onClick={() => setSelectedChat(null)}
-                        >chevron_left
+                  >chevron_left
                   </span>
                   <ProfileImage
                         className="default-profile-img w-10 h-10 max-w-none hover:scale-105"

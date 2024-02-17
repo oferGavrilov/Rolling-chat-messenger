@@ -4,16 +4,14 @@ import { IUser } from "../../../model/user.model"
 
 import ChatInfo from "./ChatInfo"
 import GroupInfo from "./GroupInfo"
-import { IMessage } from "../../../model/message.model"
 
 interface Props {
       conversationUser: IUser | null
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
-      messages: IMessage[]
 }
 
-export default function Info ({ conversationUser, setChatMode, messages }: Props): JSX.Element {
-      const { selectedChat } = useStore()
+export default function Info ({ conversationUser, setChatMode }: Props): JSX.Element {
+      const { selectedChat, messages } = useStore()
       const [isAddUsers, setIsAddUsers] = useState<boolean>(false)
 
       return (

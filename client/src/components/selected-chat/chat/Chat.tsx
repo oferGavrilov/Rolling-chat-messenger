@@ -3,18 +3,16 @@ import useStore from '../../../context/store/useStore'
 import { AuthState } from '../../../context/useAuth'
 import Messages from './messages/Messages'
 import socketService from '../../../services/socket.service'
-import { IMessage } from '../../../model/message.model'
 import { scrollToBottom } from '../../../utils/functions'
 import { messageService } from '../../../services/message.service'
 
 interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
-      messages: IMessage[]
 }
 
-export default function Chat({ setChatMode, messages }: Props): JSX.Element {
+export default function Chat({ setChatMode }: Props): JSX.Element {
       const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
-      const { selectedChat, replyMessage, setReplyMessage, setMessages, updateChatReadReceipts } = useStore()
+      const { selectedChat, replyMessage, setReplyMessage, messages, setMessages, updateChatReadReceipts } = useStore()
       const { user: loggedInUser, chatBackgroundColor } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
 
@@ -25,7 +23,7 @@ export default function Chat({ setChatMode, messages }: Props): JSX.Element {
                   if (selectedChat._id === 'temp-id') return
                   socketService.emit('join chat', { chatId: selectedChat._id, userId: loggedInUser._id })
                   setReplyMessage(null)
-                  await fetchMessages()
+                  // await fetchMessages()
             }
 
             joinChat()
@@ -41,8 +39,8 @@ export default function Chat({ setChatMode, messages }: Props): JSX.Element {
       }, [messages, replyMessage])
 
       const fetchMessages = useCallback(async () => {
-            if (!selectedChat || selectedChat._id === 'temp-id' || !loggedInUser) {
-                  setMessages([])
+            if (!selectedChat || selectedChat._id === 'temp-id' || !loggedInUser || selectedChat?.isNewChat) {
+                  // setMessages([])
                   return
             }
 
@@ -60,6 +58,11 @@ export default function Chat({ setChatMode, messages }: Props): JSX.Element {
                   setLoadingMessages(false)
             }
       }, [selectedChat, loggedInUser, setMessages, updateChatReadReceipts]);
+
+      useEffect(() => {
+            fetchMessages();
+      }, [fetchMessages]);
+
 
       return (
             <>

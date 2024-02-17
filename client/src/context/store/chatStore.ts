@@ -171,6 +171,7 @@ export const createChatSlice = (set, get): IChatStore => ({
             users: [user, loggedInUser],
             kickedUsers: [],
             unreadMessagesCount: 0,
+            isNewChat: true
         };
 
         set({ selectedChat: newChat });

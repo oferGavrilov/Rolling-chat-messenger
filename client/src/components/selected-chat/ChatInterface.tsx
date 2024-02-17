@@ -16,12 +16,13 @@ import { IUser } from "../../model/user.model"
 import { IChat } from "../../model/chat.model"
 import { messageService } from "../../services/message.service"
 import Loading from "../Loading";
+import { toast } from "react-toastify";
 
 export default function ChatInterface(): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "send-file">('chat')
       const [file, setFile] = useState<File | null>(null)
-      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, chats, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useStore()
+      const { selectedChat, setSelectedChat, updateChatWithLatestMessage, setChats, setReplyMessage, messages, setMessages, removeMessage, bringChatToTop } = useStore()
       const { user: loggedInUser } = AuthState()
 
       const conversationUserRef = useRef<IUser | null>(null)
@@ -92,7 +93,7 @@ export default function ChatInterface(): JSX.Element {
             return () => {
                   socketService.off('message received')
             }
-      }, [selectedChat])
+      }, [selectedChat, setMessages, updateChatWithLatestMessage])
 
       function fetchConversationUser(): void {
             const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0]
@@ -135,11 +136,14 @@ export default function ChatInterface(): JSX.Element {
                   if (selectedChat._id === 'temp-id') {
                         const targetUser: string = selectedChat.users.find(user => user._id !== loggedInUser._id)?._id as string;
                         const newChat = await chatService.createChat(targetUser);
-                        if (!newChat) throw new Error('Failed to create chat');
+                        if (!newChat) {
+                              toast.error('Failed to create chat');
+                              return;
+                        }
 
                         updatedChat = newChat;
-                        setSelectedChat(newChat);
-                        setChats([newChat, ...chats]);
+                        setSelectedChat({ ...newChat, isNewChat: true }); // add this flag to prevent fetching messages because the chat is getting a new id
+                        setChats(prevChats => [newChat, ...prevChats]);
                         socketService.emit('join chat', { chatId: newChat._id, userId: loggedInUser._id });
                   }
                   const realMessage = await messageService.sendMessage({
@@ -191,13 +195,11 @@ export default function ChatInterface(): JSX.Element {
                         {chatMode === 'chat' && (
                               <Chat
                                     setChatMode={setChatMode}
-                                    messages={messages}
                               />
                         )}
                         {chatMode === 'info' && (
                               <Info
                                     conversationUser={conversationUser}
-                                    messages={messages}
                                     setChatMode={setChatMode}
                               />
                         )}

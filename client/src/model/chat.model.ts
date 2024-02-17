@@ -14,6 +14,7 @@ export interface IChat {
       deletedBy?: string[]
       kickedUsers: KickedUsers[]
       unreadMessagesCount: number
+      isNewChat?: boolean
 }
 
 type KickedUsers = {
