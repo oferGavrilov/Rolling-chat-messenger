@@ -2,7 +2,7 @@ import { User } from "../../models/user.model.js"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
 import { ConflictError, NotFoundError, UnauthorizedError } from "../../utils/errorHandler.js"
 import jwt from 'jsonwebtoken'
-import { generateToken } from "src/config/generateToken.js"
+import { generateToken } from "../../config/generateToken.js"
 interface SignUpResult {
     user: {
         _id: string
