@@ -1,11 +1,12 @@
 import type { Response, Request, CookieOptions } from "express"
 import { generateRefreshToken, generateToken } from "../../config/generateToken.js"
 import type { AuthenticatedRequest } from "../../models/types.js"
-import { loginUser, resetPasswordConfirm, signUpService } from "./service.js"
+import { loginUser, resetPasswordConfirm, signUpService, validateTokenService } from "./service.js"
 import { EmailService } from "../../services/email.service.js"
 import logger from "../../services/logger.service.js"
 import { User } from "../../models/user.model.js"
 import { ConflictError, InternalServerError } from "../../utils/errorHandler.js"
+import jwt from "jsonwebtoken"
 import moment from "moment"
 
 export async function signUp(req: AuthenticatedRequest, res: Response) {
@@ -76,30 +77,43 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
 
 export async function login(req: AuthenticatedRequest, res: Response) {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ msg: 'Please enter all fields' })
+            return res.status(400).json({ msg: 'Please enter all fields' });
         }
 
-        const result = await loginUser(email, password)
+        const result = await loginUser(email, password);
 
         if (result.error) {
-            return res.status(401).json({ msg: result.error })
+            return res.status(401).json({ msg: result.error });
         }
 
-        const { user } = result
+        const { user } = result;
 
         if (user) {
-
-            const accessToken: string = generateToken(user._id)  // Short-lived
-
             let refreshToken: string | undefined = user.refreshToken;
+            let shouldUpdateRefreshToken = false;
 
-            if (!refreshToken) {
+            // Check if the refresh token is expired
+            if (refreshToken) {
+                try {
+                    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+                } catch (error) {
+                    // Token is expired or invalid
+                    shouldUpdateRefreshToken = true;
+                }
+            } else {
+                // No refresh token present
+                shouldUpdateRefreshToken = true;
+            }
+
+            if (shouldUpdateRefreshToken) {
                 refreshToken = generateRefreshToken(user._id); // Long-lived
                 await User.findByIdAndUpdate(user._id, { refreshToken });
             }
+
+            const accessToken: string = generateToken(user._id); // Short-lived
 
             const isProduction: boolean = process.env.NODE_ENV === 'production';
 
@@ -108,7 +122,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
                 secure: isProduction,
                 sameSite: "lax",
                 path: '/',
-            }
+            };
 
             res.cookie('accessToken', accessToken, {
                 ...cookiesConfig,
@@ -126,17 +140,48 @@ export async function login(req: AuthenticatedRequest, res: Response) {
                 email: user.email,
                 profileImg: user.profileImg,
                 about: user.about,
-            })
+            });
         } else {
-            throw new Error('User not found')
+            throw new Error('User not found');
         }
     } catch (error: unknown) {
         if (error instanceof Error) {
-            logger.error('Error during login:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
+            logger.error('Error during login:', error);
+            return res.status(500).json({ msg: 'Internal server error' });
         } else {
-            throw error
+            throw error;
         }
+    }
+}
+
+export async function validateUser(req: AuthenticatedRequest, res: Response) {
+    try {
+        const { accessToken, refreshToken } = req.cookies
+        const validationResponse = await validateTokenService(accessToken, refreshToken)
+        if (validationResponse.isValid) {
+            if (validationResponse.accessToken) {
+                const isProduction: boolean = process.env.NODE_ENV === 'production';
+
+                const cookiesConfig: CookieOptions = {
+                    httpOnly: true,
+                    secure: isProduction,
+                    sameSite: "lax",
+                    path: '/',
+                }
+
+                res.cookie('accessToken', validationResponse.accessToken, {
+                    ...cookiesConfig,
+                    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+                });
+            }
+            res.json({isValid: true, user: validationResponse.user})
+        } else {
+            res.status(401).json({isValid: false, message: 'expired'})
+        }
+
+    } catch (error) {
+        logger.error('Error during validateUser:', error)
+        return res.status(500).json({ msg: 'Internal server error' })
     }
 }
 

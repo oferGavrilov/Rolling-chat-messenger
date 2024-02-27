@@ -47,11 +47,11 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
                   console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, message: ${err.message} with data: `, data)
                   console.dir(err)
             }
-
             console.log('status', err?.response?.status)
             console.log('message', err.response.data.message)
             if (err.response) {
                   const status = err.response.status
+                  console.log(err.response)
                   if (status === 401) {
                         // when user is logged in but with expired tokens
                         if (err.response.data.message === 'expired') {

@@ -19,7 +19,13 @@ export const userService = {
       saveBackgroundColor,
       getBackgroundColor,
       getTheme,
-      saveTheme
+      saveTheme,
+      validateUser
+}
+
+type ValidationResponse = {
+      isValid: boolean,
+      user?: IUser,
 }
 
 async function getUsers(): Promise<IUser[]> {
@@ -36,7 +42,7 @@ async function loginSignUp(credentials: FormData, formMode: string) {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
 
       try {
-            const data = await httpService.post(`${BASE_URL}${path}`, credentials) 
+            const data = await httpService.post(`${BASE_URL}${path}`, credentials)
 
             if (data) {
                   _saveToLocalStorage(data)
@@ -84,8 +90,15 @@ async function logout(): Promise<void> {
       }
 }
 
-async function getUserConnectionStatus(userId: string) {
+async function validateUser(): Promise<ValidationResponse> {
+      try {
+            return await httpService.get<ValidationResponse>(`${BASE_URL}/api/auth/validate`)
+      } catch (error) {
+            throw error
+      }
+}
 
+async function getUserConnectionStatus(userId: string) {
       return await httpService.get(`${BASE_URL}/api/user/status/${userId}`)
 }
 

@@ -85,7 +85,6 @@ export default function ChatInterface(): JSX.Element {
 
       useEffect(() => {
             socketService.on('message received', (newMessage: IMessage) => {
-                  console.log('newMessage:', newMessage)
                   updateChatWithLatestMessage(newMessage)
                   setMessages((prevMessages) => [...prevMessages, newMessage])
             })

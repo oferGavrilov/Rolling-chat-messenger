@@ -24,7 +24,7 @@ export const AppRoutes = () => {
         <Routes>
 
           <Route index element={<Home />} />
-          <Route path="/" element={<Layout />} >
+          <Route path="/" element={<Layout />}>
             <Route path="/chat" element={<ChatPage />} />
           </Route>
 

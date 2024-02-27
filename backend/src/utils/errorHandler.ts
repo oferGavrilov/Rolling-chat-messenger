@@ -38,6 +38,17 @@ export class ValidationError extends Error {
     }
 }
 
+// 401
+export class UnauthorizedError extends Error {
+    statusCode: number;
+
+    constructor(message = 'Unauthorized') {
+        super(message);
+        this.name = "UnauthorizedError";
+        this.statusCode = 401;
+    }
+}
+
 export class InternalServerError extends Error {
     statusCode: number;
 

@@ -1,7 +1,8 @@
 import { User } from "../../models/user.model.js"
 import { handleErrorService } from "../../middleware/errorMiddleware.js"
-import { ConflictError, NotFoundError } from "../../utils/errorHandler.js"
-
+import { ConflictError, NotFoundError, UnauthorizedError } from "../../utils/errorHandler.js"
+import jwt from 'jsonwebtoken'
+import { generateToken } from "src/config/generateToken.js"
 interface SignUpResult {
     user: {
         _id: string
@@ -62,6 +63,35 @@ export async function loginUser(email: string, password: string): Promise<{ user
             profileImg: user.profileImg,
             about: user.about,
             refreshToken: user.refreshToken
+        }
+    }
+}
+
+export async function validateTokenService(accessToken: string, refreshToken: string) {
+    try {
+        const decodedAccess = jwt.verify(accessToken, process.env.JWT_SECRET) as { id: string }
+        const user = await User.findById(decodedAccess.id)
+
+        if (!user) {
+            throw new Error('User not found')
+        }
+
+        return { isValid: true, user, accessToken }
+    } catch (accessError) {
+        try {
+            const decodedRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as { id: string }
+            const user = await User.findOne({ _id: decodedRefresh.id, refreshToken })
+
+            if (!user) {
+                throw new UnauthorizedError('User not found')
+            }
+
+            const newAccessToken = generateToken(user._id)
+
+            return { isValid: true, user, accessToken: newAccessToken }
+        } catch (refreshError) {
+            console.log('refreshError ', refreshError)
+            return { isValid: false }
         }
     }
 }

@@ -45,7 +45,7 @@ export class EmailService {
 
             const resetLink = process.env.NODE_ENV === 'development'
                 ? `http://localhost:3000/reset-password/${resetToken}`
-                : `https://yourproductiondomain.com/reset-password/${resetToken}`
+                : `https://www.rolling-chat.com/reset-password/${resetToken}`
 
             const html = this.getResetPasswordHtml(resetLink)
 

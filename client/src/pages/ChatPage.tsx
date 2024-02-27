@@ -6,10 +6,10 @@ import DynamicList from '../components/dynamic-list/DynamicList'
 import ChatInterface from '../components/selected-chat/ChatInterface'
 import SelectedFile from '../components/SelectedFile'
 
-import useStore  from '../context/store/useStore'
+import useStore from '../context/store/useStore'
 import { AuthState } from '../context/useAuth'
 import { userService } from '../services/user.service'
-import socketService from '../services/socket.service'
+// import socketService from '../services/socket.service'
 import SelectedImage from '../components/gallery-editor/selected-image'
 
 export type ContentType = 'chats' | 'groups' | 'gallery' | 'videos' | 'story' | 'settings' | 'profile'
@@ -21,11 +21,12 @@ export default function ChatPage(): JSX.Element {
       const { selectedChat, selectedFile, selectedImage } = useStore()
       const { user } = AuthState()
 
-      useEffect(() => {
-            if (user) {
-                  socketService.setup(user._id)
-            }
-      }, [])
+      //todo: remove this 
+      // useEffect(() => {
+      //       if (user) {
+      //             socketService.setup(user._id)
+      //       }
+      // }, [])
 
       useEffect(() => {
             if (!user) return

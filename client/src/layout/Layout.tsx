@@ -7,32 +7,41 @@ import socketService from "../services/socket.service"
 
 
 export const Layout: React.FC = () => {
-    const { setUser, justLoggedIn, setJustLoggedIn } = AuthState()
+    const { setUser, justLoggedIn, setJustLoggedIn, user } = AuthState()
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
     useEffect(() => {
         async function checkUser() {
-            const loggedInUser = userService.getLoggedinUser()
-
-            if (loggedInUser) {
-                setUser(loggedInUser)
-
+            try {
                 if (justLoggedIn) {
-                    socketService.setup(loggedInUser._id)
-                    socketService.login(loggedInUser._id)
-                    setJustLoggedIn(false)
-                }
-            } else {
-                navigate('/auth')
-            }
+                    if (!user) return navigate('/auth')
 
-            setLoading(false)
+                    setUser(user)
+                    socketService.login(user._id)
+                    setJustLoggedIn(false)
+                    return
+                }
+
+                const response = await userService.validateUser()
+
+                if (response.isValid && response.user) {
+                    setUser(response.user)
+
+                } else {
+                    // navigate('/auth')
+                }
+            } catch (err) {
+                console.error('Error validating user:', err)
+                // navigate('/auth')
+            } finally {
+                setLoading(false)
+            }
         }
 
         checkUser()
+    }, [])
 
-    }, [setUser, navigate])
 
     if (loading) {
         return <Loading />
