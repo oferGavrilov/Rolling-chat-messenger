@@ -5,7 +5,6 @@ import { AuthState } from "../context/useAuth"
 import Loading from "../components/Loading"
 import socketService from "../services/socket.service"
 
-
 export const Layout: React.FC = () => {
     const { setUser, justLoggedIn, setJustLoggedIn, user } = AuthState()
     const [loading, setLoading] = useState(true)
@@ -33,7 +32,8 @@ export const Layout: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Error validating user:', err)
-                // navigate('/auth')
+                console.clear()
+                navigate('/auth')
             } finally {
                 setLoading(false)
             }

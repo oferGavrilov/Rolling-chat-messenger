@@ -78,7 +78,7 @@ export default function Navigation({
                               </Link>
                         </Tooltip>
                         <ProfileImage
-                              className="w-11 h-11 default-profile-img hover:scale-105 hover:shadow-lg shadow-gray-30 dark:shadow-gray-900"
+                              className={`w-11 h-11 default-profile-img hover:scale-105 hover:shadow-lg shadow-gray-30 dark:shadow-gray-900 ${contentType === 'profile' ? 'outline-2 outline-double outline-primary' : ''}`}
                               src={user.profileImg}
                               alt={user.username}
                               onClick={() => setContentType('profile')}

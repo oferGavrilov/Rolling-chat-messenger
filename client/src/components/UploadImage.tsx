@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded'
-import { cloudinaryService } from '../services/cloudinary.service'
+import { uploadImg } from '../utils/cloudinary'
 
 interface Props {
       image: string
@@ -17,31 +16,14 @@ export default function UploadImage({ image, setImage, editImage }: Props) {
 
             try {
                   setImageLoading(true)
-                  const formData = new FormData()
-                  formData.append('image', file)
-
-                  const newImageUrl = await cloudinaryService.uploadImageToCloudinary(formData)
-                  console.log(newImageUrl)
-                  setImage(newImageUrl)
-                  if (editImage) editImage('image', newImageUrl)
-
-
+                  const data = await uploadImg(file)
+                  setImage(data?.url || image)
+                  if (editImage) editImage('image', data.url)
             } catch (err) {
                   console.log(err)
             } finally {
                   setImageLoading(false)
             }
-
-            // try {
-            //       setImageLoading(true)
-            //       const data = await uploadImg(file)
-            //       setImage(data?.url || image)
-            //       if (editImage) editImage('image', data.url)
-            // } catch (err) {
-            //       console.log(err)
-            // } finally {
-            //       setImageLoading(false)
-            // }
       }
       return (
             <label
@@ -54,7 +36,7 @@ export default function UploadImage({ image, setImage, editImage }: Props) {
 
                         <div className='overlay hidden '>
                               <div className={`flex flex-col items-center text-sm ${image && 'text-primary'}`}>
-                                    <CameraAltRoundedIcon fontSize='large' />
+                                    <span className="material-symbols-outlined text-3xl font-bold">photo_camera</span>
                                     Change Image
                               </div>
                         </div>
