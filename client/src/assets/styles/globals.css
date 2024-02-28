@@ -277,12 +277,15 @@
       .message-menu-icon {
             @apply
             opacity-0
+            select-none
             absolute top-0 -z-10 
             bg-inherit
             transition-all duration-300 cursor-pointer;     
       }
 
-
+      .material-symbols-outlined {
+            @apply select-none;
+      }
 
       /* Chat Info */
       .scroll-arrow-btn {

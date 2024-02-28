@@ -47,15 +47,19 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
             setIsOpen(false)
       }, [message, onRemoveMessage])
 
+      const isAlreadyRemoved = message.deletedBy.some(deletion => deletion.userId === user?._id)
+
       return (
             <>
-                  <div className={`message-menu-icon ${incomingMessage ? 'right-0 rounded-bl-2xl rounded-tr-3xl rounded-br-md' : 'left-1 rounded-br-2xl rounded-tl-xl'}${isOpen ? 'pointer-events-none' : ''}`} onClick={() => setIsOpen(true)}>
+                  <div className={`message-menu-icon ${isOpen ? 'pointer-events-none' : ''} ${incomingMessage ? 'right-0 rounded-bl-2xl rounded-tr-3xl rounded-br-md' : 'left-1 rounded-br-2xl rounded-tl-xl'}`} onClick={() => setIsOpen(true)}>
                         <span className="material-symbols-outlined text-sm transition-all duration-150">expand_more</span>
                   </div>
 
                   <div ref={menuRef} className={`message-menu-container ${incomingMessage ? 'incoming-message' : 'outgoing-message'}`}>
                         <ul className={`message-menu-list ${isOpen ? 'max-h-56' : 'max-h-0  p-0'}`}>
-                              {!message?.deletedBy?.length ? (
+                              {isAlreadyRemoved ? (
+                                    <li className='message-menu-option rounded-lg' onClick={() => removeMessage('forMe')}>Delete</li>
+                              ) : (
                                     <>
                                           <li className='message-menu-option rounded-t-lg' onClick={onReplyMessage}>Reply</li>
                                           <li className='message-menu-option'>Forward</li>
@@ -65,9 +69,6 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
                                           )}
                                           <li className='message-menu-option' onClick={() => removeMessage('forMe')}>Delete For Me</li>
                                     </>
-
-                              ) : (
-                                    <li className='message-menu-option rounded-lg' onClick={() => removeMessage('forMe')}>Delete</li>
                               )}
                         </ul>
                   </div>
