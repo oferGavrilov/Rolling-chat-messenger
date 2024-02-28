@@ -40,6 +40,7 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
             async function loadChats(event?: string): Promise<void> {
                   if (!loggedinUser) return
 
+                  // for handling user-joined and user-left events when user is kicked/left and joined back
                   if (event === 'user-joined') {
                         socketService.emit('join-user', loggedinUser?._id)
                   } else if (event === 'user-left' || event === 'user-kicked') {
