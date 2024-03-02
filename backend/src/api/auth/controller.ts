@@ -80,13 +80,12 @@ export async function login(req: AuthenticatedRequest, res: Response) {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ msg: 'Please enter all fields' });
+            return res.status(400).json({ message: 'Please enter all fields' });
         }
 
         const result = await loginUser(email, password);
-
         if (result.error) {
-            return res.status(401).json({ msg: result.error });
+            return res.status(403).json({ message: result.error });
         }
 
         const { user } = result;
@@ -142,7 +141,8 @@ export async function login(req: AuthenticatedRequest, res: Response) {
                 about: user.about,
             });
         } else {
-            throw new Error('User not found');
+            // throw new Error('User not found');
+            return res.status(403).json({ message: 'EmaInvalid email or password' });
         }
     } catch (error: unknown) {
         if (error instanceof Error) {

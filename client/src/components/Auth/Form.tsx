@@ -111,7 +111,6 @@ export default function Form(): JSX.Element {
                   setJustLoggedIn(true);
                   navigate('/chat')
             } catch (error) {
-                  if (axios.isAxiosError(error)) toast.warn(error?.response?.data.msg || "An error occurred")
                   console.log(error)
             } finally {
                   setIsLoading(false)

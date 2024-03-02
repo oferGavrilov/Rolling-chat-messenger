@@ -41,18 +41,12 @@ async function getUsers(): Promise<IUser[]> {
 async function loginSignUp(credentials: FormData, formMode: string) {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
 
-      try {
-            const data = await httpService.post(`${BASE_URL}${path}`, credentials)
-
-            if (data) {
-                  _saveToLocalStorage(data)
-            }
-
-            return data
-      } catch (error: any) {
-            console.log(error)
-            throw error
+      const userData = await httpService.post(`${BASE_URL + path}`, credentials)
+      if (userData) {
+            _saveToLocalStorage(userData)
       }
+
+      return userData
 }
 
 async function sendResetPasswordMail(email: string): Promise<void> {
