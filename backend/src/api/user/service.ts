@@ -56,14 +56,16 @@ export async function editUserDetailsService(userId: string, newName: string): P
       }
 }
 
-export async function editUserImageService(userId: string, newImage: string): Promise<string | null> {
+export async function editUserImageService(userId: string, newImage: string, newTNImage: string): Promise<{ image: string, TN_profileImg: string } | null> {
       try {
             const user = await User.findById(userId)
 
             if (user) {
                   user.profileImg = newImage
+                  user.TN_profileImg = newTNImage
                   await user.save()
-                  return user.profileImg
+
+                  return { image: user.profileImg, TN_profileImg: user.TN_profileImg }
             }
 
             return null

@@ -75,12 +75,12 @@ export class EmailService {
     
     private getResetPasswordHtml(resetLink: string): string {
         return `
-            <div style="font-family: Arial, sans-serif color: #333333 text-align: center padding: 20px">
-                <h1 style="color: #333333">Reset Your Password</h1>
-                <p style="font-size: 16px">You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
-                <a href="${resetLink}" style="background-color: #0099ff color: white padding: 14px 20px text-align: center text-decoration: none display: inline-block font-size: 16px margin: 4px 2px cursor: pointer border-radius: 8px">Reset Password</a>
-                <p style="font-size: 14px">If you did not request this, please ignore this email and your password will remain unchanged.</p>
+            <div style="font-family: Arial, sans-serif; color: #333333; text-align: center; padding: 20px;">
+                <h1 style="color: #333333;">Reset Your Password</h1>
+                <p style="font-size: 16px;">You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
+                <a href="${resetLink}" style="background-color: #3a72ec; color: white; padding: 14px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 8px;">Reset Password</a>
+                <p style="font-size: 14px;">If you did not request this, please ignore this email and your password will remain unchanged.</p>
             </div>
-        `
+        `;
     }
 }

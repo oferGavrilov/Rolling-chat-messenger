@@ -61,11 +61,15 @@ export async function editUserDetails(req: AuthenticatedRequest, res: Response) 
 }
 
 export async function editUserImage(req: AuthenticatedRequest, res: Response) {
-      const { image } = req.body
+      const { image, TN_profileImg } = req.body
       const userId = req.user?._id
 
+      if (!image) {
+            return res.status(400).json({ msg: 'Image is required' })
+      }
+
       try {
-            const user = await editUserImageService(userId, image)
+            const user = await editUserImageService(userId, image, TN_profileImg)
 
             if (user) {
                   res.status(200).json(image)

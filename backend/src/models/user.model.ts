@@ -6,6 +6,7 @@ export interface User extends Document {
   email: string
   password: string
   profileImg: string
+  TN_profileImg: string
   about: string
   verifyPassword: (enteredPassword: string) => Promise<boolean>
   createdAt: Date
@@ -23,6 +24,7 @@ const userSchema: Schema<User> = new Schema<User>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
     profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
+    TN_profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
     about: { type: String, default: "Available" },
     isOnline: { type: Boolean, default: false },
     lastSeen: { type: Date, default: Date.now() },

@@ -11,6 +11,7 @@ export interface AuthenticatedRequest extends Request {
     email?: string;
     password?: string;
     profileImg?: string;
+    TN_profileImg?: string;
     newName?: string;
     image?: string;
     chatId?: string;

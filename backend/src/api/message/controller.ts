@@ -58,6 +58,28 @@ export async function getAllMessages(req: RequestMessage, res: Response, next: N
       }
 }
 
+// export async function getAllMessages(req: RequestMessage, res: Response, next: NextFunction) {
+//       const { chatId } = req.params
+//       const messagePage = parseInt(req.query.page as string, 10) || 1
+//       const userId = req.user?._id
+
+//       if (!chatId) {
+//             return res.status(400).json({ message: 'ChatId is required' })
+//       }
+
+//       try {
+//             const messages = await getAllMessagesByChatId(chatId, userId, messagePage)
+//             return res.status(200).json(messages || [])
+//       } catch (error) {
+//             if (error instanceof ForbiddenError || error instanceof NotFoundError) {
+//                   console.log('error', error)
+//                   return res.status(error.statusCode).json({ message: error.message });
+//             } else {
+//                   next(error);
+//             }
+//       }
+// }
+
 export async function removeMessage(req: RequestMessage, res: Response, next: NextFunction) {
       const { messageId, chatId } = req.params
       const { deletionType } = req.body

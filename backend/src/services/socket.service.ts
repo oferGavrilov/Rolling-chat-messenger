@@ -88,6 +88,11 @@ export function setupSocketAPI(http: HttpServer) {
                   socket.in(room).emit('stop typing')
             })
 
+            socket.on('read-messages', ({ chatId, userId, messages }: { chatId: string, userId: string, messages: string[] }) => {
+                  socket.to(chatId).emit('message-read', { chatId, userId, messages });
+                  logger.info(`Socket [id: ${socket.id}] read messages in room: ${chatId}`)
+            })
+
             socket.on('new message in room', async ({ chatId: room, message, chatUsers }: { chatId: string, message: IMessage, chatUsers: User[] }) => {
                   try {
                         // Fetch all socket instances in the room
@@ -109,9 +114,6 @@ export function setupSocketAPI(http: HttpServer) {
                         socket.in(room).emit('message received', message);
                         logger.info(`Socket [id: ${socket.id}] sent a message to room: ${room}`);
 
-                        // if (callback && typeof callback === 'function') {
-                        //       callback({ status: 'success', message: 'Message received' });
-                        // }
                   } catch (error) {
                         logger.error(`Error in 'new message in room' handler: ${error}`);
                   }

@@ -27,7 +27,7 @@ export async function sendMessageService(senderId: string, content: string, chat
                   replyMessage: replyMessage ? replyMessage : null,
                   messageSize: messageSize ? messageSize : undefined,
                   deletedBy: [],
-                  isReadBy: [{ userId: senderId, readAt: new Date()}],
+                  isReadBy: [{ userId: senderId, readAt: new Date() }],
                   createdAt: new Date(),
                   updatedAt: new Date()
             }
@@ -63,12 +63,58 @@ export async function sendMessageService(senderId: string, content: string, chat
       }
 }
 
+// export async function getAllMessagesByChatId(chatId: string, userId: string, page = 1, limit = 50) {
+//       try {
+//             const chat = await Chat.findById(chatId)
+//             if (!chat) throw new NotFoundError('Chat not found')
+
+//             const skip = (page - 1) * limit;
+
+
+//             const messages = await Message.find({
+//                   chat: chatId,
+//                   $nor: [
+//                         { deletedBy: { $elemMatch: { userId, deletionType: 'forMe' } } },
+//                         { deletedBy: { $elemMatch: { userId, deletionType: 'forEveryoneAndMe' } } }
+//                   ]
+//             })
+//                   .sort({ createdAt: -1 }) // Sort by most recent messages first
+//                   .skip(skip)
+//                   .limit(limit)
+//                   .populate('sender', 'username profileImg')
+//                   .populate({
+//                         path: 'replyMessage',
+//                         select: '_id content sender messageType',
+//                         populate: {
+//                               path: 'sender',
+//                               select: '_id username profileImg'
+//                         }
+//                   });
+//                   console.log(messages)
+//             // update unread messages in chat
+//             messages.forEach((message) => {
+//                   if (!message.isReadBy.some(({ userId: id }) => id.toString() === userId.toString())) {
+//                         message.isReadBy.push({ userId, readAt: new Date() })
+//                   }
+//             })
+
+//             await Promise.all(messages.map(async (message) => await message.save()))
+
+//             return messages
+//       } catch (error: unknown) {
+//             if (error instanceof NotFoundError) {
+//                   throw error
+//             } else {
+//                   logger.error(`Error in getAllMessagesByChatId: ${error}`)
+//                   throw new Error('Something went wrong')
+//             }
+//       }
+// }
+
 export async function getAllMessagesByChatId(chatId: string, userId: string) {
       try {
             const chat = await Chat.findById(chatId)
             if (!chat) throw new NotFoundError('Chat not found')
-
-            // const chatUserIds = chat.users.map((user) => user.toString())
 
             const messages = await Message.find({
                   chat: chatId,
