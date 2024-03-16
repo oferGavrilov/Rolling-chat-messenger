@@ -48,7 +48,9 @@ export default function Chat({ setChatMode }: Props): JSX.Element {
                   setLoadingMessages(true)
                   const fetchedMessages = await messageService.getMessages(selectedChat._id)
 
-                  updateChatReadReceipts(selectedChat._id, loggedInUser._id);
+                  const messagesToUpdate: string[] = updateChatReadReceipts(selectedChat._id, loggedInUser._id);
+
+                  socketService.emit('read-messages', { chatId: selectedChat._id, userId: loggedInUser._id, messages: messagesToUpdate})
 
                   setMessages(fetchedMessages)
                   scrollToBottom(chatRef)
@@ -62,7 +64,6 @@ export default function Chat({ setChatMode }: Props): JSX.Element {
       useEffect(() => {
             fetchMessages();
       }, [fetchMessages]);
-
 
       return (
             <>

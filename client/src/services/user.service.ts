@@ -96,19 +96,19 @@ async function getUserConnectionStatus(userId: string) {
       return await httpService.get(`${BASE_URL}/api/user/status/${userId}`)
 }
 
-async function updateUserImage(image: string): Promise<string> {
+async function updateUserImage(image: string, TN_profileImg: string): Promise<{ image: string, TN_profileImg: string }> {
       try {
             const user = getLoggedinUser()
             if (!user) {
                   throw new Error('User is not logged in.')
             }
 
-            const updatedImage = await httpService.put(`${BASE_URL}/api/user/image`, { image }) as string
-            if (updatedImage) {
-                  _saveToLocalStorage({ ...user, profileImg: updatedImage })
+            const updatedImages = await httpService.put<{ image: string, TN_profileImg: string }>(`${BASE_URL}/api/user/image`, { image, TN_profileImg })
+            if (updatedImages) {
+                  _saveToLocalStorage({ ...user, profileImg: updatedImages.image, TN_profileImg: updatedImages.TN_profileImg })
             }
 
-            return updatedImage
+            return updatedImages
       } catch (error) {
             console.error(error)
             throw error

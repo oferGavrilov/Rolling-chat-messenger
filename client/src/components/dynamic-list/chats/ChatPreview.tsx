@@ -11,6 +11,7 @@ const defaultUser: IUser = {
       username: "Unknown",
       email: "unknown@example.com",
       profileImg: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      TN_profileImg: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
       about: "No Information",
       isOnline: false,
       lastSeen: new Date().toISOString(),
@@ -19,7 +20,7 @@ const defaultUser: IUser = {
 }
 
 const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
-      const { setSelectedChat, selectedChat } = useStore()
+      const { setSelectedChat, selectedChat, setMessages } = useStore()
       const { user: loggedInUser } = AuthState()
 
       const getSender = useCallback((users: IUser[]): IUser => {
@@ -30,7 +31,8 @@ const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
       const handleSelectChat = useCallback(() => {
             if (selectedChat?._id === chat._id) return
 
-            const updatedChat = getUpdatedChat(chat);
+            const updatedChat = getUpdatedChat(chat); // Add the logged in user to the chat if not already present
+            setMessages([]); // Clear the messages when a new chat is selected
             setSelectedChat(updatedChat);
 
       }, [chat, selectedChat, setSelectedChat])

@@ -5,7 +5,7 @@
 @layer base {
 
       body {
-            @apply text-[#242424] font-roboto-regular scroll-smooth tracking-wide;
+            @apply text-[#242424] font-sans scroll-smooth tracking-wide;
       }
       
       ::-webkit-scrollbar {
@@ -48,7 +48,7 @@
             @apply
             inline-block 
             h-[180px] w-[220px] 
-            rounded-xl px-5 py-7 mr-4
+            rounded-xl px-5 mr-4
             text-[#5386e4];
       }
       .carousel-content {
@@ -57,9 +57,19 @@
             h-full whitespace-normal  
             text-center text-lg lg:text-xl;
       }
+      /* HOME PAGE - Features & Services */
+      .feature-card {
+            @apply border-2 border-primary p-8 rounded-lg flex flex-col items-center gap-4;
+      }
+      .feature-title {
+            @apply text-xl font-semibold;
+      }
+      .feature-description {
+            @apply text-center;
+      }
       /* LOGIN PAGE */
       .auth-btn {
-            @apply w-full rounded-lg text-gray-700 py-2 font-semibold transition-all duration-200;
+            @apply w-full rounded-lg text-base text-gray-700 py-2.5 font-semibold transition-all duration-200 ease-out;
       }
       .auth-input {
             @apply border-2 border-gray-300 rounded-md p-2 focus:border-primary focus:outline-none transition-colors duration-300;
@@ -223,7 +233,7 @@
             @apply px-2 rounded-lg cursor-pointer  hover:bg-gray-500 dark:hover:bg-dark-default-hover-bg;
       }
       .selected-chat {
-            box-shadow: inset -4px 0px 0 0 #0099ff;
+            box-shadow: inset -4px 0px 0 0 #3a72ec;
       }
        /* Chat Messages */
       .message-container:hover .message-menu-icon {
@@ -439,7 +449,7 @@
       .message-arrow {
             position: absolute;
             bottom: -9.9px;
-            left: -1.76rem;
+            left: -1.66rem;
             transition: opacity 200ms;
             font-size: 1rem !important;
             -moz-transform: scale(-1, 1);
@@ -478,6 +488,17 @@
             transform: translateX(-50%);
             border-right: 2px dashed gray; 
         }
+
+      .box-shadow-inner {
+            box-shadow: inset 0 0 0 2px #3a72ec;
+      }
+      .scroll-hide {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+      }
+      .scroll-hide::-webkit-scrollbar {
+            display: none;
+      }
 }
 
 /* MUI */

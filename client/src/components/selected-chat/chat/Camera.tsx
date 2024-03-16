@@ -9,11 +9,13 @@ interface Props {
 }
 
 const Camera: React.FC<Props> = ({ onCapture }) => {
-      const webcamRef = useRef<Webcam>(null)
+      const webcamRef = useRef<Webcam | null>(null)
       const [isMirrored, setIsMirrored] = React.useState<boolean>(true)
 
       const captureImage = useCallback(() => {
+            console.log('webcamRef.current:', webcamRef.current);
             const imageSrc = webcamRef.current?.getScreenshot()
+            console.log('imageSrc:', imageSrc);
             if (imageSrc) {
                   onCapture(imageSrc)
             }

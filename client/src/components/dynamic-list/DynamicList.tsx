@@ -4,15 +4,7 @@ import Settings from "./user/Settings"
 import Profile from "./user/Profile"
 import { ContentType } from "../../pages/ChatPage"
 import Gallery from "./gallery/Gallery"
-
-function Story(): JSX.Element {
-      return (
-            <section className='pt-7 px-4 relative'>
-
-                  Coming soon...
-            </section>
-      )
-}
+import Story from "./story/Story"
 
 function Videos(): JSX.Element {
       return (

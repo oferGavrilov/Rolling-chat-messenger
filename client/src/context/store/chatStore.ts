@@ -14,10 +14,11 @@ interface ChatActions {
     setSelectedChat: (chat: IChat | null) => void
     setReplyMessage: (message: IReplyMessage | null) => void
     removeMessage: (messageId: string, chatId: string, removerId: string, deleteAction: 'forMe' | 'forEveryone') => void
-    updateChatReadReceipts: (chatId: string, userId: string) => void;
+    updateChatReadReceipts: (chatId: string, userId: string) => string[];
     bringChatToTop: (message: IMessage) => void
     updateChatsWithNewMessage: (newMessage: IMessage) => void
     onSelectChat: (user: IUser, loggedInUser?: IUser) => Promise<void>
+    updateChatStatusToRead: (chatId: string, userId: string) => void
 }
 
 export type IChatStore = ChatState & ChatActions;
@@ -57,7 +58,9 @@ export const createChatSlice = (set, get): IChatStore => ({
             return { ...state, chats: updatedChats };
         });
     },
-    updateChatReadReceipts: (chatId: string, userId: string) => {
+    updateChatReadReceipts: (chatId: string, userId: string): string[] => {
+        let updatedMessageIds: string[] = [];
+
         set((state: ChatState) => {
             const updatedChats = state.chats.map(chat => {
                 if (chat._id === chatId && chat.latestMessage) {
@@ -65,6 +68,8 @@ export const createChatSlice = (set, get): IChatStore => ({
                     let updatedReadBy = chat.latestMessage.isReadBy;
 
                     if (!alreadyReadByUser) {
+                        updatedMessageIds.push(chat.latestMessage._id);
+
                         updatedReadBy = [...updatedReadBy, { userId, readAt: new Date() }];
                     }
 
@@ -84,6 +89,8 @@ export const createChatSlice = (set, get): IChatStore => ({
 
             return { ...state, chats: updatedChats };
         });
+
+        return updatedMessageIds;
     },
     setMessages: (messagesOrUpdater: IMessage[] | ((currentMessages: IMessage[]) => IMessage[])) => {
         set((state: ChatState) => {
@@ -165,7 +172,7 @@ export const createChatSlice = (set, get): IChatStore => ({
         }
 
         const newChat: IChat = {
-            _id: 'temp-id', // Temporary ID until it's confirmed by the backend
+            _id: 'temp-id', // Temporary ID until it's confirmed by the server 
             chatName: user.username,
             isGroupChat: false,
             users: [user, loggedInUser],
@@ -176,4 +183,39 @@ export const createChatSlice = (set, get): IChatStore => ({
 
         set({ selectedChat: newChat });
     },
+    updateChatStatusToRead: (chatId: string, userId: string) => {
+        set((state: ChatState) => {
+            const updatedChats = state.chats.map(chat => {
+                if (chat._id === chatId && chat.latestMessage) {
+                    let isReadByUpdated = chat.latestMessage.isReadBy;
+    
+                    // Check if the user has already read this message
+                    const userReadReceiptIndex = isReadByUpdated.findIndex(receipt => receipt.userId === userId);
+    
+                    if (userReadReceiptIndex !== -1) {
+                        // Update existing read receipt
+                        isReadByUpdated[userReadReceiptIndex] = { ...isReadByUpdated[userReadReceiptIndex], readAt: new Date() };
+                    } else {
+                        // Add new read receipt
+                        isReadByUpdated.push({ userId, readAt: new Date() });
+                    }
+    
+                    const updatedChat: IChat = {
+                        ...chat,
+                        unreadMessagesCount: 0,
+                        latestMessage: {
+                            ...chat.latestMessage,
+                            isReadBy: isReadByUpdated
+                        }
+                    };
+    
+                    return updatedChat;
+                }
+                return chat;
+            });
+    
+            return { ...state, chats: updatedChats };
+        });
+    }
+    
 });

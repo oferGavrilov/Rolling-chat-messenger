@@ -16,6 +16,7 @@ export default function ImageMessage ({ message, setSelectedFile, userId }: Prop
                   <img
                         className="max-h-[300px] max-w-[200px] rounded-2xl object-cover object-top py-1 cursor-pointer px-2"
                         src={message.content.toString()}
+                        loading='lazy'
                         alt="conversation-user"
                         onClick={() => setSelectedFile(message)}
                   />

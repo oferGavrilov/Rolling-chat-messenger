@@ -23,7 +23,7 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
       const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
 
-      const { chats, setChats, updateChatsWithNewMessage } = useStore()
+      const { chats, setChats, updateChatsWithNewMessage, updateChatStatusToRead } = useStore()
       const { user: loggedinUser } = AuthState()
 
       const modalRef = useRef<HTMLUListElement>(null)
@@ -49,13 +49,8 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
 
                   try {
                         setIsLoading(true)
-                        // const user = userService.getLoggedinUser()
-                        // if (!user) return
-
                         let chats = await chatService.getUserChats()
                         setChats(chats)
-                        // const chats = await chatService.getUserChats(loggedinUser._id)
-
                   } catch (err) {
                         console.log(err)
                   } finally {
@@ -99,10 +94,16 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
       useEffect(() => {
             socketService.on('notification', (newMessage: IMessage) => updateChatsWithNewMessage(newMessage))
 
+            // update the chat latest message as read
+            socketService.on('message-read', ({ chatId, userId }: { chatId: string, userId: string }) => {
+                  updateChatStatusToRead(chatId, userId);
+            })
+
             return () => {
                   socketService.off('notification');
+                  socketService.off('message-read');
             }
-      }, [])
+      }, [updateChatsWithNewMessage, updateChatStatusToRead]);
 
       function onSetSort(type: 'Newest' | 'Oldest' | null): void {
             setSort(type)

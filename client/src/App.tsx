@@ -33,7 +33,11 @@ export const AppRoutes = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-      <ToastContainer />
+
+      <ToastContainer
+        pauseOnFocusLoss={false} 
+        autoClose={2500}/>
+        
       <Notification />
     </AuthProvider>
   )

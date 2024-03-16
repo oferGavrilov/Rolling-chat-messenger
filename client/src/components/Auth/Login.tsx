@@ -39,10 +39,10 @@ export default function Login({ formik}: LoginProps) {
                               value={formik.values.password}
                               onChange={formik.handleChange}
                               maxLength={20}
-                              className={`w-full select-none auth-input ${formik.errors.password && formik.touched.password ? 'input-error' : ''}`}
+                              className={`w-full select-none auth-input mt-4 ${formik.errors.password && formik.touched.password ? 'input-error' : ''}`}
                         />
 
-                        <div className='absolute top-0  h-full right-3 cursor-pointer flex items-center justify-center' onClick={() => setShowPassword(!showPassword)}>
+                        <div className='absolute top-1/2 h-max right-3 cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
                               {showPassword ?
                                     <FaEye className='toggle-password-btn' /> : 
                                     <RiEyeCloseLine className='toggle-password-btn' />

@@ -40,7 +40,7 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                         placeholder="Username"
                         onChange={formik.handleChange}
                         value={formik.values.username}
-                        className={`auth-input ${formik.errors.username && formik.touched.username ? 'input-error' : ''}`}
+                        className={`auth-input mt-4 ${formik.errors.username && formik.touched.username ? 'input-error' : ''}`}
                   />
                   <ErrorMessage name="username" component="div" className="error-message" />
 
@@ -53,13 +53,13 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                               placeholder="Password"
                               onChange={formik.handleChange}
                               value={formik.values.password}
-                              className={`auth-input w-full ${formik.errors.password && formik.touched.password ? 'input-error' : ''}`}
+                              className={`auth-input w-full mt-4 ${formik.errors.password && formik.touched.password ? 'input-error' : ''}`}
                         />
 
-                        <div className='absolute top-0 h-full right-3 cursor-pointer flex items-center justify-center' onClick={() => setShowPassword(!showPassword)}>
+                        <div className='absolute top-1/2 h-max right-3 cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
                               {showPassword ?
-                                   <FaEye className='toggle-password-btn' /> : 
-                                   <RiEyeCloseLine className='toggle-password-btn' />
+                                    <FaEye className='toggle-password-btn' /> :
+                                    <RiEyeCloseLine className='toggle-password-btn' />
                               }
                         </div>
                   </div>
@@ -71,11 +71,13 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                         placeholder="Confirm Password"
                         onChange={formik.handleChange}
                         value={formik.values.confirmPassword}
-                        className={`auth-input ${formik.errors.confirmPassword && formik.touched.confirmPassword ? 'input-error' : ''}`}
+                        className={`auth-input mt-4 ${formik.errors.confirmPassword && formik.touched.confirmPassword ? 'input-error' : ''}`}
                   />
                   <ErrorMessage name="confirmPassword" component="div" className="error-message" />
 
-                  <UploadImage image={image} setImage={setImage} />
+                  <div className='mt-4'>
+                        <UploadImage image={image} setImage={setImage} />
+                  </div>
 
                   <ErrorMessage name="image" component="div" className="error-message" />
             </>

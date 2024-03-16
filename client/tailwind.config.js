@@ -33,7 +33,7 @@ export default {
         'light-input-bg':'#e5e7eb',
         'light-text':'#e9ecef',
         'navigation-bg': '#FAFAFA',
-        'primary': '#0099ff',
+        'primary': '#3a72ec',
         'default-hover-bg':'#57c0f8',
         'secondary-text': '#242424',
       }

@@ -63,7 +63,7 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
                   } else if (status === 403) {
                         toast.warn(err.response.data.message || 'You are not allowed to do that.')
                   } else if (status === 404) {
-                        toast.warn('Something went wrong, Try again later.')
+                        toast.warn(err.response.data.message || 'Something went wrong, Try again later.')
                   } else if (status === 500) {
                         // env === 'production' && window.location.assign('/')
                   }

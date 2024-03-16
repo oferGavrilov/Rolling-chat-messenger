@@ -34,11 +34,11 @@ export default function Auth () {
 
       return (
             <>
-                  <div className={`flex justify-center logo-fade-down ${isVisible ? 'hidden' : 'visible'}`} data-testid="login-page">
+                  <div className={`flex justify-center logo-fade-down ${isVisible ? 'hidden' : 'visible'}`}>
                         <Logo width='120' height='120' />
                   </div>
                   <section className={`max-w-lg py-24 mx-auto relative z-20 fade-down ${isVisible ? 'visible' : 'hidden'}`}>
-                        <div className="bg-white rounded-lg p-6 shadow-lg select-none">
+                        <div className="bg-white rounded-lg p-6 lg:shadow-lg select-none">
                               <Form />
                               <Tooltip title='Home' placement='right' arrow>
                                     <Link to="/" className={`absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 top-20 md:top-36 -z-10 bg-primary text-white py-[5px] px-3 rounded-t-md md:rounded-r-md shadow-lg shadow-quaternary ${isVisible ? 'home-btn-animation' : ''}`}>
@@ -46,7 +46,7 @@ export default function Auth () {
                                     </Link>
                               </Tooltip>
                         </div>
-                  </section >
+                  </section>
                   <WavesBlue className='slide-up bottom-0'/>
             </>
       )

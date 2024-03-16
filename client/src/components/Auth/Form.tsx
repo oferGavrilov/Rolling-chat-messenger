@@ -25,7 +25,7 @@ export default function Form(): JSX.Element {
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<string>('')
       const { setUser, setJustLoggedIn } = AuthState()
-      const navigate = useNavigate();
+      const navigate = useNavigate()
 
       const validationSchema = (() => {
             switch (formMode) {
@@ -100,15 +100,15 @@ export default function Form(): JSX.Element {
 
             } else if (formMode === 'reset') {
                   modifiedValues = { email: values.email }
-                  await handleResetPassword(modifiedValues);
-                  setIsLoading(false);
-                  return;
+                  await handleResetPassword(modifiedValues)
+                  setIsLoading(false)
+                  return
             }
 
             try {
                   const user = await userService.loginSignUp(modifiedValues, formMode) as IUser
                   setUser(user)
-                  setJustLoggedIn(true);
+                  setJustLoggedIn(true)
                   navigate('/chat')
             } catch (error) {
                   console.log(error)
@@ -117,28 +117,33 @@ export default function Form(): JSX.Element {
             }
       }
 
+      function onFormModeChange(mode: 'login' | 'sign-up' | 'reset') {
+            setFormMode(mode)
+            formik.resetForm()
+      }
+
       return (
             <FormikProvider value={formik}>
                   <section className='text-sm lg:text-base'>
 
-                        <div className="flex justify-between gap-x-2">
+                        <div className="flex gap-x-2">
                               <Button
-                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'login' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
-                                    onClick={() => setFormMode('login')}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'login' ? 'bg-primary text-white' : 'hover:bg-primary/60 box-shadow-inner hover:shadow-none hover:text-white'}`}
+                                    onClick={() => onFormModeChange('login')}
                                     type='button'
                                     disabled={isLoading}>
                                     Login
                               </Button>
                               <Button
-                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'sign-up' ? 'bg-primary text-white' : 'hover:bg-[#96d5ff] hover:text-white'}`}
-                                    onClick={() => setFormMode('sign-up')}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'sign-up' ? 'bg-primary text-white' : 'hover:bg-primary/60 box-shadow-inner hover:shadow-none hover:text-white'}`}
+                                    onClick={() => onFormModeChange('sign-up')}
                                     type='button'
                                     disabled={isLoading}>
                                     Sign Up
                               </Button>
                         </div>
 
-                        <form className="flex flex-col gap-y-4 mt-6" onSubmit={formik.handleSubmit} id='auth-form'>
+                        <form className="flex flex-col mt-6" onSubmit={formik.handleSubmit} id='auth-form'>
                               {formMode === 'login' && <Login formik={formik} />}
                               {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} />}
                               {formMode === 'reset' && <ForgotPassword formik={formik} />}
@@ -146,23 +151,23 @@ export default function Form(): JSX.Element {
                               {formMode === 'login' && (
                                     <button
                                           type="button"
-                                          className='underline underline-offset-2 text-sm transition-all duration-100 hover:tracking-wide disabled:cursor-not-allowed'
+                                          className='underline underline-offset-2 text-end text-sm transition-all mt-2 duration-100 hover:text-primary disabled:cursor-not-allowed'
                                           onClick={() => setFormMode('reset')}
                                           disabled={isLoading}>
                                           Forget you'r password ?</button>
                               )}
                               <div className='flex flex-col gap-[2px] mt-4'>
                                     <Button
-                                          className="bg-primary transition-colors text-white duration-300 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-[#23a7ff]"
+                                          className="bg-primary transition-colors text-white duration-300 max-h-[40px] rounded-md p-2 my-2 disabled:cursor-not-allowed hover:bg-primary/90"
                                           type="submit"
                                           disabled={!formik.dirty || isLoading}
                                           isLoading={isLoading}>
-                                          Submit
+                                          Submit &rarr;
                                     </Button>
                                     {formMode === 'login' && (
                                           <>
                                                 <Button
-                                                      className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff] disabled:cursor-not-allowed"
+                                                      className="bg-primary/70 text-white rounded-md p-2 transition-colors duration-300 hover:bg-primary/80 disabled:cursor-not-allowed"
                                                       type="button"
                                                       onClick={setGuestUser}
                                                       disabled={isLoading}>
@@ -171,7 +176,7 @@ export default function Form(): JSX.Element {
 
                                                 {process.env.NODE_ENV === 'development' && (
                                                       <Button
-                                                            className="bg-[#55bbff] text-white rounded-md p-2 transition-colors duration-300 hover:bg-[#23a7ff] disabled:cursor-not-allowed"
+                                                            className="bg-primary/70 text-white rounded-md p-2 transition-colors duration-300 hover:bg-primary/80 disabled:cursor-not-allowed"
                                                             type="button"
                                                             onClick={setOferUser}
                                                             disabled={isLoading}>

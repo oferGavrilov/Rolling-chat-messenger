@@ -10,6 +10,7 @@ export interface IMessage {
             _id: string
             username: string
             profileImg: string
+            TN_profileImg: string
       }
       updatedAt: string,
       messageType: "text" | "image" | "audio" | "file"

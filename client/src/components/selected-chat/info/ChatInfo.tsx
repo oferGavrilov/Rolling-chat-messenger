@@ -26,6 +26,8 @@ export default function ChatInfo({ conversationUser, messages }: Props): JSX.Ele
                   return
             }
 
+            if (!window.confirm('Are you sure you want to remove this chat?')) return
+
             try {
                   await chatService.removeChat(selectedChat._id, user._id)
 

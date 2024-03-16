@@ -19,16 +19,16 @@ export default function Views () {
       );
 
       return (
-            <div className="min-h-[95svh] md:min-h-[100svh]">
-                  <div className="dashed-line relative w-[85%] md:w-2/3 mx-auto max-w-3xl opacity-0 translate-y-20 transition-all duration-500" ref={showOnScrollRef}>
-                        <h2 className="text-3xl md:text-5xl font-bold text-center py-8">Choose your favorite view</h2>
+            <div className="h-screen overflow-hidden opacity-0" ref={showOnScrollRef}>
+                  <div className="relative w-[85%] md:w-2/3 mx-auto max-w-2xl translate-y-0 transition-all duration-500" >
+                        <h2 className="text-3xl md:text-5xl font-bold text-center py-12">Choose your favorite view</h2>
                         <img
                               src="https://res.cloudinary.com/dqkstk6dw/image/upload/v1693406469/chat-app/rolling1_cyagsg.png"
                               alt="dark-mode"
                               loading="lazy"
                               className="opacity-95 shadow-2xl shadow-gray-400 rounded-xl"
                         />
-                        <div className="flex justify-evenly text-center my-16 h-28 text-sm md:text-lg uppercase tracking-wide font-bold">
+                        <div className="flex justify-evenly text-center mt-6 h-28 text-sm md:text-lg uppercase tracking-wide font-bold">
                               <div className="flex flex-col items-center gap-4">
                                     <span className="max-w-[80%]">Light / Dark Theme</span>
                                     <div className="flex gap-x-6 !text-3xl md:!text-4xl">

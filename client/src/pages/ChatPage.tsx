@@ -73,6 +73,8 @@ export default function ChatPage(): JSX.Element {
                         <SelectedFile />
                   )}
 
+                  
+
                   <DynamicSideModal
                         contentType={contentType}
                         isOpen={showSearch}

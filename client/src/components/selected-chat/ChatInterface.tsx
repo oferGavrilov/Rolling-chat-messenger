@@ -84,15 +84,39 @@ export default function ChatInterface(): JSX.Element {
       }, [selectedChat])
 
       useEffect(() => {
+            if (!loggedInUser) return
+
             socketService.on('message received', (newMessage: IMessage) => {
+                  // update the chat with the latest message
                   updateChatWithLatestMessage(newMessage)
                   setMessages((prevMessages) => [...prevMessages, newMessage])
+
+                  // if the other user is in the chat, emit read-messages
+                  if (selectedChat && selectedChat._id === newMessage.chat?._id) {
+                        socketService.emit('read-messages', {
+                              chatId: selectedChat._id,
+                              userId: loggedInUser._id,
+                              messages: [newMessage._id]
+                        })
+                  }
             })
 
             return () => {
                   socketService.off('message received')
             }
       }, [selectedChat, setMessages, updateChatWithLatestMessage])
+
+      useEffect(() => {
+            socketService.on('message-read', ({ chatId, userId, messages }: { chatId: string, userId: string, messages: string[] }) => {
+                  if (selectedChat?._id === chatId) {
+                        setMessages((prevMessages) => prevMessages.map(msg => messages.includes(msg._id) ? { ...msg, isReadBy: msg.isReadBy?.concat({ userId, readAt: new Date() }) } : msg))
+                  }
+            })
+
+            return () => {
+                  socketService.off('message-read')
+            }
+      }, [selectedChat, setMessages])
 
       function fetchConversationUser(): void {
             const conversationUser = selectedChat?.users.find((user) => user._id !== loggedInUser?._id) || selectedChat?.users[0]

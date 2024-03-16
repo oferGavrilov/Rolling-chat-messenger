@@ -12,6 +12,7 @@ export interface IUser {
       email: string
       password?: string
       profileImg: string
+      TN_profileImg:string
       createdAt: string
       updatedAt: string
       about?: string

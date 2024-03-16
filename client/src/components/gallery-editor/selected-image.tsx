@@ -6,31 +6,33 @@ export default function SelectedImage(): JSX.Element {
     const { selectedImage, gallery, setGallery } = useStore()
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [enableDrawing, setEnableDrawing] = useState<boolean>(false)
+    const [zoomLevel, setZoomLevel] = useState<number>(1);
 
     useEffect(() => {
-        if (!selectedImage || !canvasRef.current) return
+        if (!selectedImage || !canvasRef.current) return;
 
-        const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
-        if (!ctx) return console.error('Canvas context not found')
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return console.error('Canvas context not found');
 
-        const img = new Image()
-        img.crossOrigin = 'anonymous'
-        img.src = selectedImage.url
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = selectedImage.url + `?v=${new Date().getTime()}`; // Cache busting for re-render
         img.onload = () => {
-            const maxWidth = canvas.parentElement?.offsetWidth ?? window.innerWidth
-            const maxHeight = window.innerHeight
+            const maxWidth = canvas.parentElement?.offsetWidth ?? window.innerWidth;
+            const maxHeight = window.innerHeight;
+            const scale = Math.min(maxWidth / img.width, maxHeight / img.height) * zoomLevel;
 
-            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height)
-            const width = img.width * ratio
-            const height = img.height * ratio
+            const width = img.width * scale;
+            const height = img.height * scale;
 
-            canvas.width = width
-            canvas.height = height
+            canvas.width = width;
+            canvas.height = height;
 
-            ctx.drawImage(img, 0, 0, width, height)
-        }
-    }, [selectedImage])
+            ctx.clearRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+        };
+    }, [selectedImage, zoomLevel]);
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -84,7 +86,6 @@ export default function SelectedImage(): JSX.Element {
         setEnableDrawing(!enableDrawing)
     }
 
-    // update the 
     const onSave = () => {
         const canvas = canvasRef.current
         if (!canvas) return console.error('Canvas not found')
@@ -104,24 +105,27 @@ export default function SelectedImage(): JSX.Element {
         setGallery(newGallery)
     }
 
+    const zoomIn = () => {
+        setZoomLevel(prevZoom => Math.min(prevZoom * 1.1, 10)); // Optionally, set a max zoom level
+    };
+
+    const zoomOut = () => {
+        setZoomLevel(prevZoom => Math.max(prevZoom * 0.9, 0.1)); // Optionally, set a min zoom level
+    };
+
 
     if (!selectedImage) return <div>No image selected</div>
 
     return (
         <div className='flex-1'>
-            <div className='w-full py-4 bg-blue-500 flex justify-between text-white'>
+            <div className='w-full py-4 bg-dark-primary-bg flex justify-between text-white'>
                 <div className='flex gap-x-4'>
                     <button className='' onClick={toggleDrawingMode}>
                         {enableDrawing ? "Stop Drawing" : "Start Drawing"}
                     </button>
 
-                    <button className=''>
-                        Zoom In
-                    </button>
-
-                    <button className=''>
-                        Zoom Out
-                    </button>
+                    <button onClick={zoomIn}>Zoom In</button>
+                    <button onClick={zoomOut}>Zoom Out</button>
                 </div>
                 <button className='text-white' onClick={onSave}>
                     Save

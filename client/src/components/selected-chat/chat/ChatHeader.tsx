@@ -79,7 +79,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
             else setChatMode('info')
       }
 
-      if (!selectedChat) return <div></div>
+      if (!selectedChat || !conversationUser) return <div></div>
       return (
             <header className='flex items-center px-2 chat-header-shadow bg-white dark:bg-dark-secondary-bg'>
                   <span
@@ -89,7 +89,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, chat
                   </span>
                   <ProfileImage
                         className="default-profile-img w-10 h-10 max-w-none hover:scale-105"
-                        src={selectedChat.isGroupChat ? selectedChat.groupImage : conversationUser?.profileImg}
+                        src={selectedChat.isGroupChat ? selectedChat.groupImage as string : conversationUser.profileImg as string}
                         alt={conversationUser?.username}
                         onClick={toggleChatInfo}
                   />

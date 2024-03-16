@@ -15,7 +15,7 @@ interface UserValues {
 
 export default function Profile(): JSX.Element {
       const { user, setUser } = AuthState()
-      const [image, setImage] = useState<string>(user?.profileImg || '')
+      const [imageObj, setImageObj] = useState<{ image: string, TNImage: string }>({ image: user?.profileImg || '', TNImage: '' })
       const [editType, setEditType] = useState<'username' | 'about' | ''>('')
       const [userValues, setUserValues] = useState<UserValues>({
             username: user?.username ?? '',
@@ -47,19 +47,23 @@ export default function Profile(): JSX.Element {
             toast.success(`${editType} changed successfully`)
       }
 
-      async function handleImageChange(newImage: string): Promise<void> {
-            setImage(newImage)
-            const savedImage = await userService.updateUserImage(newImage)
+      async function handleImageChange(newImage: string, newTNImage: string): Promise<void> {
+            setImageObj({ image: newImage, TNImage: newTNImage })
+
+            const savedImages = await userService.updateUserImage(newImage, newTNImage) as { image: string, TN_profileImg: string }
+            if (!savedImages.image) return
+
             const userToSave = {
                   ...user,
-                  profileImg: savedImage,
+                  profileImg: savedImages.image,
+                  TN_profileImg: savedImages.TN_profileImg
             } as IUser
             setUser(userToSave)
       }
 
       return (
             <section>
-                  <UploadImage image={image} setImage={handleImageChange} />
+                  <UploadImage image={imageObj.image} setImage={handleImageChange} />
 
                   <div className='px-6 py-10'>
                         <span className='text-lg font-semibold text-primary dark:text-dark-tertiary-text'>Your Name</span>

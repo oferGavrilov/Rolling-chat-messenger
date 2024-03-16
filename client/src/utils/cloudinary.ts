@@ -1,5 +1,5 @@
 
-export async function uploadImg (file: File) {
+export async function uploadImg(file: File, isThumbnail = false, filename: string = '') {
       try {
             const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME
             const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload/`
@@ -9,6 +9,12 @@ export async function uploadImg (file: File) {
             formData.append('file', file)
             formData.append('upload_preset', UPLOAD_PRESET)
             formData.append('cloud_name', CLOUD_NAME)
+
+            console.log('isThumbnail', isThumbnail)
+            if (isThumbnail) {
+                  const publicId = `TN_${filename}`;
+                  formData.append('public_id', publicId);
+            }
 
             const res = await fetch(UPLOAD_URL, {
                   method: 'POST',
@@ -21,7 +27,7 @@ export async function uploadImg (file: File) {
       }
 }
 
-export async function uploadAudio (audioBlob: Blob) {
+export async function uploadAudio(audioBlob: Blob) {
       try {
             const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME
             const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload/`
@@ -45,7 +51,7 @@ export async function uploadAudio (audioBlob: Blob) {
       }
 }
 
-export async function uploadToCloudinary(blob : Blob) {
+export async function uploadToCloudinary(blob: Blob) {
       try {
             const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME
             const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload/`

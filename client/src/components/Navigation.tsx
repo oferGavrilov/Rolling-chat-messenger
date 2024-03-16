@@ -4,11 +4,11 @@ import { AuthState } from "../context/useAuth"
 import useStore from '../context/store/useStore'
 
 import Logo from "./svg/Logo"
-import Story from "./svg/Story"
+// import Story from "./svg/Story"
 import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
 
 import { Tooltip } from "@mui/material"
-import { BsCameraVideo, BsChatText } from 'react-icons/bs'
+import { BsChatText } from 'react-icons/bs'
 import { FiSettings } from 'react-icons/fi'
 import { RxExit } from 'react-icons/rx'
 import { useClickOutside } from "../custom-hook/useClickOutside"
@@ -80,6 +80,7 @@ export default function Navigation({
                         <ProfileImage
                               className={`w-11 h-11 default-profile-img hover:scale-105 hover:shadow-lg shadow-gray-30 dark:shadow-gray-900 ${contentType === 'profile' ? 'outline-2 outline-double outline-primary' : ''}`}
                               src={user.profileImg}
+                              TN_src={user.TN_profileImg}
                               alt={user.username}
                               onClick={() => setContentType('profile')}
                         />
@@ -101,16 +102,16 @@ export default function Navigation({
                                           <span className="material-symbols-outlined">crop</span>
                                     </div>
                               </Tooltip> */}
-                              <Tooltip title="Stories" arrow placement='right'>
+                              {/* <Tooltip title="Stories" arrow placement='right'>
                                     <div className={`navigation-icon  ${contentType === 'story' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('story')}>
                                           <Story />
                                     </div>
-                              </Tooltip>
-                              <Tooltip title="Videos" arrow placement='right'>
+                              </Tooltip> */}
+                              {/* <Tooltip title="Videos" arrow placement='right'>
                                     <div className={`navigation-icon ${contentType === 'videos' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('videos')}>
                                           <BsCameraVideo size={20} />
                                     </div>
-                              </Tooltip>
+                              </Tooltip> */}
                         </div>
                         <div className="flex flex-col ">
                               <Tooltip title="Settings" arrow placement='right'>
