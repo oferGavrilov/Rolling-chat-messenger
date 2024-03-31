@@ -6,6 +6,15 @@ export default {
   ],
   darkMode: 'class',
   theme: {
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl':'1280px',
+      '2xl':'1536px',
+      '3xl':'1920px',
+      '4xl':'2560px',
+    },
     extend: {
       boxShadow: {
         dark: '0 9px 14px 1px #082818',
@@ -18,8 +27,10 @@ export default {
         'primary': 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px #84a98c)'
       },
       colors: {
-        'dark-primary-bg': '#111b21',
-        'dark-secondary-bg': '#202c33',
+        // 'dark-primary-bg': '#111b21',
+        'dark-primary-bg': '#292c31',
+        // 'dark-secondary-bg': '#202c33',
+        'dark-secondary-bg': '#202324',
         'dark-default-hover-bg': '#495057',
         'dark-dropdown-bg': '#233138',
         'dark-navigation-bg': '#212529',
