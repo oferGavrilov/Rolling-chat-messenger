@@ -19,13 +19,13 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noPropertyAccessFromIndexSignature": false,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "ignoreDeprecations": "5.0",
     "noImplicitAny": false,
     "types": [
       "node",
       "express",
-      "Multer"
+      "multer"
     ]
   },
   "extends": [],
