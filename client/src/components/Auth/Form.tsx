@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../common/Button'
 import ForgotPassword from './ForgotPassword'
 import { IUser } from '../../model'
+import socketService from '../../services/socket.service'
+import { SocketEmitEvents } from '../../utils/socketEvents'
 
 interface FormData {
       username?: string
@@ -75,7 +77,7 @@ export default function Form(): JSX.Element {
 
 
       function setOferUser() {
-            formik.setValues({ email: 'ofergavri@gmail.com', password: 'Yes12345' })
+            formik.setValues({ email: 'ofergavri@gmail.com', password: 'ofer1234' })
       }
 
       async function handleResetPassword(values: FormData) {
@@ -108,8 +110,10 @@ export default function Form(): JSX.Element {
             try {
                   const user = await userService.loginSignUp(modifiedValues, formMode) as IUser
                   setUser(user)
+                  socketService.emit(SocketEmitEvents.LOGIN, user._id)
                   setJustLoggedIn(true)
                   navigate('/chat')
+
             } catch (error) {
                   console.log(error)
             } finally {
@@ -162,7 +166,8 @@ export default function Form(): JSX.Element {
                                           type="submit"
                                           disabled={!formik.dirty || isLoading}
                                           isLoading={isLoading}>
-                                          Submit &rarr;
+                                          {/* first letter uppercase */}
+                                          {formMode === 'reset' ? 'Send Email' : formMode.charAt(0).toUpperCase() + formMode.slice(1)} &rarr;
                                     </Button>
                                     {formMode === 'login' && (
                                           <>

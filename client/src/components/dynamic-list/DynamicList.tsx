@@ -64,6 +64,7 @@ export default function DynamicList(props: Props) {
                   case 'story':
                   case 'settings':
                   case 'profile':
+                  case 'gallery':
                         return <div></div>
                   default:
                         return (
@@ -81,7 +82,7 @@ export default function DynamicList(props: Props) {
       return (
             <section className={`${selectedChat ? 'hidden md:block' : 'block'} 
             bg-white dark:bg-dark-primary-bg dark:text-dark-primary-text overflow-hidden
-                  w-full md:w-[364px] xl:w-[400px] border-r-2 border-[#EEEEEE] dark:border-none slide-right`}>
+                  w-full md:w-[364px] xl:w-[400px] 3xl:w-[540px] border-r-2 border-[#EEEEEE] dark:border-none slide-right`}>
 
                   <div className='flex justify-between items-center md:pb-4 pt-3 md:pt-7 mx-4'>
                         <div className={`md:!hidden flex items-center justify-center p-2 rounded-full leading-none cursor-pointer text-primary dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg ${props.showNavigation ? 'pointer-events-none' : ''}`} onClick={() => props.setShowNavigation(!props.showNavigation)}>

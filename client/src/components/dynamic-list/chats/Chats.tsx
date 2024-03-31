@@ -9,9 +9,9 @@ import { IChat } from '../../../model/chat.model'
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
 import { useClickOutside } from '../../../custom-hook/useClickOutside'
 import socketService from '../../../services/socket.service'
+
 import { ContentType } from '../../../pages/ChatPage'
 import ChatList from './ChatList'
-import { IMessage } from '../../../model'
 
 interface MessagesProps {
       contentType: ContentType
@@ -23,7 +23,7 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
       const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
 
-      const { chats, setChats, updateChatsWithNewMessage, updateChatStatusToRead } = useStore()
+      const { chats, setChats } = useStore()
       const { user: loggedinUser } = AuthState()
 
       const modalRef = useRef<HTMLUListElement>(null)
@@ -32,20 +32,18 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
 
       useEffect(() => {
             if (!loggedinUser) return
+            //TODO: move this to chat page
             socketService.setup(loggedinUser._id)
-            socketService.on('user-kicked', () => loadChats('user-kicked'))
-            socketService.on('user-joined', () => loadChats('user-joined'))
-            socketService.on('user-left', () => loadChats('user-left'))
 
-            async function loadChats(event?: string): Promise<void> {
+            async function loadChats(): Promise<void> {
                   if (!loggedinUser) return
 
                   // for handling user-joined and user-left events when user is kicked/left and joined back
-                  if (event === 'user-joined') {
-                        socketService.emit('join-user', loggedinUser?._id)
-                  } else if (event === 'user-left' || event === 'user-kicked') {
-                        socketService.emit('leave-user', loggedinUser?._id)
-                  }
+                  // if (event === 'user-joined') {
+                  //       socketService.emit('join-user', loggedinUser?._id)
+                  // } else if (event === 'user-left' || event === 'user-kicked') {
+                  //       socketService.emit('leave-user', loggedinUser?._id)
+                  // }
 
                   try {
                         setIsLoading(true)
@@ -61,9 +59,9 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
             loadChats()
 
             return () => {
-                  socketService.off('user-kicked')
-                  socketService.off('user-joined')
-                  socketService.off('user-left')
+                  // socketService.off('user-kicked')
+                  // socketService.off('user-joined')
+                  // socketService.off('user-left')
             }
       }, [])
 
@@ -90,20 +88,6 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
             }
             return chats
       }, [chats, filter, contentType, loggedinUser, sort, setChats])
-
-      useEffect(() => {
-            socketService.on('notification', (newMessage: IMessage) => updateChatsWithNewMessage(newMessage))
-
-            // update the chat latest message as read
-            socketService.on('message-read', ({ chatId, userId }: { chatId: string, userId: string }) => {
-                  updateChatStatusToRead(chatId, userId);
-            })
-
-            return () => {
-                  socketService.off('notification');
-                  socketService.off('message-read');
-            }
-      }, [updateChatsWithNewMessage, updateChatStatusToRead]);
 
       function onSetSort(type: 'Newest' | 'Oldest' | null): void {
             setSort(type)

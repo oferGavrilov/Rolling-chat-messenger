@@ -7,7 +7,7 @@ import GroupInfo from "./GroupInfo"
 
 interface Props {
       conversationUser: IUser | null
-      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "edit-file">>
 }
 
 export default function Info ({ conversationUser, setChatMode }: Props): JSX.Element {

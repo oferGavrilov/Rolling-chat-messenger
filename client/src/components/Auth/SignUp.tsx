@@ -26,6 +26,7 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                         type="email"
                         name="email"
                         id="email"
+                        autoComplete="email"
                         placeholder="Email"
                         onChange={formik.handleChange}
                         value={formik.values.email}
@@ -37,6 +38,7 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                         type="text"
                         name="username"
                         id="username"
+                        autoComplete="username"
                         placeholder="Username"
                         onChange={formik.handleChange}
                         value={formik.values.username}
@@ -50,6 +52,7 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                               type={showPassword ? "text" : "password"}
                               name="password"
                               id="password"
+                              autoComplete="new-password"
                               placeholder="Password"
                               onChange={formik.handleChange}
                               value={formik.values.password}
@@ -68,6 +71,7 @@ export default function SignUp({ formik, image, setImage }: SignUpProps) {
                         type={showPassword ? "text" : "password"}
                         name="confirmPassword"
                         id="confirmPassword"
+                        autoComplete="new-password"
                         placeholder="Confirm Password"
                         onChange={formik.handleChange}
                         value={formik.values.confirmPassword}

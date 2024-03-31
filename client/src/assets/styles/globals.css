@@ -35,11 +35,6 @@
             -webkit-user-drag: none;
             user-select: none;
       }
-
-      /* @font-face {
-            font-family: 'sf-pro-display';
-            src: url('../fonts/SF-Pro-Text-Regular.ttf');
-      } */
 }
 
 @layer components {
@@ -121,7 +116,6 @@
             transition-all duration-300 
             max-w-[70px] h-full
             flex flex-col justify-between gap-y-4
-            /* sticky z-10 */
             bg-navigation-bg /* LIGHT MODE */
             dark:bg-dark-navigation-bg; /* DARK MODE */
       }
@@ -184,22 +178,31 @@
       .gallery-item {
             @apply relative;
       }
-      .gallery-item:hover .remove-btn {
-            @apply bg-red-600 opacity-100 translate-x-0;
+      .gallery-item:hover .gallery-float-btns {
+            @apply  opacity-100 -translate-x-2;
         }
 
-      .gallery-item .remove-btn {
+      .gallery-item .gallery-float-btns {
             @apply
-            absolute top-1 right-1 
-            w-4 h-4 p-3
-            rounded-full 
-            bg-red-500 
-            translate-x-8
-            opacity-0 
-            transition-all duration-300 
-            flex items-center justify-center 
-            cursor-pointer
+            absolute translate-x-8
+            right-1 top-1 opacity-0
+            flex flex-col gap-2
+            transition-all duration-300 ;
+      }
+
+      .gallery-float-btns .float-btn {
+            @apply size-7 p-3 flex items-center justify-center rounded-full cursor-pointer transition-all duration-300 
             hover:scale-110;
+      }
+
+      /* Gallery Edit tools */
+      .gallery-edit-btn {
+            @apply
+            flex flex-col items-center justify-center gap-2
+            border-2 w-full border-gray-200 rounded-lg 
+            p-3 select-none cursor-pointer
+            transition-colors duration-300
+            hover:bg-gray-200 dark:hover:bg-dark-default-hover-bg; /* DARK MODE */
       }
 
       /* Settings */
@@ -307,6 +310,14 @@
             absolute top-1/2 
             transition-all duration-300 cursor-pointer 
             hover:scale-110;
+      }
+      .input-edit-group-name {
+            @apply 
+            max-w-[200px] md:max-w-full 
+            border-b-2 border-primary rounded-t-lg
+            text-xl py-1 pl-4 pr-8
+            bg-gray-100 
+            dark:bg-dark-default-hover-bg dark:text-white ; /* DARK MODE */
       }
       /* Selected File */
       .tools-icon {

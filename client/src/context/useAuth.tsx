@@ -24,7 +24,7 @@ export const AuthState = () => {
 }
 
 export default function AuthProvider({ children }: { children: ReactNode }): JSX.Element {
-      const [user, setUser] = useState<IUser | null>(null)
+      const [user, setUser] = useState<IUser | null>(userService.getLoggedinUser() || null)
       const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
       const [chatBackgroundColor, setChatBackgroundColor] = useState<IColorPalette>(userService.getBackgroundColor() || { color: '#d8f3dc', opacity: .7 })
 

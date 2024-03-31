@@ -31,8 +31,8 @@ const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
       const handleSelectChat = useCallback(() => {
             if (selectedChat?._id === chat._id) return
 
-            const updatedChat = getUpdatedChat(chat); // Add the logged in user to the chat if not already present
             setMessages([]); // Clear the messages when a new chat is selected
+            const updatedChat = getUpdatedChat(chat); // Add the logged in user to the chat if not already present
             setSelectedChat(updatedChat);
 
       }, [chat, selectedChat, setSelectedChat])
@@ -68,7 +68,7 @@ const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {
                                           {formatTime(chat.latestMessage ? chat?.latestMessage?.createdAt : chat.createdAt as string)}
                                     </span>
                               </div>
-                              <div className='flex justify-between'>
+                              <div className='flex justify-between min-h-6'>
                                     <LatestMessagePreview chat={chat} loggedinUser={loggedInUser} unreadMessagesCount={chat.unreadMessagesCount} selectedChat={selectedChat} />
                               </div>
                         </div>

@@ -6,10 +6,10 @@ import { AuthState } from "../../../context/useAuth";
 import useStore from "../../../context/store/useStore";
 
 interface Props {
-    setIsShowUploadForm: React.Dispatch<React.SetStateAction<boolean>>;
+    setViewMode: React.Dispatch<React.SetStateAction<'list' | 'upload' | 'edit'>>;
 }
 
-export default function UploadGalleryImage({ setIsShowUploadForm }: Props): JSX.Element {
+export default function UploadGalleryImage({ setViewMode }: Props): JSX.Element {
     const [imageLoading, setImageLoading] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("New Image")
     const [dragOver, setDragOver] = useState<boolean>(false);
@@ -86,7 +86,7 @@ export default function UploadGalleryImage({ setIsShowUploadForm }: Props): JSX.
             if (newImage && newImage._id) {
                 setGallery((prevGallery) => [...prevGallery, newImage]);
                 toast.success('Image uploaded successfully!');
-                setIsShowUploadForm(false);
+                setViewMode('list');
             } else {
                 toast.error('Failed to upload image. Please try again.');
             }

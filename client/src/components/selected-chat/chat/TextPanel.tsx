@@ -7,6 +7,8 @@ import { AuthState } from '../../../context/useAuth'
 import useStore from '../../../context/store/useStore'
 
 import socketService from '../../../services/socket.service'
+import { SocketEmitEvents } from "../../../utils/socketEvents"
+
 import { uploadAudio } from '../../../utils/cloudinary'
 
 import MessageArrow from '../../svg/MessageArrow'
@@ -22,7 +24,7 @@ type Timer = NodeJS.Timeout | number
 
 interface Props {
       setFile: React.Dispatch<React.SetStateAction<IFile | null>>
-      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "edit-file">>
       onSendMessage: (message: string, type: 'text' | 'image' | 'audio' | 'file', replyMessageId: IReplyMessage | null, recordingTimer?: number) => void
 }
 
@@ -52,7 +54,7 @@ export default function TextPanel({
             onSendMessage(newMessage.trim(), 'text', replyMessage || null);
             setNewMessage('');
             setTyping(false);
-            socketService.emit('stop typing', { chatId: selectedChat._id, userId: loggedInUser?._id });
+            socketService.emit(SocketEmitEvents.STOP_TYPING, { chatId: selectedChat._id, userId: loggedInUser?._id });
       }, [newMessage, onSendMessage, replyMessage, selectedChat, loggedInUser]);
 
       const typingHandler = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -67,7 +69,7 @@ export default function TextPanel({
 
             if (!typing) {
                   setTyping(true)
-                  socketService.emit('typing', { chatId: selectedChat?._id, userId: loggedInUser?._id })
+                  socketService.emit(SocketEmitEvents.TYPING, { chatId: selectedChat?._id, userId: loggedInUser?._id })
             }
 
             if (typingTimeoutRef.current) {
@@ -76,7 +78,7 @@ export default function TextPanel({
 
             const timerLength = 2000
             typingTimeoutRef.current = setTimeout(() => {
-                  socketService.emit('stop typing', { chatId: selectedChat?._id, userId: loggedInUser?._id })
+                  socketService.emit(SocketEmitEvents.STOP_TYPING, { chatId: selectedChat?._id, userId: loggedInUser?._id })
                   setTyping(false)
             }, timerLength)
       }, [typing, selectedChat, loggedInUser]);

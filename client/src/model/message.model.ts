@@ -5,6 +5,7 @@ export interface IMessage {
       chatId: string
       chat?: IChat
       content: string | File 
+      TN_Image: string 
       createdAt: string
       sender: {
             _id: string

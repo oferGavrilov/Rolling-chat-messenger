@@ -28,13 +28,12 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
 
       const renderMessageContent = (message: IMessage): ReactNode => {
             if (!user) return null
-            // If the message is deleted by the sender, show a message that the message was deleted
-            if (message.deletedBy.some(deletion => deletion.userId === user._id)) {
+            // If the message is deleted by the sender, and the deletion type is forEveryone, then show the deleted message component
+            if (message.deletedBy.some(deletion => deletion.deletionType === 'forEveryone' && message.sender._id === deletion.userId)) {
                   return (
                         <DeletedMessage />
                   )
             }
-
             if (message.messageType === 'text') {
                   return <TextMessage message={message} />
 

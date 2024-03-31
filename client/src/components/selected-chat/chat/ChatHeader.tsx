@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
 
 import { IUser } from "../../../model/user.model"
-import socketService, { SOCKET_LOGIN, SOCKET_LOGOUT } from '../../../services/socket.service'
+import socketService from '../../../services/socket.service'
+import { SocketOnEvents } from "../../../utils/socketEvents"
+
 import ProfileImage from '../../common/ProfileImage'
 import { userService } from '../../../services/user.service'
 import { formatLastSeenDate } from '../../../utils/functions'
 
 interface Props {
       conversationUser: IUser | null
-      chatMode: "chat" | "info" | "send-file"
-      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "edit-file">>
       conversationUserRef: React.MutableRefObject<IUser | null>
 }
 
@@ -21,83 +22,129 @@ type connection = {
       lastSeen: string
 }
 
-export default function ChatHeader({ conversationUser, conversationUserRef, chatMode, setChatMode }: Props): JSX.Element {
+export default function ChatHeader({ conversationUser, conversationUserRef, setChatMode }: Props): JSX.Element {
       const { selectedChat, setSelectedChat } = useStore()
       const { user: loggedInUser } = AuthState()
-      const [isTyping, setIsTyping] = useState<boolean>(false);
+      const [isTyping, setIsTyping] = useState<boolean>(false)
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [isLoadingStatus, setIsLoadingStatus] = useState<boolean>(false)
 
-      useEffect(() => {
-            socketService.on('typing', () => setIsTyping(true));
-            socketService.on('stop typing', () => setIsTyping(false));
 
-            fetchConnectionStatus()
+      // old typing status
+      // useEffect(() => {
+      //       socketService.on(SocketOnEvents.USER_TYPING, () => setIsTyping(true))
+      //       socketService.on(SocketOnEvents.STOP_TYPING, () => setIsTyping(false))
+
+      //       fetchConnectionStatus()
+
+      //       return () => {
+      //             socketService.on(SocketOnEvents.USER_TYPING, () => setIsTyping(true))
+      //             socketService.on(SocketOnEvents.STOP_TYPING, () => setIsTyping(false))
+      //             setIsTyping(false)
+      //       }
+      // }, [selectedChat?._id, conversationUser, conversationUserRef?.current])
+
+      const handleConnection = useCallback(({ userId, status }: { userId: string, status: boolean }): void => {
+            console.log('userId:', userId, 'conversationUserRef?.current?._id:', conversationUserRef?.current?._id)
+            console.log('status:', status)
+            if (userId !== conversationUserRef?.current?._id) return;
+            const date = new Date();
+            setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`);
+      }, [conversationUserRef]);
+
+      useEffect(() => {
+            const typingEvent = () => setIsTyping(true);
+            const stopTypingEvent = () => setIsTyping(false);
+
+            socketService.on(SocketOnEvents.USER_TYPING, typingEvent);
+            socketService.on(SocketOnEvents.STOP_TYPING, stopTypingEvent);
 
             return () => {
-                  socketService.on('stop typing', () => setIsTyping(false));
-                  setIsTyping(false)
-            }
-      }, [selectedChat, conversationUser]);
+                  socketService.off(SocketOnEvents.USER_TYPING, typingEvent);
+                  socketService.off(SocketOnEvents.STOP_TYPING, stopTypingEvent);
+            };
+      }, [selectedChat?._id, conversationUser]);
 
-      async function fetchConnectionStatus() {
+      useEffect(() => {
+            socketService.on(SocketOnEvents.LOGIN, handleConnection)
+            socketService.on(SocketOnEvents.LOGOUT, handleConnection)
+
+            return () => {
+                  socketService.off(SocketOnEvents.LOGIN, handleConnection)
+                  socketService.off(SocketOnEvents.LOGOUT, handleConnection)
+            }
+      }, [conversationUserRef?.current?._id, conversationUserRef, handleConnection])
+
+      useEffect(() => {
             if (selectedChat?.isGroupChat || !conversationUser?._id || selectedChat?.isNewChat) return
 
-            try {
-                  setIsLoadingStatus(true)
-                  const connection = await userService.getUserConnectionStatus(conversationUser._id as string) as connection
-                  const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
-                  setConnectionStatus(status)
-            } catch (err) {
-                  console.error('Failed to fetch user connection status:', err)
+            const fetchConnectionStatus = async (): Promise<void> => {
+                  try {
+                        setIsLoadingStatus(true)
+                        const connection: connection = await userService.getUserConnectionStatus(conversationUser._id) as connection
+                        const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
+                        setConnectionStatus(status)
+                  } catch (err) {
+                        console.error('Failed to fetch user connection status:', err)
 
-            } finally {
-                  setIsLoadingStatus(false)
+                  } finally {
+                        setTimeout(() => setIsLoadingStatus(false), 1000) // for smooth transition
+                  }
             }
-      }
 
-      useEffect(() => {
-            socketService.on(SOCKET_LOGIN, handleConnection, true)
-            socketService.on(SOCKET_LOGOUT, handleConnection, false)
+            fetchConnectionStatus()
+      }, [selectedChat?._id, conversationUser])
 
-            return () => {
-                  socketService.off(SOCKET_LOGIN, handleConnection)
-                  socketService.off(SOCKET_LOGOUT, handleConnection)
-            }
-      }, [selectedChat])
+      // old function to handle connection status
+      // async function fetchConnectionStatus() {
+      //       if (selectedChat?.isGroupChat || !conversationUser?._id || selectedChat?.isNewChat) return
 
-      function handleConnection(userId: string, status: boolean): void {
-            if (userId !== conversationUserRef?.current?._id) return
-            const date = new Date()
-            setConnectionStatus(
-                  status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`
-            )
-      }
+      //       try {
+      //             setIsLoadingStatus(true)
+      //             const connection = await userService.getUserConnectionStatus(conversationUser._id as string) as connection
+      //             const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
+      //             setConnectionStatus(status)
+      //       } catch (err) {
+      //             console.error('Failed to fetch user connection status:', err)
 
-      function toggleChatInfo(): void {
-            if (chatMode === 'info') setChatMode('chat')
-            else setChatMode('info')
-      }
+      //       } finally {
+      //             setTimeout(() => setIsLoadingStatus(false), 1000) // for smooth transition
+      //       }
+      // }
+
+
+      // old function to handle connection status
+      // function handleConnection(userId: string, status: boolean): void {
+      //       if (userId !== conversationUserRef?.current?._id) return
+      //       const date = new Date()
+      //       setConnectionStatus(
+      //             status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`
+      //       )
+      // }
+
+      const toggleChatInfo = (): void => setChatMode(prevMode => prevMode === 'info' ? 'chat' : 'info');
+
 
       if (!selectedChat || !conversationUser) return <div></div>
       return (
             <header className='flex items-center px-2 chat-header-shadow bg-white dark:bg-dark-secondary-bg'>
-                  <span
+                  <button
                         className="material-symbols-outlined md:hidden text-3xl leading-none text-primary dark:text-dark-primary-text ml-2 mr-4 cursor-pointer"
                         onClick={() => setSelectedChat(null)}
-                  >chevron_left
-                  </span>
+                        aria-label='Close chat'>
+                        chevron_left
+                  </button>
                   <ProfileImage
                         className="default-profile-img w-10 h-10 max-w-none hover:scale-105"
                         src={selectedChat.isGroupChat ? selectedChat.groupImage as string : conversationUser.profileImg as string}
-                        alt={conversationUser?.username}
+                        alt={`${conversationUser.username}'s profile image`}
                         onClick={toggleChatInfo}
                   />
                   <div className='flex items-center gap-4 ml-4 justify-between w-full'>
                         <div className='flex flex-col'>
-                              <h2 className='cursor-pointer font-semibold tracking-wider dark:text-dark-primary-text underline-offset-2 hover:underline' onClick={toggleChatInfo}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
+                              <h2 className='cursor-pointer font-bold tracking-wider dark:text-dark-primary-text 2xl:text-lg underline-offset-2 hover:underline' onClick={toggleChatInfo}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
                               {!selectedChat.isGroupChat ? (
-                                    <span className='text-primary dark:text-dark-primary-text text-sm lg:text-lg'>
+                                    <span className={`text-primary dark:text-dark-primary-text text-sm transition-all duration-200 ${isLoadingStatus ? 'max-h-0 opacity-0' : 'max-h-5 opacity-100'} 2xl:text-lg 2xl:leading-none`}>
                                           {isTyping ? 'Typing...' : isLoadingStatus ? '' : connectionStatus}
                                     </span>
                               ) : (

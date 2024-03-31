@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from 'axios'
 import { toast } from 'react-toastify'
 import { userService } from './user.service'
+import socketService from './socket.service'
 // import { userService } from './user.service'
 
 const env = import.meta.env.VITE_NODE_ENV
 
-console.log('env', env)
 const BASE_URL =
       env === 'production'
             ? env.VITE_SERVER_URL
@@ -18,12 +18,19 @@ const axiosInstance = axios.create({
       withCredentials: true
 })
 
+interface ServiceResponse<T> {
+      success: boolean
+      message: string
+      responseObject: T
+      statusCode: number
+}
+
 export const httpService = {
       async get<T>(endpoint: string, params = {}): Promise<T> {
             return ajax(endpoint, 'GET', null, params)
       },
-      async post<T>(endpoint: string, data: unknown): Promise<T> {
-            return ajax(endpoint, 'POST', data)
+      async post<T>(endpoint: string, data: unknown, config?: {}): Promise<T> {
+            return ajax(endpoint, 'POST', data, null, config)
       },
       async put<T>(endpoint: string, data: unknown): Promise<T> {
             return ajax(endpoint, 'PUT', data)
@@ -33,15 +40,23 @@ export const httpService = {
       },
 }
 
-async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown = null, params: unknown = {}): Promise<T> {
+async function ajax<T>(
+      endpoint: string,
+      method: string = 'GET',
+      data: unknown = null,
+      params: unknown = {},
+      config: {} = {}
+): Promise<T> {
       try {
-            const res: AxiosResponse<T> = await axiosInstance({
+            const res: AxiosResponse<ServiceResponse<T>> = await axiosInstance({
                   url: endpoint,
                   method,
                   data,
                   params: method === 'GET' ? params : null,
+                  ...config
             })
-            return res.data
+            console.log('res', res)
+            return res.data.responseObject
       } catch (err: any) {
             if (env === 'development') {
                   console.log(`Had Issues ${method}ing to the backend, endpoint: ${endpoint}, message: ${err.message} with data: `, data)
@@ -52,21 +67,25 @@ async function ajax<T>(endpoint: string, method: string = 'GET', data: unknown =
             if (err.response) {
                   const status = err.response.status
                   console.log(err.response)
-                  if (status === 401) {
-                        // when user is logged in but with expired tokens
-                        if (err.response.data.message === 'expired') {
-                              await userService.logout()
-                              window.location.assign('/auth')
-                        } else {
-                              toast.warn(err.response.data.message || 'You are not logged in.')
+                  if (status === 400) {
+                        toast.warn(err.response.data.message || 'Bad request, Try again later.')
+                  } else
+                        if (status === 401) {
+                              // when user is logged in but with expired tokens
+                              if (err.response.data.message === 'expired') {
+                                    await userService.logout()
+                                    socketService.terminate();
+                                    window.location.assign('/auth')
+                              } else {
+                                    toast.warn(err.response.data.message || 'You are not logged in.')
+                              }
+                        } else if (status === 403) {
+                              toast.warn(err.response.data.message || 'You are not allowed to do that.')
+                        } else if (status === 404) {
+                              toast.warn(err.response.data.message || 'Something went wrong, Try again later.')
+                        } else if (status === 500) {
+                              window.location.assign('/')
                         }
-                  } else if (status === 403) {
-                        toast.warn(err.response.data.message || 'You are not allowed to do that.')
-                  } else if (status === 404) {
-                        toast.warn(err.response.data.message || 'Something went wrong, Try again later.')
-                  } else if (status === 500) {
-                        // env === 'production' && window.location.assign('/')
-                  }
             }
 
             throw err

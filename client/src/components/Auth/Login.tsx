@@ -22,6 +22,7 @@ export default function Login({ formik}: LoginProps) {
                         name="email"
                         id="email"
                         placeholder="Email"
+                        autoComplete="email"
                         maximum-scale={1}
                         value={formik.values.email}
                         onChange={formik.handleChange}
@@ -35,6 +36,7 @@ export default function Login({ formik}: LoginProps) {
                               type={showPassword ? "text" : "password"}
                               name="password"
                               id="password"
+                              autoComplete="current-password"
                               placeholder="Password"
                               value={formik.values.password}
                               onChange={formik.handleChange}

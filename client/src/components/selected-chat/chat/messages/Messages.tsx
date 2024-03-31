@@ -6,11 +6,13 @@ import MessagePreview from "./MessagePreview"
 import ProfileImage from "../../../common/ProfileImage"
 import { messageService } from "../../../../services/message.service"
 import socketService from "../../../../services/socket.service"
+import { SocketEmitEvents } from "../../../../utils/socketEvents"
+
 import { toast } from "react-toastify"
 
 interface Props {
       messages: IMessage[]
-      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "edit-file">>
 }
 
 export default function Messages({ messages, setChatMode }: Props): JSX.Element {
@@ -37,7 +39,7 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
                   await messageService.removeMessage(message._id, selectedChat._id, deleteAction)
                   if (deleteAction === 'forEveryone') {
                         removeMessage(message._id, selectedChat._id, user._id, deleteAction)
-                        socketService.emit('message-removed', { messageId: message._id, chatId: selectedChat._id, removerId: user._id, chatUsers: selectedChat.users, deleteAction })
+                        socketService.emit(SocketEmitEvents.MESSAGE_REMOVED, { messageId: message._id, chatId: selectedChat._id, removerId: user._id, chatUsers: selectedChat.users })
 
                   } else if (deleteAction === 'forMe') {
                         // await messageService.removeMessage(message._id, selectedChat._id, deleteAction)

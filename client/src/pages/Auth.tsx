@@ -1,7 +1,5 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
-
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { userService } from '../services/user.service'
 import Logo from '../components/svg/Logo'
 import HomeIcon from '@mui/icons-material/Home'
 import { Tooltip } from '@mui/material'
@@ -9,15 +7,19 @@ import { Tooltip } from '@mui/material'
 import Form from '../components/Auth/Form'
 
 import { WavesBlue } from '../components/svg/Bubble'
+import { AuthState } from '../context/useAuth'
 
-export default function Auth () {
-      const [isVisible, setIsVisible] = useState(false)
+export default function Auth() {
+      const [isVisible, setIsVisible] = useState<boolean>(false)
+      const { user } = AuthState()
       const navigate = useNavigate()
 
-      useLayoutEffect(() => {
-            const user = userService.getLoggedinUser()
-            if (user) navigate('/chat')
-      }, [navigate])
+      useEffect(() => {
+            if (user !== null && window.location.pathname !== '/chat') {
+                console.log('user is already logged in. Redirecting to chat page...');
+                navigate('/chat');
+            }
+        }, [user, navigate]);
 
 
       useEffect(() => {
@@ -27,9 +29,9 @@ export default function Auth () {
                   document.body.style.overflow = 'auto'
             }, 3000)
 
-            return () =>{
+            return () => {
                   clearTimeout(timer)
-            } 
+            }
       }, [])
 
       return (
@@ -47,7 +49,7 @@ export default function Auth () {
                               </Tooltip>
                         </div>
                   </section>
-                  <WavesBlue className='slide-up bottom-0'/>
+                  <WavesBlue className='slide-up bottom-0 md:-bottom-10 lg:-bottom-20 xl:-bottom-28 2xl:-bottom-36' />
             </>
       )
 }

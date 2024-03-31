@@ -4,6 +4,8 @@ import useStore from "../../../context/store/useStore"
 
 import { AuthState } from "../../../context/useAuth"
 import socketService from "../../../services/socket.service"
+import { SocketOnEvents } from "../../../utils/socketEvents"
+
 import ChatPreview from "./ChatPreview"
 
 export default function ChatList({ chats }: { chats: IChat[] }) {
@@ -13,11 +15,11 @@ export default function ChatList({ chats }: { chats: IChat[] }) {
       useEffect(() => {
             if (!user) return
 
-            socketService.on('new group', handleNewGroup)
+            socketService.on(SocketOnEvents.NEW_GROUP_CREATED, handleNewGroup)
 
 
             return () => {
-                  socketService.off('new group', handleNewGroup)
+                  socketService.off(SocketOnEvents.NEW_GROUP_CREATED, handleNewGroup)
             }
       }, [user])
 
@@ -28,7 +30,7 @@ export default function ChatList({ chats }: { chats: IChat[] }) {
       return (
             <div className="overflow-y-auto h-[79vh]">
                   <ul className="pl-1">
-                        {chats.map(chat => (
+                        {chats.map((chat: IChat) => (
                               <ChatPreview key={chat._id} chat={chat} />
                         ))}
                   </ul>

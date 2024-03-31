@@ -5,7 +5,9 @@ import useStore from '../context/store/useStore'
 
 import Logo from "./svg/Logo"
 // import Story from "./svg/Story"
-import socketService, { SOCKET_LOGOUT } from '../services/socket.service'
+import socketService from '../services/socket.service'
+import { SocketEmitEvents } from "../utils/socketEvents"
+
 
 import { Tooltip } from "@mui/material"
 import { BsChatText } from 'react-icons/bs'
@@ -29,7 +31,7 @@ export default function Navigation({
       showNavigation,
       setShowNavigation
 }: Props): JSX.Element {
-      const { user, setJustLoggedIn } = AuthState()
+      const { user, setUser, setJustLoggedIn } = AuthState()
       const { setSelectedChat, setSelectedImage } = useStore()
       const navigate = useNavigate()
       const navigationRef = useRef<HTMLElement>(null)
@@ -62,8 +64,10 @@ export default function Navigation({
 
       async function handleLogout() {
             await userService.logout()
-            navigate('/')
-            socketService.emit(SOCKET_LOGOUT, user?._id)
+            setUser(null)
+            navigate('/', { replace: true })
+            socketService.emit(SocketEmitEvents.LOGOUT, user?._id)
+            socketService.terminate()
             setSelectedChat(null)
             setJustLoggedIn(false)
       }
@@ -101,8 +105,8 @@ export default function Navigation({
                                     <div className={`navigation-icon ${contentType === 'gallery' && 'active-navigation-icon'}`} onClick={() => onSelectContentType('gallery')}>
                                           <span className="material-symbols-outlined">crop</span>
                                     </div>
-                              </Tooltip> */}
-                              {/* <Tooltip title="Stories" arrow placement='right'>
+                              </Tooltip>
+                              <Tooltip title="Stories" arrow placement='right'>
                                     <div className={`navigation-icon  ${contentType === 'story' ? 'active-navigation-icon' : ''}`} onClick={() => onSelectContentType('story')}>
                                           <Story />
                                     </div>

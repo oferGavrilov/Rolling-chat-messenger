@@ -11,6 +11,7 @@ import UploadImage from '../UploadImage'
 import SearchInput from '../common/SearchInput'
 import UsersList from './UsersList'
 import socketService from "../../services/socket.service"
+import { SocketEmitEvents } from "../../utils/socketEvents"
 
 interface Props {
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -75,7 +76,7 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
 
                   // const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000', { transports: ['websocket'] })
                   // socket.emit('create group', group.users, user?._id, newChat)
-                  socketService.emit('create group', { users: group.users, adminId: user?._id, group: newChat })
+                  socketService.emit(SocketEmitEvents.CREATE_GROUP, { users: group.users, adminId: user?._id, group: newChat })
             } catch (error) {
                   console.error("An error occurred while creating group:", error)
             }

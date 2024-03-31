@@ -11,11 +11,12 @@ const CHAT_SESSION_KEY = 'userChatsFetched'
 export const chatService = {
       getUserChats,
       createChat,
+      removeChat,
+      getChatById,
       createGroup,
       updateGroupInfo,
       kickFromGroup,
       updateUsersGroup,
-      removeChat,
       leaveFromGroup,
       isUserChatsFetched
 }
@@ -57,6 +58,15 @@ async function removeChat(chatId: string, userId: string) {
       } catch (error) {
             console.log(error)
             throw new Error('Failed to remove chat.')
+      }
+}
+
+async function getChatById(chatId: string): Promise<IChat> {
+      try {
+            return httpService.get<IChat>(`${BASE_URL}/api/chat/${chatId}`)
+      } catch (error) {
+            console.error(error)
+            throw new Error('Failed to fetch chat.')
       }
 }
 

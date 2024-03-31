@@ -15,7 +15,7 @@ import { IFile } from '../../../model/chat.model'
 
 interface Props {
       setFile: React.Dispatch<React.SetStateAction<IFile | null>>
-      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "send-file">>
+      setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "edit-file">>
 }
 
 export default function AddFileModal({ setFile, setChatMode }: Props) {
@@ -30,7 +30,7 @@ export default function AddFileModal({ setFile, setChatMode }: Props) {
             try {
                   // Show the file editor immediately and then show the file
                   setFile(null)
-                  setChatMode('send-file')
+                  setChatMode('edit-file')
                   setShowCamera(false)
 
                   const blob = await fetch(image).then((r) => r.blob())
@@ -52,7 +52,7 @@ export default function AddFileModal({ setFile, setChatMode }: Props) {
             if (!e.target.files) return
             const file = e.target.files[0]
             setFile(file)
-            setChatMode('send-file')
+            setChatMode('edit-file')
       }
 
       return (

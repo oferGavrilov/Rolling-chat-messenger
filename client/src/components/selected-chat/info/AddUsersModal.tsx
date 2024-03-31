@@ -8,6 +8,8 @@ import useStore from '../../../context/store/useStore'
 import Loading from '../../SkeltonLoading'
 import { IChat } from '../../../model/chat.model'
 import socketService from '../../../services/socket.service'
+import { SocketEmitEvents } from "../../../utils/socketEvents"
+
 
 import CloseIcon from '@mui/icons-material/Close'
 
@@ -18,7 +20,7 @@ interface Props {
       setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setIsOpen }: Props): JSX.Element {
+export default function AddUsersModal({ existsUsers, isOpen, selectedChat, setIsOpen }: Props): JSX.Element {
       const usersModal = useRef<HTMLDivElement>(null)
       const [users, setUsers] = useState<IUser[]>([])
       const [selectedUsers, setSelectedUsers] = useState<IUser[]>([])
@@ -29,10 +31,10 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
       useClickOutside(usersModal, () => setIsOpen(false), isOpen)
 
       useEffect(() => {
-            loadUsers()
-      }, [existsUsers])
+            if (isOpen) loadUsers()
+      }, [isOpen])
 
-      async function loadUsers () {
+      async function loadUsers() {
             try {
                   setIsLoading(true)
                   const allUsers = await userService.getUsers() as IUser[]
@@ -48,7 +50,7 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
             }
       }
 
-      function handleSelectUsers (user: IUser) {
+      function handleSelectUsers(user: IUser) {
             setSelectedUsers(prevSelectedUsers => {
                   if (prevSelectedUsers?.some(selectedUser => selectedUser._id === user._id)) {
                         return prevSelectedUsers.filter(selectedUserId => selectedUserId._id !== user._id)
@@ -58,19 +60,19 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
             })
       }
 
-      async function onAddUsers () {
+      async function onAddUsers() {
             if (!selectedChat) return
             if (selectedUsers.length === 0) return toast.error('Please select at least one user')
 
             try {
-                  const updatedUsers = await chatService.updateUsersGroup(selectedChat._id, selectedUsers) as IChat
+                  const { users: newUsers } = await chatService.updateUsersGroup(selectedChat._id, selectedUsers) as IChat
 
-                  setChats(chats.map(chat => chat._id === selectedChat?._id ? { ...chat, users: updatedUsers.users } : chat))
+                  setChats(chats.map(chat => chat._id === selectedChat?._id ? { ...chat, newUsers } : chat))
 
-                  socketService.emit('add-to-group', { chatId: selectedChat._id, users: selectedUsers })
+                  socketService.emit(SocketEmitEvents.ADDED_USERS_TO_GROUP, { chatId: selectedChat._id, usersInChat: selectedChat.users, newUsers })
 
                   if (selectedChat) {
-                        setSelectedChat({ ...selectedChat, users: updatedUsers.users })
+                        setSelectedChat({ ...selectedChat, users: newUsers })
                   }
 
                   toast.success('Users added successfully')
@@ -84,12 +86,11 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
             }
       }
 
-      function onCloseModal () {
+      function onCloseModal() {
             setSelectedUsers([])
             setIsOpen(false)
       }
 
-      console.log('AddUsersModal', users)
       return (
             <div
                   ref={usersModal}
@@ -126,10 +127,10 @@ export default function AddUsersModal ({ existsUsers, isOpen, selectedChat, setI
 
                   <div className='absolute bottom-0 flex justify-between w-[90%] px-6 items-center mx-auto'>
                         <button className='users-modal-btn opacity-80 hover:opacity-100' onClick={onCloseModal}>Cancel</button>
-                        <button className='users-modal-btn hover:shadow-xl shadow-primary' onClick={onAddUsers}>Add Users</button>
+                        {selectedUsers.length > 0 && <button className='users-modal-btn hover:shadow-xl shadow-primary' onClick={onAddUsers}>Add Users</button>}
                   </div>
 
-                  <CloseIcon className='absolute top-5 right-3' onClick={() => setIsOpen(false)} />
+                  <CloseIcon className='absolute top-5 right-3' onClick={onCloseModal} />
             </div>
       );
 }

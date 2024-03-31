@@ -1,6 +1,8 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import { chatService } from '../../../services/chat.service'
 import socketService from '../../../services/socket.service'
+import { SocketEmitEvents } from "../../../utils/socketEvents"
+
 import { IChat } from '../../../model/chat.model'
 import { IUser } from '../../../model/user.model'
 import useStore from '../../../context/store/useStore'
@@ -13,14 +15,13 @@ interface Props {
 }
 
 export default function GroupUsersList({ selectedChat, setSelectedChat, loggedInUser, isAdmin }: Props): JSX.Element {
+      const { onSelectChat, setMessages } = useStore()
 
-      const { onSelectChat } = useStore()
       async function onKickFromGroup(userId: string) {
             if (!selectedChat || !loggedInUser) return
             try {
                   const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
-
-                  socketService.emit('kick-from-group', { chatId: selectedChat._id, userId, kickerId: loggedInUser._id })
+                  socketService.emit(SocketEmitEvents.KICKED_USER_FROM_GROUP, { chatId: selectedChat._id, usersInChat: selectedChat.users, kickedUserId: userId, kickerId: loggedInUser._id })
 
                   setSelectedChat({ ...selectedChat, users: updatedChat.users })
             } catch (err) {
@@ -32,6 +33,7 @@ export default function GroupUsersList({ selectedChat, setSelectedChat, loggedIn
             if (loggedInUser && loggedInUser?._id === userToChat._id) return
 
             onSelectChat(userToChat, loggedInUser as IUser)
+            setMessages([])
       }
 
       if (!selectedChat || !loggedInUser) return <div></div>

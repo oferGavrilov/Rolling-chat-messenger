@@ -62,7 +62,7 @@ const LatestMessagePreview: React.FC<ChatMessagePreviewProps> = React.memo(({ ch
             </div>
             {isShowUnreadMessagesCount() && (
                 <div className='text-xs text-white bg-primary rounded-full h-5 w-5 flex justify-center items-center'>
-                    {unreadMessagesCount}
+                    {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
                 </div>
             )}
             {isSender && (

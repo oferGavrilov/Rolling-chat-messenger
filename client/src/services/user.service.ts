@@ -71,6 +71,7 @@ async function logout(): Promise<void> {
       try {
             const user = getLoggedinUser()
             if (!user) {
+                  process.env.NODE_ENV !== 'development' && window.location.assign('/auth')
                   throw new Error('User is not logged in.')
             }
 
@@ -85,11 +86,15 @@ async function logout(): Promise<void> {
 }
 
 async function validateUser(): Promise<ValidationResponse> {
-      try {
-            return await httpService.get<ValidationResponse>(`${BASE_URL}/api/auth/validate`)
-      } catch (error) {
-            throw error
-      }
+      const validateUserResponse = await httpService.get<ValidationResponse>(`${BASE_URL}/api/auth/validate`)
+
+      if (validateUserResponse) {
+            if (validateUserResponse.isValid && validateUserResponse.user) {
+                  _saveToLocalStorage(validateUserResponse.user)
+            }
+      } 
+
+      return validateUserResponse
 }
 
 async function getUserConnectionStatus(userId: string) {
@@ -180,14 +185,15 @@ function getBackgroundColor(): IColorPalette | null {
       }
 }
 
-export function getLoggedinUser() {
+export function getLoggedinUser(): Partial<IUser> | null {
       const storedItem = localStorage.getItem(STORAGE_KEY)
       if (storedItem) {
             return JSON.parse(storedItem)
       }
+      return null
 }
 
-function _saveToLocalStorage(user) {
+function _saveToLocalStorage(user: Partial<IUser>) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
       return user
 }

@@ -66,7 +66,7 @@ export default function Home(): JSX.Element {
                               </div>
                         </MaxWidthWrapper>
 
-                        <WavesBlue className="slide-up bottom-0 md:-bottom-10 lg:-bottom-20 2xl:-bottom-36" />
+                        <WavesBlue className="slide-up bottom-0 md:-bottom-10 lg:-bottom-20 2xl:-bottom-28 3xl:-bottom-36" />
                   </div>
 
                   {/* SECOND */}
