@@ -1,51 +1,34 @@
-import { IGalleryRequest, IGalleryResponse } from "../../models/gallery.model.js";
+import { Request, Response } from "express";
+import { IGalleryResponse } from "../../models/gallery.model.js";
 import { createGalleryService, deleteGalleryService, getGalleryService } from "./service.js";
+import { handleServiceResponse } from "@/utils/httpHandler.js";
 
 
-export async function getGallery(req: IGalleryRequest, res: IGalleryResponse) {
+export async function getGallery(req: Request, res: Response) {
     const userId = req.user._id
 
-    try {
-        const gallery = await getGalleryService(userId)
-        return res.status(200).json(gallery)
-    } catch (error) {
-        console.log(error)
-    }
+    const gallery = await getGalleryService(userId)
+    handleServiceResponse(gallery, res)
 }
 
-export async function createGallery(req: IGalleryRequest, res: IGalleryResponse) {
+export async function createGallery(req: Request, res: Response) {
     const { title } = req.body
     const file = req.file
-
-    if (!title) {
-        return res.status(400).json({ message: 'Title are required' })
-    }
-
-    if (!file) {
-        return res.status(400).json({ message: 'File are required' })
-    }
-
     const userId = req.user._id
 
-    try {
-        const gallery = await createGalleryService(file.path, title, userId)
-        return res.status(201).json(gallery)
-    } catch (error) {
-        console.log(error)
-    }
+    if (!title) return res.status(400).json({ message: 'Title are required' })
+    if (!file) return res.status(400).json({ message: 'File are required' })
+
+    const gallery = await createGalleryService(file.path, title, userId)
+    handleServiceResponse(gallery, res)
 }
 
-export async function deleteGallery(req: IGalleryRequest, res: IGalleryResponse) {
+export async function deleteGallery(req: Request, res: Response) {
     const id = req.params.id
     const userId = req.user._id
 
-    try {
-        await deleteGalleryService(id, userId);
-        // If the service does not throw an error, deletion was successful
-        return res.status(200).json({ success: true });
-    } catch (error) {
-        console.error(error);
-        // Respond with false if there was an error during deletion
-        return res.status(500).json({ success: false, message: 'Failed to delete gallery item.' });
-    }
+    if (!id) return res.status(400).json({ message: 'Galley ID is required' })
+
+    const response = await deleteGalleryService(id, userId);
+    handleServiceResponse(response, res)
 }

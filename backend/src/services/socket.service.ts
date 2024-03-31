@@ -1,14 +1,18 @@
 import type { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
-import type { User } from '../models/user.model.js'
-import { type ChatDocument } from '../models/chat.model.js'
-import logger from './logger.service.js'
-import { IMessage } from '../models/message.model.js'
+import type { IUser, User } from '@/models/user.model'
+import { IChat } from '@/models/chat.model'
+import { logger } from '@/server'
+import { IMessage } from '@/models/message.model'
 
 let gIo: Server | null = null
-const roomToSocketIdsMap = new Map();
-const onlineUsers = new Map<string, string>();
-const userToRoomMap = new Map();
+
+const onlineUsers = new Map<string, string>()
+// Tracks which rooms a user is in (by user ID)
+const userToRoomsMap = new Map<string, Set<string>>()
+// Tracks which users (by user ID) are in a room
+const roomToUserIdsMap = new Map<string, Set<string>>()
+
 
 export function setupSocketAPI(http: HttpServer) {
       gIo = new Server(http, {
@@ -24,152 +28,205 @@ export function setupSocketAPI(http: HttpServer) {
                   socket.join(userId)
                   logger.info(`[Socket - Event: 'setup'] socketID: ${socket.id} joined userId: ${userId}`)
                   socket.broadcast.emit('connected', userId)
+
+                  // Update online users
+                  onlineUsers.set(userId, socket.id)
+
+                  // Update userToRoomMap
+                  // const rooms = userToRoomsMap.get(userId) || new Set()
+                  // rooms.forEach((room) => {
+                  //       socket.join(room)
+                  // })
+
+                  // // Update roomToUserIdsMap
+                  // roomToUserIdsMap.forEach((users, room) => {
+                  //       if (users.has(userId)) {
+                  //             socket.join(room)
+                  //       }
+                  // })
             })
 
             socket.on('login', (userId: string) => {
                   if (!onlineUsers.has(userId)) {
-                        logger.info(`[SOCKET - Event:'login'] - User connected: ${userId}`)
+                        logger.info(`[SOCKET - Event:'user-logged-in'] - User connected: ${userId}`)
                         socket.join(userId)
                         onlineUsers.set(userId, socket.id)
-                        socket.broadcast.emit('login', userId)
+                        socket.broadcast.emit('user-logged-in', userId)
                   }
             })
 
             socket.on('logout', (userId: string) => {
-                  logger.info(`[SOCKET - Event:'logout'] - User disconnected: ${userId}`)
+                  logger.info(`[SOCKET - Event:'user-logout'] - User disconnected: ${userId}`)
                   onlineUsers.delete(userId)
-                  socket.broadcast.emit('logout', userId)
+                  socket.broadcast.emit('user-logout', userId)
             })
 
-            socket.on('create group', ({ users, adminId, group }: { users: User[], adminId: string, group: ChatDocument }) => {
-                  console.log('users', users, 'adminId', adminId, 'group', group)
-                  const notifiedUsers = users.filter(user => user._id !== adminId);
+            socket.on('join-room', ({ chatId: room, userId }: { chatId: string, userId: string }) => {
+                  socket.join(room)
 
-                  logger.info(`Group created by AdminID: ${adminId}. Notifying Users: ${notifiedUsers.map(user => user._id).join(', ')}`);
+                  // Update roomToUserIdsMap
+                  const usersInRoom = roomToUserIdsMap.get(room) || new Set()
+                  usersInRoom.add(userId)
+                  roomToUserIdsMap.set(room, usersInRoom)
 
-                  notifiedUsers.forEach((user: User) => {
-                        socket.to(user._id).emit('new group', group);
-                  });
-            });
+                  // Update userToRoomsMap
+                  const roomsForUser = userToRoomsMap.get(userId) || new Set()
+                  roomsForUser.add(room)
+                  userToRoomsMap.set(userId, roomsForUser)
 
-            socket.on('join chat', ({ chatId: room, userId }: { chatId: string, userId: string }) => {
-                  socket.join(room);
-                  const socketsInRoom = roomToSocketIdsMap.get(room) || new Set();
-                  socketsInRoom.add(socket.id);
-                  roomToSocketIdsMap.set(room, socketsInRoom);
+                  logger.info(`Socket [id: ${socket.id}] with User [id: ${userId}] joined room: ${room}`)
+            })
 
-                  const rooms = userToRoomMap.get(userId) || new Set();
-                  rooms.add(room);
-                  userToRoomMap.set(userId, rooms);
+            socket.on('leave-room', ({ chatId: room, userId }: { chatId: string, userId: string }) => {
+                  socket.leave(room)
 
-                  logger.info(`Socket [id: ${socket.id}] joined room: ${room}`);
-            });
-
-            socket.on('leave chat', ({ chatId: room }: { chatId: string }) => {
-                  socket.leave(room);
-                  const socketsInRoom = roomToSocketIdsMap.get(room);
-                  if (socketsInRoom) {
-                        socketsInRoom.delete(socket.id);
-                        if (socketsInRoom.size === 0) {
-                              roomToSocketIdsMap.delete(room);
+                  // Update roomToUserIdsMap
+                  const usersInRoom = roomToUserIdsMap.get(room)
+                  if (usersInRoom) {
+                        usersInRoom.delete(userId)
+                        if (usersInRoom.size === 0) {
+                              roomToUserIdsMap.delete(room)
                         } else {
-                              roomToSocketIdsMap.set(room, socketsInRoom);
+                              roomToUserIdsMap.set(room, usersInRoom)
                         }
                   }
-                  logger.info(`Socket [id: ${socket.id}] left room: ${room}`);
-            });
+
+                  // Update userToRoomsMap
+                  const roomsForUser = userToRoomsMap.get(userId)
+                  if (roomsForUser) {
+                        roomsForUser.delete(room)
+                        if (roomsForUser.size === 0) {
+                              userToRoomsMap.delete(userId)
+                        } else {
+                              userToRoomsMap.set(userId, roomsForUser)
+                        }
+                  }
+
+                  logger.info(`User [id: ${userId}] with Socket [id: ${socket.id}] left room: ${room}`)
+            })
 
             socket.on('typing', ({ chatId: room, userId }: { chatId: string, userId: string }) => {
-                  socket.in(room).emit('typing', room, userId)
-                  logger.info(`Socket [id: ${socket.id}] is typing in room: ${room}`);
+                  socket.in(room).emit('user-typing', room, userId)
+                  logger.info(`Socket [id: ${socket.id}] is typing in room: ${room}`)
             })
 
-            socket.on('stop typing', ({ chatId: room }: { chatId: string }) => {
-                  socket.in(room).emit('stop typing')
+            socket.on('stop-typing', ({ chatId: room }: { chatId: string }) => {
+                  socket.in(room).emit('stop-typing')
             })
 
-            socket.on('read-messages', ({ chatId, userId, messages }: { chatId: string, userId: string, messages: string[] }) => {
-                  socket.to(chatId).emit('message-read', { chatId, userId, messages });
-                  logger.info(`Socket [id: ${socket.id}] read messages in room: ${chatId}`)
-            })
+            socket.on('new-message', ({ chatId: room, message, chatUsers, senderId }: { chatId: string, message: IMessage, chatUsers: IUser[], senderId: string }) => {
+                  const usersInRoom = roomToUserIdsMap.get(room) || new Set()
 
-            socket.on('new message in room', async ({ chatId: room, message, chatUsers }: { chatId: string, message: IMessage, chatUsers: User[] }) => {
-                  try {
-                        // Fetch all socket instances in the room
-                        const socketsInRoom = await gIo.in(room).fetchSockets();
-                        let isUserInRoom = false
-                        chatUsers.forEach((user: User) => {
-                              // Check if any socket for the user is in the room
-                              isUserInRoom = socketsInRoom.some(s => s.rooms.has(user._id));
-
-                              if (!isUserInRoom) {
-                                    gIo.to(user._id).emit('notification', message);
-                                    logger.info(`Notification sent to user [id: ${user._id}]`);
-                                    return;
-                              }
-
-                        });
-
-                        // Send the message to all sockets in the room
-                        socket.in(room).emit('message received', message);
-                        logger.info(`Socket [id: ${socket.id}] sent a message to room: ${room}`);
-
-                  } catch (error) {
-                        logger.error(`Error in 'new message in room' handler: ${error}`);
-                  }
-            });
-
-            socket.on('kick-from-group', ({ chatId, userId, kickerId }: { chatId: string, userId: string, kickerId: string }) => {
-                  socket.in(userId).emit('user-kicked', { chatId, userId, kickerId })
-                  logger.info(`user: ${kickerId} kicked user: ${userId} from chat: ${chatId}`)
-            })
-
-            socket.on('add-to-group', ({ chatId, users, adderId }: { chatId: string, users: User[], adderId: string }) => {
-                  logger.info(`user: ${adderId} added users: ${users.map(user => user._id)} to chat: ${chatId}`)
-
-                  users.forEach((user: User) => {
-                        socket.in(user._id).emit('user-joined', { chatId, user, adderId })
-                  })
-            })
-
-            socket.on('leave-from-group', ({ chatId, userId, chatUsers }: { chatId: string, userId: string, chatUsers: User[] }) => {
-                  chatUsers.forEach((user: User) => {
-                        if (user._id !== userId) {
-                              socket.in(user._id).emit('user-left', { chatId, userId })
+                  chatUsers.forEach((user: IUser) => {
+                        if (user._id === senderId) {
+                              return
+                        }
+                        // Check if the user is in the room
+                        if (usersInRoom.has(user._id)) {
+                              // Emit message to users in the room
+                              logger.info(`Emitting message-received to user ${user._id} in room ${room}`)
+                              socket.to(room).emit('new-message-in-room', { chatId: room, message })
+                        } else {
+                              // Emit notification to users not in the room
+                              logger.info(`Emitting notification-received to user ${user._id}`)
+                              gIo?.to(user._id).emit('notification-received', { chatId: room, message })
                         }
                   })
             })
 
-            socket.on('message-removed', ({ messageId, chatId, removerId, chatUsers, deleteAction }: { messageId: string, chatId: string, removerId: string, chatUsers: User[], deleteAction: 'forMe' | 'forEveryone' }) => {
-                  console.log(`user: ${removerId} removed message: ${messageId} from chat: ${chatId}`)
+            socket.on('read-messages', ({ chatId, userId, messageIds }: { chatId: string, userId: string, messageIds: string[] }) => {
+                  // socket.to(chatId).emit('message-read', { chatId, userId, messages })
+                  // logger.info(`Socket [id: ${socket.id}] read messages in room: ${chatId}`)
+                  const usersInRoom = roomToUserIdsMap.get(chatId) || new Set()
+                  usersInRoom.forEach((user) => {
+                        if (user !== userId) {
+                              logger.info(`Emitting messages-read to user ${user} in room ${chatId}`)
+                              gIo?.to(user).emit('messages-read', { chatId, userId, messageIds })
+                        }
+                  })
 
-                  chatUsers.forEach((user: User) => {
-                        socket.in(user._id).emit('message removed', { messageId, chatId, removerId, deleteAction })
+            })
+
+            socket.on('message-removed', ({ messageId, chatId, removerId, chatUsers }: { messageId: string, chatId: string, removerId: string, chatUsers: IUser[] }) => {
+                  chatUsers.forEach((user: IUser) => {
+                        if (user._id === removerId) return
+                        socket.in(user._id).emit('removed-message', { messageId, chatId, removerId })
+                  })
+                  logger.info(`Emitting removed-message to user ${chatUsers.map(user => user._id).join(', ')} in room ${chatId}`)
+            })
+
+            // updated group info
+            socket.on('update-group-info', ({ chatId, chatUsers, updateType, updateData }: { chatId: string, chatUsers: IUser[], updateType: 'image' | 'name', updateData: string }) => {
+                  chatUsers.forEach((user: IUser) => {
+                        socket.in(user._id).emit('group-info-updated', { chatId, updateType, updateData })
+                  })
+                  logger.info(`Group info updated for chat: ${chatId}. Update type: ${updateType}. Update data: ${updateData}`)
+            })
+
+            // when a user is added to a group
+            socket.on('added-users-to-group', ({ chatId, usersInChat, newUsers }: { chatId: string, usersInChat: IUser[], newUsers: IUser[] }) => {
+                  if (!chatId || !newUsers || !usersInChat) return
+
+                  logger.info(`added users: ${newUsers.map(user => user._id)} to chat: ${chatId}`)
+
+                  // notify the new users with the new chat
+                  newUsers.forEach((user: IUser) => {
+                        socket.in(user._id).emit('user-joined', { chatId, userId: user._id })
+                  })
+
+                  // notify the existing users in the chat with the new users
+                  usersInChat.forEach((user: IUser) => {
+                        socket.in(user._id).emit('group-users-joined', { chatId, newUsers })
+                  })
+            })
+
+            // when a user is kicked from a group
+            socket.on('kicked-user-from-group', ({ chatId, usersInChat, kickedUserId, kickerId }: { chatId: string, usersInChat: IUser[], kickedUserId: string, kickerId: string }) => {
+                  if (!chatId || !kickedUserId || !kickerId) return
+
+                  logger.info(`User: ${kickerId} kicked user: ${kickedUserId} from chat: ${chatId}`)
+
+                  // notify the kicked user
+                  socket.in(kickedUserId).emit('user-kicked', { chatId, kickedUserId, kickerId })
+
+                  // notify the other users in the chat with the kicked user
+                  usersInChat.forEach((user: IUser) => {
+                        socket.in(user._id).emit('group-user-kicked', { chatId, kickedUserId })
+                  })
+            })
+
+            // when a user leaves a group
+            socket.on('user-leave-group', ({ chatId, leaverId, chatUsers }: { chatId: string, leaverId: string, chatUsers: IUser[] }) => {
+                  if (!chatId || !leaverId || !chatUsers) return
+
+                  logger.info(`User: ${leaverId} left chat: ${chatId}`)
+
+                  // notify the other users in the chat with the leaver
+                  chatUsers.forEach((user: IUser) => {
+                        if (user._id !== leaverId) {
+                              socket.in(user._id).emit('group-user-left', { chatId, leaverId })
+                        }
+                  })
+            })
+
+            socket.on('create group', ({ users, adminId, group }: { users: IUser[], adminId: string, group: IChat }) => {
+                  const notifiedUsers = users.filter(user => user._id !== adminId)
+
+                  logger.info(`Group created by AdminID: ${adminId}. Notifying Users: ${notifiedUsers.map(user => user._id).join(', ')}`)
+
+                  notifiedUsers.forEach((user: IUser) => {
+                        socket.to(user._id).emit('new-group-created', group)
                   })
             })
 
             socket.on('disconnect', () => {
+                  userToRoomsMap.forEach((rooms, userId) => {
+                        rooms.forEach((room) => {
+                              roomToUserIdsMap.get(room)?.delete(userId)
+                        })
+                        userToRoomsMap.delete(userId)
+                  })
                   logger.info(`Socket ${socket.id} has disconnected`)
-
-                  for (const [room, sockets] of roomToSocketIdsMap.entries()) {
-                        if (sockets.has(socket.id)) {
-                              sockets.delete(socket.id);
-                              if (sockets.size === 0) {
-                                    roomToSocketIdsMap.delete(room);
-                              } else {
-                                    roomToSocketIdsMap.set(room, sockets);
-                              }
-                              break;
-                        }
-                  }
-
-                  for (const [userId, socketId] of onlineUsers.entries()) {
-                        if (socketId === socket.id) {
-                              onlineUsers.delete(userId);
-                              gIo?.emit('logout', userId);
-                              break;
-                        }
-                  }
             })
       })
 }

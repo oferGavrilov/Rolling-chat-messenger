@@ -1,29 +1,29 @@
+import type { Response, NextFunction, Request } from 'express'
 import jwt from 'jsonwebtoken'
-import { User } from '../models/user.model.js'
-import type { Response, NextFunction } from 'express'
-import type { AuthenticatedRequest } from '../models/types.js'
-import { Chat, ChatDocument } from '../models/chat.model.js'
-import logger from '../services/logger.service.js'
-import { generateToken } from '../config/generateToken.js'
+import { User } from '@/models/user.model'
+import { Chat, IChat } from '@/models/chat.model'
+import { logger } from '@/server'
+import { generateToken } from '@/config/generateToken'
+import { env } from '@/utils/envConfig'
 
 interface DecodedToken extends jwt.JwtPayload {
       id: string
 }
 
-export async function authMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
       try {
             const accessToken = req.cookies['accessToken']
             const refreshToken = req.cookies['refreshToken']
 
             if (!accessToken && !refreshToken) {
-                  logger.error(`[API: ${req.path}] - Not authorized, no token`)
+                  logger.error(`[API] - No Access token and no Refresh token.`)
                   return res.status(401).json({ message: 'expired' })
             }
 
             let decoded
             if (accessToken) {
                   try {
-                        decoded = jwt.verify(accessToken, process.env.JWT_SECRET) as DecodedToken
+                        decoded = jwt.verify(accessToken, env.JWT_SECRET) as DecodedToken
                   } catch (error) {
                         decoded = null // Invalid access token
                         console.log('access token verify', error)
@@ -42,7 +42,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
             // Handle refresh token
             if (refreshToken) {
                   try {
-                        const decodedRefresh = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET) as DecodedToken
+                        const decodedRefresh = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as DecodedToken
                         const newAccessToken = generateToken(decodedRefresh.id)
 
                         const isProduction = process.env.NODE_ENV === 'production'
@@ -58,7 +58,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
                         req.user = await User.findById(decodedRefresh.id).select('-password')
                         return next()
                   } catch (error) {
-                        console.error('refresh token',error)
+                        console.error('refresh token', error)
                         return res.status(401).json({ message: 'expired' })
                   }
             }
@@ -70,7 +70,7 @@ export async function authMiddleware(req: AuthenticatedRequest, res: Response, n
       }
 }
 
-export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function groupAdminMiddleware(req: Request, res: Response, next: NextFunction) {
       const { chatId } = req.body
       const userId = req.user?._id
 
@@ -79,9 +79,9 @@ export async function groupAdminMiddleware(req: AuthenticatedRequest, res: Respo
       }
 
       try {
-            const chat: ChatDocument = await Chat.findById(chatId)
+            const chat: IChat | null = await Chat.findById(chatId)
             // check if the user is the admin of the group
-            if (chat && chat?.groupAdmin.toString() === userId.toString()) {
+            if (chat && chat?.groupAdmin?.toString() === userId.toString()) {
                   next()
             } else {
                   return res.status(401).json({ message: "Not authorized as an admin" })

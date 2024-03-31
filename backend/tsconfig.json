@@ -1,18 +1,42 @@
 {
   "compilerOptions": {
-      "module": "ES2020",
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "target": "es2020",
-      "noImplicitAny": true,
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "build",
-      "baseUrl": ".",
-      "allowJs": true,
+    "target": "es2020",
+    "module": "ES2020",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "moduleResolution": "Node",
+    "outDir": "build",
+    "importsNotUsedAsValues": "remove",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "5.0",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "allowJs": true,
   },
-  "include": ["./src/**/*"],
-  "exclude": ["node_modules", "build"]
-  }
-
-  
+  "ts-node": {
+    "files": true
+  },
+  "files": [
+    "src/types/express/index.d.ts"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "src/types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

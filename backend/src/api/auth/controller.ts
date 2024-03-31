@@ -1,36 +1,41 @@
 import type { Response, Request, CookieOptions } from "express"
-import { generateRefreshToken, generateToken } from "../../config/generateToken.js"
-import type { AuthenticatedRequest } from "../../models/types.js"
-import { loginUser, resetPasswordConfirm, signUpService, validateTokenService } from "./service.js"
-import { EmailService } from "../../services/email.service.js"
-import logger from "../../services/logger.service.js"
-import { User } from "../../models/user.model.js"
-import { ConflictError, InternalServerError } from "../../utils/errorHandler.js"
+import { StatusCodes } from "http-status-codes"
 import jwt from "jsonwebtoken"
-import moment from "moment"
+import { generateRefreshToken, generateToken } from "@/config/generateToken"
+import { loginUser, resetPasswordConfirm, signUpService, validateRefreshTokenService } from "./service"
+import { EmailService } from "@/services/email.service"
+import { logger } from "@/server"
+import { IUser, User } from "@/models/user.model"
+import { InternalServerError } from "@/middleware/errorHandler"
+import { env } from "@/utils/envConfig"
+import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
+import { handleServiceResponse } from "@/utils/httpHandler"
+import { format } from 'date-fns'
 
-export async function signUp(req: AuthenticatedRequest, res: Response) {
-    const { username, email, password } = req.body
-    let { profileImg } = req.body
+export async function signUp(req: Request, res: Response) {
+    const { username, email, password, profileImg = "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" } = req.body;
 
-    if (!username) {
-        return res.status(400).json({ msg: 'Username is required' })
+    if (!username || !email || !password) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            message: 'Username, email, and password are required',
+        });
+        return;
     }
-    if (!email) {
-        return res.status(400).json({ msg: 'Email is required' })
-    }
-    if (!password) {
-        return res.status(400).json({ msg: 'Password is required' })
-    }
-
-    profileImg = profileImg || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
 
     try {
-        const result = await signUpService(username, email, password, profileImg)
-        const { user } = result
+        const serviceResponse = await signUpService(username, email, password, profileImg);
+
+        if (!serviceResponse.success) {
+            res.status(serviceResponse.statusCode).json({ message: serviceResponse.message });
+            return;
+        }
+
+        const user = serviceResponse.responseObject;
 
         if (!user) {
-            throw new InternalServerError('Failed to create user')
+            logger.error('User data not found after signup');
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'An unexpected error occurred' });
+            return;
         }
 
         const accessToken: string = generateToken(user._id)  // Short-lived
@@ -57,38 +62,37 @@ export async function signUp(req: AuthenticatedRequest, res: Response) {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
-        return res.status(201).json({
-            _id: user._id,
-            username: user.username,
-            email: user.email,
-            profileImg: user.profileImg,
-            about: user.about,
-        })
+        // return res.status(201).json({
+        //     _id: user._id,
+        //     username: user.username,
+        //     email: user.email,
+        //     profileImg: user.profileImg,
+        //     about: user.about,
+        // })
+        handleServiceResponse(serviceResponse, res)
 
-    } catch (error: unknown) {
-        if (error instanceof ConflictError || error instanceof InternalServerError) {
-            logger.error('Error during sign up:', error)
-            return res.status(error.statusCode).json({ msg: error.message })
-        } else {
-            throw error
-        }
+    } catch (ex) {
+        const errorMessage = `Error during signup: ${(ex as Error).message}`
+        logger.error(errorMessage)
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }
 
-export async function login(req: AuthenticatedRequest, res: Response) {
+export async function login(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: 'Please enter all fields' });
+            return new ServiceResponse(ResponseStatus.Failed, 'Please enter all fields', null, StatusCodes.BAD_REQUEST)
         }
 
-        const result = await loginUser(email, password);
-        if (result.error) {
-            return res.status(403).json({ message: result.error });
+        const serviceResponse = await loginUser(email, password);
+
+        if (!serviceResponse.success) {
+            return handleServiceResponse(serviceResponse, res)
         }
 
-        const { user } = result;
+        const user = serviceResponse.responseObject;
 
         if (user) {
             let refreshToken: string | undefined = user.refreshToken;
@@ -97,7 +101,7 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             // Check if the refresh token is expired
             if (refreshToken) {
                 try {
-                    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+                    jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
                 } catch (error) {
                     // Token is expired or invalid
                     shouldUpdateRefreshToken = true;
@@ -108,11 +112,11 @@ export async function login(req: AuthenticatedRequest, res: Response) {
             }
 
             if (shouldUpdateRefreshToken) {
-                refreshToken = generateRefreshToken(user._id); // Long-lived
+                refreshToken = generateRefreshToken(user._id as string); // Long-lived
                 await User.findByIdAndUpdate(user._id, { refreshToken });
             }
 
-            const accessToken: string = generateToken(user._id); // Short-lived
+            const accessToken: string = generateToken(user._id as string); // Short-lived
 
             const isProduction: boolean = process.env.NODE_ENV === 'production';
 
@@ -133,59 +137,64 @@ export async function login(req: AuthenticatedRequest, res: Response) {
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
 
-            res.json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                profileImg: user.profileImg,
-                about: user.about,
-            });
+            handleServiceResponse(serviceResponse, res)
         } else {
-            // throw new Error('User not found');
-            return res.status(403).json({ message: 'EmaInvalid email or password' });
+            return new ServiceResponse(ResponseStatus.Failed, 'Invalid email or password', null, StatusCodes.FORBIDDEN)
         }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            logger.error('Error during login:', error);
-            return res.status(500).json({ msg: 'Internal server error' });
-        } else {
-            throw error;
-        }
+        const errorMessage = `Error during login: ${(error as Error).message}`;
+        logger.error(errorMessage);
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
 
-export async function validateUser(req: AuthenticatedRequest, res: Response) {
-    try {
-        const { accessToken, refreshToken } = req.cookies
-        const validationResponse = await validateTokenService(accessToken, refreshToken)
-        if (validationResponse.isValid) {
-            if (validationResponse.accessToken) {
-                const isProduction: boolean = process.env.NODE_ENV === 'production';
+export async function validateUser(req: Request, res: Response) {
+    const { accessToken, refreshToken } = req.cookies
 
-                const cookiesConfig: CookieOptions = {
-                    httpOnly: true,
-                    secure: isProduction,
-                    sameSite: "lax",
-                    path: '/',
-                }
+    if (!refreshToken) {
+        return new ServiceResponse(ResponseStatus.Failed, 'No refresh token found', { isValid: false }, StatusCodes.UNAUTHORIZED)
+    }
 
-                res.cookie('accessToken', validationResponse.accessToken, {
-                    ...cookiesConfig,
-                    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-                });
+    const serviceResponse = await validateRefreshTokenService(refreshToken)
+    const validationResponse: { isValid: boolean, user?: Partial<IUser> } = serviceResponse.responseObject
+    console.log('validationResponse', validationResponse)
+
+    if (validationResponse.isValid && validationResponse.user) {
+        const isProduction: boolean = process.env.NODE_ENV === 'production';
+        const cookiesConfig: CookieOptions = {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: "lax",
+            path: '/',
+        }
+
+        if (accessToken) {
+            const decoded = jwt.verify(accessToken, env.JWT_SECRET) as { id: string }
+            if (!decoded) {
+                return handleServiceResponse(serviceResponse, res)
             }
-            res.json({isValid: true, user: validationResponse.user})
+
+            // update the maxAge of the accessToken
+            res.cookie('accessToken', accessToken, {
+                ...cookiesConfig,
+                maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            });
         } else {
-            res.status(401).json({isValid: false, message: 'expired'})
+            // generate new access token
+            const newAccessToken = generateToken(validationResponse.user._id as string)
+            res.cookie('accessToken', newAccessToken, {
+                ...cookiesConfig,
+                maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            });
         }
 
-    } catch (error) {
-        logger.error('Error during validateUser:', error)
-        return res.status(500).json({ msg: 'Internal server error' })
+        handleServiceResponse(serviceResponse, res)
+    } else {
+        return handleServiceResponse(serviceResponse, res)
     }
 }
 
-export async function logoutUser(req: AuthenticatedRequest, res: Response) {
+export async function logoutUser(req: Request, res: Response) {
     const { userId } = req.body
     try {
         const isProduction: boolean = process.env.NODE_ENV === 'production';
@@ -207,36 +216,22 @@ export async function logoutUser(req: AuthenticatedRequest, res: Response) {
             expires: new Date(0),
         });
 
+        await User.findByIdAndUpdate(userId, { isOnline: false, lastSeen: new Date() })
 
-        //update the user to set isOnline to false and lastSeen to current time
-        await User.findByIdAndUpdate(userId, { isOnline: false, lastSeen: moment.utc().toDate() })
-
-        res.status(200).json({ message: 'User logged out successfully' })
+        return res.status(200).json({ message: 'User logged out successfully' })
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            logger.error('Error during logout:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
-        } else {
-            throw error
-        }
+        const errorMessage = `Error during logoutUser: ${(error as Error).message}`
+        logger.error(errorMessage)
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }
 
 export async function sendResetPasswordMail(req: Request, res: Response) {
     const { email } = req.body
-    try {
-        const emailService = new EmailService()
-        await emailService.sendResetPasswordMail(email)
+    const emailService = new EmailService()
+    await emailService.sendResetPasswordMail(email)
 
-        res.status(200).json({ message: 'Reset password email sent successfully' })
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            logger.error('Error during sendResetPasswordMail:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
-        } else {
-            throw error
-        }
-    }
+    res.status(200).json({ message: 'Reset password email sent successfully' })
 }
 
 export async function resetPassword(req: Request, res: Response) {
@@ -246,15 +241,6 @@ export async function resetPassword(req: Request, res: Response) {
         return res.status(400).json({ msg: 'Please enter all fields' })
     }
 
-    try {
-        await resetPasswordConfirm(token, password)
-        res.status(200).json({ message: 'Password reset successfully' })
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            logger.error('Error during resetPassword:', error)
-            return res.status(500).json({ msg: 'Internal server error' })
-        } else {
-            throw error
-        }
-    }
+    await resetPasswordConfirm(token, password)
+    res.status(200).json({ message: 'Password reset successfully' })
 }

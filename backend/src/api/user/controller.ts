@@ -1,106 +1,40 @@
-import type { Response, Request } from "express"
-import type { AuthenticatedRequest } from "../../models/types.js"
-import { editUserDetailsService, editUserImageService, getUserStatusById, getUsersService, searchUsers } from "./service.js"
-import logger from "../../services/logger.service.js"
+import type { Request, Response } from "express"
+import { editUserDetailsService, editUserImageService, getUserStatusById, getUsersService } from "./service"
+import { handleServiceResponse } from "@/utils/httpHandler"
+import { ServiceResponse } from "@/models/serviceResponse"
+import { IUser } from "@/models/user.model"
 
-export async function searchUsersByKeyword(req: Request, res: Response) {
-      const { search } = req.query
-      const keyword = search?.toString() || ''
-
-      try {
-            const users = await searchUsers(keyword)
-            res.status(200).send(users)
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  logger.error('Error during searchUsersByKeyword:', error)
-                  return res.status(500).json({ msg: 'Internal server error' })
-            } else {
-                  throw error
-            }
-      }
+export async function getUsers(req: Request, res: Response) {
+      const userId = req.user._id
+      const users: ServiceResponse<IUser[] | null> = await getUsersService(userId)
+      handleServiceResponse(users, res)
 }
 
-export async function getUsers(req: AuthenticatedRequest, res: Response) {
-      const loggedInUserId = req.user?._id
-
-      try {
-            const users = await getUsersService(loggedInUserId)
-            res.status(200).json(users)
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  logger.error('Error during getUsers:', error)
-                  return res.status(500).json({ msg: 'Internal server error' })
-            } else {
-                  throw error
-            }
-      }
-}
-
-export async function editUserDetails(req: AuthenticatedRequest, res: Response) {
+export async function editUserDetails(req: Request, res: Response) {
       const { newName } = req.body
-      const userId = req.user?._id
+      const userId = req.user._id
 
-      try {
-            const newNameToSave = newName?.replace(/[/>]/g, '').trim();
-            const user = await editUserDetailsService(userId, newNameToSave)
+      if (!newName) return res.status(400).json({ msg: 'Name is required' })
 
-            if (user) {
-                  res.status(200).json({ message: 'User details updated successfully' })
-
-            } else {
-                  res.status(404).json({ msg: 'User not found' })
-            }
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  logger.error('Error during editUserDetails:', error)
-                  return res.status(500).json({ msg: 'Internal server error' })
-            } else {
-                  throw error
-            }
-      }
+      const cleanName = newName.replace(/[/>]/g, '').trim()
+      const updatedName: ServiceResponse<string | null> = await editUserDetailsService(userId, cleanName)
+      handleServiceResponse(updatedName, res)
 }
 
-export async function editUserImage(req: AuthenticatedRequest, res: Response) {
+export async function editUserImage(req: Request, res: Response) {
       const { image, TN_profileImg } = req.body
       const userId = req.user?._id
 
-      if (!image) {
-            return res.status(400).json({ msg: 'Image is required' })
-      }
+      if (!image) return res.status(400).json({ msg: 'Image is required' })
 
-      try {
-            const user = await editUserImageService(userId, image, TN_profileImg)
-
-            if (user) {
-                  res.status(200).json(image)
-            } else {
-                  res.status(404).json({ msg: 'User not found' })
-            }
-      } catch (error: unknown) {
-            if (error instanceof Error) {
-                  logger.error('Error during editUserImage:', error)
-                  return res.status(500).json({ msg: 'Internal server error' })
-            } else {
-                  throw error
-            }
-      }
+      const user: ServiceResponse<{ image: string, TN_profileImg: string } | null> = await editUserImageService(userId, image, TN_profileImg)
+      handleServiceResponse(user, res)
 }
 
-export async function getUserStatus(req: AuthenticatedRequest, res: Response) {
+export async function getUserStatus(req: Request, res: Response) {
       const userId = req.params.userId
+      if (!userId) return res.status(400).json({ msg: 'User ID is required' })
 
-      if (!userId) {
-            return res.status(400).json({ msg: 'User ID is required' })
-      }
-      try {
-            const userStatus = await getUserStatusById(userId)
-            res.status(200).json(userStatus)
-      } catch (err: unknown) {
-            if (err instanceof Error) {
-                  logger.error('Error during getUserStatus:', err)
-                  return res.status(500).json({ msg: 'Internal server error' })
-            } else {
-                  throw err
-            }
-      }
+      const userStatus: ServiceResponse<{ isOnline: boolean, lastSeen?: Date } | null> = await getUserStatusById(userId)
+      handleServiceResponse(userStatus, res)
 }

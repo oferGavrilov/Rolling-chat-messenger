@@ -9,12 +9,14 @@ import {
       renameGroupChat,
       updateGroupImage,
       removeChat,
-      leaveGroup
+      leaveGroup,
+      getChatById
 } from './controller.js'
 
 export const router = express.Router()
 
 router.get('/', authMiddleware, getUserChats)
+router.get('/:chatId', authMiddleware, getChatById)
 router.post('/createchat', authMiddleware, createChat)
 router.post('/creategroup', authMiddleware, createGroupChat)
 router.put('/leave', authMiddleware, leaveGroup)

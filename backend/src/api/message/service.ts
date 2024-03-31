@@ -1,35 +1,48 @@
-import { IMessage, Message, ReplyMessage } from "../../models/message.model.js"
-import { Chat } from "../../models/chat.model.js"
-import { ForbiddenError, InternalServerError, NotFoundError, ValidationError } from "../../utils/errorHandler.js"
-import logger from "../../services/logger.service.js"
-import { uploadImageToCloudinary } from "../../services/cloudinary.service.js"
+import { IMessage, Message, NewMessagePayload, ReplyMessage } from "@/models/message.model"
+import { Chat } from "@/models/chat.model"
+import { logger } from "@/server"
+import { deleteImageFromCloudinary, uploadImageToCloudinary } from "../../services/cloudinary.service.js"
+import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse.js"
+import { StatusCodes } from "http-status-codes"
 
-export async function sendMessageService(senderId: string, content: string, chatId: string, messageType: string, replyMessage: ReplyMessage | null, messageSize?: number) {
+export async function sendMessageService(
+      senderId: string,
+      content: string,
+      chatId: string,
+      messageType: string,
+      replyMessage: ReplyMessage | null,
+      messageSize?: number,
+      file?: Express.Multer.File
+): Promise<ServiceResponse<IMessage | null>> {
       try {
             const chat = await Chat.findById(chatId)
-
-            if (!chat) throw new NotFoundError('Chat not found')
+            if (!chat) return new ServiceResponse(ResponseStatus.Failed, 'Chat not found', null, StatusCodes.NOT_FOUND)
 
             // check if the user is in the group chat
             if (chat.isGroupChat && !chat.users.some((user) => user.toString() === senderId.toString())) {
-                  throw new ForbiddenError('You are not in this group chat')
+                  return new ServiceResponse(ResponseStatus.Failed, 'You are not in this group chat', null, StatusCodes.FORBIDDEN)
             }
 
-            if (messageType === 'image' && typeof content === 'string') {
-                  content = await uploadImageToCloudinary(content, 'chat_app')
+            let imageUrl: string = ''
+            let tnImageUrl: string = ''
+
+            if (messageType === 'image' && file) {
+                  const result = await uploadImageToCloudinary(file, 'chat_app')
+                  imageUrl = result.originalImageUrl
+                  tnImageUrl = result.tnImageUrl
+                  content = imageUrl
             }
 
-            const newMessage: Omit<IMessage, '_id'> = {
+            const newMessage: NewMessagePayload = {
                   sender: senderId,
                   content,
+                  TN_Image: tnImageUrl,
                   chat: chatId,
                   messageType,
                   replyMessage: replyMessage ? replyMessage : null,
                   messageSize: messageSize ? messageSize : undefined,
                   deletedBy: [],
                   isReadBy: [{ userId: senderId, readAt: new Date() }],
-                  createdAt: new Date(),
-                  updatedAt: new Date()
             }
 
             let message = await Message.create(newMessage)
@@ -45,76 +58,24 @@ export async function sendMessageService(senderId: string, content: string, chat
                   }
             })
 
-            if (!message) throw new InternalServerError('Failed to send message')
+            if (!message) return new ServiceResponse(ResponseStatus.Failed, 'Error sending message', null, StatusCodes.INTERNAL_SERVER_ERROR)
 
-            if (!chat) throw new NotFoundError('Chat not found')
             chat.deletedBy = []
             await chat.save()
 
             await Chat.findByIdAndUpdate(chatId, { latestMessage: message })
-            return message
-      } catch (error: unknown) {
-            if (error instanceof NotFoundError || error instanceof ForbiddenError || error instanceof ValidationError) {
-                  throw error
-            } else {
-                  logger.error(`Error in sendMessageService: ${error}`)
-                  throw new InternalServerError('Something went wrong')
-            }
+            return new ServiceResponse(ResponseStatus.Success, 'Message sent successfully', message, StatusCodes.CREATED)
+      } catch (error) {
+            const errorMessage = `Error in sendMessageService: ${(error as Error).message}`
+            logger.error(errorMessage)
+            return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
       }
 }
 
-// export async function getAllMessagesByChatId(chatId: string, userId: string, page = 1, limit = 50) {
-//       try {
-//             const chat = await Chat.findById(chatId)
-//             if (!chat) throw new NotFoundError('Chat not found')
-
-//             const skip = (page - 1) * limit;
-
-
-//             const messages = await Message.find({
-//                   chat: chatId,
-//                   $nor: [
-//                         { deletedBy: { $elemMatch: { userId, deletionType: 'forMe' } } },
-//                         { deletedBy: { $elemMatch: { userId, deletionType: 'forEveryoneAndMe' } } }
-//                   ]
-//             })
-//                   .sort({ createdAt: -1 }) // Sort by most recent messages first
-//                   .skip(skip)
-//                   .limit(limit)
-//                   .populate('sender', 'username profileImg')
-//                   .populate({
-//                         path: 'replyMessage',
-//                         select: '_id content sender messageType',
-//                         populate: {
-//                               path: 'sender',
-//                               select: '_id username profileImg'
-//                         }
-//                   });
-//                   console.log(messages)
-//             // update unread messages in chat
-//             messages.forEach((message) => {
-//                   if (!message.isReadBy.some(({ userId: id }) => id.toString() === userId.toString())) {
-//                         message.isReadBy.push({ userId, readAt: new Date() })
-//                   }
-//             })
-
-//             await Promise.all(messages.map(async (message) => await message.save()))
-
-//             return messages
-//       } catch (error: unknown) {
-//             if (error instanceof NotFoundError) {
-//                   throw error
-//             } else {
-//                   logger.error(`Error in getAllMessagesByChatId: ${error}`)
-//                   throw new Error('Something went wrong')
-//             }
-//       }
-// }
-
-export async function getAllMessagesByChatId(chatId: string, userId: string) {
+export async function getAllMessagesByChatId(chatId: string, userId: string): Promise<ServiceResponse<{ messages: IMessage[], newlyReadMessageIds: string[] } | null>> {
       try {
             const chat = await Chat.findById(chatId)
-            if (!chat) throw new NotFoundError('Chat not found')
+            if (!chat) return new ServiceResponse(ResponseStatus.Failed, 'Chat not found', null, StatusCodes.NOT_FOUND)
 
             const messages = await Message.find({
                   chat: chatId,
@@ -132,63 +93,69 @@ export async function getAllMessagesByChatId(chatId: string, userId: string) {
                               select: '_id username profileImg'
                         }
                   })
+                  .populate('chat', 'users isGroupChat name profileImg') // Populate chat to get the users and group chat name
+
+            let newlyReadMessageIds: string[] = []
 
             // update unread messages in chat
             messages.forEach((message) => {
                   if (!message.isReadBy.some(({ userId: id }) => id.toString() === userId.toString())) {
                         message.isReadBy.push({ userId, readAt: new Date() })
+                        newlyReadMessageIds.push(message._id.toString())
                   }
             })
 
             await Promise.all(messages.map(async (message) => await message.save()))
 
-            return messages
+            return new ServiceResponse(ResponseStatus.Success, 'Messages retrieved successfully', { messages, newlyReadMessageIds }, StatusCodes.OK)
       } catch (error: unknown) {
-            if (error instanceof NotFoundError) {
-                  throw error
-            } else {
-                  logger.error(`Error in getAllMessagesByChatId: ${error}`)
-                  throw new Error('Something went wrong')
-            }
+            const errorMessage = `Error in getAllMessagesByChatId: ${(error as Error).message}`
+            logger.error(errorMessage)
+            return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
       }
 }
 
-export async function removeMessageService(messageId: string, chatId: string, userId: string, deletionType: 'forMe' | 'forEveryone'): Promise<void> {
+export async function removeMessageService(messageId: string, chatId: string, userId: string, deletionType: 'forMe' | 'forEveryone'): Promise<ServiceResponse<null>> {
       try {
-            const chat = await Chat.findById(chatId);
-            if (!chat) throw new NotFoundError('Chat not found');
+            const chat = await Chat.findById(chatId)
+            if (!chat) return new ServiceResponse(ResponseStatus.Failed, 'Chat not found', null, StatusCodes.NOT_FOUND)
 
-            const message = await Message.findById(messageId);
-            if (!message) throw new NotFoundError('Message not found');
+            const message = await Message.findById(messageId)
+            if (!message) return new ServiceResponse(ResponseStatus.Failed, 'Message not found', null, StatusCodes.NOT_FOUND)
 
-            const userDeletionIndex = message.deletedBy.findIndex(deletion => deletion.userId.toString() === userId.toString());
+            const userDeletionIndex = message.deletedBy.findIndex(deletion => deletion.userId.toString() === userId.toString())
 
             // If the message is already deleted by the user for themselves, throw an error
             if (userDeletionIndex !== -1 && message.deletedBy[userDeletionIndex].deletionType === 'forMe' && deletionType === 'forMe') {
-                  throw new ForbiddenError('Message already deleted for you');
+                  return new ServiceResponse(ResponseStatus.Failed, 'Message already deleted', null, StatusCodes.BAD_REQUEST)
             }
 
             // If the message is deleted by the user for everyone, and now they want to delete for themselves, adjust the type
             if (userDeletionIndex !== -1 && message.deletedBy[userDeletionIndex].deletionType === 'forEveryone' && deletionType === 'forMe') {
-                  message.deletedBy[userDeletionIndex].deletionType = 'forEveryoneAndMe'; // Adjust deletion type accordingly
-            } else if (userDeletionIndex === -1) { // If there's no deletion record for this user, add one
-                  message.deletedBy.push({ userId, deletionType });
+                  message.deletedBy[userDeletionIndex].deletionType = 'forEveryoneAndMe' // Adjust deletion type accordingly
+            } else if (deletionType === 'forEveryone') {
+                  message.content = 'This message was deleted'
+            }
+
+            if (userDeletionIndex === -1) { // If there's no deletion record for this user, add one
+                  message.deletedBy.push({ userId, deletionType })
             }
 
             // Perform deletion if all users have marked the message for deletion in some form
             if (message.deletedBy.filter(deletion => deletion.deletionType === 'forMe' || deletion.deletionType === 'forEveryoneAndMe').length === chat.users.length) {
-                  await Message.findByIdAndDelete(messageId);
+                  if (message.messageType === 'image' && message.content.trim() !== '') {
+                        await deleteImageFromCloudinary(message.content, 'chat_app')
+                  }
+                  await Message.findByIdAndDelete(messageId)
             } else {
-                  await message.save();
+                  await message.save()
             }
+
+            return new ServiceResponse(ResponseStatus.Success, 'Message deleted successfully', null, StatusCodes.OK)
 
       } catch (error) {
-            if (error instanceof NotFoundError || error instanceof ForbiddenError) {
-                  throw error;
-            } else {
-                  console.error(`Error in removeMessageService: ${error}`);
-                  throw new InternalServerError('Something went wrong in removeMessageService');
-            }
+            const errorMessage = `Error in removeMessageService: ${(error as Error).message}`
+            logger.error(errorMessage)
+            return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
       }
 }
-

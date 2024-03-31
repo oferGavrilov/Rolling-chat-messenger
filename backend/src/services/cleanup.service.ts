@@ -1,6 +1,6 @@
 import cron from 'node-cron'
-import { User } from '../models/user.model.js'
-import logger from './logger.service.js'
+import { User } from '@/models/user.model'
+import { logger } from '@/server'
 
 class CleanupService {
     constructor() {

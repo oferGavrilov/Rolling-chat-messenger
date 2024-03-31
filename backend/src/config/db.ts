@@ -1,11 +1,11 @@
 import mongoose, { type Mongoose } from 'mongoose'
-import logger from '../services/logger.service.js'
+import { logger } from '@/server'
 
 let connection: Mongoose | null = null
 
 export const connectDB = async (): Promise<void> => {
       logger.info('Connecting to MongoDB...')
-      
+
       try {
             let mongoURI
             if (process.env.NODE_ENV === 'production') {
@@ -22,19 +22,16 @@ export const connectDB = async (): Promise<void> => {
 
             logger.info(`MongoDB environment: ${connection.connection.host}`)
       } catch (error: unknown) {
-            if (error instanceof Error) {
-                  logger.error(`Error: ${error.message}`)
-            } else {
-                  logger.error(`Error: ${error}`)
-            }
-
+            const errorMessage = `Error connecting to MongoDB: ${(error as Error).message}`
+            logger.error(errorMessage)
+            
             process.exit(1)
       }
 }
 
 export const disconnectDB = async (): Promise<void> => {
       if (connection) {
-            await connection.disconnect();
+            await connection.disconnect()
             logger.info('MongoDB Disconnected')
       }
-};
+}

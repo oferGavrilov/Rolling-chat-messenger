@@ -1,7 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema, Document, Model } from 'mongoose'
 import bcrypt from 'bcryptjs'
+import { env } from '@/utils/envConfig'
 
-export interface User extends Document {
+export interface IUser extends Document {
+  _id: string
   username: string
   email: string
   password: string
@@ -9,8 +11,6 @@ export interface User extends Document {
   TN_profileImg: string
   about: string
   verifyPassword: (enteredPassword: string) => Promise<boolean>
-  createdAt: Date
-  updatedAt: Date
   isOnline: boolean
   lastSeen: Date
   resetPasswordToken?: string
@@ -18,32 +18,33 @@ export interface User extends Document {
   refreshToken?: string
 }
 
-const userSchema: Schema<User> = new Schema<User>(
-  {
-    username: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, select: false },
-    profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
-    TN_profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
-    about: { type: String, default: "Available" },
-    isOnline: { type: Boolean, default: false },
-    lastSeen: { type: Date, default: Date.now() },
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
-    refreshToken: String
-  },
+const userSchema: Schema<IUser> = new Schema<IUser>({
+  username: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true, select: false },
+  profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
+  TN_profileImg: { type: String, default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
+  about: { type: String, default: "Available" },
+  isOnline: { type: Boolean, default: false },
+  lastSeen: { type: Date, default: Date.now() },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
+  refreshToken: String
+},
   { timestamps: true }
 )
 
 userSchema.methods.verifyPassword = async function (candidatePassword: string): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password)
 }
-userSchema.pre<User>('save', async function (next) {
+userSchema.pre<IUser>('save', async function (next) {
   if (!this.isModified('password')) {
     next()
   }
-  const salt = await bcrypt.genSalt(10)
+
+  const SALT_ROUNDS = parseInt(env.SALT_ROUNDS as string || '10')
+  const salt = await bcrypt.genSalt(SALT_ROUNDS)
   this.password = await bcrypt.hash(this.password, salt)
 })
 
-export const User = mongoose.model<User>('User', userSchema)
+export const User: Model<IUser> = mongoose.model<IUser>('User', userSchema)

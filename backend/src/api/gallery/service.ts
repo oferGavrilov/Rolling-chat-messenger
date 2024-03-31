@@ -1,17 +1,30 @@
-import { Gallery } from "../../models/gallery.model.js"
+import { Gallery, IGallery } from "../../models/gallery.model.js"
 import { v2 as cloudinary } from 'cloudinary'
 import { unlink } from "fs"
-import { NotFoundError } from "../../utils/errorHandler.js"
+import { NotFoundError } from "../../middleware/errorHandler.js"
+import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse.js"
+import { StatusCodes } from "http-status-codes"
+import { logger } from "@/server.js"
 
 
-export async function getGalleryService(userId: string) {
-    const gallery = await Gallery.find({ userId })
-    // const gallery = await Gallery.find({ userId }).select('title url')
+export async function getGalleryService(userId: string): Promise<ServiceResponse<IGallery[] | null>> {
+    try {
+        const gallery: IGallery[] = await Gallery.find({ userId })
 
-    return gallery
+        if (!gallery) {
+            return new ServiceResponse(ResponseStatus.Failed, 'Gallery items not found', null, StatusCodes.NOT_FOUND)
+        }
+        // return gallery
+        return new ServiceResponse(ResponseStatus.Success, 'Gallery items fetched', gallery, StatusCodes.OK)
+
+    } catch (err) {
+        const errorMessage = `Error fetching gallery items: ${(err as Error).message}`
+        logger.error(errorMessage)
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
+    }
 }
 
-export async function createGalleryService(filePath: string, title: string, userId: string) {
+export async function createGalleryService(filePath: string, title: string, userId: string): Promise<ServiceResponse<IGallery | null>> {
     cloudinary.config({
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
@@ -33,7 +46,7 @@ export async function createGalleryService(filePath: string, title: string, user
 
         const gallery = new Gallery({ title, url: result.secure_url, userId })
         await gallery.save()
-        return gallery
+        return new ServiceResponse(ResponseStatus.Success, 'Gallery item created', gallery, StatusCodes.CREATED)
     } catch (error) {
 
         unlink(filePath, (err) => {
@@ -41,12 +54,13 @@ export async function createGalleryService(filePath: string, title: string, user
                 console.error(err)
             }
         })
-
-        console.log(error)
+        const errorMessage = `Error creating gallery item: ${(error as Error).message}`
+        logger.error(errorMessage)
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }
 
-export async function deleteGalleryService(id: string, userId: string) {
+export async function deleteGalleryService(id: string, userId: string): Promise<ServiceResponse<{ message: string } | null>> {
     cloudinary.config({
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
@@ -57,15 +71,15 @@ export async function deleteGalleryService(id: string, userId: string) {
         // Find the gallery item by ID and userId to ensure ownership
         const galleryItem = await Gallery.findOne({ _id: id, userId })
 
-        if (!galleryItem) {
+        if (!galleryItem || !galleryItem.url) {
             throw new NotFoundError('Gallery item not found')
         }
 
-        let publicId = galleryItem.url
-            .split('/') 
-            .pop() 
-            .split('.')[0]
-            .replace(/%20/g, ' ')
+        let publicId = galleryItem?.url?.split('/')?.pop()?.split('.')[0]
+
+        if (!publicId) {
+            throw new NotFoundError('Public ID not found')
+        }
 
         publicId = `gallery/${publicId}`
 
@@ -79,9 +93,11 @@ export async function deleteGalleryService(id: string, userId: string) {
         // Delete the gallery item from the database
         await Gallery.deleteOne({ _id: id })
 
-        return { message: 'Gallery item deleted' }
+        // return { message: 'Gallery item deleted' }
+        return new ServiceResponse(ResponseStatus.Success, 'Gallery item deleted', { message: 'Gallery item deleted' }, StatusCodes.OK)
     } catch (error) {
-        console.error('Deletion error:', error)
-        throw error
+        const errorMessage = `Error deleting gallery item: ${(error as Error).message}`
+        logger.error(errorMessage)
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }

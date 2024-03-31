@@ -14,16 +14,16 @@ export interface IGalleryDocument extends IGallery, Document {
 export interface MulterFile extends Express.Multer.File {}
 
 
-export interface IGalleryRequest extends Request {
-    body: {
-        title: string
-        userId: string
-    }
-    user: {
-        _id: string
-    }
-    file: MulterFile
-}
+// export interface IGalleryRequest extends Request {
+//     body: {
+//         title: string
+//         userId: string
+//     }
+//     user: {
+//         _id: string
+//     }
+//     file: MulterFile
+// }
 
 export interface IGalleryResponse extends Response {
     _id: string

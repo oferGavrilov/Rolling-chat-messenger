@@ -1,45 +1,38 @@
-import { Request } from 'express'
-import mongoose, { Model } from 'mongoose'
+import mongoose, { Document, Model } from 'mongoose'
+
+export interface IMessage extends Document {
+      sender: string
+      content: string
+      chat: string
+      messageType: string
+      TN_Image?: string // TODO: rename to thumbnailImage
+      deletedBy: { userId: string, deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[]
+      isReadBy: { userId: string, readAt: Date }[]
+      replyMessage: ReplyMessage | null
+      messageSize?: number
+}
 
 const readReceiptSchema = new mongoose.Schema({
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       readAt: { type: Date, default: Date.now }
 })
 
+const deletedBySchema = new mongoose.Schema({
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      deletionType: { type: String, enum: ['forMe', 'forEveryone', 'forEveryoneAndMe'] }
+})
+
 const messageModel = new mongoose.Schema({
       sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       content: { type: String, trim: true },
+      TN_Image: { type: String, default: null },
       chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
-      messageType: { type: String, default: 'text' },
+      messageType: { type: String, enum: ['text', 'image', 'audio', 'file'], default: 'text' },
       replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
       messageSize: { type: Number, default: 0 },
-      deletedBy: [{
-            userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            deletionType: { type: String, enum: ['forMe', 'forEveryone', 'forEveryoneAndMe'] }
-      }],
+      deletedBy: [deletedBySchema],
       isReadBy: [readReceiptSchema]
 }, { timestamps: true })
-
-interface CustomBody {
-      messageIds?: string[];
-      chatId?: string;
-      content?: string;
-      messageType?: string;
-      replyMessage?: ReplyMessage;
-      messageSize?: number;
-      deletionType?: 'forMe' | 'forEveryone';
-}
-
-export interface RequestMessage extends Omit<Request, 'body'> {
-      user?: {
-            _id: string;
-      };
-      params: {
-            chatId?: string;
-            messageId?: string;
-      };
-      body?: CustomBody;
-}
 
 export type ReplyMessage = {
       _id: string
@@ -52,19 +45,22 @@ export type ReplyMessage = {
       messageType: "text" | "image" | "audio" | "file"
 }
 
-export interface IMessage {
-      sender: string
-      content: string
-      chat: string
-      messageType: string
-      // deletedBy: string[]
-      deletedBy: { userId: string, deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[]
-      isReadBy: { userId: string, readAt: Date }[]
-      replyMessage: ReplyMessage | null
-      messageSize?: number
-      createdAt: Date
-      updatedAt: Date
-}
+// messageType: {
+//       type: string
+//       enum: ['text', 'image', 'audio', 'file']
+//       default: 'text'
+// }
 
+export type NewMessagePayload = {
+      sender: string;
+      content: string;
+      chat: string;
+      messageType: string;
+      TN_Image?: string;
+      replyMessage?: ReplyMessage | null; // Adjust according to your actual ReplyMessage type
+      messageSize?: number;
+      deletedBy?: { userId: string; deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[];
+      isReadBy?: { userId: string; readAt: Date }[];
+    };
 
 export const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageModel)

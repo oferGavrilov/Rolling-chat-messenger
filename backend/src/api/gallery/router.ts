@@ -1,7 +1,7 @@
 import express from "express"
 import multer from "multer"
-import { authMiddleware } from "../../middleware/authMiddleware.js"
-import { createGallery, deleteGallery, getGallery } from "./controller.js"
+import { authMiddleware } from "@/middleware/authMiddleware"
+import { createGallery, deleteGallery, getGallery } from "./controller"
 
 const upload = multer({ dest: 'uploads/' })
 export const router = express.Router()

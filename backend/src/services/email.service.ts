@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
-import { User } from '../models/user.model.js'
+import { User } from '../models/user.model'
 import crypto from 'crypto'
+import { env } from '@/utils/envConfig'
 
 export class EmailService {
     private transporter
@@ -57,7 +58,7 @@ export class EmailService {
     }
 
     async sendErrorEmail( errorMessage: string): Promise<void> {
-        const to = process.env.EMAIL
+        const to = env.EMAIL
         const subject = 'Error Notification'
         const htmlContent = this.getErrorEmailHtml(errorMessage)
         await this.sendEmail(to, subject, htmlContent)
