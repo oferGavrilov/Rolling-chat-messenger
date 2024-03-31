@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { IGalleryResponse } from "../../models/gallery.model.js";
+// import { IGalleryResponse } from "../../models/gallery.model.js";
 import { createGalleryService, deleteGalleryService, getGalleryService } from "./service.js";
 import { handleServiceResponse } from "@/utils/httpHandler.js";
-
 
 export async function getGallery(req: Request, res: Response) {
     const userId = req.user._id

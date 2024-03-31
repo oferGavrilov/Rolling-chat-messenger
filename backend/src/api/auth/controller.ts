@@ -1,4 +1,4 @@
-import type { Response, Request, CookieOptions } from "express"
+import { Response, Request, CookieOptions } from "express"
 import { StatusCodes } from "http-status-codes"
 import jwt from "jsonwebtoken"
 import { generateRefreshToken, generateToken } from "@/config/generateToken"
@@ -6,11 +6,9 @@ import { loginUser, resetPasswordConfirm, signUpService, validateRefreshTokenSer
 import { EmailService } from "@/services/email.service"
 import { logger } from "@/server"
 import { IUser, User } from "@/models/user.model"
-import { InternalServerError } from "@/middleware/errorHandler"
 import { env } from "@/utils/envConfig"
 import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { handleServiceResponse } from "@/utils/httpHandler"
-import { format } from 'date-fns'
 
 export async function signUp(req: Request, res: Response) {
     const { username, email, password, profileImg = "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" } = req.body;

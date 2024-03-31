@@ -1,6 +1,6 @@
 import type { Server as HttpServer } from 'http'
 import { Server, Socket } from 'socket.io'
-import type { IUser, User } from '@/models/user.model'
+import type { IUser } from '@/models/user.model'
 import { IChat } from '@/models/chat.model'
 import { logger } from '@/server'
 import { IMessage } from '@/models/message.model'
