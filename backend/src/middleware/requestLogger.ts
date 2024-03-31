@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Request, RequestHandler, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { IncomingMessage, ServerResponse } from 'http';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { LevelWithSilent } from 'pino';
@@ -54,7 +54,7 @@ const customProps = (req: Request, res: Response): PinoCustomProps => ({
   responseBody: res.locals.responseBody,
 });
 
-const responseBodyMiddleware: RequestHandler = (_req, res, next) => {
+const responseBodyMiddleware: RequestHandler = (_req: Request, res: Response, next: NextFunction) => {
   const isNotProduction = !env.isProduction;
   if (isNotProduction) {
     const originalSend = res.send;
