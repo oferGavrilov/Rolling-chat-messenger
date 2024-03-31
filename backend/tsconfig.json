@@ -24,8 +24,7 @@
     "noImplicitAny": false,
     "types": [
       "node",
-      "express",
-      "multer"
+      "express"
     ]
   },
   "extends": [],
