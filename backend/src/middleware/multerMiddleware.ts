@@ -1,21 +1,20 @@
-import { Request } from 'express';
-import multer from 'multer';
+import { Request } from 'express'
+import multer from 'multer'
 
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage()
 
 const fileFilter = (
   req: Request,
-  // file: Multer.File,
   file: Express.Multer.File,
   cb: multer.FileFilterCallback
 ) => {
   if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
+    cb(null, true)
   } else {
-    cb(null, false);
+    cb(null, false)
   }
-};
+}
 
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+const upload = multer({ storage: storage, fileFilter: fileFilter })
 
-export default upload;
+export default upload

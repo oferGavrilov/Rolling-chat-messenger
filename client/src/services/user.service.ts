@@ -185,7 +185,7 @@ function getBackgroundColor(): IColorPalette | null {
       }
 }
 
-export function getLoggedinUser(): Partial<IUser> | null {
+export function getLoggedinUser() {
       const storedItem = localStorage.getItem(STORAGE_KEY)
       console.log('storedItem', storedItem)
       if (storedItem) {

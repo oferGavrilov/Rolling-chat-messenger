@@ -1,5 +1,5 @@
 import express from 'express'
-import { authMiddleware, groupAdminMiddleware } from '../../middleware/authMiddleware.js'
+import { authMiddleware, groupAdminMiddleware } from '../../middleware/authMiddleware'
 import {
       updateUsersInGroupChat,
       createChat,

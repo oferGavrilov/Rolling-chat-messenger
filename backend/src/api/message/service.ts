@@ -1,8 +1,8 @@
 import { IMessage, Message, NewMessagePayload, ReplyMessage } from "@/models/message.model"
 import { Chat } from "@/models/chat.model"
 import { logger } from "@/server"
-import { deleteImageFromCloudinary, uploadImageToCloudinary } from "../../services/cloudinary.service.js"
-import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse.js"
+import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/services/cloudinary.service"
+import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { StatusCodes } from "http-status-codes"
 
 export async function sendMessageService(

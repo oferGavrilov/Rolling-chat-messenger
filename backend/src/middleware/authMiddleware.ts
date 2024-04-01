@@ -5,6 +5,7 @@ import { Chat, IChat } from '@/models/chat.model'
 import { logger } from '@/server'
 import { generateToken } from '@/config/generateToken'
 import { env } from '@/utils/envConfig'
+import { StatusCodes } from 'http-status-codes'
 
 interface DecodedToken extends jwt.JwtPayload {
       id: string
@@ -16,22 +17,25 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             const refreshToken = req.cookies['refreshToken']
 
             if (!accessToken && !refreshToken) {
-                  logger.error(`[API] - No Access token and no Refresh token.`)
-                  return res.status(401).json({ message: 'expired' })
+                  logger.error(`[Auth Middleware] - No Access token and no Refresh token.`)
+                  return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'expired' })
             }
 
-            let decoded
+            let decoded = null as DecodedToken | null
             if (accessToken) {
                   try {
                         decoded = jwt.verify(accessToken, env.JWT_SECRET) as DecodedToken
                   } catch (error) {
-                        decoded = null // Invalid access token
-                        console.log('access token verify', error)
+                        if (error instanceof jwt.TokenExpiredError) {
+                              decoded = null // Access token expired
+                        } else {
+                              return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authorized, token failed' })
+                        }
                   }
             }
 
             if (decoded) {
-                  req.user = await User.findById(decoded.id).select('-password')
+                  req.user = await User.findById(decoded.id).select('-password -refreshToken -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt')
 
                   if (!req.user) {
                         return res.status(401).json({ message: 'Not authorized, token failed' })
@@ -45,8 +49,11 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
                         const decodedRefresh = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as DecodedToken
                         const newAccessToken = generateToken(decodedRefresh.id)
 
-                        const isProduction = process.env.NODE_ENV === 'production'
+                        if (!decodedRefresh) {
+                              return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authorized, token failed' })
+                        }
 
+                        const isProduction = env.NODE_ENV === 'production'
                         res.cookie('accessToken', newAccessToken, {
                               httpOnly: true,
                               secure: isProduction,
@@ -55,18 +62,24 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
                               maxAge: 24 * 60 * 60 * 1000, // 24 hours
                         })
 
-                        req.user = await User.findById(decodedRefresh.id).select('-password')
+                        req.user = await User.findById(decodedRefresh.id).select('-resetPasswordToken -resetPasswordExpires -password -refreshToken -createdAt -updatedAt')
+
+                        if (!req.user) {
+                              return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authorized, token failed' })
+                        }
+
                         return next()
                   } catch (error) {
-                        console.error('refresh token', error)
-                        return res.status(401).json({ message: 'expired' })
+                        console.error('Error with refresh token', error)
+                        return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authorized, token failed' })
                   }
             }
 
+            // if there's no access token and refresh token handling fails
             return res.status(401).json({ message: 'Not authorized, token failed' })
       } catch (error) {
-            console.error(error)
-            return res.status(401).json({ message: 'Not authorized, token failed' })
+            console.error('Unexpected error in authMiddleware', error);
+            return res.status(500).json({ message: 'Internal server error' });
       }
 }
 

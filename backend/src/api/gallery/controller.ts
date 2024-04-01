@@ -1,7 +1,6 @@
-import { Request , Response} from "express";
-// import { IGalleryResponse } from "../../models/gallery.model.js";
-import { createGalleryService, deleteGalleryService, getGalleryService } from "./service.js";
-import { handleServiceResponse } from "@/utils/httpHandler.js";
+import { Request , Response} from "express"
+import { createGalleryService, deleteGalleryService, getGalleryService } from "./service"
+import { handleServiceResponse } from "@/utils/httpHandler"
 
 export async function getGallery(req: Request, res: Response) {
     const userId = req.user._id
@@ -28,6 +27,6 @@ export async function deleteGallery(req: Request, res: Response) {
 
     if (!id) return res.status(400).json({ message: 'Galley ID is required' })
 
-    const response = await deleteGalleryService(id, userId);
+    const response = await deleteGalleryService(id, userId)
     handleServiceResponse(response, res)
 }

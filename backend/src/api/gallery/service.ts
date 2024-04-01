@@ -1,10 +1,10 @@
-import { Gallery, IGallery } from "../../models/gallery.model.js"
+import { Gallery, IGallery } from "@/models/gallery.model"
 import { v2 as cloudinary } from 'cloudinary'
 import { unlink } from "fs"
-import { NotFoundError } from "../../middleware/errorHandler.js"
-import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse.js"
+import { NotFoundError } from "@/middleware/errorHandler"
+import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { StatusCodes } from "http-status-codes"
-import { logger } from "@/server.js"
+import { logger } from "@/server"
 
 
 export async function getGalleryService(userId: string): Promise<ServiceResponse<IGallery[] | null>> {

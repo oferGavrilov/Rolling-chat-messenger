@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export enum ResponseStatus {
     Success,
@@ -6,16 +6,16 @@ export enum ResponseStatus {
 }
 
 export class ServiceResponse<T = null> {
-    success: boolean;
-    message: string;
-    responseObject: T;
-    statusCode: number;
+    success: boolean
+    message: string
+    responseObject: T
+    statusCode: number
 
     constructor(status: ResponseStatus, message: string, responseObject: T, statusCode: number) {
-        this.success = status === ResponseStatus.Success;
-        this.message = message;
-        this.responseObject = responseObject;
-        this.statusCode = statusCode;
+        this.success = status === ResponseStatus.Success
+        this.message = message
+        this.responseObject = responseObject
+        this.statusCode = statusCode
     }
 }
 
@@ -25,4 +25,4 @@ export const ServiceResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
         message: z.string(),
         responseObject: z.unknown(),
         statusCode: z.number()
-    });
+    })
