@@ -4,8 +4,8 @@ import { IColorPalette, IUser } from "../model/user.model"
 import { IChat } from "../model/chat.model"
 
 interface ChatContextProps {
-      user: IUser | null
-      setUser: React.Dispatch<React.SetStateAction<IUser | null>>
+      user: Partial<IUser> | null
+      setUser: React.Dispatch<React.SetStateAction<Partial<IUser> | null>>
       justLoggedIn: boolean;
       setJustLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
       isAdmin: (chat: IChat, userId?: string) => boolean
@@ -24,7 +24,7 @@ export const AuthState = () => {
 }
 
 export default function AuthProvider({ children }: { children: ReactNode }): JSX.Element {
-      const [user, setUser] = useState<IUser | null>(userService.getLoggedinUser() || null)
+      const [user, setUser] = useState<Partial<IUser> | null>(userService.getLoggedinUser() || null)
       const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
       const [chatBackgroundColor, setChatBackgroundColor] = useState<IColorPalette>(userService.getBackgroundColor() || { color: '#d8f3dc', opacity: .7 })
 

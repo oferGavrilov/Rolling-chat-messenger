@@ -6,7 +6,7 @@ import { Image, Audiotrack, Description } from '@mui/icons-material'
 
 interface ChatMessagePreviewProps {
     chat: IChat
-    loggedinUser: IUser
+    loggedinUser: Partial<IUser>
     unreadMessagesCount: number
     selectedChat: IChat | null
 }

@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { Request , Response} from "express";
 // import { IGalleryResponse } from "../../models/gallery.model.js";
 import { createGalleryService, deleteGalleryService, getGalleryService } from "./service.js";
 import { handleServiceResponse } from "@/utils/httpHandler.js";
