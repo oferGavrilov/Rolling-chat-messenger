@@ -4,7 +4,6 @@
   "description": "Backend of Rolling chat application",
   "main": "build/index",
   "types": "build/index",
-  "type": "module",
   "engines": {
     "node": "20.10.0"
   },
