@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { type Request, type Response } from "express"
 import { getAllMessagesByChatId, sendMessageService, removeMessageService } from "./service"
 import { logger } from "@/server"
 import { handleServiceResponse } from "@/utils/httpHandler"

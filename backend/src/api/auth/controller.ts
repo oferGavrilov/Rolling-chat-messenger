@@ -1,4 +1,4 @@
-import { Response, Request, CookieOptions } from "express"
+import { type Response, type Request, type CookieOptions } from "express"
 import { StatusCodes } from "http-status-codes"
 import jwt from "jsonwebtoken"
 import { generateRefreshToken, generateToken } from "@/config/generateToken"

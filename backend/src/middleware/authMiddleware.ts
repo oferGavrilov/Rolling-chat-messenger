@@ -1,4 +1,4 @@
-import { Response, NextFunction, Request } from 'express'
+import { type Response, type NextFunction, type Request } from 'express'
 import jwt from 'jsonwebtoken'
 import { User } from '@/models/user.model'
 import { Chat, IChat } from '@/models/chat.model'

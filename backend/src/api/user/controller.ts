@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { type Request, type Response } from "express"
 import { editUserDetailsService, editUserImageService, getUserStatusById, getUsersService } from "./service"
 import { handleServiceResponse } from "@/utils/httpHandler"
 import { ServiceResponse } from "@/models/serviceResponse"
