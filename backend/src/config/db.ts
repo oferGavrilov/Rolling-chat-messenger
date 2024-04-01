@@ -1,5 +1,6 @@
 import mongoose, { type Mongoose } from 'mongoose'
 import { logger } from '@/server'
+import { env } from '@/utils/envConfig'
 
 let connection: Mongoose | null = null
 
@@ -7,12 +8,8 @@ export const connectDB = async (): Promise<void> => {
       logger.info('Connecting to MongoDB...')
 
       try {
-            let mongoURI
-            if (process.env.NODE_ENV === 'production') {
-                  mongoURI = process.env.MONGO_ATLAS_URI
-            } else {
-                  mongoURI = process.env.MONGO_LOCAL_URI
-            }
+            let mongoURI = ''
+            mongoURI = env.MONGO_URI
 
             if (!mongoURI) {
                   throw new Error('MongoDB connection URI is not defined')
@@ -24,7 +21,7 @@ export const connectDB = async (): Promise<void> => {
       } catch (error: unknown) {
             const errorMessage = `Error connecting to MongoDB: ${(error as Error).message}`
             logger.error(errorMessage)
-            
+
             process.exit(1)
       }
 }
