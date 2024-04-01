@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
-    "build": "rimraf build && tsup",
+    "build": "tsup",
+    "build-dev": "rimraf build && tsup",
     "start": "node build/index.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
