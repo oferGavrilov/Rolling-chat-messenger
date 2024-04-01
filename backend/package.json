@@ -10,8 +10,8 @@
   },
   "scripts": {
     "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
-    "build": "tsup",
-    "build-dev": "rimraf build && tsup",
+    "build": "tsc && tsc-alias",
+    "build-dev": "rimraf build && tsc && tsc-alias",
     "start": "node build/index.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -53,8 +53,8 @@
     "nodemailer": "^6.9.8",
     "pino-http": "^9.0.0",
     "socket.io": "^4.7.0",
-    "zod": "^3.22.4",
-    "tsup": "^8.0.2"
+    "tsc-alias": "^1.8.8",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
