@@ -19,7 +19,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
         // in case user just logged in, return to chat page
         if (justLoggedIn) {
             setJustLoggedIn(false)
-            console.log('just logged in')
             return
         }
 

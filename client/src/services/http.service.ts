@@ -55,7 +55,6 @@ async function ajax<T>(
                   params: method === 'GET' ? params : null,
                   ...config
             })
-            console.log('res', res)
             return res.data.responseObject
       } catch (err: any) {
             if (env === 'development') {

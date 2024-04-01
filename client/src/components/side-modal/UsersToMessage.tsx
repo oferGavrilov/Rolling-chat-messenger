@@ -18,7 +18,7 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [users, setUsers] = useState<IUser[]>([])
 
-      const { setSelectedChat, chats } = useStore()
+      const { setSelectedChat, chats, setMessages } = useStore()
       const { user: loggedInUser } = AuthState()
 
       useEffect(() => {
@@ -77,6 +77,7 @@ export default function UsersToMessage({ setIsOpen, isOpen }: Props): JSX.Elemen
                   unreadMessagesCount: 0
             }
 
+            setMessages([])
             setSelectedChat(newChat)
             setFilter('')
             setIsOpen(false)
