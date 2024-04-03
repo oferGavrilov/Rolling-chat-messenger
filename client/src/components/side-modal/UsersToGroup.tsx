@@ -21,9 +21,9 @@ interface Props {
 export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
       const [filter, setFilter] = useState<string>('')
       const [users, setUsers] = useState<IUser[]>([])
-      const [group, setGroup] = useState<{ chatName: string, users: IUser[] }>({ chatName: '', users: [] })
+      const [group, setGroup] = useState<{ chatName: string, userIds: string[] }>({ chatName: '', userIds: [] })
       const [isLoading, setIsLoading] = useState<boolean>(false)
-      const [image, setImage] = useState<string>('')
+      const [image, setImage] = useState<File>({} as File)
       const { user } = AuthState()
 
       const { chats, setChats } = useStore()
@@ -61,7 +61,7 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
                   return
             }
 
-            if (group.users.length === 0) {
+            if (group.userIds.length === 0) {
                   toast.error('Please select at least one user')
                   return
             }
@@ -72,27 +72,26 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
                   setChats([newChat, ...chats])
                   toast.success('Group created successfully')
                   setIsOpen(false)
-                  setGroup({ chatName: '', users: [] })
+                  setGroup({ chatName: '', userIds: [] })
 
-                  // const socket = io(process.env.NODE_ENV === 'production' ? 'https://rolling-948m.onrender.com/' : 'http://localhost:5000', { transports: ['websocket'] })
-                  // socket.emit('create group', group.users, user?._id, newChat)
-                  socketService.emit(SocketEmitEvents.CREATE_GROUP, { users: group.users, adminId: user?._id, group: newChat })
+                  socketService.emit(SocketEmitEvents.CREATE_GROUP, { users: group.userIds, adminId: user?._id, group: newChat })
             } catch (error) {
                   console.error("An error occurred while creating group:", error)
             }
       }
 
       function handleGroupUsers(user: IUser): void {
-            if (group.users.find(u => u._id === user._id)) {
-                  setGroup({ ...group, users: group.users.filter(u => u._id !== user._id) })
+            const userId = user._id
+            if (group.userIds.find(currId => currId === userId)) {
+                  setGroup({ ...group, userIds: group.userIds.filter(currId => currId !== userId) })
                   return
             }
 
-            setGroup({ ...group, users: [...group.users, user] })
+            setGroup({ ...group, userIds: [...group.userIds, userId] })
       }
 
       function clearSelectedUsers(): void {
-            setGroup({ ...group, users: [] })
+            setGroup({ ...group, userIds: [] })
       }
 
       return (
@@ -100,7 +99,7 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
                   <h2 className='text-xl md:text-2xl text-center pb-5 dark:text-dark-primary-text'>Create Group Chat</h2>
 
                   <div className='flex flex-col gap-y-6 px-4 mx-auto'>
-                        <UploadImage image={image} setImage={setImage} />
+                        <UploadImage image={image} handleImageChange={setImage} />
                         <input
                               type="text"
                               className='bg-gray-100 p-2 py-2 rounded-lg px-3 dark:text-black focus:outline-none focus:ring-1 focus:ring-primary'
@@ -122,7 +121,7 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
                         <UsersList
                               users={filteredUsers}
                               onSelectChat={handleGroupUsers}
-                              selectedUsers={group.users}
+                              selectedUsers={group.userIds}
                               clearSelectedUsers={clearSelectedUsers}
                               usersType="group"
                         />

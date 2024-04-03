@@ -72,9 +72,21 @@ async function getChatById(chatId: string): Promise<IChat> {
 
 //////////////////// GROUP - Operations ////////////////////
 
-async function createGroup(group: { chatName: string, users: IUser[], groupImage: string }): Promise<IChat> {
+async function createGroup(group: { chatName: string, userIds: string[], groupImage: File }): Promise<IChat> {
       try {
-            return httpService.post(`${BASE_URL}/api/chat/creategroup`, group)
+            const formData = new FormData()
+            formData.append('groupImage', group.groupImage)
+            formData.append('chatName', group.chatName)
+            formData.append('userIds', JSON.stringify(group.userIds))
+
+            const config = {
+                  headers: {
+                        'content-type': 'multipart/form-data'
+                  }
+            }
+
+            return httpService.post(`${BASE_URL}/api/chat/creategroup`, formData, config)
+            // return httpService.post(`${BASE_URL}/api/chat/creategroup`, group)
       } catch (error) {
             console.error(error)
             throw new Error('Failed to create group.')

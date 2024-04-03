@@ -4,7 +4,7 @@ interface Props {
       users: IUser[]
       onSelectChat: (user: IUser) => void
       usersType: "group" | "message"
-      selectedUsers?: IUser[]
+      selectedUsers?: string[]
       clearSelectedUsers?: () => void
 }
 
@@ -24,7 +24,7 @@ export default function UsersList({ users, onSelectChat, usersType, selectedUser
                         {users?.map((user: IUser) => (
                               <li
                                     key={user._id}
-                                    className={`user-card ${selectedUsers?.some(selectedUser => selectedUser._id === user._id) ? '!bg-primary text-white' : ''}`}
+                                    className={`user-card ${selectedUsers?.some(selectedUserId => selectedUserId === user._id) ? '!bg-primary text-white' : ''}`}
                                     onClick={() => onSelectChat(user)}
                               >
                                     <div className='flex gap-x-4 items-center'>

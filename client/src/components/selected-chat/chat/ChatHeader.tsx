@@ -29,21 +29,6 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
       const [connectionStatus, setConnectionStatus] = useState<string>('')
       const [isLoadingStatus, setIsLoadingStatus] = useState<boolean>(false)
 
-
-      // old typing status
-      // useEffect(() => {
-      //       socketService.on(SocketOnEvents.USER_TYPING, () => setIsTyping(true))
-      //       socketService.on(SocketOnEvents.STOP_TYPING, () => setIsTyping(false))
-
-      //       fetchConnectionStatus()
-
-      //       return () => {
-      //             socketService.on(SocketOnEvents.USER_TYPING, () => setIsTyping(true))
-      //             socketService.on(SocketOnEvents.STOP_TYPING, () => setIsTyping(false))
-      //             setIsTyping(false)
-      //       }
-      // }, [selectedChat?._id, conversationUser, conversationUserRef?.current])
-
       const handleConnection = useCallback(({ userId, status }: { userId: string, status: boolean }): void => {
             console.log('userId:', userId, 'conversationUserRef?.current?._id:', conversationUserRef?.current?._id)
             console.log('status:', status)
@@ -95,35 +80,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
             fetchConnectionStatus()
       }, [selectedChat?._id, conversationUser])
 
-      // old function to handle connection status
-      // async function fetchConnectionStatus() {
-      //       if (selectedChat?.isGroupChat || !conversationUser?._id || selectedChat?.isNewChat) return
-
-      //       try {
-      //             setIsLoadingStatus(true)
-      //             const connection = await userService.getUserConnectionStatus(conversationUser._id as string) as connection
-      //             const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
-      //             setConnectionStatus(status)
-      //       } catch (err) {
-      //             console.error('Failed to fetch user connection status:', err)
-
-      //       } finally {
-      //             setTimeout(() => setIsLoadingStatus(false), 1000) // for smooth transition
-      //       }
-      // }
-
-
-      // old function to handle connection status
-      // function handleConnection(userId: string, status: boolean): void {
-      //       if (userId !== conversationUserRef?.current?._id) return
-      //       const date = new Date()
-      //       setConnectionStatus(
-      //             status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`
-      //       )
-      // }
-
       const toggleChatInfo = (): void => setChatMode(prevMode => prevMode === 'info' ? 'chat' : 'info');
-
 
       if (!selectedChat || !conversationUser) return <div></div>
       return (

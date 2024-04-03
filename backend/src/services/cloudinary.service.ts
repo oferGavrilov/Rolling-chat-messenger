@@ -45,7 +45,7 @@ const uploadToCloudinaryAsPromise = (fileBuffer: Buffer, options: any): Promise<
   
       return {
         originalImageUrl: originalResult.secure_url,
-        tnImageUrl: tnResult.secure_url,
+        tnImageUrl: tnResult.secure_url || '',
       }
     } catch (err) {
       console.log(err)
@@ -56,7 +56,6 @@ const uploadToCloudinaryAsPromise = (fileBuffer: Buffer, options: any): Promise<
 
 export const deleteImageFromCloudinary = async (imgUrl: string, folderName: string) => {
     try {
-
         let publicId = imgUrl
             ?.split('/')
             ?.pop()

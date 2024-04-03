@@ -14,9 +14,7 @@ const defaultUser: IUser = {
       TN_profileImg: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
       about: "No Information",
       isOnline: false,
-      lastSeen: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      lastSeen: "2021-09-23T15:45:00.000Z"
 }
 
 const ChatPreview: React.FC<{ chat: IChat }> = ({ chat }) => {

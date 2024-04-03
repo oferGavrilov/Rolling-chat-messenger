@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express'
 import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, renameGroupChatService, updateGroupImageService, removeChatService, kickFromGroupChatService, leaveGroupService, getChatByIdService } from './service'
-import type { IUser } from '@/models/user.model'
+import { DEFAULT_GUEST_IMAGE, type IUser } from '@/models/user.model'
 import { handleServiceResponse } from '@/utils/httpHandler'
 import { uploadImageToCloudinary } from '@/services/cloudinary.service'
 
@@ -33,13 +33,25 @@ export async function getChatById(req: Request, res: Response) {
 }
 
 export async function createGroupChat(req: Request, res: Response) {
-      const { users, chatName, groupImage = 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg' } = req.body
+      const { userIds, chatName} = req.body
       const currentUser = req.user as IUser
+      const reqGroupImage = req.file
 
-      if (!users) return res.status(400).json({ message: 'No users sent to the server' })
+      let groupImage: string = ''
+
+      if (reqGroupImage) {
+            const result = await uploadImageToCloudinary(reqGroupImage, 'profiles')
+            groupImage = result.originalImageUrl
+      } else {
+            groupImage = DEFAULT_GUEST_IMAGE
+      }
+      
+      if (!userIds) return res.status(400).json({ message: 'No users sent to the server' })
       if (!chatName) return res.status(400).json({ message: 'No chat name sent to the server' })
 
-      const createdChat = await createGroupChatService(users, chatName, groupImage, currentUser)
+      let parsedUserIds: string[] = JSON.parse(userIds)
+
+      const createdChat = await createGroupChatService(parsedUserIds, chatName, groupImage, currentUser)
       handleServiceResponse(createdChat, res)
 }
 

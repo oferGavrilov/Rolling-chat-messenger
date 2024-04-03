@@ -13,6 +13,8 @@ export interface IUser {
       profileImg: string
       TN_profileImg:string
       about: string
+      isOnline: boolean
+      lastSeen?: string
 }
 
 export interface IColorPalette {

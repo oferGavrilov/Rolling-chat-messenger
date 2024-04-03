@@ -165,10 +165,9 @@ export async function removeChatService(chatId: string, userId: string): Promise
       }
 }
 
-export async function createGroupChatService(users: IUser[], chatName: string, groupImage: string, currentUser: IUser): Promise<ServiceResponse<IChat | null>> {
+export async function createGroupChatService(users: string[], chatName: string, groupImage: string, currentUser: IUser): Promise<ServiceResponse<IChat | null>> {
       try {
-            const usersIds = users.map((user) => user._id.toString())
-            const chatUsers = [...usersIds, currentUser._id.toString()]
+            const chatUsers = Array.from(new Set([...users, currentUser._id.toString()]));
 
             const groupChatData = {
                   chatName,
@@ -182,7 +181,7 @@ export async function createGroupChatService(users: IUser[], chatName: string, g
             }
 
             const createdChat = await Chat.create(groupChatData)
-            const fullChat = await Chat.findOne({ _id: createdChat._id }).populate('users', "-password").populate('groupAdmin', "-password")
+            const fullChat = await Chat.findById(createdChat._id).populate('users', "-password").populate('groupAdmin', "-password").lean();
 
             if (!fullChat) {
                   return new ServiceResponse(ResponseStatus.Failed, 'Failed to retrieve the created group chat', null, StatusCodes.INTERNAL_SERVER_ERROR)
