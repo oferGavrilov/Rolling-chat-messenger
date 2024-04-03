@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useCallback, useState } from "react"
+import React, { Suspense, lazy, useCallback } from "react"
 import { IMessage, IChat } from "../../../model/"
 import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
@@ -26,26 +26,31 @@ const GroupInfo: React.FC<GroupInfoProps> = ({ messages, isAddUsers, setIsAddUse
       const { selectedChat, setSelectedChat, chats, setChats } = useStore()
       const { isAdmin, user: loggedInUser } = AuthState()
 
-      const [image, setImage] = useState<string>(selectedChat?.groupImage || '')
-
-      const updateGroupInfoAndSetChat = useCallback(async (updateType: 'image' | 'name', updateData: string): Promise<void> => {
-            if (!selectedChat) return;
+      const updateGroupInfoAndSetChat = useCallback(async (updateType: 'image' | 'name', updateData: string | File): Promise<void> => {
+            if (!selectedChat) return
 
             try {
-                  const newUpdate = await chatService.updateGroupInfo(selectedChat._id, updateType, updateData);
-                  const updatedChat: IChat = { ...selectedChat, [updateType === 'image' ? 'groupImage' : 'chatName']: newUpdate };
+                  const newUpdate = await chatService.updateGroupInfo(selectedChat._id, updateType, updateData)
+                  if (!newUpdate) return
 
-                  //do it with previous chat
-                  setSelectedChat( updatedChat);
-                  setChats(chats.map(chat => (chat._id === selectedChat._id ? updatedChat : chat)));
+                  let updatedChat: IChat = { ...selectedChat, [updateType === 'image' ? 'groupImage' : 'chatName']: newUpdate }
 
-                  //TODO: Emit socket event to update group info
-                  socketService.emit(SocketEmitEvents.UPDATE_GROUP_INFO, { chatId: selectedChat._id, chatUsers:selectedChat.users, updateType, updateData })
-            } catch (err) {
-                  toast.error('Failed to update group info. Try again later.')
-                  console.error(err);
+                  setSelectedChat(updatedChat)
+                  setChats(chats.map(chat => (chat._id === selectedChat._id ? updatedChat : chat)))
+
+                  socketService.emit(SocketEmitEvents.UPDATE_GROUP_INFO, { chatId: selectedChat._id, chatUsers: selectedChat.users, updateType, updateData })
+            } catch (errMsg) {
+                  toast.error(errMsg as string)
             }
-      }, [selectedChat, chats, setChats, setSelectedChat]);
+      }, [selectedChat, chats, setChats, setSelectedChat])
+
+      const handleImageChange = useCallback(async (image: File) => {
+            try {
+                  await updateGroupInfoAndSetChat('image', image)
+            } catch (err) {
+                  console.log(err)
+            }
+      }, [updateGroupInfoAndSetChat])
 
       const onLeaveFromGroup = useCallback(async () => {
             if (!selectedChat || !loggedInUser) return
@@ -68,8 +73,8 @@ const GroupInfo: React.FC<GroupInfoProps> = ({ messages, isAddUsers, setIsAddUse
 
             try {
                   await chatService.removeChat(selectedChat._id, loggedInUser._id)
-                  const updatedChats = chats.filter(chat => chat._id !== selectedChat._id);
-                  setChats(updatedChats);
+                  const updatedChats = chats.filter(chat => chat._id !== selectedChat._id)
+                  setChats(updatedChats)
                   setSelectedChat(null)
 
             } catch (err) {
@@ -84,12 +89,13 @@ const GroupInfo: React.FC<GroupInfoProps> = ({ messages, isAddUsers, setIsAddUse
 
       if (!selectedChat) return <div>No chat selected.</div>
 
+      const chatImage = selectedChat.groupImage || ''
       return (
             <>
                   <section className={`w-full ${isAddUsers ? 'overflow-hidden' : ''}`}>
                         <div className="text-center py-6">
                               {isAdmin(selectedChat) ?
-                                    (<UploadImage image={image} setImage={setImage} editImage={updateGroupInfoAndSetChat} />) :
+                                    (<UploadImage image={chatImage} handleImageChange={handleImageChange} />) :
                                     (<img src={selectedChat.groupImage} alt="group-img" className="w-24 h-24 shadow-lg md:w-32 md:h-32 mx-auto rounded-full" />)
                               }
 

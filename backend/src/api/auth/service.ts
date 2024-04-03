@@ -10,10 +10,11 @@ interface SignUpResult {
     username: string
     email: string
     profileImg: string
+    TN_profileImg: string
     about: string
 }
 
-export async function signUpService(username: string, email: string, password: string, profileImg: string): Promise<ServiceResponse<SignUpResult | null>> {
+export async function signUpService(username: string, email: string, password: string, profileImg: string, TN_profileImg: string): Promise<ServiceResponse<SignUpResult | null>> {
     try {
         const userExists = await User.findOne({ email })
 
@@ -26,6 +27,7 @@ export async function signUpService(username: string, email: string, password: s
             email,
             password,
             profileImg,
+            TN_profileImg,
             about: User.schema.path('about').default('Available'),
             isOnline: true,
         })
@@ -35,6 +37,7 @@ export async function signUpService(username: string, email: string, password: s
             username: newUser.username,
             email: newUser.email,
             profileImg: newUser.profileImg,
+            TN_profileImg: newUser.TN_profileImg,
             about: newUser.about
         }
 
@@ -108,9 +111,10 @@ export async function validateRefreshTokenService(refreshToken: string): Promise
             username: user.username,
             email: user.email,
             profileImg: user.profileImg,
+            TN_profileImg: user.TN_profileImg,
             about: user.about
         }
-        return new ServiceResponse(ResponseStatus.Success, 'Token is valid', { isValid: true, user:userResponse }, StatusCodes.OK)
+        return new ServiceResponse(ResponseStatus.Success, 'Token is valid', { isValid: true, user: userResponse }, StatusCodes.OK)
 
     } catch (error) {
         const errorMessage = `Error validating refresh token: ${(error as Error).message}`

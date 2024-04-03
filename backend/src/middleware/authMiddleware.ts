@@ -84,7 +84,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 }
 
 export async function groupAdminMiddleware(req: Request, res: Response, next: NextFunction) {
-      const { chatId } = req.body
+      const chatId = req.body.chatId
       const userId = req.user?._id
 
       if (!chatId) {

@@ -49,7 +49,7 @@ export default function ChatInterface(): JSX.Element {
       useEffect(() => {
             loadConversationUserInfo()
             setChatMode('chat')
-      }, [selectedChat])
+      }, [selectedChat?._id])
 
       function loadConversationUserInfo(): void {
             if (!selectedChat || !loggedInUser) return

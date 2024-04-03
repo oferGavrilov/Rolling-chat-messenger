@@ -3,6 +3,7 @@ import { editUserDetailsService, editUserImageService, getUserStatusById, getUse
 import { handleServiceResponse } from "@/utils/httpHandler"
 import { ServiceResponse } from "@/models/serviceResponse"
 import { IUser } from "@/models/user.model"
+import { uploadImageToCloudinary } from "@/services/cloudinary.service"
 
 export async function getUsers(req: Request, res: Response) {
       const userId = req.user._id
@@ -11,29 +12,36 @@ export async function getUsers(req: Request, res: Response) {
 }
 
 export async function editUserDetails(req: Request, res: Response) {
-      const { newName } = req.body
+      const { newName, fieldToUpdate } = req.body
       const userId = req.user._id
 
-      if (!newName) return res.status(400).json({ msg: 'Name is required' })
+      if (!fieldToUpdate) return res.status(400).json({ message: 'No field to update.' })
 
       const cleanName = newName.replace(/[/>]/g, '').trim()
-      const updatedName: ServiceResponse<string | null> = await editUserDetailsService(userId, cleanName)
-      handleServiceResponse(updatedName, res)
+
+      if (!cleanName) return res.status(400).json({ message: 'Name is required.' })
+
+      const serviceResponse: ServiceResponse<{ newUserValue: string, field: 'username' | 'about' } | null> = await editUserDetailsService(userId, cleanName, fieldToUpdate)
+      handleServiceResponse(serviceResponse, res)
 }
 
 export async function editUserImage(req: Request, res: Response) {
-      const { image, TN_profileImg } = req.body
+      const profileImg = req.file
       const userId = req.user?._id
+      
+      if (!profileImg) return res.status(400).json({ message: 'Image is required.' })
 
-      if (!image) return res.status(400).json({ msg: 'Image is required' })
+      const result = await uploadImageToCloudinary(profileImg, 'profiles')
+      let profileImgToSave: string = result.originalImageUrl
+      let TN_profileImgToSave: string = result.tnImageUrl
 
-      const user: ServiceResponse<{ image: string, TN_profileImg: string } | null> = await editUserImageService(userId, image, TN_profileImg)
-      handleServiceResponse(user, res)
+      const serviceResponse: ServiceResponse<{ newProfileImg: string, newTN_profileImg: string } | null> = await editUserImageService(userId, profileImgToSave, TN_profileImgToSave)
+      handleServiceResponse(serviceResponse, res)
 }
 
 export async function getUserStatus(req: Request, res: Response) {
       const userId = req.params.userId
-      if (!userId) return res.status(400).json({ msg: 'User ID is required' })
+      if (!userId) return res.status(400).json({ message: 'User not found.' })
 
       const userStatus: ServiceResponse<{ isOnline: boolean, lastSeen?: Date } | null> = await getUserStatusById(userId)
       handleServiceResponse(userStatus, res)

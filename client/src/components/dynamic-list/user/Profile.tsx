@@ -15,7 +15,10 @@ interface UserValues {
 
 export default function Profile(): JSX.Element {
       const { user, setUser } = AuthState()
-      const [imageObj, setImageObj] = useState<{ image: string, TNImage: string }>({ image: user?.profileImg || '', TNImage: '' })
+      const [imageObj, setImageObj] = useState<{
+            image: string | File, TN_Image: string | File
+      }>({ image: user?.profileImg || '', TN_Image: '' })
+
       const [editType, setEditType] = useState<'username' | 'about' | ''>('')
       const [userValues, setUserValues] = useState<UserValues>({
             username: user?.username ?? '',
@@ -30,7 +33,7 @@ export default function Profile(): JSX.Element {
             // Check for special symbols in the input value
             const specialSymbolsRegex = /[!@#$%^&*()_+\-=[\]{}':"\\|,.<>/?]+/
             if (specialSymbolsRegex.test(newValue)) {
-                  return toast.error(`Please enter a valid ${editType} without special symbols`)
+                  return toast.warn(`Please enter a valid ${editType} without special symbols`)
             }
 
             if (newValue === user?.[editType]) {
@@ -38,32 +41,48 @@ export default function Profile(): JSX.Element {
             }
 
             if (newValue === user?.[editType] || newValue === '') {
-                  return toast.error(`Please enter a valid ${editType}`)
+                  return toast.warn(`Please enter a valid ${editType}`)
             }
 
-            const newUser = await userService.editUserDetails(newValue, editType)
-            setUser(newUser)
-            setEditType('')
-            toast.success(`${editType} changed successfully`)
+            try {
+                  const { newUserValue, field } = await userService.editUserDetails(newValue, editType)
+                  const userToSave = { ...user, [field]: newUserValue } as IUser
+                  setUser(userToSave)
+                  setEditType('')
+                  toast.success(`${field} changed successfully`)
+            } catch (errMsg) {
+                  if (errMsg && typeof errMsg === 'string') {
+                        toast.error(errMsg as string)
+                  }
+            }
       }
 
-      async function handleImageChange(newImage: string, newTNImage: string): Promise<void> {
-            setImageObj({ image: newImage, TNImage: newTNImage })
+      async function handleImageChange(image: File): Promise<void> {
+            // setImageObj(prevState => ({ ...prevState, image }))
 
-            const savedImages = await userService.updateUserImage(newImage, newTNImage) as { image: string, TN_profileImg: string }
-            if (!savedImages.image) return
+            try {
+                  const { newProfileImg, newTN_profileImg } = await userService.updateUserImage(image)
 
-            const userToSave = {
-                  ...user,
-                  profileImg: savedImages.image,
-                  TN_profileImg: savedImages.TN_profileImg
-            } as IUser
-            setUser(userToSave)
+                  const userToSave = {
+                        ...user,
+                        profileImg: newProfileImg,
+                        TN_profileImg: newTN_profileImg
+                  } as IUser
+
+                  setImageObj({ image: newProfileImg, TN_Image: newTN_profileImg })
+                  setUser(userToSave)
+
+                  toast.success('Image changed successfully')
+            } catch (errMsg) {
+                  if (errMsg && typeof errMsg === 'string') {
+                        toast.error(errMsg as string)
+                  }
+            }
       }
 
       return (
             <section>
-                  <UploadImage image={imageObj.image} setImage={handleImageChange} />
+                  <UploadImage image={imageObj.image} handleImageChange={handleImageChange} />
 
                   <div className='px-6 py-10'>
                         <span className='text-lg font-semibold text-primary dark:text-dark-tertiary-text'>Your Name</span>

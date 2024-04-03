@@ -15,8 +15,7 @@ export default function Chat({ setChatMode }: Props): JSX.Element {
 
       useEffect(() => {
             if (messages.length > 4) {
-                  console.log('scrolling to bottom')
-                  setTimeout(() => scrollToBottom(chatRef), 100)
+                  setTimeout(() => scrollToBottom(chatRef), 100) // For smooth scrolling
             }
       }, [messages, replyMessage, setMessages])
 

@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
-import { chatService } from '../../../services/chat.service'
+import { useState, useMemo, useRef } from 'react'
 import useStore from '../../../context/store/useStore'
 import ChatLoading from '../../SkeltonLoading'
 import MessagesInput from '../../common/MessagesInput'
@@ -8,17 +7,16 @@ import { IUser } from '../../../model/user.model'
 import { IChat } from '../../../model/chat.model'
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
 import { useClickOutside } from '../../../custom-hook/useClickOutside'
-import socketService from '../../../services/socket.service'
 
 import { ContentType } from '../../../pages/ChatPage'
 import ChatList from './ChatList'
 
 interface MessagesProps {
       contentType: ContentType
+      isLoadingChats: boolean
 }
 
-export default function Chats({ contentType }: MessagesProps): JSX.Element {
-      const [isLoading, setIsLoading] = useState<boolean>(false)
+export default function Chats({ contentType, isLoadingChats }: MessagesProps): JSX.Element {
       const [filter, setFilter] = useState<string>('')
       const [sort, setSort] = useState<'Newest' | 'Oldest' | null>(null)
       const [showSortModal, setShowSortModal] = useState<boolean>(false)
@@ -29,41 +27,6 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
       const modalRef = useRef<HTMLUListElement>(null)
 
       useClickOutside(modalRef, () => setShowSortModal(false), showSortModal)
-
-      useEffect(() => {
-            if (!loggedinUser) return
-            //TODO: move this to chat page
-            socketService.setup(loggedinUser._id)
-
-            async function loadChats(): Promise<void> {
-                  if (!loggedinUser) return
-
-                  // for handling user-joined and user-left events when user is kicked/left and joined back
-                  // if (event === 'user-joined') {
-                  //       socketService.emit('join-user', loggedinUser?._id)
-                  // } else if (event === 'user-left' || event === 'user-kicked') {
-                  //       socketService.emit('leave-user', loggedinUser?._id)
-                  // }
-
-                  try {
-                        setIsLoading(true)
-                        let chats = await chatService.getUserChats()
-                        setChats(chats)
-                  } catch (err) {
-                        console.log(err)
-                  } finally {
-                        setIsLoading(false)
-                  }
-            }
-
-            loadChats()
-
-            return () => {
-                  // socketService.off('user-kicked')
-                  // socketService.off('user-joined')
-                  // socketService.off('user-left')
-            }
-      }, [])
 
       const filteredChats = useMemo(() => {
             if (filter) {
@@ -117,7 +80,7 @@ export default function Chats({ contentType }: MessagesProps): JSX.Element {
                         </div>
                   </div>
 
-                  {!isLoading ? (
+                  {!isLoadingChats ? (
                         filteredChats.length > 0 ? (
                               <ChatList chats={filteredChats} />
                         ) : (

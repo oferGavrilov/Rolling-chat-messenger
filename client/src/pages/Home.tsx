@@ -28,7 +28,7 @@ export default function Home(): JSX.Element {
                                                 From real-time messaging to voice and video calls, our platform brings people together, fostering collaboration, and enabling rich communication experiences.
                                           </p>
                                     </div>
-
+                                    
                                     <div className="flex justify-center">
                                           <Link
                                                 to="/chat"

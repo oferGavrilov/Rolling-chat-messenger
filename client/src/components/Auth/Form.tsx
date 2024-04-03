@@ -23,10 +23,10 @@ interface FormData {
 }
 
 export default function Form(): JSX.Element {
+      const { setUser, setJustLoggedIn } = AuthState()
       const [formMode, setFormMode] = useState<'login' | 'sign-up' | 'reset'>('login')
       const [isLoading, setIsLoading] = useState<boolean>(false)
-      const [image, setImage] = useState<string>('')
-      const { setUser, setJustLoggedIn } = AuthState()
+      const [image, setImage] = useState<File | string>('')
       const navigate = useNavigate()
 
       const validationSchema = (() => {
@@ -148,8 +148,8 @@ export default function Form(): JSX.Element {
                         </div>
 
                         <form className="flex flex-col mt-6" onSubmit={formik.handleSubmit} id='auth-form'>
-                              {formMode === 'login' && <Login formik={formik} />}
-                              {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} />}
+                              {formMode === 'login' && <Login formik={formik} isLoading={isLoading}/>}
+                              {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} isLoading={isLoading} />}
                               {formMode === 'reset' && <ForgotPassword formik={formik} />}
 
                               {formMode === 'login' && (

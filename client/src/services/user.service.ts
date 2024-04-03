@@ -1,4 +1,4 @@
-import { FormData, IColorPalette, IUser } from "../model/user.model"
+import { FormDataSubmit, IColorPalette, IUser } from "../model/user.model"
 import { httpService } from "./http.service"
 
 const STORAGE_KEY = 'loggedin-user'
@@ -38,10 +38,32 @@ async function getUsers(): Promise<IUser[]> {
       }
 }
 
-async function loginSignUp(credentials: FormData, formMode: string) {
+async function loginSignUp(credentials: FormDataSubmit, formMode: string): Promise<IUser> {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
 
-      const userData = await httpService.post(`${BASE_URL + path}`, credentials)
+      let userData: IUser | null = null
+      
+      if (formMode === 'login') {
+            userData = await httpService.post<IUser>(`${BASE_URL + path}`, credentials)
+      } else {
+            const formData = new FormData()
+            const config = {
+                  headers: {
+                        'Content-Type': 'multipart/form-data'
+                  }
+            }
+            formData.append('username', credentials.username as string)
+            formData.append('email', credentials.email)
+            formData.append('password', credentials.password)
+
+            if (credentials.profileImg) {
+                  formData.append('profileImg', credentials.profileImg)
+            }
+
+            userData = await httpService.post<IUser>(`${BASE_URL + path}`, formData, config)
+      }
+
+
       if (userData) {
             _saveToLocalStorage(userData)
       }
@@ -92,7 +114,7 @@ async function validateUser(): Promise<ValidationResponse> {
             if (validateUserResponse.isValid && validateUserResponse.user) {
                   _saveToLocalStorage(validateUserResponse.user)
             }
-      } 
+      }
 
       return validateUserResponse
 }
@@ -101,45 +123,50 @@ async function getUserConnectionStatus(userId: string) {
       return await httpService.get(`${BASE_URL}/api/user/status/${userId}`)
 }
 
-async function updateUserImage(image: string, TN_profileImg: string): Promise<{ image: string, TN_profileImg: string }> {
-      try {
-            const user = getLoggedinUser()
-            if (!user) {
-                  throw new Error('User is not logged in.')
-            }
-
-            const updatedImages = await httpService.put<{ image: string, TN_profileImg: string }>(`${BASE_URL}/api/user/image`, { image, TN_profileImg })
-            if (updatedImages) {
-                  _saveToLocalStorage({ ...user, profileImg: updatedImages.image, TN_profileImg: updatedImages.TN_profileImg })
-            }
-
-            return updatedImages
-      } catch (error) {
-            console.error(error)
-            throw error
+async function updateUserImage(profileImg: File): Promise<{ newProfileImg: string, newTN_profileImg: string }> {
+      const user = getLoggedinUser()
+      if (!user) {
+            throw new Error('User is not logged in.')
       }
+
+      const config = {
+            headers: {
+                  'Content-Type': 'multipart/form-data'
+            }
+      }
+
+      const formData = new FormData()
+      formData.append('profileImg', profileImg)
+
+      const { newProfileImg, newTN_profileImg } = await httpService.put<{ newProfileImg: string, newTN_profileImg: string }>(`${BASE_URL}/api/user/image`, formData, config)
+
+      if (newProfileImg) {
+            _saveToLocalStorage({
+                  ...user,
+                  profileImg: newProfileImg,
+                  TN_profileImg: newTN_profileImg
+            })
+      }
+
+      return { newProfileImg, newTN_profileImg }
 }
 
-async function editUserDetails(newName: string, key: string): Promise<IUser> {
-      try {
-            const user = getLoggedinUser()
-            if (!user) {
-                  throw new Error('User is not logged in.')
-            }
-
-            const response = await httpService.put(`${BASE_URL}/api/user/details`, { newName }) as IUser
-
-            if (response) {
-                  const user = getLoggedinUser()
-                  const userWithNewName = { ...user, [key]: newName }
-                  _saveToLocalStorage(userWithNewName)
-            }
-
-            return response
-      } catch (error) {
-            console.error(error)
-            throw error
+async function editUserDetails(newName: string, key: 'about' | 'username'): Promise<{ newUserValue: string, field: 'username' | 'about' }> {
+      const user = getLoggedinUser()
+      if (!user) {
+            throw new Error('User is not logged in.')
       }
+
+      const { newUserValue, field } = await httpService.put<{ newUserValue: string, field: 'username' | 'about' }>(`${BASE_URL}/api/user/details`, { newName, fieldToUpdate: key })
+      console.log('response', newUserValue)
+
+      if (newUserValue) {
+            const user = getLoggedinUser() as IUser
+            const userWithNewName = { ...user, [field]: newUserValue }
+            _saveToLocalStorage(userWithNewName)
+      }
+
+      return { newUserValue, field }
 }
 
 function getTheme(): "light" | "dark" {
@@ -185,15 +212,16 @@ function getBackgroundColor(): IColorPalette | null {
       }
 }
 
-export function getLoggedinUser() {
+export function getLoggedinUser(): IUser | null {
       const storedItem = localStorage.getItem(STORAGE_KEY)
       if (storedItem) {
+            console.log('storedItem:', JSON.parse(storedItem))
             return JSON.parse(storedItem)
       }
       return null
 }
 
-function _saveToLocalStorage(user: Partial<IUser>) {
+function _saveToLocalStorage(user: IUser) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
       return user
 }

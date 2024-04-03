@@ -1,4 +1,5 @@
 import mongoose, { Model, ObjectId, Schema, Types } from 'mongoose'
+import { DEFAULT_GUEST_IMAGE } from './user.model'
 
 export interface IChat extends Document {
   _id: ObjectId
@@ -42,7 +43,7 @@ const chatSchema: Schema<IChat> = new Schema(
     groupAdmin: { type: Schema.Types.ObjectId, ref: 'User' },
     groupImage: {
       type: String,
-      default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
+      default: DEFAULT_GUEST_IMAGE,
     },
     deletedBy: [DeletedBySchema],
     kickedUsers: [KickedUsersSchema],

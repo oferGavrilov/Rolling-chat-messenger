@@ -34,6 +34,8 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
   { timestamps: true }
 )
 
+export const DEFAULT_GUEST_IMAGE = './imgs/guest.jpg'
+
 userSchema.methods.verifyPassword = async function (candidatePassword: string): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password)
 }

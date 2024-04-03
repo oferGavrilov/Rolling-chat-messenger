@@ -215,7 +215,12 @@ export async function renameGroupChatService(chatId: string, groupName: string):
 
 export async function updateGroupImageService(chatId: string, groupImage: string): Promise<ServiceResponse<string | null>> {
       try {
-            await Chat.findByIdAndUpdate(chatId, { groupImage }, { new: true }).populate('users', "-password").populate('groupAdmin', "-password")
+            await Chat.findByIdAndUpdate(
+                  chatId,
+                  { groupImage},
+                  { new: true, useFindAndModify: false }
+            )
+
             return new ServiceResponse(ResponseStatus.Success, 'Group image updated', groupImage, 200)
       } catch (error: unknown) {
             const errorMessage = `Error updating group image: ${(error as Error).message}`

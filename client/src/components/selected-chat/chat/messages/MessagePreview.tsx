@@ -107,7 +107,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
       const incomingMessage: boolean = message.sender?._id !== user?._id
       return (
             <div className="select-none message-container" onDoubleClick={() => handleDoubleClick(message)}>
-                  <div className={`select-text relative w-max flex items-center max-w-[75%] text-white ${getMessageBorderRadius(arrowDirection)} ${message.replyMessage?._id ? 'flex-col' : ''} ${(message.sender._id === user._id) ? 'out-going-message' : 'incoming-message'}`}>
+                  <div className={`select-text relative w-max flex items-center min-h-8 max-w-[75%] text-white ${getMessageBorderRadius(arrowDirection)} ${message.replyMessage?._id ? 'flex-col' : ''} ${(message.sender._id === user._id) ? 'out-going-message' : 'incoming-message'}`}>
                         {message.replyMessage?._id && (
                               <ReplyMessage
                                     message={message}

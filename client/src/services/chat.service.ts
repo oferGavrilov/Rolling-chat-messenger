@@ -81,24 +81,25 @@ async function createGroup(group: { chatName: string, users: IUser[], groupImage
       }
 }
 
-async function updateGroupInfo(chatId: string, updateType: 'image' | 'name', updateData: string): Promise<string> {
-      try {
-            let url: string, dataKey: string
-            if (updateType === 'image') {
-                  url = `${BASE_URL}/api/chat/groupimage`
-                  dataKey = 'groupImage'
-            } else if (updateType === 'name') {
-                  url = `${BASE_URL}/api/chat/rename`
-                  dataKey = 'groupName'
-            } else {
-                  throw new Error('Invalid update type.')
+async function updateGroupInfo(chatId: string, updateType: 'image' | 'name', updateData: string | File): Promise<string | null> {
+      if (updateType === 'image') {
+            const formData = new FormData()
+            formData.append('groupImage', updateData as File)
+            formData.append('chatId', chatId)
+
+            const config = {
+                  headers: {
+                        'content-type': 'multipart/form-data'
+                  }
             }
 
-            return httpService.put(url, { chatId, [dataKey]: updateData })
-      } catch (error) {
-            console.error(error)
-            throw new Error('Failed to update group info.')
+            return httpService.put(`${BASE_URL}/api/chat/groupimage`, formData, config)
+
+      } else if (updateType === 'name') {
+            return httpService.put(`${BASE_URL}/api/chat/rename`, { chatId, groupName: updateData })
       }
+
+      return null
 }
 
 async function updateUsersGroup(chatId: string, users: IUser[]) {

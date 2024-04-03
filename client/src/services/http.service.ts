@@ -32,8 +32,8 @@ export const httpService = {
       async post<T>(endpoint: string, data: unknown, config?: {}): Promise<T> {
             return ajax(endpoint, 'POST', data, null, config)
       },
-      async put<T>(endpoint: string, data: unknown): Promise<T> {
-            return ajax(endpoint, 'PUT', data)
+      async put<T>(endpoint: string, data: unknown, config?: {}): Promise<T> {
+            return ajax(endpoint, 'PUT', data, null, config)
       },
       async delete<T>(endpoint: string, data: unknown): Promise<T> {
             return ajax(endpoint, 'DELETE', data)
@@ -66,12 +66,13 @@ async function ajax<T>(
             console.log('message', err.response?.data.message)
             if (err.response) {
                   const status = err.response.status
-                  console.log(err.response)
-                  if (status === 400) {
-                        toast.warn(err.response.data.message || 'Bad request, Try again later.')
-                  } else
-                        if (status === 401) {
-                              // when user is logged in but with expired tokens
+                  const message = err?.response?.data?.message
+
+                  switch (status) {
+                        case 400:
+                              // if has message throw message error else throw generic error
+                              throw message || 'Something went wrong, Try again later.'
+                        case 401:
                               if (err.response.data.message === 'expired') {
                                     await userService.logout()
                                     socketService.terminate();
@@ -79,13 +80,17 @@ async function ajax<T>(
                               } else {
                                     toast.warn(err.response.data.message || 'You are not logged in.')
                               }
-                        } else if (status === 403) {
+                              break
+                        case 403:
                               toast.warn(err.response.data.message || 'You are not allowed to do that.')
-                        } else if (status === 404) {
+                              break
+                        case 404:
                               toast.warn(err.response.data.message || 'Something went wrong, Try again later.')
-                        } else if (status === 500) {
-                              window.location.assign('/')
-                        }
+                              break
+                        case 500:
+                              env === 'production' && window.location.assign('/')
+                              break
+                  }
             }
 
             throw err

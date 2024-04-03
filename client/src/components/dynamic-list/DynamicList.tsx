@@ -20,6 +20,7 @@ interface Props {
       setContentType: React.Dispatch<React.SetStateAction<ContentType>>
       showNavigation: boolean
       setShowNavigation: React.Dispatch<React.SetStateAction<boolean>>
+      isLoadingChats: boolean
 }
 
 export default function DynamicList(props: Props) {
@@ -28,9 +29,9 @@ export default function DynamicList(props: Props) {
       function getContent(): JSX.Element {
             switch (props.contentType) {
                   case 'chats':
-                        return <Chats contentType={props.contentType} />
+                        return <Chats contentType={props.contentType} isLoadingChats={props.isLoadingChats} />
                   case 'groups':
-                        return <Chats contentType={props.contentType} />
+                        return <Chats contentType={props.contentType} isLoadingChats={props.isLoadingChats} />
                   case 'gallery':
                         return <Gallery />
                   case 'videos':
@@ -42,7 +43,7 @@ export default function DynamicList(props: Props) {
                   case 'profile':
                         return <Profile />
                   default:
-                        return <Chats contentType={props.contentType} />
+                        return <Chats contentType={props.contentType} isLoadingChats={props.isLoadingChats} />
             }
       }
 

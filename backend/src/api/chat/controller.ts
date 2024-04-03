@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express'
 import { updateUsersInGroupChatService, createChatService, createGroupChatService, getUserChatsService, renameGroupChatService, updateGroupImageService, removeChatService, kickFromGroupChatService, leaveGroupService, getChatByIdService } from './service'
 import type { IUser } from '@/models/user.model'
 import { handleServiceResponse } from '@/utils/httpHandler'
+import { uploadImageToCloudinary } from '@/services/cloudinary.service'
 
 export async function createChat(req: Request, res: Response) {
       const { userId } = req.body
@@ -53,12 +54,18 @@ export async function renameGroupChat(req: Request, res: Response) {
 }
 
 export async function updateGroupImage(req: Request, res: Response) {
-      const { chatId, groupImage } = req.body
+      const { chatId } = req.body
+      const reqGroupImage = req.file
 
       if (!chatId) return res.status(400).json({ message: 'No chat id sent to the server' })
-      if (!groupImage) return res.status(400).json({ message: 'No group image sent to the server' })
+      if (!reqGroupImage) return res.status(400).json({ message: 'No group image sent to the server' })
 
-      const updatedGroupImage = await updateGroupImageService(chatId, groupImage)
+      let groupImageToSave: string = ''
+
+      const result = await uploadImageToCloudinary(reqGroupImage, 'profiles')
+      groupImageToSave = result.originalImageUrl
+
+      const updatedGroupImage = await updateGroupImageService(chatId, groupImageToSave)
       handleServiceResponse(updatedGroupImage, res)
 }
 

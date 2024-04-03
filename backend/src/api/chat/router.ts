@@ -12,6 +12,7 @@ import {
       leaveGroup,
       getChatById
 } from './controller.js'
+import upload from '@/middleware/multerMiddleware'
 
 export const router = express.Router()
 
@@ -22,6 +23,6 @@ router.post('/creategroup', authMiddleware, createGroupChat)
 router.put('/leave', authMiddleware, leaveGroup)
 router.put('/remove', authMiddleware, removeChat)
 router.put('/rename', authMiddleware, groupAdminMiddleware, renameGroupChat)
-router.put('/groupimage', authMiddleware, groupAdminMiddleware, updateGroupImage)
+router.put('/groupimage', authMiddleware, upload.single('groupImage'), groupAdminMiddleware, updateGroupImage)
 router.put('/updateusers', authMiddleware, groupAdminMiddleware, updateUsersInGroupChat)
 router.put('/kick', authMiddleware, groupAdminMiddleware, kickFromGroupChat)

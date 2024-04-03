@@ -38,7 +38,7 @@ const useImageEditor = ({ ref, initialImage }: UseImageEditorProps) => {
             ctx.font = `${text.fontSize}px Arial`
             ctx.fillText(text.text, text.x, text.y)
         })
-    }, [])
+    }, [texts])
 
     const initializeCanvas = useCallback(() => {
         if (!ref.current || !initialImage) return console.error('Canvas or initial image not found')
@@ -90,7 +90,7 @@ const useImageEditor = ({ ref, initialImage }: UseImageEditorProps) => {
             ctx.filter = 'none'
         }
 
-    }, [ref, zoomLevel, initialImage, isMirrored, isFlipped, grayscale, renderTexts, texts])
+    }, [ref, zoomLevel, initialImage, isMirrored, isFlipped, grayscale, renderTexts])
 
     useEffect(() => {
         initializeCanvas()

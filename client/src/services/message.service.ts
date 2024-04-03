@@ -29,7 +29,7 @@ async function sendMessage(
       }): Promise<IMessage> {
       try {
             const formData = new FormData()
-
+            
             if (message.file) {
                   formData.append('file', message.file)
             }

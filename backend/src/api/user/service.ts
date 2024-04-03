@@ -14,7 +14,7 @@ export async function getUsersService(loggedInUserId: string): Promise<ServiceRe
       }
 }
 
-export async function editUserDetailsService(userId: string, newName: string): Promise<ServiceResponse<string | null>> {
+export async function editUserDetailsService(userId: string, newName: string, fieldToUpdate: 'username' | 'about'): Promise<ServiceResponse<{newUserValue: string, field: 'username'| 'about'} | null>> {
       try {
             const user = await User.findById(userId)
 
@@ -22,10 +22,15 @@ export async function editUserDetailsService(userId: string, newName: string): P
                   return new ServiceResponse(ResponseStatus.Failed, 'User not found', null, StatusCodes.NOT_FOUND)
             }
 
-            user.username = newName
+            if (fieldToUpdate === 'about') {
+                  user.about = newName
+            } else {
+                  user.username = newName
+            }
+            
             await user.save()
 
-            return new ServiceResponse(ResponseStatus.Success, 'User updated successfully', newName, StatusCodes.OK)
+            return new ServiceResponse(ResponseStatus.Success, 'User updated successfully', {newUserValue:newName, field:fieldToUpdate}, StatusCodes.OK)
       } catch (error: unknown) {
             const errorMessage = `Error while updating user: ${(error as Error).message}`
             logger.error(errorMessage)
@@ -33,18 +38,18 @@ export async function editUserDetailsService(userId: string, newName: string): P
       }
 }
 
-export async function editUserImageService(userId: string, newImage: string, newTNImage: string = ''): Promise<ServiceResponse<{ image: string, TN_profileImg: string } | null>> {
+export async function editUserImageService(userId: string, newImageUrl: string, newTNImageUrl: string = ''): Promise<ServiceResponse<{ newProfileImg: string, newTN_profileImg: string } | null>> {
       try {
             const user = await User.findById(userId)
             if (!user) {
                   return new ServiceResponse(ResponseStatus.Failed, 'User not found', null, StatusCodes.NOT_FOUND)
             }
 
-            user.profileImg = newImage
-            user.TN_profileImg = newTNImage
+            user.profileImg = newImageUrl
+            user.TN_profileImg = newTNImageUrl
             await user.save()
 
-            return new ServiceResponse(ResponseStatus.Success, 'User image updated successfully', { image: user.profileImg, TN_profileImg: user.TN_profileImg }, StatusCodes.OK)
+            return new ServiceResponse(ResponseStatus.Success, 'User image updated successfully', { newProfileImg: user.profileImg, newTN_profileImg: user.TN_profileImg }, StatusCodes.OK)
       } catch (error: unknown) {
             const errorMessage = `Error while updating user image: ${(error as Error).message}`
             logger.error(errorMessage)

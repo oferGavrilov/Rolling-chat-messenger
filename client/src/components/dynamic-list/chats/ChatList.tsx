@@ -17,7 +17,6 @@ export default function ChatList({ chats }: { chats: IChat[] }) {
 
             socketService.on(SocketOnEvents.NEW_GROUP_CREATED, handleNewGroup)
 
-
             return () => {
                   socketService.off(SocketOnEvents.NEW_GROUP_CREATED, handleNewGroup)
             }

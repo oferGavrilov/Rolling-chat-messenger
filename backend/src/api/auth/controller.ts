@@ -5,23 +5,38 @@ import { generateRefreshToken, generateToken } from "@/config/generateToken"
 import { loginUser, resetPasswordConfirm, signUpService, validateRefreshTokenService } from "./service"
 import { EmailService } from "@/services/email.service"
 import { logger } from "@/server"
-import { IUser, User } from "@/models/user.model"
+import { DEFAULT_GUEST_IMAGE, IUser, User } from "@/models/user.model"
 import { env } from "@/utils/envConfig"
 import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { handleServiceResponse } from "@/utils/httpHandler"
+import { uploadImageToCloudinary } from "@/services/cloudinary.service"
 
 export async function signUp(req: Request, res: Response) {
-    const { username, email, password, profileImg = "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" } = req.body
-
-    if (!username || !email || !password) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            message: 'Username, email, and password are required',
-        })
-        return
-    }
+    const { username, email, password } = req.body
 
     try {
-        const serviceResponse = await signUpService(username, email, password, profileImg)
+        if (!username || !email || !password) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                message: 'Username, email, and password are required',
+            })
+            return
+        }
+
+        const reqProfileImg = req.file
+
+        let profileImgToSave: string = ''
+        let TN_profileImgToSave: string = ''
+
+        if (reqProfileImg) {
+            const result = await uploadImageToCloudinary(reqProfileImg, 'profiles')
+            profileImgToSave = result.originalImageUrl
+            TN_profileImgToSave = result.tnImageUrl
+        } else {
+            profileImgToSave = DEFAULT_GUEST_IMAGE
+            TN_profileImgToSave = ''
+        }
+
+        const serviceResponse = await signUpService(username, email, password, profileImgToSave, TN_profileImgToSave)
 
         if (!serviceResponse.success) {
             res.status(serviceResponse.statusCode).json({ message: serviceResponse.message })
@@ -134,6 +149,9 @@ export async function login(req: Request, res: Response) {
                 ...cookiesConfig,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             })
+
+            // remove the refresh token from the response object
+            delete user.refreshToken
 
             handleServiceResponse(serviceResponse, res)
         } else {

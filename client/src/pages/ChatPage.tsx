@@ -23,6 +23,7 @@ export default function ChatPage(): JSX.Element {
       const [showSearch, setShowSearch] = useState<boolean>(false)
       const [contentType, setContentType] = useState<ContentType>('chats')
       const [showNavigation, setShowNavigation] = useState<boolean>(true)
+      const [isLoadingChats, setIsLoadingChats] = useState<boolean>(false)
       const { selectedChat, selectedFile, selectedImage, chats, setChats, setSelectedChat, setMessages } = useStore()
       const { user } = AuthState()
 
@@ -243,6 +244,7 @@ export default function ChatPage(): JSX.Element {
             }
       }, [selectedChat?._id, chats, setChats, setSelectedChat])
 
+      // chat operations listeners
       useEffect(() => {
             if (!user) return
             // listen for new message in the selected chat
@@ -393,8 +395,26 @@ export default function ChatPage(): JSX.Element {
             }
       }, [selectedChat?._id, setMessages, setChats, setSelectedChat, chats])
 
+      async function loadChats(): Promise<void> {
+            try {
+                  setIsLoadingChats(true)
+                  let chats = await chatService.getUserChats()
+                  setChats(chats)
+            } catch (err) {
+                  console.log(err)
+            } finally {
+                  setIsLoadingChats(false)
+            }
+      }
+
       useEffect(() => {
             if (!user) return
+
+            socketService.setup(user._id)
+
+            // load the user chats
+            loadChats()
+
             const theme = userService.getTheme()
             switch (theme) {
                   case 'dark':
@@ -429,6 +449,7 @@ export default function ChatPage(): JSX.Element {
                               setShowSearch={setShowSearch}
                               showNavigation={showNavigation}
                               setShowNavigation={setShowNavigation}
+                              isLoadingChats={isLoadingChats}
                         />
 
                         {selectedChat && <ChatInterface />}
@@ -437,8 +458,6 @@ export default function ChatPage(): JSX.Element {
                   {selectedFile && (
                         <SelectedFile />
                   )}
-
-
 
                   <DynamicSideModal
                         contentType={contentType}
