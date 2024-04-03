@@ -181,12 +181,13 @@ export async function createGroupChatService(users: string[], chatName: string, 
             }
 
             const createdChat = await Chat.create(groupChatData)
-            const fullChat = await Chat.findById(createdChat._id).populate('users', "-password").populate('groupAdmin', "-password").lean();
+            const fullChat: IChat | null = await Chat.findById(createdChat._id).populate('users', "-password").populate('groupAdmin', "-password").lean();
 
             if (!fullChat) {
                   return new ServiceResponse(ResponseStatus.Failed, 'Failed to retrieve the created group chat', null, StatusCodes.INTERNAL_SERVER_ERROR)
             }
 
+            // return new ServiceResponse(ResponseStatus.Success, 'Group chat created', fullChat, 200)
             return new ServiceResponse(ResponseStatus.Success, 'Group chat created', fullChat, 200)
       } catch (error: unknown) {
             const errorMessage = `Error creating group chat: ${(error as Error).message}`
@@ -216,7 +217,7 @@ export async function updateGroupImageService(chatId: string, groupImage: string
       try {
             await Chat.findByIdAndUpdate(
                   chatId,
-                  { groupImage},
+                  { groupImage },
                   { new: true, useFindAndModify: false }
             )
 
