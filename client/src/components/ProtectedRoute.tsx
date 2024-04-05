@@ -33,6 +33,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
                 } else {
                     // User is valid, update user state and allow access
                     setUser(user);
+                    setIsUserValidated(true);
                 }
             }
         };
