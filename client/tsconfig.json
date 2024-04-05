@@ -3,31 +3,30 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [
-      "ES2020",
+      "ESNext",
       "DOM",
       "DOM.Iterable"
     ],
-    "module": "ES2022",
+    "allowJs": false,
     "skipLibCheck": true,
-    "noImplicitAny": false,
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    /* Bundler mode */
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "Node",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "noEmit": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
+    "module": "ESNext",
     "jsx": "react-jsx",
-    /* Linting */
     "strict": true,
+    "noEmit": true,
+
+    "noImplicitAny": false,
+    /* Bundler mode */
+    "allowImportingTsExtensions": true,
+    /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": [
-      "vite/client",
-      "@testing-library/jest-dom",
-    ]
   },
   "include": [
     "src",

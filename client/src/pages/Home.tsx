@@ -1,11 +1,8 @@
 import { Link } from "react-router-dom"
 import { WavesBlue } from "../components/svg/Bubble"
-import Features from "../components/home/Features";
-import Views from "../components/home/Views";
-import MaxWidthWrapper from "../MaxWidthWrapper";
-// import { MdOutlineGroups } from "react-icons/md";
-// import { CiLock } from "react-icons/ci";
-// import { BsCameraVideo } from "react-icons/bs";
+import Features from "../components/home/Features"
+import Views from "../components/home/Views"
+import MaxWidthWrapper from "../MaxWidthWrapper"
 
 export default function Home(): JSX.Element {
       return (

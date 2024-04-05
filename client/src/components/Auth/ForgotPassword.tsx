@@ -13,17 +13,19 @@ export default function ForgotPassword({ formik }: Props) {
     return (
         <div>
             <h4 className='text-center font-bold text-primary text-xl mt-2 mb-4 tracking-wide'>Reset Password</h4>
-            <Field
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email"
-                maximum-scale={1}
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                maxLength={60}
-                className={`auth-input w-full ${formik.errors.email && formik.touched.email ? 'input-error' : ''}`}
-            />
+            <div className='input-group'>
+                <Field
+                    type="email"
+                    name="email"
+                    id="email"
+                    maximum-scale={1}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    maxLength={60}
+                    className={`auth-input w-full ${formik.errors.email && formik.touched.email ? 'input-error' : ''}`}
+                />
+                <label htmlFor="email">Email</label>
+            </div>
             <ErrorMessage name="email" component="div" className="error-message" />
 
             <div className='float-right text-sm'>

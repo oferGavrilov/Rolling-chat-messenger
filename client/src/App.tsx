@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react"
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom"
 
 const Home = lazy(() => import('./pages/Home'))
 const ChatPage = lazy(() => import('./pages/ChatPage'))
@@ -15,6 +15,7 @@ import AuthProvider from "./context/useAuth"
 import Loading from "./components/Loading"
 import Notification from "./components/Notification"
 import ProtectedRoute from "./components/ProtectedRoute"
+import ErrorBoundary from "./ErrorBoundary"
 
 const ProtectedLayout = () => (
   <ProtectedRoute>
@@ -23,13 +24,31 @@ const ProtectedLayout = () => (
 );
 
 const router = createBrowserRouter([
-  { path: '/', element: <Home /> },
+  {
+    path: '/',
+    element: (
+      <ErrorBoundary>
+        <Home />
+      </ErrorBoundary>
+    ),
+  },
   { path: '/auth', element: <Auth /> },
   {
     path: '/',
-    element: <ProtectedLayout />,
+    element: (
+      <ErrorBoundary>
+        <ProtectedLayout />
+      </ErrorBoundary>
+    ),
     children: [
-      { path: '/chat', element: <ChatPage /> }
+      {
+        path: '/chat',
+        element: (
+          <ErrorBoundary>
+            <ChatPage />
+          </ErrorBoundary>
+        )
+      }
     ]
   },
   { path: '/reset-password/:token', element: <ResetPassword /> },

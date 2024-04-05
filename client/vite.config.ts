@@ -7,8 +7,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ mode }) => {
   const API_URL = mode === 'production' ? 'https://rolling-backend.onrender.com' : 'http://localhost:5000'
 
-  console.log('mode', mode)
-  console.log('API_URL', API_URL)
   return {
     plugins: [react()],
     preview: {
@@ -28,11 +26,6 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
       },
-    },
-    test: {
-      globals: true,
-      environment: 'jsdom',
-      setupFiles: ['./src/setupTests.ts']
     },
     eslint: {
       configFile: '.eslintrc.cjs',

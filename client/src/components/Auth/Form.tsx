@@ -1,18 +1,24 @@
+import { ReactElement, useState } from 'react'
 import { FormikProvider, useFormik } from 'formik'
-import { useState } from 'react'
-import Login from './Login'
-import SignUp from './SignUp'
 import * as Yup from 'yup'
 import { toast } from 'react-toastify'
 import axios from 'axios'
-import { AuthState } from '../../context/useAuth'
-import { userService } from '../../services/user.service'
 import { useNavigate } from 'react-router-dom'
+import Login from './Login'
+import SignUp from './SignUp'
+import { userService } from '../../services/user.service'
 import Button from '../common/Button'
 import ForgotPassword from './ForgotPassword'
 import { IUser } from '../../model'
 import socketService from '../../services/socket.service'
 import { SocketEmitEvents } from '../../utils/socketEvents'
+import { AuthState } from '../../context/useAuth'
+
+interface FormModes {
+      login: ReactElement;
+      signUp: ReactElement;
+      reset: ReactElement;
+}
 
 interface FormData {
       username?: string
@@ -24,7 +30,7 @@ interface FormData {
 
 export default function Form(): JSX.Element {
       const { setUser, setJustLoggedIn } = AuthState()
-      const [formMode, setFormMode] = useState<'login' | 'sign-up' | 'reset'>('login')
+      const [formMode, setFormMode] = useState<keyof FormModes>('login')
       const [isLoading, setIsLoading] = useState<boolean>(false)
       const [image, setImage] = useState<File | string>('')
       const navigate = useNavigate()
@@ -40,7 +46,7 @@ export default function Form(): JSX.Element {
                                     .min(6, 'Password must be at least 6 characters')
                                     .max(20, 'Password must not exceed 20 characters'),
                         })
-                  case 'sign-up':
+                  case 'signUp':
                         return Yup.object().shape({
                               username: Yup.string().required('Name is required').min(3, 'Name must be at least 3 characters').max(20, 'Name must not exceed 20 characters'),
                               email: Yup.string().required('Email is required').email('Email is invalid'),
@@ -71,7 +77,7 @@ export default function Form(): JSX.Element {
             onSubmit: handleSubmit,
       })
 
-      function setGuestUser() {
+      function setGuestUser(): void {
             formik.setValues({ email: 'example@example.com', password: 'demo1234' })
       }
 
@@ -97,7 +103,7 @@ export default function Form(): JSX.Element {
             if (formMode === 'login') {
                   modifiedValues = { email: values.email, password: values.password }
 
-            } else if (formMode === 'sign-up') {
+            } else if (formMode === 'signUp') {
                   modifiedValues = { username: values.username, email: values.email, password: values.password, profileImg: image }
 
             } else if (formMode === 'reset') {
@@ -121,7 +127,7 @@ export default function Form(): JSX.Element {
             }
       }
 
-      function onFormModeChange(mode: 'login' | 'sign-up' | 'reset') {
+      function onFormModeChange(mode: 'login' | 'signUp' | 'reset') {
             setFormMode(mode)
             formik.resetForm()
       }
@@ -139,8 +145,8 @@ export default function Form(): JSX.Element {
                                     Login
                               </Button>
                               <Button
-                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'sign-up' ? 'bg-primary text-white' : 'hover:bg-primary/60 box-shadow-inner hover:shadow-none hover:text-white'}`}
-                                    onClick={() => onFormModeChange('sign-up')}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'signUp' ? 'bg-primary text-white' : 'hover:bg-primary/60 box-shadow-inner hover:shadow-none hover:text-white'}`}
+                                    onClick={() => onFormModeChange('signUp')}
                                     type='button'
                                     disabled={isLoading}>
                                     Sign Up
@@ -148,8 +154,8 @@ export default function Form(): JSX.Element {
                         </div>
 
                         <form className="flex flex-col mt-6" onSubmit={formik.handleSubmit} id='auth-form'>
-                              {formMode === 'login' && <Login formik={formik} isLoading={isLoading}/>}
-                              {formMode === 'sign-up' && <SignUp formik={formik} image={image} setImage={setImage} isLoading={isLoading} />}
+                              {formMode === 'login' && <Login formik={formik} isLoading={isLoading} />}
+                              {formMode === 'signUp' && <SignUp formik={formik} image={image} setImage={setImage} isLoading={isLoading} />}
                               {formMode === 'reset' && <ForgotPassword formik={formik} />}
 
                               {formMode === 'login' && (
@@ -166,7 +172,6 @@ export default function Form(): JSX.Element {
                                           type="submit"
                                           disabled={!formik.dirty || isLoading}
                                           isLoading={isLoading}>
-                                          {/* first letter uppercase */}
                                           {formMode === 'reset' ? 'Send Email' : formMode.charAt(0).toUpperCase() + formMode.slice(1)} &rarr;
                                     </Button>
                                     {formMode === 'login' && (
@@ -187,7 +192,6 @@ export default function Form(): JSX.Element {
                                                             disabled={isLoading}>
                                                             Get OFER User Credentials
                                                       </Button>
-
                                                 )}
                                           </>
                                     )}
