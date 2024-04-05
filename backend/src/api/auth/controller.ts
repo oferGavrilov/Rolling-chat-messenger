@@ -75,13 +75,6 @@ export async function signUp(req: Request, res: Response) {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
 
-        // return res.status(201).json({
-        //     _id: user._id,
-        //     username: user.username,
-        //     email: user.email,
-        //     profileImg: user.profileImg,
-        //     about: user.about,
-        // })
         handleServiceResponse(serviceResponse, res)
 
     } catch (ex) {

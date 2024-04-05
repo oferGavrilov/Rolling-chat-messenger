@@ -95,14 +95,12 @@ export async function validateRefreshTokenService(refreshToken: string): Promise
         const decodedAccess = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as { id: string }
 
         if (!decodedAccess) {
-            console.log('no decoded access')
             return new ServiceResponse(ResponseStatus.Failed, 'Token is invalid', { isValid: false }, StatusCodes.UNAUTHORIZED)
         }
 
         const user = await User.findById(decodedAccess.id)
 
         if (!user) {
-            console.log('no user')
             return new ServiceResponse(ResponseStatus.Failed, 'User not found', { isValid: false }, StatusCodes.UNAUTHORIZED)
         }
 
@@ -117,6 +115,10 @@ export async function validateRefreshTokenService(refreshToken: string): Promise
         return new ServiceResponse(ResponseStatus.Success, 'Token is valid', { isValid: true, user: userResponse }, StatusCodes.OK)
 
     } catch (error) {
+        // if the error is expired token, return a unauthorized response
+        if (error instanceof jwt.TokenExpiredError) {
+            return new ServiceResponse(ResponseStatus.Failed, 'expired', { isValid: false }, StatusCodes.UNAUTHORIZED)
+        }
         const errorMessage = `Error validating refresh token: ${(error as Error).message}`
         logger.error(errorMessage)
         return new ServiceResponse(ResponseStatus.Failed, errorMessage, { isValid: false }, StatusCodes.INTERNAL_SERVER_ERROR)

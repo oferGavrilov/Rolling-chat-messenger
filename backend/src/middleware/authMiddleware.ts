@@ -70,7 +70,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
                         return next()
                   } catch (error) {
-                        console.error('Error with refresh token', error)
                         return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Not authorized, token failed' })
                   }
             }
