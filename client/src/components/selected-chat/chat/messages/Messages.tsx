@@ -1,3 +1,4 @@
+import { toast } from "react-toastify"
 import { AuthState } from "../../../../context/useAuth"
 import useStore from "../../../../context/store/useStore"
 import { IMessage, IReplyMessage } from "../../../../model/message.model"
@@ -7,8 +8,6 @@ import ProfileImage from "../../../common/ProfileImage"
 import { messageService } from "../../../../services/message.service"
 import socketService from "../../../../services/socket.service"
 import { SocketEmitEvents } from "../../../../utils/socketEvents"
-
-import { toast } from "react-toastify"
 
 interface Props {
       messages: IMessage[]
@@ -45,6 +44,7 @@ export default function Messages({ messages, setChatMode }: Props): JSX.Element 
                         // await messageService.removeMessage(message._id, selectedChat._id, deleteAction)
                         setMessages(messages.filter((msg) => msg._id !== message._id))
                   }
+
                   toast.success('Message deleted', { autoClose: 1500 })
             } catch (error) {
                   console.log(error)

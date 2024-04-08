@@ -15,7 +15,6 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
       const { replyMessage } = useStore()
       const [fileSrc, setFileSrc] = useState<string | null>(null)
       const [isLoading, setIsLoading] = useState<boolean>(false)
-
       const fileEditorRef = React.createRef<HTMLDivElement>()
 
       useClickOutside(fileEditorRef, () => setChatMode('chat'), true)
@@ -24,8 +23,6 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
             if (file) {
                   const objectUrl = URL.createObjectURL(file)
                   setFileSrc(objectUrl)
-
-                  // return () => URL.revokeObjectURL(objectUrl)
             }
       }, [file])
 
@@ -43,10 +40,6 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
                   console.error('Failed to upload file:', err)
             } finally {
                   setIsLoading(false)
-                  if (fileSrc) {
-                        console.log('revoking object url')
-                        URL.revokeObjectURL(fileSrc)
-                  }
             }
       }
 
@@ -59,7 +52,7 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
                               <img
                                     src={fileSrc}
                                     alt="picked-file"
-                                    className="object-contain max-w-[240px] md:max-w-96 drop-shadow-2xl -mt-24"
+                                    className="object-contain max-w-[240px] md:max-w-96 drop-shadow-2xl -mt-20"
                               />
                         ) : (
                               <iframe
@@ -100,5 +93,5 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
                         </button>
                   </div>
             </div>
-      );
+      )
 }

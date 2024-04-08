@@ -19,30 +19,28 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
       const messagesFilesRef = useRef<HTMLDivElement>(null)
 
       useEffect(() => {
-            if (!messagesFilesRef.current) return;
+            if (!messagesFilesRef.current) return
         
-            const container = messagesFilesRef.current;
-            setShowLeftButton(container.scrollLeft > 0);
+            const container = messagesFilesRef.current
+            setShowLeftButton(container.scrollLeft > 0)
         
-            // Compare scrollLeft + container.clientWidth to container.scrollWidth - a small buffer value
             setShowRightButton(
                 container.scrollLeft + container.clientWidth < container.scrollWidth - 5
-            );
+            )
         
             const handleScroll = () => {
-                setShowLeftButton(container.scrollLeft > 0);
+                setShowLeftButton(container.scrollLeft > 0)
         
-                // Compare scrollLeft + container.clientWidth to container.scrollWidth - a small buffer value
                 setShowRightButton(
                     container.scrollLeft + container.clientWidth < container.scrollWidth - 5
-                );
-            };
+                )
+            }
         
-            container.addEventListener('scroll', handleScroll);
+            container.addEventListener('scroll', handleScroll)
             return () => {
-                container.removeEventListener('scroll', handleScroll);
-            };
-        }, [messagesFilesRef]);
+                container.removeEventListener('scroll', handleScroll)
+            }
+        }, [messagesFilesRef])
 
       const scrollMessagesFiles = (direction: 'left' | 'right') => {
             if (!messagesFilesRef.current) return

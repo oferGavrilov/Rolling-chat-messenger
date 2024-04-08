@@ -9,15 +9,26 @@ interface Props {
 }
 
 export default function Chat({ setChatMode }: Props): JSX.Element {
-      const { replyMessage, messages, setMessages } = useStore()
+      const { replyMessage, messages, setMessages, selectedChat, blobUrls, setBlobUrls } = useStore()
       const { chatBackgroundColor } = AuthState()
       const chatRef = useRef<HTMLDivElement>(null)
 
       useEffect(() => {
             if (messages.length > 4) {
+                  console.log('scrolling to bottom')
                   setTimeout(() => scrollToBottom(chatRef), 100) // For smooth scrolling
             }
       }, [messages, replyMessage, setMessages])
+
+      useEffect(() => {
+            // Revoke blob urls when component unmounts or selected chat id changes
+            return () => {
+                  if (blobUrls.length === 0) return
+                  console.log('revoking blob urls')
+                  blobUrls.forEach(blobUrl => URL.revokeObjectURL(blobUrl))
+                  setBlobUrls([])
+            }
+      }, [selectedChat?._id])
 
       return (
             <>

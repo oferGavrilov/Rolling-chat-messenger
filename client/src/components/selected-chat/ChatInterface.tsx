@@ -10,7 +10,7 @@ const FileEditor = lazy(() => import("./file/FileEditor"))
 const TextPanel = lazy(() => import("./chat/TextPanel"))
 
 import socketService from "../../services/socket.service"
-import { SocketEmitEvents} from "../../utils/socketEvents"
+import { SocketEmitEvents } from "../../utils/socketEvents"
 
 import { chatService } from "../../services/chat.service"
 import { messageService } from "../../services/message.service"
@@ -22,7 +22,7 @@ export default function ChatInterface(): JSX.Element {
       const [conversationUser, setConversationUser] = useState<IUser | null>(null)
       const [chatMode, setChatMode] = useState<"chat" | "info" | "edit-file">('chat')
       const [file, setFile] = useState<File | null>(null)
-      const { selectedChat, setSelectedChat, setChats, setReplyMessage, messages, setMessages, bringChatToTop, updateChatReadReceipts } = useStore()
+      const { selectedChat, setSelectedChat, setChats, setReplyMessage, messages, setMessages, bringChatToTop, updateChatReadReceipts, setBlobUrls } = useStore()
       const { user: loggedInUser } = AuthState()
 
       const conversationUserRef = useRef<IUser | null>(null)
@@ -90,6 +90,11 @@ export default function ChatInterface(): JSX.Element {
             setMessages(prevMessages => [...prevMessages, optimisticMessage])
             bringChatToTop(optimisticMessage)
 
+            // when the message type is image, we keep the blob url in blobUrls state to revoke it when the user leaves the chat or the message is deleted
+            if (messageType === 'image' && file) {
+                  setBlobUrls(prevBlobUrls => [...prevBlobUrls, URL.createObjectURL(file)])
+            }
+
             try {
                   let updatedChat: IChat | undefined = selectedChat
                   // Chats that are not created yet have _id = 'temp-id'
@@ -115,8 +120,18 @@ export default function ChatInterface(): JSX.Element {
                         file
                   })
 
-                  setMessages(prevMessages =>
-                        prevMessages.map(msg => msg._id === 'temp-id' ? { ...msg, ...realMessage } : msg)
+                  console.log('realMessage:', realMessage)
+
+                  // Update the message with the real one, and when the message is image, we keep the blob url.
+                  setMessages((prevMessages) =>
+                        prevMessages.map((msg) =>
+                              msg._id === 'temp-id'
+                                    ? {
+                                          ...msg,
+                                          ...(messageType === 'image' ? { ...realMessage, content: msg.content, TN_Image: msg.TN_Image } : realMessage)
+                                    }
+                                    : msg
+                        )
                   )
 
                   setChats(prevChats =>
