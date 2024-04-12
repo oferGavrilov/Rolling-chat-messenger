@@ -37,7 +37,7 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
 
       if (!message.fileUrl) return <div></div>
       return (
-            <div>
+            <div className='p-1'>
                   {(message.chat?.isGroupChat && message.sender._id !== userId) && (
                         <p
                               className='mx-3 font-bold text-green-400 text-sm max-w-44 overflow-ellipsis truncate'
@@ -48,7 +48,7 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
                   )}
 
                   <img
-                        className={`max-h-[300px] max-w-56 lg:max-w-64 xl:max-w-72 rounded-2xl object-cover object-top py-1 cursor-pointer px-2 ${!isLoaded ? `blur-sm ` : ''}`}
+                        className={`max-h-[300px] max-w-56 lg:max-w-64 xl:max-w-72 rounded-lg object-cover object-top cursor-pointer ${!isLoaded ? `blur-sm ` : ''}`}
                         src={currentImage as string}
                         loading='lazy'
                         alt={message.fileName || `Image sent by ${message.sender.username}`}

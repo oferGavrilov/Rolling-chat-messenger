@@ -140,6 +140,7 @@ export default function ChatInterface(): JSX.Element {
                                                 TN_Image: realMessage.TN_Image,
                                                 fileUrl: msg.fileUrl,
                                                 fileName: msg.fileName,
+                                                messageSize: realMessage.messageSize,
                                           };
                                     } else {
                                           return realMessage;

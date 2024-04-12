@@ -253,9 +253,10 @@
             dark:shadow-dark-dropdown-bg;
   }
   .message-container:hover .message-menu-icon:hover {
-    height: 27px;
+    height: 22px;
+    width: 22px;
     & span {
-      font-size: 1.2rem !important;
+      font-size: 1.2rem ;
     }
   }
   .message-menu-option {
@@ -267,7 +268,7 @@
     @apply opacity-0
             select-none
             absolute top-0 -z-10 
-            bg-inherit
+            bg-inherit leading-none
             transition-all duration-300 cursor-pointer;
   }
 
@@ -419,8 +420,6 @@
     position: absolute;
     bottom: -0.5875rem;
     right: -1.751rem;
-    /* width: 0.5625rem;
-            height: 1.25rem; */
     transition: opacity 200ms;
     font-size: 1rem !important;
     @apply bg-[#e5e7eb] dark:bg-[#2a3942];

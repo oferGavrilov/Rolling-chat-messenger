@@ -4,7 +4,7 @@ import Navigation from '../components/Navigation'
 import DynamicSideModal from '../components/side-modal/DynamicSideModal'
 import DynamicList from '../components/dynamic-list/DynamicList'
 import ChatInterface from '../components/selected-chat/ChatInterface'
-import SelectedFile from '../components/SelectedFile'
+import SelectedFile from '../components/selected-file/SelectedFile'
 
 import useStore from '../context/store/useStore'
 import { AuthState } from '../context/useAuth'

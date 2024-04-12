@@ -16,7 +16,18 @@ export default function FileMessage({ message, setSelectedFile }: Props): JSX.El
       return (
             <div className="relative px-[2px] pt-[2px] overflow-hidden">
                   <div className='flex flex-col'>
-                        <div style={{ backgroundImage: `url(${message.TN_Image})` }} className='h-[100px] w-[330px] rounded-t-lg bg-cover bg-top' onClick={() => onSetSelectedFile(message)}></div>
+                        {/* temp-id means the message is still the optimistic message */}
+                        {(message._id !== 'temp-id') ? (<div
+                              style={{ backgroundImage: `url(${message.TN_Image})` }}
+                              className='h-[100px] w-[330px] rounded-t-lg bg-cover bg-top cursor-pointer'
+                              onClick={() => onSetSelectedFile(message)}
+                              role='button'
+                              title='Click to view file'
+                              aria-label='Click to view file'
+                        />
+                        ) : (
+                              <div className='h-[100px] w-[330px] rounded-t-lg bg-gray-300 animate-pulse' />
+                        )}
 
                         <div className='bg-dark-outgoing-chat-reply-bg w-full p-3 px-6 rounded-b-lg'>
                               <div className='flex justify-between items-center'>
@@ -33,15 +44,17 @@ export default function FileMessage({ message, setSelectedFile }: Props): JSX.El
                                                 </div>
                                           </div>
                                     </div>
-                                    {message._id !== 'temp-id' && (
+                                    {(message._id !== 'temp-id') ? (
                                           <div
-                                                className='border border-gray-400 rounded-full flex items-center justify-center cursor-pointer'
-                                                role='button'
+                                                className='border border-gray-400 rounded-full flex items-center justify-center cursor-pointer hover:border-gray-100'
                                                 onClick={() => onDownloadFile(message)}
+                                                role='button'
+                                                title='Download file'
+                                                aria-label='Download file'
                                           >
                                                 <span className="material-symbols-outlined text-gray-400 text-md leading-none p-1">arrow_downward</span>
                                           </div>
-                                    )}
+                                    ) : <div className='spinner'></div>}
                               </div>
                         </div>
                   </div>
