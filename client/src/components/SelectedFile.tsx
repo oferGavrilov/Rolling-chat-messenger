@@ -8,9 +8,9 @@ import ToolTip from '@mui/material/Tooltip'
 
 import CloseIcon from '@mui/icons-material/Close'
 import DownloadIcon from '@mui/icons-material/Download'
+import { BsFiletypePdf } from "react-icons/bs";
 import { IMessage } from '../model'
 import { useImageNavigator } from '../custom-hook/useImageNavigator'
-
 export default function SelectedFile(): JSX.Element {
       const { selectedFile, setSelectedFile, messages } = useStore()
       const { user: loggedInUser } = AuthState()
@@ -59,7 +59,7 @@ export default function SelectedFile(): JSX.Element {
       useEffect(() => {
             if (!currentFile || !currentFile.chat) return
             const chatId = currentFile.chat._id
-            const files = messages.filter(message => message.chat?._id === chatId && message.messageType === 'image')
+            const files = messages.filter(message => message.chat?._id === chatId && message.messageType === 'image' || message.messageType === 'file')
             setFilesInChat(files)
       }, [currentFile, messages])
 
@@ -142,7 +142,7 @@ export default function SelectedFile(): JSX.Element {
                                     <div className='w-4/5 max-w-[90%] max-h-[70vh] flex items-center justify-center'>
                                           <img
                                                 ref={fileRef as React.MutableRefObject<HTMLImageElement>}
-                                                src={currentFile?.content?.toString()}
+                                                src={currentFile.fileUrl}
                                                 className='max-w-full max-h-full object-cover rounded-lg'
                                                 alt={`${currentFile.sender.username} sent this image.`}
                                           />
@@ -150,9 +150,9 @@ export default function SelectedFile(): JSX.Element {
                               ) : (
                                     <iframe
                                           ref={fileRef as React.MutableRefObject<HTMLIFrameElement>}
-                                          src={selectedFile?.content?.toString()}
+                                          src={selectedFile?.fileUrl}
                                           title='picked-pdf'
-                                          className='w-full md:w-[700px] h-full md:h-[700px]'
+                                          className='w-4/5 h-4/5'
                                     />
                               )}
 
@@ -171,12 +171,20 @@ export default function SelectedFile(): JSX.Element {
                                           tabIndex={0}
                                           aria-label='View image in full screen'
                                     >
-                                          <img
-                                                src={file.content.toString()}
-                                                className='object-cover rounded-lg h-full w-full'
-                                                alt={`${file.sender.username} sent this image.`}
-                                                title='View image in full screen'
-                                          />
+                                          {file.messageType === 'image' ?
+                                                (
+                                                      <img
+                                                            src={file.fileUrl}
+                                                            className='object-cover rounded-lg h-full w-full'
+                                                            alt={`${file.sender.username} sent this image.`}
+                                                            title='View image in full screen'
+                                                      />
+                                                ) : (
+                                                      <div className='bg-[#f14545] w-full h-full rounded-lg text-center flex items-center justify-center flex-col'>
+                                                            <BsFiletypePdf className='text-gray-500 dark:text-gray-300 w-6 h-6' />
+                                                            <span className='text-white dark:text-gray-300 text-[11px] -mb-2 mt-2'>{file.sender.username}</span>
+                                                      </div>
+                                                )}
                                           <span className='absolute -bottom-6 text-white dark:text-gray-300 text-xs'>{formatTime(file.createdAt)}</span>
                                     </div>
                               ))}

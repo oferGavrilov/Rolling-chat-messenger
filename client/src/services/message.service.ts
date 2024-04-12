@@ -29,7 +29,6 @@ async function sendMessage(
       }): Promise<IMessage> {
       try {
             const formData = new FormData()
-            
             if (message.file) {
                   formData.append('file', message.file)
             }
@@ -51,28 +50,16 @@ async function sendMessage(
                         'Content-Type': 'multipart/form-data'
                   }
             }
+            for (let [key, value] of formData.entries()) {
+                  console.log(key, value);
+              }
+              
             return httpService.post<IMessage>(`${BASE_URL}/message`, formData, config)
       } catch (error) {
             console.log(error)
             throw new Error('Failed to send message.')
       }
 }
-// async function sendMessage(
-//       message: {
-//             content: string | File
-//             chatId: string,
-//             messageType: string,
-//             replyMessage: IReplyMessage | null,
-//             messageSize?: number,
-//             file?: File
-//       }): Promise<IMessage> {
-//       try {
-//             return httpService.post(`${BASE_URL}/message`, message)
-//       } catch (error) {
-//             console.log(error)
-//             throw new Error('Failed to send message.')
-//       }
-// }
 
 async function removeMessage(
       messageId: string,

@@ -34,7 +34,8 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
             setIsLoading(true)
             try {
                   setChatMode('chat')
-                  await sendMessage(fileSrc, type, replyMessage, file.size, file)
+                  URL.revokeObjectURL(fileSrc)
+                  await sendMessage('', type, replyMessage, file.size, file)
 
             } catch(err) {
                   console.error('Failed to upload file:', err)
@@ -42,7 +43,6 @@ export default function FileEditor({ file, setChatMode, sendMessage }: Props) {
                   setIsLoading(false)
             }
       }
-
 
       if (!fileSrc) return <div></div>
       return (

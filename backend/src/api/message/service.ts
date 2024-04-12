@@ -1,7 +1,7 @@
 import { IMessage, Message, NewMessagePayload, ReplyMessage } from "@/models/message.model"
 import { Chat } from "@/models/chat.model"
 import { logger } from "@/server"
-import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/services/cloudinary.service"
+import { deleteImageFromCloudinary, uploadImageToCloudinary, uploadPdfToCloudinary } from "@/services/cloudinary.service"
 import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { StatusCodes } from "http-status-codes"
 
@@ -23,20 +23,30 @@ export async function sendMessageService(
                   return new ServiceResponse(ResponseStatus.Failed, 'You are not in this group chat', null, StatusCodes.FORBIDDEN)
             }
 
-            let imageUrl: string = ''
-            let tnImageUrl: string = ''
+            let fileUrl: string = ''
+            let tnFileUrl: string = ''
+            let fileName: string = ''
 
             if (messageType === 'image' && file) {
                   const result = await uploadImageToCloudinary(file, 'chat_app')
-                  imageUrl = result.originalImageUrl
-                  tnImageUrl = result.tnImageUrl
-                  content = imageUrl
+                  fileUrl = result.originalImageUrl
+                  tnFileUrl = result.tnImageUrl
+                  //content = fileUrl
+                  fileName = file.originalname
+            } else if (messageType === 'file' && file) {
+                  const result = await uploadPdfToCloudinary(file, 'chat_app')
+                  fileUrl = result.pdfUrl
+                  tnFileUrl = result.previewUrl
+                  //content = fileUrl
+                  fileName = file.originalname
             }
 
             const newMessage: NewMessagePayload = {
                   sender: senderId,
                   content,
-                  TN_Image: tnImageUrl,
+                  TN_Image: tnFileUrl,
+                  fileName,
+                  fileUrl,
                   chat: chatId,
                   messageType,
                   replyMessage: replyMessage ? replyMessage : null,

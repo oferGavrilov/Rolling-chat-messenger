@@ -16,7 +16,7 @@ export async function sendMessage(req: Request, res: Response) {
       if (!messageType) return res.status(400).json({ message: 'Message type is required' })
       if (messageType === 'text' && !content?.trim()) return res.status(400).json({ message: 'Content cannot be empty' })
       if (messageType === 'text' && content.length > 700) return res.status(400).json({ message: 'Text message cannot be more than 700 characters' })
-      if (messageType === 'image' && !file) return res.status(400).json({ message: 'File not found' })
+      if ((messageType === 'image' || messageType === 'file') && !file) return res.status(400).json({ message: 'File not found' })
       if (!chatId) return res.status(400).json({ message: 'ChatId is required' })
       if (!senderId) return res.status(401).json({ message: 'Unauthorized' })
 

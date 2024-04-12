@@ -78,7 +78,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
       function getMessageBorderRadius(arrowDirection: 'none' | 'left' | 'right'): string {
             if (arrowDirection === 'none') return 'rounded-xl'
             if (arrowDirection === 'left') return 'rounded-t-2xl rounded-br-2xl'
-            return 'rounded-t-2xl rounded-bl-2xl'
+            return 'rounded-t-xl rounded-bl-xl'
       }
 
       function getReceiptStatus(): ReactNode | null {

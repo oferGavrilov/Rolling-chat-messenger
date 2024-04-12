@@ -8,16 +8,18 @@ interface Props {
 }
 
 export default function ImageMessage({ message, setSelectedFile, userId }: Props) {
-      const [currentImage, setCurrentImage] = useState<string | File>(message.TN_Image || message.content.toString());
+      const [currentImage, setCurrentImage] = useState<string | File>(message.TN_Image || message.fileUrl as string);
       const [isLoaded, setIsLoaded] = useState<boolean>(!message.TN_Image);
 
       useEffect(() => {
+            if (!message.fileUrl) return;
+            
             if (message.TN_Image) {
                   const image = new Image();
-                  image.src = message.content.toString(); // This is the URL of the original image.
+                  image.src = message.fileUrl  // This is the URL of the original image.
                   image.onload = () => {
                         setIsLoaded(true);
-                        setCurrentImage(message.content.toString());
+                        setCurrentImage(message.fileUrl as string);
                   };
                   image.onerror = () => {
                         setIsLoaded(true);
@@ -29,10 +31,11 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
                   }
 
             } else {
-                  setCurrentImage(message.content.toString());
+                  setCurrentImage(message.fileUrl);
             }
-      }, [message.TN_Image, message.content]);
+      }, [message.TN_Image, message.fileUrl]);
 
+      if (!message.fileUrl) return <div></div>
       return (
             <div>
                   {(message.chat?.isGroupChat && message.sender._id !== userId) && (
@@ -48,7 +51,8 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
                         className={`max-h-[300px] max-w-56 lg:max-w-64 xl:max-w-72 rounded-2xl object-cover object-top py-1 cursor-pointer px-2 ${!isLoaded ? `blur-sm ` : ''}`}
                         src={currentImage as string}
                         loading='lazy'
-                        alt={`Message image from ${message.sender.username}`}
+                        alt={message.fileName || `Image sent by ${message.sender.username}`}
+                        title={message.fileName || `Image sent by ${message.sender.username}`}
                         role="button"
                         tabIndex={0}
                         aria-label="Click to view the image in full screen"

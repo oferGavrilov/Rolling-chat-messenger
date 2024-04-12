@@ -172,30 +172,31 @@ export function scrollToBottom(chatRef: React.RefObject<HTMLElement>): void {
   }, 0)
 }
 
-export function onDownloadFile(selectedFile: IMessage) {
+export async function onDownloadFile(selectedFile: IMessage) {
+  if (!selectedFile.fileUrl) {
+    console.error('File URL is not available.')
+    return
+  }
+  const fileUrl = selectedFile.fileUrl
+
   try {
-    const imageUrl = selectedFile?.content?.toString()
+    const response = await fetch(fileUrl)
+    if (!response.ok) throw new Error('Failed to download the file.')
 
-    if (imageUrl) {
-      fetch(imageUrl)
-        .then((response) => response.blob())
-        .then((blob) => {
-          const blobUrl = URL.createObjectURL(blob)
-
-          const link = document.createElement('a')
-          link.href = blobUrl
-          link.download = 'downloaded-image.jpg'
-          link.click()
-
-          URL.revokeObjectURL(blobUrl)
-        })
-        .catch((error) => {
-          console.error('Error fetching the image:', error)
-        })
-    } else {
-      console.error('Image URL is not available.')
-    }
+    const blob = await response.blob()
+    const blobUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = blobUrl
+    a.download = selectedFile.fileName || 'downloaded-file'
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(blobUrl)
+    document.body.removeChild(a)
   } catch (error) {
     console.error('Error downloading the image:', error)
   }
+}
+
+export function formatBytesToKB(bytes: number): string {
+  return (bytes / 1024).toFixed(1)
 }

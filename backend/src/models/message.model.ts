@@ -10,6 +10,8 @@ export interface IMessage extends Document {
       isReadBy: { userId: string, readAt: Date }[]
       replyMessage: ReplyMessage | null
       messageSize?: number
+      fileName?: string
+      fileUrl?: string
 }
 
 const readReceiptSchema = new mongoose.Schema({
@@ -31,7 +33,9 @@ const messageModel = new mongoose.Schema({
       replyMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
       messageSize: { type: Number, default: 0 },
       deletedBy: [deletedBySchema],
-      isReadBy: [readReceiptSchema]
+      isReadBy: [readReceiptSchema],
+      fileName: { type: String, default: null },
+      fileUrl: { type: String, default: null }
 }, { timestamps: true })
 
 export type ReplyMessage = {
@@ -45,12 +49,6 @@ export type ReplyMessage = {
       messageType: "text" | "image" | "audio" | "file"
 }
 
-// messageType: {
-//       type: string
-//       enum: ['text', 'image', 'audio', 'file']
-//       default: 'text'
-// }
-
 export type NewMessagePayload = {
       sender: string;
       content: string;
@@ -61,6 +59,8 @@ export type NewMessagePayload = {
       messageSize?: number;
       deletedBy?: { userId: string; deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[];
       isReadBy?: { userId: string; readAt: Date }[];
+      fileName?: string;
+      fileUrl?: string;
     };
 
 export const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageModel)

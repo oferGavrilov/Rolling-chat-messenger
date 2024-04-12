@@ -36,6 +36,7 @@ export default {
         'dark-navigation-bg': '#212529',
         'dark-outgoing-chat-bg':'#005c4b',
         'dark-outgoing-chat-reply-bg':'#025144',
+        'dark-outgoing-chat-bg-deeper':'#025144',
         'dark-incoming-chat-bg':'#202c33',
         'dark-incoming-chat-reply-bg':'#1d282f',
         'dark-primary-text': '#ffffff',
@@ -47,6 +48,7 @@ export default {
         'primary': '#3a72ec',
         'default-hover-bg':'#57c0f8',
         'secondary-text': '#242424',
+        'document-text':'#ffffff99',
       }
     },
 

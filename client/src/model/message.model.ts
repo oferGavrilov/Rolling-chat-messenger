@@ -19,6 +19,8 @@ export interface IMessage {
       messageSize?: number
       deletedBy: { userId: string, deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[]
       isReadBy: { userId: string, readAt: Date }[]
+      fileName?: string
+      fileUrl?: string
 }
 
 export type IReplyMessage = {

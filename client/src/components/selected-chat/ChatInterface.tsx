@@ -62,20 +62,25 @@ export default function ChatInterface(): JSX.Element {
       }
 
       async function onSendMessage(
-            message: string,
+            content: string,
             messageType: "text" | "image" | "audio" | "file",
             replyMessage: IReplyMessage | null,
             size?: number,
             file?: File
       ): Promise<void> {
-            if (!selectedChat || !message || !loggedInUser) return
+            if (!selectedChat || !loggedInUser) return
 
+            // if the message type is text and the content is empty, return
+            if (messageType === 'text' && content.trim() === '') return
+
+            // create objectUrl for the image or file to show it immediately
+            const objectUrl = (messageType === 'image' || messageType === 'file') ? URL.createObjectURL(file as File) : ''
             const optimisticMessage: IMessage = {
                   _id: 'temp-id',
                   sender: loggedInUser,
                   messageType,
-                  content: message,
-                  TN_Image: messageType === 'image' ? message : '',
+                  content: content,
+                  TN_Image: messageType === 'file' ? objectUrl : '',
                   chatId: selectedChat._id,
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
@@ -83,7 +88,11 @@ export default function ChatInterface(): JSX.Element {
                   messageSize: size !== undefined ? Math.floor(size) : undefined,
                   deletedBy: [],
                   isReadBy: [{ userId: loggedInUser._id as string, readAt: new Date() }],
+                  fileName: file?.name,
+                  fileUrl: (messageType === 'image' || messageType === 'file') ? objectUrl : ''
             }
+
+            console.log('optimisticMessage:', optimisticMessage)
 
             // Show the message immediately
             setReplyMessage(null)
@@ -91,7 +100,7 @@ export default function ChatInterface(): JSX.Element {
             bringChatToTop(optimisticMessage)
 
             // when the message type is image, we keep the blob url in blobUrls state to revoke it when the user leaves the chat or the message is deleted
-            if (messageType === 'image' && file) {
+            if ((messageType === 'image') && file) {
                   setBlobUrls(prevBlobUrls => [...prevBlobUrls, URL.createObjectURL(file)])
             }
 
@@ -112,7 +121,7 @@ export default function ChatInterface(): JSX.Element {
                         socketService.emit(SocketEmitEvents.JOIN_ROOM, { chatId: newChat._id, userId: loggedInUser._id })
                   }
                   const realMessage = await messageService.sendMessage({
-                        content: message,
+                        content: content,
                         chatId: updatedChat._id,
                         messageType: messageType,
                         replyMessage,
@@ -120,19 +129,25 @@ export default function ChatInterface(): JSX.Element {
                         file
                   })
 
-                  console.log('realMessage:', realMessage)
-
-                  // Update the message with the real one, and when the message is image, we keep the blob url.
+                  // Update the message with the real one, and when the message is image or file, don't change the fileUrl.
                   setMessages((prevMessages) =>
-                        prevMessages.map((msg) =>
-                              msg._id === 'temp-id'
-                                    ? {
-                                          ...msg,
-                                          ...(messageType === 'image' ? { ...realMessage, content: msg.content, TN_Image: msg.TN_Image } : realMessage)
+                        prevMessages.map((msg) => {
+                              if (msg._id === 'temp-id') {
+                                    if (messageType === 'image' || messageType === 'file') {
+                                          return {
+                                                ...realMessage,
+                                                content: msg.content,
+                                                TN_Image: realMessage.TN_Image,
+                                                fileUrl: msg.fileUrl,
+                                                fileName: msg.fileName,
+                                          };
+                                    } else {
+                                          return realMessage;
                                     }
-                                    : msg
-                        )
-                  )
+                              }
+                              return msg;
+                        })
+                  );
 
                   setChats(prevChats =>
                         prevChats.map(chat =>
@@ -147,8 +162,10 @@ export default function ChatInterface(): JSX.Element {
 
                   socketService.emit(SocketEmitEvents.NEW_MESSAGE, { chatId: updatedChat._id, message: realMessage, chatUsers: updatedChat.users, senderId: loggedInUser._id })
 
-            } catch (error) {
-                  console.error('Failed to send message:', error)
+            } catch (errMsg) {
+                  if (errMsg && typeof errMsg === 'string') {
+                        toast.error(errMsg)
+                  }
                   setMessages([...messages])
             } finally {
                   if (chatMode !== 'chat') setChatMode('chat')
