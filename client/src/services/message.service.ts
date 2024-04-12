@@ -51,7 +51,7 @@ async function sendMessage(
                   }
             }
             for (let [key, value] of formData.entries()) {
-                  console.log(key, value);
+                  console.log(key, value)
               }
               
             return httpService.post<IMessage>(`${BASE_URL}/message`, formData, config)

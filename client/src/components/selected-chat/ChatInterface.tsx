@@ -141,14 +141,14 @@ export default function ChatInterface(): JSX.Element {
                                                 fileUrl: msg.fileUrl,
                                                 fileName: msg.fileName,
                                                 messageSize: realMessage.messageSize,
-                                          };
+                                          }
                                     } else {
-                                          return realMessage;
+                                          return realMessage
                                     }
                               }
-                              return msg;
+                              return msg
                         })
-                  );
+                  )
 
                   setChats(prevChats =>
                         prevChats.map(chat =>

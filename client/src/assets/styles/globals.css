@@ -295,7 +295,11 @@
   }
   /* Selected File */
   .tools-icon {
-    @apply cursor-pointer h-max p-1 rounded-full hover:bg-gray-500;
+    @apply 
+    flex items-center justify-center
+    cursor-pointer 
+    p-2 rounded-full 
+    hover:bg-dark-default-hover-bg;
   }
 
   /* Message Preview */

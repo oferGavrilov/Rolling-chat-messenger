@@ -1,7 +1,7 @@
 import { IMessage } from "../../../model"
 import { formatTime } from '../../../utils/functions'
-import ImageFile from "./file-types/ImageFile";
-import PdfFile from "./file-types/PdfFile";
+import ImageFile from "./file-types/ImageFile"
+import PdfFile from "./file-types/PdfFile"
 
 interface FilesInChatProps {
     files: IMessage[]
@@ -14,13 +14,13 @@ const renderFileContent = (file: IMessage): JSX.Element => {
         case 'image':
             return (
                 <ImageFile file={file} />
-            );
+            )
         case 'file':
             return <PdfFile />
         default:
-            return <div></div>;
+            return <div></div>
     }
-};
+}
 
 export default function FilesInChat({ files, setSelectedFileById, currentFileId }: FilesInChatProps): JSX.Element {
 

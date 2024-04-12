@@ -10,6 +10,7 @@ import UserInfo from "../../common/UserInfo"
 import RemoveChatButton from "../../common/RemoveChatButton"
 import AboutUser from "../../common/AboutUser"
 import { IChat } from "../../../model"
+import { useEffect, useState } from "react"
 
 interface Props {
       conversationUser: IUser | null
@@ -19,6 +20,14 @@ interface Props {
 export default function ChatInfo({ conversationUser, messages }: Props): JSX.Element {
       const { chats, setChats, selectedChat, setSelectedChat, setMessages } = useStore()
       const { user } = AuthState()
+      const [filesInChat, setFilesInChat] = useState<IMessage[]>([])
+
+      useEffect(() => {
+            if (!selectedChat) return
+
+            const files = messages.filter(message => message.messageType === 'image' || message.messageType === 'file')
+            setFilesInChat(files)
+      }, [])
 
       async function onRemoveChat(): Promise<void> {
             if (!selectedChat || !user) {
@@ -48,7 +57,7 @@ export default function ChatInfo({ conversationUser, messages }: Props): JSX.Ele
                         <div className="[&>*]:border-t-[6px] last:border-t-0 flex flex-col h-full w-full [&>*]:border-gray-200 dark:[&>*]:border-[#2f3e46]">
                               <AboutUser user={conversationUser} />
 
-                              <MediaFiles messages={messages} />
+                              {filesInChat && <MediaFiles messages={filesInChat} />}
 
                               <RemoveChatButton onRemoveChat={onRemoveChat} />
                         </div>

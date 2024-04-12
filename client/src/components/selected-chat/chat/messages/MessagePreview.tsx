@@ -82,23 +82,23 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
       }
 
       function getReceiptStatus(): ReactNode | null {
-            if (message.sender._id !== user._id) return null;
+            if (message.sender._id !== user._id) return null
 
-            // if (message.deletedBy.some(deletion => deletion.userId === user._id)) return null;
+            // if (message.deletedBy.some(deletion => deletion.userId === user._id)) return null
 
-            const isMessageFullyRead = message.isReadBy?.length === 2;
-            const isMessagePartiallyRead = message.isReadBy?.length === 1;
+            const isMessageFullyRead = message.isReadBy?.length === 2
+            const isMessagePartiallyRead = message.isReadBy?.length === 1
 
-            const iconBaseClass = "material-symbols-outlined text-[18px] mt-auto";
-            const fullyReadIconClass = `${iconBaseClass} text-[#00fa9a] dark:text-[#00bfff]`;
-            const partiallyReadIconClass = `${iconBaseClass} text-gray-200`;
+            const iconBaseClass = "material-symbols-outlined text-[18px] mt-auto"
+            const fullyReadIconClass = `${iconBaseClass} text-[#00fa9a] dark:text-[#00bfff]`
+            const partiallyReadIconClass = `${iconBaseClass} text-gray-200`
 
             if (isMessageFullyRead) {
-                  return <span className={fullyReadIconClass}>done_all</span>;
+                  return <span className={fullyReadIconClass}>done_all</span>
             } else if (isMessagePartiallyRead) {
-                  return <span className={partiallyReadIconClass}>done_all</span>;
+                  return <span className={partiallyReadIconClass}>done_all</span>
             } else {
-                  return <span className={partiallyReadIconClass}>done</span>;
+                  return <span className={partiallyReadIconClass}>done</span>
             }
       }
 

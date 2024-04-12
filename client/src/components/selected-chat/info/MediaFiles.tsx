@@ -4,12 +4,14 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { IMessage } from '../../../model/message.model'
 import useStore from '../../../context/store/useStore'
+import ImageFile from '../../selected-file/filesInChat/file-types/ImageFile'
+import PdfFile from '../../selected-file/filesInChat/file-types/PdfFile'
 
 interface Props {
       messages: IMessage[]
 }
 
-export default function MediaFiles ({ messages }: Props): JSX.Element {
+export default function MediaFiles({ messages }: Props): JSX.Element {
       const [showMessagesFiles, setShowMessagesFiles] = useState(false)
       const [showLeftButton, setShowLeftButton] = useState(false)
       const [showRightButton, setShowRightButton] = useState(false)
@@ -20,27 +22,27 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
 
       useEffect(() => {
             if (!messagesFilesRef.current) return
-        
+
             const container = messagesFilesRef.current
             setShowLeftButton(container.scrollLeft > 0)
-        
+
             setShowRightButton(
-                container.scrollLeft + container.clientWidth < container.scrollWidth - 5
+                  container.scrollLeft + container.clientWidth < container.scrollWidth - 5
             )
-        
+
             const handleScroll = () => {
-                setShowLeftButton(container.scrollLeft > 0)
-        
-                setShowRightButton(
-                    container.scrollLeft + container.clientWidth < container.scrollWidth - 5
-                )
+                  setShowLeftButton(container.scrollLeft > 0)
+
+                  setShowRightButton(
+                        container.scrollLeft + container.clientWidth < container.scrollWidth - 5
+                  )
             }
-        
+
             container.addEventListener('scroll', handleScroll)
             return () => {
-                container.removeEventListener('scroll', handleScroll)
+                  container.removeEventListener('scroll', handleScroll)
             }
-        }, [messagesFilesRef])
+      }, [messagesFilesRef])
 
       const scrollMessagesFiles = (direction: 'left' | 'right') => {
             if (!messagesFilesRef.current) return
@@ -55,7 +57,7 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
             }
       }
 
-      const messagesFiles = messages.filter(message => message.messageType === 'image')
+      const messagesFiles = messages.filter(message => message.messageType === 'image' || message.messageType === 'file')
 
       return (
             <div className="px-6 relative">
@@ -67,18 +69,18 @@ export default function MediaFiles ({ messages }: Props): JSX.Element {
                         </div>
                   </div>
 
-                  <div className={`flex gap-x-3 overflow-x-auto overflow-y-hidden relative scroll-smooth transition-[height] duration-300 ease-in-out hide-scrollbar ${showMessagesFiles ? 'h-[160px]' : 'h-[0px]'}`} ref={messagesFilesRef} >
+                  <div className={`flex gap-x-3 overflow-x-auto overflow-y-hidden relative scroll-smooth transition-[height] duration-300 ease-in-out hide-scrollbar ${showMessagesFiles ? 'h-[120px]' : 'h-[0px]'}`} ref={messagesFilesRef} >
                         {messagesFiles.map(message => (
-                              <img
-                                    key={message._id}
-                                    className="object-cover w-[120px] h-[140px] object-center py-1 cursor-pointer"
-                                    src={message.content.toString()}
-                                    alt="conversation-user"
-                                    onClick={() => setSelectedFile(message)}
-                              />
+                              <div key={message._id} className='w-[100px] h-[110px]' onClick={() => setSelectedFile(message)}>
+                                    {message.messageType === 'image' ? (
+                                          <ImageFile file={message} />
+                                    ) : (
+                                          <PdfFile />
+                                    )}
+                              </div>
                         ))}
-
                   </div>
+
                   {showMessagesFiles && showRightButton && (
                         <div
                               className="scroll-arrow-btn right-0"

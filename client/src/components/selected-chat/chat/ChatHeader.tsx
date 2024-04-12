@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-
 import useStore from "../../../context/store/useStore"
 import { AuthState } from "../../../context/useAuth"
-
 import { IUser } from "../../../model/user.model"
 import socketService from '../../../services/socket.service'
 import { SocketOnEvents } from "../../../utils/socketEvents"
-
 import ProfileImage from '../../common/ProfileImage'
 import { userService } from '../../../services/user.service'
 import { formatLastSeenDate } from '../../../utils/functions'
@@ -30,25 +27,23 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
       const [isLoadingStatus, setIsLoadingStatus] = useState<boolean>(false)
 
       const handleConnection = useCallback(({ userId, status }: { userId: string, status: boolean }): void => {
-            console.log('userId:', userId, 'conversationUserRef?.current?._id:', conversationUserRef?.current?._id)
-            console.log('status:', status)
-            if (userId !== conversationUserRef?.current?._id) return;
-            const date = new Date();
-            setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`);
-      }, [conversationUserRef]);
+            if (userId !== conversationUserRef?.current?._id) return
+            const date = new Date()
+            setConnectionStatus(status ? 'Online' : `Last seen ${formatLastSeenDate(date.toString())}`)
+      }, [conversationUserRef])
 
       useEffect(() => {
-            const typingEvent = () => setIsTyping(true);
-            const stopTypingEvent = () => setIsTyping(false);
+            const typingEvent = () => setIsTyping(true)
+            const stopTypingEvent = () => setIsTyping(false)
 
-            socketService.on(SocketOnEvents.USER_TYPING, typingEvent);
-            socketService.on(SocketOnEvents.STOP_TYPING, stopTypingEvent);
+            socketService.on(SocketOnEvents.USER_TYPING, typingEvent)
+            socketService.on(SocketOnEvents.STOP_TYPING, stopTypingEvent)
 
             return () => {
-                  socketService.off(SocketOnEvents.USER_TYPING, typingEvent);
-                  socketService.off(SocketOnEvents.STOP_TYPING, stopTypingEvent);
-            };
-      }, [selectedChat?._id, conversationUser]);
+                  socketService.off(SocketOnEvents.USER_TYPING, typingEvent)
+                  socketService.off(SocketOnEvents.STOP_TYPING, stopTypingEvent)
+            }
+      }, [selectedChat?._id, conversationUser])
 
       useEffect(() => {
             socketService.on(SocketOnEvents.LOGIN, handleConnection)
@@ -80,7 +75,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
             fetchConnectionStatus()
       }, [selectedChat?._id, conversationUser])
 
-      const toggleChatInfo = (): void => setChatMode(prevMode => prevMode === 'info' ? 'chat' : 'info');
+      const toggleChatInfo = (): void => setChatMode(prevMode => prevMode === 'info' ? 'chat' : 'info')
 
       if (!selectedChat || !conversationUser) return <div></div>
       return (
@@ -116,9 +111,14 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
                               )}
                         </div>
                         <div className='flex items-center gap-x-2'>
-                              <div className='flex items-center justify-center text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg leading-none p-2 rounded-xl cursor-pointer' onClick={() => setChatMode('info')}>
-                                    <span className="material-symbols-outlined">info</span>
-                              </div>
+                              <button
+                                    className='flex items-center justify-center text-gray-500 dark:text-dark-primary-text hover:bg-gray-100 dark:hover:bg-dark-default-hover-bg leading-none p-2 rounded-xl material-symbols-outlined'
+                                    onClick={() => setChatMode('info')}
+                                    aria-label='Chat info'
+                                    title='Chat info'
+                              >
+                                    info
+                              </button>
                         </div>
                   </div>
             </header>

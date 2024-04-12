@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { AuthState } from '../../context/useAuth'
 import useStore from '../../context/store/useStore'
-
 import { formatTime, onDownloadFile } from '../../utils/functions'
-
-import ToolTip from '@mui/material/Tooltip'
-
-import CloseIcon from '@mui/icons-material/Close'
-import DownloadIcon from '@mui/icons-material/Download'
 import { IMessage } from '../../model'
 import { useImageNavigator } from '../../custom-hook/useImageNavigator'
 import FilesInChat from './filesInChat/FilesInChat'
+import Avatar from '../common/Avatar'
+
 export default function SelectedFile(): JSX.Element {
       const { selectedFile, setSelectedFile, messages } = useStore()
       const { user: loggedInUser } = AuthState()
@@ -32,14 +28,12 @@ export default function SelectedFile(): JSX.Element {
             if (!canNavigateNext || !currentFile) return
             const nextIndex = filesInChat.findIndex(file => file._id === currentFile._id) + 1
             setSelectedFileById(filesInChat[nextIndex]._id)
-            // TODO: scroll to the item in the filesInChatRef
       }
 
       const handlePrevious = () => {
             if (!canNavigatePrev || !currentFile) return
             const prevIndex = filesInChat.findIndex(file => file._id === currentFile._id) - 1
             setSelectedFileById(filesInChat[prevIndex]._id)
-            // TODO: scroll to the item in the filesInChatRef
       }
 
       useEffect(() => {
@@ -50,6 +44,9 @@ export default function SelectedFile(): JSX.Element {
                               break
                         case 'ArrowLeft':
                               handlePrevious()
+                              break
+                        case 'Escape':
+                              setSelectedFile(null)
                               break
                   }
             }
@@ -65,7 +62,6 @@ export default function SelectedFile(): JSX.Element {
             setFilesInChat(files)
       }, [currentFile, messages])
 
-
       const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node
 
@@ -78,15 +74,15 @@ export default function SelectedFile(): JSX.Element {
                   return
             }
 
-            setSelectedFile(null);
+            setSelectedFile(null)
       }
 
       useEffect(() => {
-            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('mousedown', handleClickOutside)
 
             return () => {
-                  document.removeEventListener('mousedown', handleClickOutside);
-            };
+                  document.removeEventListener('mousedown', handleClickOutside)
+            }
       }, [handleClickOutside, setSelectedFile])
 
       if (!currentFile) return <div></div>
@@ -98,28 +94,55 @@ export default function SelectedFile(): JSX.Element {
                   <header className='bg-gray-800 dark:bg-dark-primary-bg' ref={headerRef}>
                         <div className='flex justify-between px-4 py-2 items-center text-white'>
                               <div className='flex items-center gap-x-3'>
-                                    <ToolTip title="Close" arrow placement='bottom'>
-                                          <div className='tools-icon' onClick={() => setSelectedFile(null)}>
-                                                <CloseIcon />
-                                          </div>
-                                    </ToolTip>
+                                    <div
+                                          className='tools-icon material-symbols-outlined'
+                                          onClick={() => setSelectedFile(null)}
+                                          role='button'
+                                          title='Close'
+                                          aria-label='Close selected file modal'
+                                    >
+                                          close
+                                    </div>
 
-                                    <ToolTip title="Download" arrow placement='bottom'>
-                                          <div className='tools-icon' onClick={() => onDownloadFile(currentFile)}>
-                                                <DownloadIcon />
-                                          </div>
-                                    </ToolTip>
+                                    <div
+                                          className='tools-icon material-symbols-outlined'
+                                          onClick={() => onDownloadFile(currentFile)}
+                                          role='button'
+                                          title='Download'
+                                          aria-label={`Download the current file sent by ${currentFile.sender.username}, and named ${currentFile.fileName}.`}
+                                    >
+                                          download
+                                    </div>
+
+                                    <div
+                                          className='tools-icon material-symbols-outlined'
+                                          role='button'
+                                          title='Share file on WhatsApp'
+                                          aria-label='Share file on WhatsApp'
+                                          onClick={() => {
+                                                const url = currentFile.fileUrl
+                                                const message = `Check out this file sent by ${currentFile.sender.username} on WhatsApp.`
+                                                window.open(`https://wa.me/?text=${encodeURIComponent(message + '\n' + url)}`)
+                                          }}
+                                    >
+                                          share
+                                    </div>
                               </div>
 
-                              <div className='flex'>
-                                    <div className='flex flex-col mr-3 justify-between'>
+                              <div className='flex text-sm tracking-widest leading-none'>
+                                    <div className='flex flex-col justify-center'>
                                           <div className='flex text-white gap-x-2'>
                                                 {currentFile.chat?.chatName && <span>{currentFile.chat?.chatName}@</span>}
                                                 <span>{currentFile.sender._id === loggedInUser?._id ? 'You' : currentFile.sender.username}</span>
                                           </div>
-                                          <span className='text-gray-400 dark:text-gray-300 text-sm text-right'>{formatTime(currentFile.createdAt)}</span>
+                                          <span className='text-gray-400 dark:text-gray-400 mt-1 -mb-1'>{formatTime(currentFile.createdAt)}</span>
                                     </div>
-                                    <img src={currentFile?.sender.profileImg} alt='' className='w-12 h-12 rounded-full object-cover' />
+                                    <Avatar 
+                                          src={currentFile.sender.profileImg}
+                                          alt={`Profile picture of ${currentFile.sender.username}`}
+                                          extraClassName='!w-12 !h-12 rounded-full ml-3'
+                                          title={`Profile picture of ${currentFile.sender.username}`}
+                                    />
                               </div>
                         </div>
                   </header>
