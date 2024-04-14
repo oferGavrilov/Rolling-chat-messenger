@@ -161,14 +161,16 @@ export async function validateUser(req: Request, res: Response) {
     const { accessToken, refreshToken } = req.cookies
 
     if (!refreshToken) {
-        // No refresh token found, unauthorized
-        return new ServiceResponse(ResponseStatus.Failed, 'No refresh token found', { isValid: false }, StatusCodes.UNAUTHORIZED)
+        // No refresh token found, unauthorized or expired token
+        res.status(StatusCodes.UNAUTHORIZED).json({ message: 'expired' })
+        return
     }
 
     // Validate the refresh token
     const serviceResponse = await validateRefreshTokenService(refreshToken)
     const validationResponse: { isValid: boolean, user?: Partial<IUser> } = serviceResponse.responseObject
 
+    console.log('validationResponse:', validationResponse)
     if (!validationResponse.isValid || !validationResponse.user) {
         // Refresh token is invalid, unauthorized
         return handleServiceResponse(serviceResponse, res)

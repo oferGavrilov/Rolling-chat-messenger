@@ -57,9 +57,15 @@ export default function SelectedFile(): JSX.Element {
 
       useEffect(() => {
             if (!currentFile || !currentFile.chat) return
+
+            document.title = `Rolling - ${currentFile.fileName}`
             const chatId = currentFile.chat._id
             const files = messages.filter(message => message.chat?._id === chatId && message.messageType === 'image' || message.messageType === 'file')
             setFilesInChat(files)
+
+            return () => {
+                  document.title = 'Rolling'
+            }
       }, [currentFile, messages])
 
       const handleClickOutside = (event: MouseEvent) => {
@@ -137,7 +143,7 @@ export default function SelectedFile(): JSX.Element {
                                           </div>
                                           <span className='text-gray-400 dark:text-gray-400 mt-1 -mb-1'>{formatTime(currentFile.createdAt)}</span>
                                     </div>
-                                    <Avatar 
+                                    <Avatar
                                           src={currentFile.sender.profileImg}
                                           alt={`Profile picture of ${currentFile.sender.username}`}
                                           extraClassName='!w-12 !h-12 rounded-full ml-3'
@@ -180,6 +186,7 @@ export default function SelectedFile(): JSX.Element {
                                           src={currentFile?.fileUrl}
                                           title='picked-pdf'
                                           className='w-4/5 h-4/5'
+                                          name={currentFile.fileName || 'file'}
                                     />
                               )}
 
