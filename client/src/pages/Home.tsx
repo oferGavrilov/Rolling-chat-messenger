@@ -16,7 +16,7 @@ export default function Home(): JSX.Element {
                                     </div>
 
                                     <div className="text-lg md:text-2xl tracking-wide leading-4 md:[word-spacing:6px] flex flex-col items-center py-12 xl:py-16 mx-auto max-3xl">
-                                          <h2 className="text-4xl !leading-[4.5rem] font-bold tracking-tight text-gray-900 text-center sm:text-6xl">
+                                          <h2 className="text-4xl !leading-[3rem] md:!leading-[4.5rem] font-bold tracking-tight text-gray-900 text-center sm:text-6xl">
                                                 Roll your chat with Rolling-
                                                 The future of communication <span className="text-primary">is here.</span>
                                           </h2>
