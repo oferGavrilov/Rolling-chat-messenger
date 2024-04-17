@@ -13,7 +13,7 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
 
       useEffect(() => {
             if (!message.fileUrl) return;
-            
+
             if (message.TN_Image) {
                   const image = new Image();
                   image.src = message.fileUrl  // This is the URL of the original image.
@@ -42,7 +42,7 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
                         <p
                               className='mx-3 font-bold text-green-400 text-sm max-w-44 overflow-ellipsis truncate'
                               aria-label={`Message sent by ${message.sender.username}`}
-                              >
+                        >
                               {message.sender.username}
                         </p>
                   )}
@@ -58,6 +58,9 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
                         aria-label="Click to view the image in full screen"
                         onClick={() => setSelectedFile(message)}
                   />
+                  <div>
+                        {message.content && <p className='text-sm md:text-base px-3 py-2'>{message.content as string}</p>}
+                  </div>
             </div>
       )
 }

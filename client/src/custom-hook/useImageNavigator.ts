@@ -17,7 +17,6 @@ export function useImageNavigator(filesInChat: IMessage[], initialSelectedFile: 
     const setSelectedFileById = useCallback((id: string) => {
         const file = filesInChat.find(file => file._id === id)
         if (!file) return
-        console.log(file)
         setCurrentFile(file)
     }, [filesInChat])
 

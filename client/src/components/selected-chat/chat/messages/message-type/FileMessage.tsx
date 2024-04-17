@@ -57,6 +57,10 @@ export default function FileMessage({ message, setSelectedFile }: Props): JSX.El
                                     ) : <div className='spinner'></div>}
                               </div>
                         </div>
+                        
+                        <div>
+                              {message.content && <p className='text-sm md:text-base px-3 py-2'>{message.content as string}</p>}
+                        </div>
                   </div>
 
             </div>

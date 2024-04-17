@@ -76,13 +76,15 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onSendAudio, isRecording,
                         }
 
                         setRecordingTimer(0)
-
                         setIsRecording(false)
                   }
 
                   mediaRecorderRef.current.start()
                   setIsRecording(true)
             } catch (error) {
+                  if ((error as Error).name === 'NotAllowedError' || (error as Error).name === 'NotSupportedError') {
+                        toast.error('Error accessing media devices, please allow access to the microphone and try again')
+                  }
                   console.error('Error accessing media devices:', error)
             }
       }

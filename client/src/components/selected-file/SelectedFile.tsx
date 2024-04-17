@@ -189,7 +189,7 @@ export default function SelectedFile(): JSX.Element {
                                           name={currentFile.fileName || 'file'}
                                     />
                               )}
-
+                              {currentFile.content && <p className='text-white mt-4'>{currentFile.content}</p>}
                         </div>
                   </main>
 

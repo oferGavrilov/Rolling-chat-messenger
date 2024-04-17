@@ -26,13 +26,20 @@
 
   textarea {
     resize: none;
-    border-radius: none;
   }
 
   a,
   img {
     -webkit-user-drag: none;
     user-select: none;
+  }
+
+  canvas {
+    width: 100%;
+    height: auto;
+  }
+  .material-symbols-outlined{
+    line-height: normal;
   }
 }
 
@@ -360,6 +367,24 @@
 
   .default-profile-img {
     @apply object-cover rounded-full cursor-pointer transition-all duration-300;
+  }
+
+  .editor-tool-btn{
+    @apply text-gray-300 rounded-full w-10 h-10 flex items-center justify-center  cursor-pointer transition-all duration-300 hover:bg-gray-600;
+  }
+
+  .brush-size-btn {
+    @apply bg-gray-700 rounded-full cursor-pointer transition-all duration-300 hover:bg-gray-500 hover:scale-105;
+  }
+  .brush-color-btn {
+    @apply w-6 h-6 rounded-full cursor-pointer transition-all duration-300;
+  }
+  .content-editable {
+    @apply absolute text-white bg-zinc-50/90 p-[2px] rounded-md min-w-14 outline-none whitespace-nowrap
+  }
+
+  .file-editor-message-textarea{
+    @apply whitespace-pre-wrap resize-none h-auto flex-shrink break-words select-text overflow-x-hidden relative overflow-y-auto w-full bg-dark-input-bg py-2 px-4 rounded-md outline-none caret-white;
   }
 }
 

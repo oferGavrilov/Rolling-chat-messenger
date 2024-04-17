@@ -93,7 +93,6 @@ export default function ChatInterface(): JSX.Element {
             }
 
             console.log('optimisticMessage:', optimisticMessage)
-
             // Show the message immediately
             setReplyMessage(null)
             setMessages(prevMessages => [...prevMessages, optimisticMessage])
