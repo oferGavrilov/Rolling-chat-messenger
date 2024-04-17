@@ -50,7 +50,7 @@ export default function ReplyMessage ({ message, loggedInUserId, incomingMessage
             <div className={`${incomingMessage ? 'ml-auto dark:bg-dark-incoming-chat-bg' : 'dark:bg-dark-outgoing-chat-bg'} text-white rounded-t-xl p-2 w-full`}>
                   <div className={`flex flex-col text-sm py-2  pl-4 rounded-md border-r-4 ${message.replyMessage?.sender._id === loggedInUserId ? 'border-lime-400' : 'border-[#ffb703]'} ${incomingMessage ? 'bg-[#828995] dark:bg-dark-incoming-chat-reply-bg' : 'bg-[#0079ca] dark:bg-dark-outgoing-chat-reply-bg'}`}>
                         {getSender()}
-                        <span className="mt-2 min-w-[100px] max-w-[180px] overflow-hidden text-ellipsis mb-1">{getReplyMessageContent()}</span>
+                        <span className="mt-2 min-w-[100px] overflow-hidden text-ellipsis mb-1">{getReplyMessageContent()}</span>
                   </div>
             </div>
       )
