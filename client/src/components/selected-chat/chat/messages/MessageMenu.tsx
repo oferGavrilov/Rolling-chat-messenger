@@ -51,7 +51,7 @@ export default function MessageMenu({ message, incomingMessage, onRemoveMessage 
 
       return (
             <>
-                  <div className={`message-menu-icon ${isOpen ? 'pointer-events-none' : ''} ${incomingMessage ? 'right-0 rounded-bl-2xl rounded-tr-3xl rounded-br-md' : 'rounded-br-2xl rounded-tl-xl'}`} onClick={() => setIsOpen(true)}>
+                  <div className={`message-menu-icon ${isOpen ? 'pointer-events-none' : ''} ${incomingMessage ? 'right-0 rounded-bl-2xl rounded-tr-2xl rounded-br-lg' : 'rounded-br-2xl rounded-tl-xl'}`} onClick={() => setIsOpen(true)}>
                         <span className="material-symbols-outlined text-sm transition-all duration-150">expand_more</span>
                   </div>
 

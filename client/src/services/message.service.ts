@@ -50,9 +50,6 @@ async function sendMessage(
                         'Content-Type': 'multipart/form-data'
                   }
             }
-            for (let [key, value] of formData.entries()) {
-                  console.log(key, value)
-              }
               
             return httpService.post<IMessage>(`${BASE_URL}/message`, formData, config)
       } catch (error) {

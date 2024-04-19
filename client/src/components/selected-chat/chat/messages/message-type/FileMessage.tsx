@@ -32,7 +32,7 @@ export default function FileMessage({ message, setSelectedFile }: Props): JSX.El
                         <div className='bg-inherit w-full p-3 px-6 rounded-b-lg'>
                               <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-3'>
-                                          <img src="/imgs/chat/pdf.png" alt="" className='w-7 h-8' />
+                                          <img src="/imgs/chat/pdf.png" alt="pdf-file" className='w-7 h-8' />
                                           <div className='flex flex-col'>
                                                 <span className='text-sm'>{message.fileName}</span>
                                                 <div className='text-document-text text-xs'>
@@ -58,11 +58,12 @@ export default function FileMessage({ message, setSelectedFile }: Props): JSX.El
                               </div>
                         </div>
 
-                        <div>
-                              {message.content && <p className='text-sm md:text-base px-3 py-2'>{message.content as string}</p>}
-                        </div>
+                        {message.content && (
+                              <p className='text-sm md:text-base px-3 py-2 break-words overflow-wrap w-[330px]'>
+                                    {message.content as string}
+                              </p>
+                        )}
                   </div>
-
             </div>
       )
 }

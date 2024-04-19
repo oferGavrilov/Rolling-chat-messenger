@@ -92,7 +92,6 @@ export default function ChatInterface(): JSX.Element {
                   fileUrl: (messageType === 'image' || messageType === 'file') ? objectUrl : ''
             }
 
-            console.log('optimisticMessage:', optimisticMessage)
             // Show the message immediately
             setReplyMessage(null)
             setMessages(prevMessages => [...prevMessages, optimisticMessage])

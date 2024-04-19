@@ -58,9 +58,11 @@ export default function ImageMessage({ message, setSelectedFile, userId }: Props
                         aria-label="Click to view the image in full screen"
                         onClick={() => setSelectedFile(message)}
                   />
-                  <div>
-                        {message.content && <p className='text-sm md:text-base px-3 py-2'>{message.content as string}</p>}
-                  </div>
+                  {message.content && (
+                        <p className='text-sm md:text-base px-3 py-2 w-full break-words overflow-wrap max-w-56 lg:max-w-56'>
+                              {message.content as string}
+                        </p>
+                  )}
             </div>
       )
 }

@@ -229,7 +229,7 @@
   }
   /* Chat Messages */
   .message-container:hover .message-menu-icon {
-    opacity: 100;
+    transform: scale(1);
     z-index: 1;
     background-color: inherit;
   }
@@ -272,7 +272,7 @@
             transition-colors duration-200 cursor-pointer;
   }
   .message-menu-icon {
-    @apply opacity-0
+    @apply  scale-0
             select-none
             absolute top-0 -z-10 
             bg-inherit leading-none

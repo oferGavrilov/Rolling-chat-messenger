@@ -40,7 +40,7 @@ async function getUsers(): Promise<IUser[]> {
 
 async function loginSignUp(credentials: FormDataSubmit, formMode: string): Promise<IUser> {
       const path = formMode === 'login' ? '/api/auth/login' : '/api/auth/signup'
-
+      
       let userData: IUser | null = null
       
       if (formMode === 'login') {
@@ -55,6 +55,7 @@ async function loginSignUp(credentials: FormDataSubmit, formMode: string): Promi
             formData.append('username', credentials.username as string)
             formData.append('email', credentials.email)
             formData.append('password', credentials.password)
+            formData.append('confirmPassword', credentials.confirmPassword as string)
 
             if (credentials.profileImg) {
                   formData.append('profileImg', credentials.profileImg)

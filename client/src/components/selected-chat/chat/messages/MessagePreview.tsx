@@ -77,7 +77,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
 
       function getMessageBorderRadius(arrowDirection: 'none' | 'left' | 'right'): string {
             if (arrowDirection === 'none') return 'rounded-xl'
-            if (arrowDirection === 'left') return 'rounded-t-2xl rounded-br-2xl'
+            if (arrowDirection === 'left') return 'rounded-t-xl rounded-br-xl'
             return 'rounded-t-xl rounded-bl-xl'
       }
 

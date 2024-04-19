@@ -42,7 +42,7 @@ export default function Form(): JSX.Element {
                               email: Yup.string().required('Email is required').email('Email is invalid'),
                               password: Yup.string()
                                     .required('Password is required')
-                                    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password must contain at least one letter, one number, and be at least 8 characters long')
+                                    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, 'Password must contain at least one letter, one number, and be at least 6 characters long')
                                     .min(6, 'Password must be at least 6 characters')
                                     .max(20, 'Password must not exceed 20 characters'),
                         })
@@ -122,6 +122,9 @@ export default function Form(): JSX.Element {
 
             } catch (error) {
                   console.log(error)
+                  if (typeof error === 'string') {
+                        toast.error(error)
+                  }
             } finally {
                   setIsLoading(false)
             }

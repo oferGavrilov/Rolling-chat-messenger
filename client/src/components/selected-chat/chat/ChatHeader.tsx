@@ -58,10 +58,12 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
       useEffect(() => {
             if (selectedChat?.isGroupChat || !conversationUser?._id || selectedChat?.isNewChat) return
 
+            if (conversationUser._id === 'default') return // to prevent fetching connection status for removed user
+
             const fetchConnectionStatus = async (): Promise<void> => {
                   try {
                         setIsLoadingStatus(true)
-                        const connection: connection = await userService.getUserConnectionStatus(conversationUser._id) as connection
+                        const connection = await userService.getUserConnectionStatus(conversationUser._id) as connection
                         const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
                         setConnectionStatus(status)
                   } catch (err) {
@@ -96,7 +98,7 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
                         <div className='flex flex-col'>
                               <h2 className='cursor-pointer font-bold tracking-wider dark:text-dark-primary-text 2xl:text-lg underline-offset-2 hover:underline' onClick={toggleChatInfo}>{selectedChat.isGroupChat ? selectedChat.chatName : conversationUser?.username}</h2>
                               {!selectedChat.isGroupChat ? (
-                                    <span className={`text-primary dark:text-dark-primary-text text-sm transition-all duration-200 ${isLoadingStatus ? 'max-h-0 opacity-0' : 'max-h-5 opacity-100'} 2xl:text-lg 2xl:leading-none`}>
+                                    <span className={`text-primary dark:text-dark-primary-text text-sm transition-all duration-200 ${isLoadingStatus ? 'max-h-0 opacity-0' : 'max-h-5 opacity-100'} 3xl:text-lg 2xl:leading-none`}>
                                           {isTyping ? 'Typing...' : isLoadingStatus ? '' : connectionStatus}
                                     </span>
                               ) : (
