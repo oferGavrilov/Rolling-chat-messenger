@@ -15,7 +15,7 @@ export const createChatSchema = z.object({
 export const createGroupChatSchema = z.object({
     body: z.object({
         chatName: z.string({ required_error: "Chat name is required" }),
-        userIds: z.string({ required_error: "User IDs are required" }).transform((data) => JSON.parse(data)),
+        userIds: z.string({ required_error: "User IDs are required" }), 
     }),
     file: z.object({
         originalname: z.string(),

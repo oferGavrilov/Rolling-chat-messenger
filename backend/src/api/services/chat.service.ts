@@ -162,9 +162,9 @@ export async function removeChatService(chatId: string, userId: string): Promise
       }
 }
 
-export async function createGroupChatService(users: string[], chatName: string, groupImage: string, currentUser: IUser): Promise<ServiceResponse<IChat | null>> {
+export async function createGroupChatService(userIdsArray: string[], chatName: string, groupImage: string, currentUserId: string): Promise<ServiceResponse<IChat | null>> {
       try {
-            const chatUsers = Array.from(new Set([...users, currentUser._id.toString()]));
+            const chatUsers = [...userIdsArray, currentUserId];
 
             const groupChatData = {
                   chatName,
@@ -173,7 +173,7 @@ export async function createGroupChatService(users: string[], chatName: string, 
                   latestMessage: null,
                   deletedBy: [],
                   kickedUsers: [],
-                  groupAdmin: currentUser._id,
+                  groupAdmin: currentUserId,
                   groupImage: groupImage,
             }
 

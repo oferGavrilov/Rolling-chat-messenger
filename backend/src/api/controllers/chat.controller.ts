@@ -50,8 +50,11 @@ export const createGroupChatHandler = async (
             groupImage = result.originalImageUrl
         }
 
-        const currentUser = req.user
-        const serviceResponse = await createGroupChatService(userIds, chatName, groupImage, currentUser)
+        // parse because the data is sent as form data, and also clean duplicates if exist
+        const userIdsArray = Array.from(new Set(JSON.parse(userIds))) as string[];
+
+        const currentUserId = req.user._id
+        const serviceResponse = await createGroupChatService(userIdsArray, chatName, groupImage, currentUserId)
         handleServiceResponse(serviceResponse, res)
     } catch (error) {
         next(error)

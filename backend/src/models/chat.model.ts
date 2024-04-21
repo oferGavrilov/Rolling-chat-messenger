@@ -5,8 +5,8 @@ export interface IChat extends Document {
   _id: ObjectId
   chatName: string
   isGroupChat: boolean
-  users: string[]
-  latestMessage: Types.ObjectId | null
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  latestMessage: mongoose.Schema.Types.ObjectId | null
   groupAdmin?: string
   groupImage?: string
   deletedBy: DeletedBy[]
