@@ -104,7 +104,7 @@ export default function Form(): JSX.Element {
                   modifiedValues = { email: values.email, password: values.password }
 
             } else if (formMode === 'signUp') {
-                  modifiedValues = { username: values.username, email: values.email, password: values.password, profileImg: image }
+                  modifiedValues = { username: values.username, email: values.email, password: values.password, confirmPassword: values.confirmPassword, profileImg: image }
 
             } else if (formMode === 'reset') {
                   modifiedValues = { email: values.email }

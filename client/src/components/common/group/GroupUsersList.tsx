@@ -17,7 +17,9 @@ interface Props {
 export default function GroupUsersList({ selectedChat, setSelectedChat, loggedInUser, isAdmin }: Props): JSX.Element {
       const { onSelectChat, setMessages } = useStore()
 
-      async function onKickFromGroup(userId: string) {
+      async function onKickFromGroup(e: React.MouseEvent, userId: string) {
+            e.stopPropagation()
+            console.log('Kicking user from group', selectedChat)
             if (!selectedChat || !loggedInUser) return
             try {
                   const updatedChat = await chatService.kickFromGroup(selectedChat._id, userId, loggedInUser._id)
@@ -51,8 +53,8 @@ export default function GroupUsersList({ selectedChat, setSelectedChat, loggedIn
                                                 Admin
                                           </span>
                                     )}
-                                    {(isAdmin(selectedChat, loggedInUser._id) && user._id !== loggedInUser._id) &&
-                                          <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={() => onKickFromGroup(user._id)}>
+                                    {(isAdmin(selectedChat, loggedInUser._id) && user._id !== loggedInUser._id) && // Only admin can kick users
+                                          <div className="flex justify-end text-red-600 transition-transform duration-200 hover:scale-125" onClick={(e) => onKickFromGroup(e, user._id)}>
                                                 <DeleteIcon className="!text-2xl" />
                                           </div>
                                     }

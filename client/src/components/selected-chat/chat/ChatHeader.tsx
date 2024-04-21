@@ -64,11 +64,10 @@ export default function ChatHeader({ conversationUser, conversationUserRef, setC
                   try {
                         setIsLoadingStatus(true)
                         const connection = await userService.getUserConnectionStatus(conversationUser._id) as connection
-                        const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(conversationUser?.lastSeen as string)}`
+                        const status = connection.isOnline ? 'Online' : `Last seen ${formatLastSeenDate(connection.lastSeen as string)}`
                         setConnectionStatus(status)
                   } catch (err) {
                         console.error('Failed to fetch user connection status:', err)
-
                   } finally {
                         setTimeout(() => setIsLoadingStatus(false), 1000) // for smooth transition
                   }

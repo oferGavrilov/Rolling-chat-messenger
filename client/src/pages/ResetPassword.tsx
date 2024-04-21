@@ -29,7 +29,6 @@ export default function ResetPassword() {
             navigate('/auth/')
         } catch (error) {
             console.error(error)
-            toast.error('Error resetting password')
         }
     }
     return (

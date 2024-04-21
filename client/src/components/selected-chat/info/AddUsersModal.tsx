@@ -63,9 +63,9 @@ export default function AddUsersModal({ existsUsers, isOpen, selectedChat, setIs
       async function onAddUsers() {
             if (!selectedChat) return
             if (selectedUsers.length === 0) return toast.error('Please select at least one user')
-
+            const selectedUsersIds = selectedUsers.map(user => user._id)
             try {
-                  const { users: newUsers } = await chatService.updateUsersGroup(selectedChat._id, selectedUsers) as IChat
+                  const { users: newUsers } = await chatService.updateUsersGroup(selectedChat._id, selectedUsersIds) as IChat
 
                   setChats(chats.map(chat => chat._id === selectedChat?._id ? { ...chat, newUsers } : chat))
 

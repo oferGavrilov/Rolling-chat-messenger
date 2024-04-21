@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function UsersList({ users, onSelectChat, usersType, selectedUsers, clearSelectedUsers }: Props): JSX.Element {
-
       if (!users || users.length === 0) {
             return (
                   <div className="text-center py-4">

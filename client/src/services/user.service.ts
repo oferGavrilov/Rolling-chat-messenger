@@ -46,6 +46,7 @@ async function loginSignUp(credentials: FormDataSubmit, formMode: string): Promi
       if (formMode === 'login') {
             userData = await httpService.post<IUser>(`${BASE_URL + path}`, credentials)
       } else {
+            // Sign up
             const formData = new FormData()
             const config = {
                   headers: {
@@ -216,7 +217,6 @@ function getBackgroundColor(): IColorPalette | null {
 export function getLoggedinUser(): IUser | null {
       const storedItem = localStorage.getItem(STORAGE_KEY)
       if (storedItem) {
-            console.log('storedItem:', JSON.parse(storedItem))
             return JSON.parse(storedItem)
       }
       return null

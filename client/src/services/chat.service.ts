@@ -1,7 +1,5 @@
 import { IChat } from "../model/chat.model"
 import { getLoggedinUser } from "./user.service"
-
-import { IUser } from "../model/user.model"
 import { httpService } from "./http.service"
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://server.rolling-chat.com' : 'http://localhost:5000'
@@ -114,9 +112,9 @@ async function updateGroupInfo(chatId: string, updateType: 'image' | 'name', upd
       return null
 }
 
-async function updateUsersGroup(chatId: string, users: IUser[]) {
+async function updateUsersGroup(chatId: string, userIds: string[]) {
       try {
-            return httpService.put(`${BASE_URL}/api/chat/updateusers`, { chatId, users })
+            return httpService.put(`${BASE_URL}/api/chat/updateusers`, { chatId, userIds })
 
       } catch (error) {
             console.error(error)

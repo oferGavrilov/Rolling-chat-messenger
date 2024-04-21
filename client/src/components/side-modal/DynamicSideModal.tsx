@@ -5,7 +5,6 @@ import { ContentType } from '../../pages/ChatPage'
 
 import UsersToGroup from './UsersToGroup'
 import UsersToMessage from './UsersToMessage'
-import { WavesBlue } from '../svg/Bubble'
 
 interface Props {
       isOpen: boolean
@@ -39,9 +38,7 @@ export default function DynamicSideModal(props: Props): JSX.Element {
                         <span className="material-symbols-outlined text-gray-400 dark:text-dark-primary-text">close</span>
                   </div>
 
-
-                  <WavesBlue className="bottom-0 md:-bottom-10 lg:-bottom-20" />
-
+                  {/* <WavesBlue className="bottom-0 md:-bottom-10 lg:-bottom-20" /> */}
             </div>
       )
 }

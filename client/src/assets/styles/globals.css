@@ -38,8 +38,13 @@
     width: 100%;
     height: auto;
   }
-  .material-symbols-outlined{
+  /* .material-symbols-outlined{
     line-height: normal;
+  } */
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    background: inherit !important;
   }
 }
 

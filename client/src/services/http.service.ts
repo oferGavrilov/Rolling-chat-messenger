@@ -70,8 +70,10 @@ async function ajax<T>(
 
                   switch (status) {
                         case 400:
-                              // if has message throw message error else throw generic error
                               throw message || 'Something went wrong, Try again later.'
+                        case 409:
+                              toast.warn(err.response.data.message || 'You are not allowed to do that.')
+                              break
                         case 401:
                               if (err.response.data.message === 'expired') {
                                     await userService.logout()
