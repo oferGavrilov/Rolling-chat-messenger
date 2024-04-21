@@ -5,7 +5,8 @@ import { logger } from "@/server"
 
 export async function getUsersService(loggedInUserId: string): Promise<ServiceResponse<IUser[] | null>> {
       try {
-            const users = await User.find({ _id: { $ne: loggedInUserId } })
+            const users = await User.find({ _id: { $ne: loggedInUserId } }).select('about username profileImg TN_profileImg email')
+            // const users = await User.find({ _id: { $ne: loggedInUserId } })
             return new ServiceResponse(ResponseStatus.Success, 'Users fetched successfully', users, StatusCodes.OK)
       } catch (error: unknown) {
             const errorMessage = `Error while fetching users: ${(error as Error).message}`
@@ -57,7 +58,7 @@ export async function editUserImageService(userId: string, newImageUrl: string, 
       }
 }
 
-export async function getUserStatusById(userId: string): Promise<ServiceResponse<{ isOnline: boolean, lastSeen?: Date } | null>> {
+export async function getUserStatusService(userId: string): Promise<ServiceResponse<{ isOnline: boolean, lastSeen?: Date } | null>> {
       try {
             const user = await User.findById(userId).select('isOnline lastSeen')
 

@@ -13,8 +13,8 @@ export interface IUser extends Document {
   verifyPassword: (enteredPassword: string) => Promise<boolean>
   isOnline: boolean
   lastSeen: Date
-  resetPasswordToken?: string
-  resetPasswordExpires?: Date
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | null
   refreshToken?: string
 }
 
@@ -27,8 +27,8 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
   about: { type: String, default: "Available" },
   isOnline: { type: Boolean, default: false },
   lastSeen: { type: Date, default: Date.now() },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
+  resetPasswordToken: { type: String, default: null },
+  resetPasswordExpires: {type:Date, default: null},
   refreshToken: String
 },
   { timestamps: true }

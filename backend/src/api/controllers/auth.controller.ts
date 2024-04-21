@@ -1,27 +1,24 @@
-import { type Response, type Request, type CookieOptions } from "express"
+import { type Response, type Request, type CookieOptions, NextFunction } from "express"
 import { StatusCodes } from "http-status-codes"
 import jwt from "jsonwebtoken"
 import { generateRefreshToken, generateToken } from "@/config/generateToken"
-import { loginUser, resetPasswordConfirm, signUpService, validateRefreshTokenService } from "./service"
-import { EmailService } from "@/services/email.service"
+import { loginUserService, resetPasswordConfirm, signUpService, validateRefreshTokenService } from "../services/auth.service"
+import { EmailService } from "@/utils/email"
 import { logger } from "@/server"
 import { DEFAULT_GUEST_IMAGE, IUser, User } from "@/models/user.model"
 import { env } from "@/utils/envConfig"
 import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { handleServiceResponse } from "@/utils/httpHandler"
-import { uploadImageToCloudinary } from "@/services/cloudinary.service"
+import { uploadImageToCloudinary } from "@/utils/cloudinary"
+import { LoginUserInput, ResetPasswordInput, SendResetPasswordMailInput, SignUpUserInput } from "@/schemas/auth.schema"
 
-export async function signUp(req: Request, res: Response) {
+export async function signUpUserHandler(
+    req: Request<{}, SignUpUserInput>,
+    res: Response
+) {
     const { username, email, password } = req.body
 
     try {
-        if (!username || !email || !password) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                message: 'Username, email, and password are required',
-            })
-            return
-        }
-
         const reqProfileImg = req.file
 
         let profileImgToSave: string = ''
@@ -84,15 +81,14 @@ export async function signUp(req: Request, res: Response) {
     }
 }
 
-export async function login(req: Request, res: Response) {
+export async function loginUserHandler(
+    req: Request<LoginUserInput>,
+    res: Response,
+    next: NextFunction
+) {
     try {
         const { email, password } = req.body
-
-        if (!email || !password) {
-            return new ServiceResponse(ResponseStatus.Failed, 'Please enter all fields', null, StatusCodes.BAD_REQUEST)
-        }
-
-        const serviceResponse = await loginUser(email, password)
+        const serviceResponse = await loginUserService(email, password)
 
         if (!serviceResponse.success) {
             return handleServiceResponse(serviceResponse, res)
@@ -123,7 +119,6 @@ export async function login(req: Request, res: Response) {
             }
 
             const accessToken: string = generateToken(user._id as string) // Short-lived
-
             const isProduction: boolean = process.env.NODE_ENV === 'production'
 
             const cookiesConfig: CookieOptions = {
@@ -153,7 +148,7 @@ export async function login(req: Request, res: Response) {
     } catch (error: unknown) {
         const errorMessage = `Error during login: ${(error as Error).message}`
         logger.error(errorMessage)
-        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR)
+        next(new ServiceResponse(ResponseStatus.Failed, errorMessage, null, StatusCodes.INTERNAL_SERVER_ERROR))
     }
 }
 
@@ -170,7 +165,6 @@ export async function validateUser(req: Request, res: Response) {
     const serviceResponse = await validateRefreshTokenService(refreshToken)
     const validationResponse: { isValid: boolean, user?: Partial<IUser> } = serviceResponse.responseObject
 
-    console.log('validationResponse:', validationResponse)
     if (!validationResponse.isValid || !validationResponse.user) {
         // Refresh token is invalid, unauthorized
         return handleServiceResponse(serviceResponse, res)
@@ -207,7 +201,7 @@ export async function validateUser(req: Request, res: Response) {
     return handleServiceResponse(serviceResponse, res)
 }
 
-export async function logoutUser(req: Request, res: Response) {
+export async function logoutUserHandler(req: Request, res: Response) {
     const { userId } = req.body
     try {
         const isProduction: boolean = process.env.NODE_ENV === 'production'
@@ -239,7 +233,10 @@ export async function logoutUser(req: Request, res: Response) {
     }
 }
 
-export async function sendResetPasswordMail(req: Request, res: Response) {
+export async function sendResetPasswordMailHandler(
+    req: Request<SendResetPasswordMailInput>,
+    res: Response
+) {
     const { email } = req.body
     const emailService = new EmailService()
     await emailService.sendResetPasswordMail(email)
@@ -247,13 +244,12 @@ export async function sendResetPasswordMail(req: Request, res: Response) {
     res.status(200).json({ message: 'Reset password email sent successfully' })
 }
 
-export async function resetPassword(req: Request, res: Response) {
+export async function resetPasswordHandler(
+    req: Request<ResetPasswordInput>,
+    res: Response,
+) {
     const { token, password } = req.body
 
-    if (!token || !password) {
-        return res.status(400).json({ msg: 'Please enter all fields' })
-    }
-
-    await resetPasswordConfirm(token, password)
-    res.status(200).json({ message: 'Password reset successfully' })
+    const serviceResponse = await resetPasswordConfirm(token, password)
+    handleServiceResponse(serviceResponse, res)
 }

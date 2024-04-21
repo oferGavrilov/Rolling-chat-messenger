@@ -2,6 +2,7 @@ import mongoose, { Document, Model } from 'mongoose'
 
 export interface IMessage extends Document {
       sender: string
+
       content: string
       chat: string
       messageType: string
@@ -50,17 +51,17 @@ export type ReplyMessage = {
 }
 
 export type NewMessagePayload = {
-      sender: string;
-      content: string;
-      chat: string;
-      messageType: string;
-      TN_Image?: string;
-      replyMessage?: ReplyMessage | null; // Adjust according to your actual ReplyMessage type
-      messageSize?: number;
-      deletedBy?: { userId: string; deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[];
-      isReadBy?: { userId: string; readAt: Date }[];
-      fileName?: string;
-      fileUrl?: string;
+      sender: string
+      content: string
+      chat: string
+      messageType: string
+      TN_Image?: string
+      replyMessage?: ReplyMessage | null
+      messageSize?: number
+      deletedBy?: { userId: string; deletionType: 'forMe' | 'forEveryone' | 'forEveryoneAndMe' }[]
+      isReadBy?: { userId: string; readAt: Date }[]
+      fileName?: string
+      fileUrl?: string
     };
 
 export const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageModel)

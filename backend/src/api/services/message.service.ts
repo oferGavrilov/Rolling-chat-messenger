@@ -1,7 +1,7 @@
 import { IMessage, Message, NewMessagePayload, ReplyMessage } from "@/models/message.model"
 import { Chat } from "@/models/chat.model"
 import { logger } from "@/server"
-import { deleteImageFromCloudinary, uploadImageToCloudinary, uploadPdfToCloudinary } from "@/services/cloudinary.service"
+import { deleteImageFromCloudinary, uploadImageToCloudinary, uploadPdfToCloudinary } from "@/utils/cloudinary"
 import { ResponseStatus, ServiceResponse } from "@/models/serviceResponse"
 import { StatusCodes } from "http-status-codes"
 

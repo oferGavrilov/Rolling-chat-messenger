@@ -49,7 +49,7 @@ export async function signUpService(username: string, email: string, password: s
     }
 }
 
-export async function loginUser(email: string, password: string): Promise<ServiceResponse<Partial<IUser> | null>> {
+export async function loginUserService(email: string, password: string): Promise<ServiceResponse<Partial<IUser> | null>> {
     try {
 
         const user = await User.findOne({ email }).select('+password')
@@ -125,28 +125,26 @@ export async function validateRefreshTokenService(refreshToken: string): Promise
     }
 }
 
-export async function resetPasswordConfirm(token: string, password: string): Promise<void> {
+export async function resetPasswordConfirm(token: string, password: string): Promise<ServiceResponse<null>> {
     try {
         const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpires: { $gt: Date.now() },
         })
 
-        if (!user) {
-            throw new Error('Password reset token is invalid or has expired.')
-        }
-
         if (user) {
             user.password = password
-            user.resetPasswordToken = undefined
-            user.resetPasswordExpires = undefined
+            user.resetPasswordToken = null
+            user.resetPasswordExpires = null
             await user.save()
         } else {
-            throw new Error('User not found')
+            throw new ServiceResponse(ResponseStatus.Failed, 'Password reset token is invalid or has expired.', null, StatusCodes.UNAUTHORIZED)
         }
+
+        return new ServiceResponse(ResponseStatus.Success, 'Password reset successfully', null, StatusCodes.OK)
     } catch (error: unknown) {
         const errorMessage = `Error resetting password: ${(error as Error).message}`
         logger.error(errorMessage)
-        throw new Error(errorMessage)
+        return new ServiceResponse(ResponseStatus.Failed, errorMessage, null, error instanceof ServiceResponse ? (error as ServiceResponse).statusCode : StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }

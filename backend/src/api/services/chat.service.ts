@@ -25,7 +25,6 @@ export async function createChatService(receiverId: string, senderId: string): P
             .populate("latestMessage")
 
       if (isChat.length > 0) {
-            // return isChat[0] as ChatDocument
             return new ServiceResponse(ResponseStatus.Success, 'Chat found', isChat[0], StatusCodes.OK)
       } else {
             const chatData = {
@@ -44,7 +43,7 @@ export async function createChatService(receiverId: string, senderId: string): P
                         throw new Error('Failed to retrieve the created chat')
                   }
 
-                  return new ServiceResponse(ResponseStatus.Success, 'Chat created', fullChat, 200)
+                  return new ServiceResponse(ResponseStatus.Success, 'Chat created', fullChat, StatusCodes.CREATED)
 
             } catch (error: unknown) {
                   const errorMessage = `Error creating chat: ${(error as Error).message}`
@@ -56,8 +55,8 @@ export async function createChatService(receiverId: string, senderId: string): P
 
 export async function getUserChatsService(userId: string): Promise<ServiceResponse<IChat[] | null>> {
       const populateOptions = [
-            { path: "users", select: "-password" },
-            { path: "groupAdmin", select: "-password" },
+            { path: "users", select: "username profileImg TN_profileImg email about" },
+            { path: "groupAdmin", select: "username profileImg TN_profileImg email about" },
             {
                   path: "latestMessage",
                   populate: { path: "sender", select: "username profileImg email" },
@@ -108,11 +107,9 @@ export async function getChatByIdService(chatId: string): Promise<ServiceRespons
             const chat = await Chat.findById(chatId).populate(populateOptions)
 
             if (!chat) {
-                  // throw new Error('Chat not found')
                   return new ServiceResponse(ResponseStatus.Failed, 'Chat not found', null, 404)
             }
 
-            // return chat
             return new ServiceResponse(ResponseStatus.Success, 'Chat found', chat, 200)
       } catch (error: unknown) {
             const errorMessage = `Error fetching chat: ${(error as Error).message}`
@@ -187,8 +184,7 @@ export async function createGroupChatService(users: string[], chatName: string, 
                   return new ServiceResponse(ResponseStatus.Failed, 'Failed to retrieve the created group chat', null, StatusCodes.INTERNAL_SERVER_ERROR)
             }
 
-            // return new ServiceResponse(ResponseStatus.Success, 'Group chat created', fullChat, 200)
-            return new ServiceResponse(ResponseStatus.Success, 'Group chat created', fullChat, 200)
+            return new ServiceResponse(ResponseStatus.Success, 'Group chat created', fullChat, StatusCodes.CREATED)
       } catch (error: unknown) {
             const errorMessage = `Error creating group chat: ${(error as Error).message}`
             logger.error(errorMessage)
@@ -286,7 +282,7 @@ export async function kickFromGroupChatService(chatId: string, userId: string, k
       }
 }
 
-export async function leaveGroupService(chatId: string, userId: string): Promise<ServiceResponse<string | null>> {
+export async function leaveGroupChatService(chatId: string, userId: string): Promise<ServiceResponse<string | null>> {
       try {
             const chat: IChat | null = await Chat.findById(chatId)
 

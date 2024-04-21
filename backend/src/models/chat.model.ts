@@ -18,16 +18,18 @@ type DeletedBy = {
   userId: Types.ObjectId
   deletedAt: Date
 }
-const DeletedBySchema = new Schema<DeletedBy>({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  deletedAt: { type: Date, required: true },
-});
 
 type KickedUsers = {
   userId: Types.ObjectId
   kickedBy: Types.ObjectId
   kickedAt: Date
 }
+
+const DeletedBySchema = new Schema<DeletedBy>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  deletedAt: { type: Date, required: true },
+});
+
 const KickedUsersSchema = new Schema<KickedUsers>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   kickedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
