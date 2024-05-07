@@ -141,14 +141,14 @@ export default function Form(): JSX.Element {
 
                         <div className="flex gap-x-2">
                               <Button
-                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'login' ? 'bg-primary text-white' : 'hover:bg-primary/60 box-shadow-inner hover:shadow-none hover:text-white'}`}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'login' ? 'border-b-2 border-b-primary' : 'border-b-2 border-white'}`}
                                     onClick={() => onFormModeChange('login')}
                                     type='button'
                                     disabled={isLoading}>
                                     Login
                               </Button>
                               <Button
-                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'signUp' ? 'bg-primary text-white' : 'hover:bg-primary/60 box-shadow-inner hover:shadow-none hover:text-white'}`}
+                                    className={`auth-btn disabled:cursor-not-allowed ${formMode === 'signUp' ? 'border-b-2 border-b-primary' : 'border-b-2 border-white'}`}
                                     onClick={() => onFormModeChange('signUp')}
                                     type='button'
                                     disabled={isLoading}>

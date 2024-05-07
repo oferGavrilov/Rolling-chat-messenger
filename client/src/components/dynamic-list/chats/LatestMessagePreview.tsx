@@ -56,7 +56,7 @@ const LatestMessagePreview: React.FC<ChatMessagePreviewProps> = React.memo(({ ch
 
     return (
         <div className='flex justify-between items-center w-full'>
-            <div className={`text-base h-6 max-h-[24px] flex items-center ${!isSender && selectedChat?._id !== chat._id && !isReadByLoggedinUser ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}>
+            <div className={`text-base h-6 max-h-[24px] flex items-center whitespace-nowrap ${!isSender && selectedChat?._id !== chat._id && !isReadByLoggedinUser ? 'text-primary font-semibold' : 'text-[#00000085] dark:text-dark-primary-text'}`}>
                 <span className={`max-w-[260px] ${senderPrefix !== '' && 'mr-2'}`}>{senderPrefix}</span>
                 <LatestMessageContent message={latestMessage} />
             </div>

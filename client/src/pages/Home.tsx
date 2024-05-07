@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { WavesBlue } from "../components/svg/Bubble"
+import { WavesHomePage } from "../components/svg/Bubble"
 import Features from "../components/home/Features"
 import Views from "../components/home/Views"
 import MaxWidthWrapper from "../MaxWidthWrapper"
@@ -8,24 +8,24 @@ export default function Home(): JSX.Element {
       return (
             <section className="relative h-screen overflow-y-scroll">
                   {/* FIRST */}
-                  <div className="min-h-[100svh] relative">
-                        <MaxWidthWrapper>
-                              <div className="slide-up relative">
-                                    <div className="flex justify-center text-primary pt-8">
-                                          <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl">Rolling</h1>
+                  <div className="min-h-[100svh] flex flex-col">
+                        <MaxWidthWrapper className="flex-1">
+                              <div className="slide-up">
+                                    <div className="flex justify-center pt-8 h-28 xl:h-32">
+                                          <h1 className="font-bold bg-gradient-to-r from-[#3a72ec] to-[#57c0f8] text-gradient text-5xl md:text-6xl lg:text-[4.3rem] xl:text-[4.8rem]">Rolling</h1>
                                     </div>
 
-                                    <div className="text-lg md:text-2xl tracking-wide leading-4 md:[word-spacing:6px] flex flex-col items-center py-12 xl:py-16 mx-auto max-3xl">
-                                          <h2 className="text-4xl !leading-[3rem] md:!leading-[4.5rem] font-bold tracking-tight text-gray-900 text-center sm:text-6xl">
+                                    <div className="text-lg md:text-xl tracking-wide leading-4 md:[word-spacing:5px] flex flex-col items-center py-6 xl:py-10 mx-auto max-3xl">
+                                          <h2 className="text-4xl !leading-[3rem] font-bold tracking-tight text-gray-900 text-center">
                                                 Roll your chat with Rolling-
                                                 The future of communication <span className="text-primary">is here.</span>
                                           </h2>
-                                          <p className="mt-6 xl:mt-12 text-lg text-gray-500 text-center tracking-tight">
+                                          <p className="mt-6 xl:mt-10 text-lg text-gray-500 text-center tracking-tight">
                                                 Discover a new way to connect with our innovative chat website
                                                 From real-time messaging to voice and video calls, our platform brings people together, fostering collaboration, and enabling rich communication experiences.
                                           </p>
                                     </div>
-                                    
+
                                     <div className="flex justify-center">
                                           <Link
                                                 to="/chat"
@@ -63,7 +63,7 @@ export default function Home(): JSX.Element {
                               </div>
                         </MaxWidthWrapper>
 
-                        <WavesBlue className="slide-up bottom-0 md:-bottom-10 lg:-bottom-20 2xl:-bottom-28 3xl:-bottom-36" />
+                        <WavesHomePage />
                   </div>
 
                   {/* SECOND */}

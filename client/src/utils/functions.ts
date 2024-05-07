@@ -31,6 +31,27 @@ export function debounce<T extends (...args: unknown[]) => void>(
   }
 }
 
+export function throttle<T extends (...args: any[]) => void>(func: T, limit: number): T {
+  let lastFunc: number;
+  let lastRan: number;
+
+  return function(this: ThisParameterType<T>, ...args: Parameters<T>) {
+      if (!lastRan) {
+          func.apply(this, args);
+          lastRan = Date.now();
+      } else {
+          clearTimeout(lastFunc);
+          lastFunc = window.setTimeout(() => {
+              if ((Date.now() - lastRan) >= limit) {
+                  func.apply(this, args);
+                  lastRan = Date.now();
+              }
+          }, Math.max(limit - (Date.now() - lastRan), 0));
+      }
+  } as T;
+}
+
+
 export function isSameSender(messages: IMessage[], m: IMessage, i: number, userId: string): boolean {
   if (!messages.length || !m || !m.sender || i >= messages.length - 1) return false;
 

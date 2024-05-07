@@ -1,15 +1,10 @@
 import { ReactNode } from 'react'
-
 import { AuthState } from '../../../../context/useAuth'
 import useStore from '../../../../context/store/useStore'
-
 import { IMessage } from '../../../../model/message.model'
 import { IUser } from '../../../../model/user.model'
-
 import { formatDate } from '../../../../utils/functions'
-
 import MessageArrow from '../../../svg/MessageArrow'
-
 import ReplyMessage from './ReplyMessage'
 import MessageMenu from './MessageMenu'
 
@@ -34,31 +29,46 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
                         <DeletedMessage />
                   )
             }
-            if (message.messageType === 'text') {
-                  return <TextMessage message={message} />
-
-            } else if (message.messageType === 'image' && typeof message.content === 'string') {
-                  return <ImageMessage
-                        message={message}
-                        setSelectedFile={setSelectedFile}
-                        userId={user._id}
-                  />
-            } else if (message.messageType === 'file') {
-                  return <FileMessage
-                        message={message}
-                        setSelectedFile={setSelectedFile}
-                  />
-
-            } else if (message.messageType === 'audio') {
-                  return (
-                        <AudioMessage
-                              message={message}
-                              userId={user._id}
-                        />
-                  )
+            switch (message.messageType) {
+                  case 'text':
+                        return <TextMessage message={message} />
+                  case 'image':
+                        return <ImageMessage message={message} setSelectedFile={setSelectedFile} userId={user._id} />
+                  case 'file':
+                        return <FileMessage message={message} setSelectedFile={setSelectedFile} />
+                  case 'audio':
+                        return <AudioMessage message={message} userId={user._id} />
+                  default:
+                        return null
             }
 
-            return null
+
+
+            // if (message.messageType === 'text') {
+            //       return <TextMessage message={message} />
+
+            // } else if (message.messageType === 'image' && typeof message.content === 'string') {
+            //       return <ImageMessage
+            //             message={message}
+            //             setSelectedFile={setSelectedFile}
+            //             userId={user._id}
+            //       />
+            // } else if (message.messageType === 'file') {
+            //       return <FileMessage
+            //             message={message}
+            //             setSelectedFile={setSelectedFile}
+            //       />
+
+            // } else if (message.messageType === 'audio') {
+            //       return (
+            //             <AudioMessage
+            //                   message={message}
+            //                   userId={user._id}
+            //             />
+            //       )
+            // }
+
+            // return null
       }
 
       function handleDoubleClick(message: IMessage): void {
@@ -128,7 +138,7 @@ export default function MessagePreview({ message, onReplyMessage, onRemoveMessag
 
                               <div className={`flex my-1 ${incomingMessage ? 'mr-2 flex-row-reverse' : 'ml-2'}`}>
                                     {getReceiptStatus()}
-                                    <span className='text-[11px] lg:text-xs text-gray-200 relative mt-auto mx-1'>
+                                    <span className='text-[11px] lg:text-xs text-gray-200 relative mt-auto mx-1 select-none'>
                                           {formatDate(message.createdAt)}
                                     </span>
                               </div>

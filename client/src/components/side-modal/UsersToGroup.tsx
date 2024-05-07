@@ -67,6 +67,7 @@ export default function UsersToGroup({ setIsOpen, isOpen }: Props) {
             }
 
             try {
+                  console.log("Creating group...", group)
                   const groupToAdd = { ...group, groupImage: image }
                   const newChat = await chatService.createGroup(groupToAdd)
                   setChats([newChat, ...chats])

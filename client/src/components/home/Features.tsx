@@ -1,4 +1,3 @@
-import { WavesWhite } from "../svg/Bubble"
 import PermMediaIcon from '@mui/icons-material/PermMedia'
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import { BsFillCameraVideoFill } from 'react-icons/bs'
@@ -20,7 +19,7 @@ export default function Features() {
 
       return (
 
-            <div className="min-h-screen relative">
+            <div className="min-h-screen">
                   <div className="flex flex-col gap-8 text-white w-[85%] md:w-2/3 max-w-2xl mx-auto translate-y-0 transition-all duration-500 bg-primary opacity-0"ref={showOnScrollRef} >
                         <h2 className="text-3xl md:text-4xl tracking-wide font-bold py-8 text-center">Explore New World of Chatting</h2>
                         <img
@@ -46,7 +45,7 @@ export default function Features() {
                               </div>
                         </div>
                   </div>
-                  <WavesWhite className="bottom-0 md:-bottom-10 lg:-bottom-24 xl:-bottom-48" />
+                  {/* <WavesWhite className="bottom-0 md:-bottom-10 lg:-bottom-24 xl:-bottom-48" /> */}
             </div>
       )
 }
