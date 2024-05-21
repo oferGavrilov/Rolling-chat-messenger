@@ -35,11 +35,8 @@
     "src/types/express/index.d.ts"
   ],
   "include": [
-    "./src/**/*.ts",
-    "src/types/**/*.d.ts",
-    "tests/**/*.ts"
+    "./src/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules", "**/*.test.ts", "build"]
+
 }
