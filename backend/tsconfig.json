@@ -23,7 +23,6 @@
     "noImplicitAny": false,
     "types": [
       "node",
-      "express",
       "jest"
     ]
   },
@@ -37,6 +36,9 @@
   "include": [
     "./src/**/*.ts"
   ],
-  "exclude": ["node_modules", "**/*.test.ts", "build"]
-
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "build"
+  ]
 }
