@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
+    "start": "vite",
     "build": "tsc && vite build",
     "build-dev": "rimraf dist && vite build --mode development",
     "preview": "vite preview",

@@ -10,12 +10,12 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     preview: {
-      host: true,
       port: 3000,
     },
     server: {
+      open: false,
+      host: true,
       port: 3000,
-      open: true,
       strictPort: true,
       watch: {
         usePolling: true,
