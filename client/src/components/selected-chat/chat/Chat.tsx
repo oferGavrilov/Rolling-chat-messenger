@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import useStore from '../../../context/store/useStore'
 import { AuthState } from '../../../context/useAuth'
 import Messages from './messages/Messages'
-import { scrollToBottom, throttle } from '../../../utils/functions'
+import { scrollToBottom } from '../../../utils/functions'
 
 interface Props {
       setChatMode: React.Dispatch<React.SetStateAction<"chat" | "info" | "edit-file">>
@@ -21,27 +21,11 @@ export default function Chat({ setChatMode }: Props): JSX.Element {
       }, [messages, setMessages])
 
       useEffect(() => {
-            const handleScroll = throttle(() => {
-                  const scrollTop = chatRef.current?.scrollTop;
-                  if (!scrollTop) return;
-                  console.log('scrolling', scrollTop);
-                  if (chatRef.current && scrollTop < 30) {
-                        console.log('fetching more messages');
-                        // fetchMoreMessages();
-                  }
-            }, 1000);
-
-            const chatElement = chatRef.current;
-            if (chatElement) {
-                  chatElement.addEventListener('scroll', handleScroll);
+            if (messages.length > 4) {
+                  console.log('scrolling to bottom')
+                  setTimeout(() => scrollToBottom(chatRef), 100) // For smooth scrolling
             }
-
-            return () => {
-                  if (chatElement) {
-                        chatElement.removeEventListener('scroll', handleScroll);
-                  }
-            };
-      }, [messages]); 
+      }, [messages, setMessages])
 
       useEffect(() => {
             // Revoke blob urls when component unmounts or selected chat id changes

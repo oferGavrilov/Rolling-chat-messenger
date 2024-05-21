@@ -1,4 +1,4 @@
-import { IChat, IMessage, IReplyMessage, IUser } from '../../model' // Adjust import paths as needed
+import { IChat, IMessage, IReplyMessage, IUser } from '../../model'
 
 interface ChatState {
     chats: IChat[]

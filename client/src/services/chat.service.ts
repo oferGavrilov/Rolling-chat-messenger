@@ -3,8 +3,8 @@ import { getLoggedinUser } from "./user.service"
 import { httpService } from "./http.service"
 
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://server.rolling-chat.com' : 'http://localhost:5000'
-const CHAT_SESSION_KEY = 'userChatsFetched'
-// const BASE_URL = "https://rolling-backend.onrender.com"
+
+
 
 export const chatService = {
       getUserChats,
@@ -16,12 +16,11 @@ export const chatService = {
       kickFromGroup,
       updateUsersGroup,
       leaveFromGroup,
-      isUserChatsFetched
 }
 
 async function getUserChats(): Promise<IChat[]> {
       try {
-            const chats = await httpService.get(BASE_URL + `/api/chat/`, {}) as IChat[]
+            const chats = await httpService.get(`${BASE_URL}/api/chat/`, {}) as IChat[]
 
             const sortedData = chats.sort((a: IChat, b: IChat) => {
                   const aDate = a.updatedAt ? new Date(a.updatedAt).getTime() : 0
@@ -29,9 +28,6 @@ async function getUserChats(): Promise<IChat[]> {
 
                   return bDate - aDate
             })
-
-            // save a flag to session storage to indicate that the user has fetched his chats
-            sessionStorage.setItem(CHAT_SESSION_KEY, 'true')
 
             return sortedData
       } catch (error) {
@@ -73,10 +69,10 @@ async function getChatById(chatId: string): Promise<IChat> {
 async function createGroup(group: { chatName: string, userIds: string[], groupImage?: File }): Promise<IChat> {
       try {
             const formData = new FormData()
-            
+
             formData.append('chatName', group.chatName)
             formData.append('userIds', JSON.stringify(group.userIds))
-            
+
             if (group.groupImage) {
                   formData.append('groupImage', group.groupImage)
             }
@@ -141,8 +137,4 @@ async function kickFromGroup(chatId: string, userId: string, kickedByUserId: str
             console.log(error)
             throw new Error('Failed to remove user from group.')
       }
-}
-
-function isUserChatsFetched() {
-      return sessionStorage.getItem(CHAT_SESSION_KEY)
 }
