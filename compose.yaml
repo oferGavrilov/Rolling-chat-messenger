@@ -9,7 +9,6 @@ services:
       - "3000:3000"
     env_file:
       - ./client/.env
-
     develop:
       watch:
         - path: ./client/package.json
@@ -22,12 +21,15 @@ services:
   api:
     depends_on:
       - db
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     ports:
       - "5000:5000"
     env_file:
       - ./backend/.env
-
+    environment:
+      - MONGO_URI=mongodb://db:27017/rolling
     develop:
       watch:
         - path: ./backend/package.json
@@ -37,10 +39,11 @@ services:
         - path: ./backend
           target: /app
           action: sync
-
   db:
     image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
       - mongodb:/data/db
+volumes:
+  mongodb:

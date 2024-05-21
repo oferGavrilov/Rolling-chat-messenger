@@ -10,7 +10,7 @@ export const connectDB = async (): Promise<void> => {
       try {
             let mongoURI = ''
             mongoURI = env.MONGO_URI
-
+            console.log('mongoURI', mongoURI)
             if (!mongoURI) {
                   throw new Error('MongoDB connection URI is not defined')
             }
@@ -19,7 +19,7 @@ export const connectDB = async (): Promise<void> => {
 
             logger.info(`MongoDB environment: ${connection.connection.host}`)
       } catch (error: unknown) {
-            const errorMessage = `Error connecting to MongoDB: ${(error as Error).message}`
+            const errorMessage = `Error connecting to MongoDB: ${(error as Error).message} the MONGO_URI is ${env.MONGO_URI}`
             logger.error(errorMessage)
 
             process.exit(1)

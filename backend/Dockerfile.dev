@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 5000
 
-CMD ["node", "/app/build/src/index.js"]
+CMD ["npm", "run", "dev"]

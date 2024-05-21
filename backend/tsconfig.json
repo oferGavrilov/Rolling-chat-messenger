@@ -24,7 +24,8 @@
     "noImplicitAny": false,
     "types": [
       "node",
-      "express"
+      "express",
+      "jest"
     ]
   },
   "extends": [],
@@ -36,7 +37,8 @@
   ],
   "include": [
     "./src/**/*.ts",
-    "src/types/**/*.d.ts"
+    "src/types/**/*.d.ts",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules"
