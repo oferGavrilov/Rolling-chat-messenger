@@ -22,8 +22,7 @@
     "ignoreDeprecations": "5.0",
     "noImplicitAny": false,
     "types": [
-      "node",
-      "jest"
+      "node"
     ]
   },
   "extends": [],
